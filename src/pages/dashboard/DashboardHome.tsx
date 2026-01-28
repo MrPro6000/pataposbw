@@ -86,7 +86,7 @@ const DashboardHome = () => {
   const mostVisitedCards = [
     { 
       title: "Today's sales", 
-      value: "R 3,345.87",
+      value: "P 3,345.87",
       hasChart: true,
       link: "/dashboard/sales"
     },
@@ -231,7 +231,7 @@ const DashboardHome = () => {
               </ChartContainer>
             </div>
             
-            <p className="text-lg font-semibold text-[#141414] mt-3">R 19,789.07</p>
+            <p className="text-lg font-semibold text-[#141414] mt-3">P 19,789.07</p>
           </div>
 
           {/* Product Report Card */}

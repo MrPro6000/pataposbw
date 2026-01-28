@@ -174,7 +174,7 @@ const Products = () => {
             <p className="text-sm text-[#141414]/60 mb-3">{product.category}</p>
             
             <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-[#141414]">R{product.price.toFixed(2)}</span>
+              <span className="text-xl font-bold text-[#141414]">P{product.price.toFixed(2)}</span>
               <span className={`text-xs px-2 py-1 rounded-full ${
                 product.stock > 0 
                   ? 'bg-green-100 text-green-700' 
@@ -206,7 +206,7 @@ const Products = () => {
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="price">Price (R)</Label>
+              <Label htmlFor="price">Price (P)</Label>
               <Input 
                 id="price"
                 type="number"

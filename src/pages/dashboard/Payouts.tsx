@@ -80,7 +80,7 @@ const Payouts = () => {
             </div>
             <span className="text-white/70">Available Balance</span>
           </div>
-          <p className="text-3xl font-bold">R12,450.00</p>
+          <p className="text-3xl font-bold">P12,450.00</p>
           <p className="text-sm text-white/60 mt-2">Next payout: Monday</p>
         </div>
 
@@ -91,7 +91,7 @@ const Payouts = () => {
             </div>
             <span className="text-[#141414]/70">Processing</span>
           </div>
-          <p className="text-3xl font-bold text-[#141414]">R5,420.00</p>
+          <p className="text-3xl font-bold text-[#141414]">P5,420.00</p>
           <p className="text-sm text-[#141414]/60 mt-2">Expected in 1-2 days</p>
         </div>
 
@@ -102,7 +102,7 @@ const Payouts = () => {
             </div>
             <span className="text-[#141414]/70">Paid Out (This Month)</span>
           </div>
-          <p className="text-3xl font-bold text-[#141414]">R67,890.00</p>
+          <p className="text-3xl font-bold text-[#141414]">P67,890.00</p>
           <p className="text-sm text-[#141414]/60 mt-2">4 payouts completed</p>
         </div>
       </div>
@@ -150,7 +150,7 @@ const Payouts = () => {
                     <span className="font-medium text-[#141414]">{payout.reference}</span>
                   </td>
                   <td className="p-4 text-[#141414]/70">{payout.date}</td>
-                  <td className="p-4 font-semibold text-[#141414]">R{payout.amount.toFixed(2)}</td>
+                  <td className="p-4 font-semibold text-[#141414]">P{payout.amount.toFixed(2)}</td>
                   <td className="p-4">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(payout.status)}`}>
                       {getStatusIcon(payout.status)}
