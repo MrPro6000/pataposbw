@@ -6,10 +6,12 @@ import {
   TrendingUp,
   Link2,
   Package,
-  Users,
+  Smartphone,
   ChevronRight,
   BarChart3,
-  User
+  User,
+  Wallet,
+  Banknote
 } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
@@ -17,7 +19,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis } from "recharts";
+import { BarChart, Bar, XAxis } from "recharts";
 
 const DashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -91,27 +93,34 @@ const DashboardHome = () => {
       link: "/dashboard/sales"
     },
     { 
-      title: "Payment Links", 
-      value: "3",
-      subtitle: "Unpaid",
-      icon: Link2,
+      title: "Mobile Money", 
+      value: "P 1,245",
+      subtitle: "28% of sales",
+      icon: Smartphone,
+      iconColor: "text-orange-500 bg-orange-100",
       link: "/dashboard/sales"
     },
     { 
-      title: "Products", 
-      value: "Tote Bag",
-      change: "+12%",
-      changePositive: true,
-      icon: Package,
-      link: "/dashboard/products"
+      title: "Cash Sales", 
+      value: "P 890",
+      subtitle: "18% of sales",
+      icon: Banknote,
+      iconColor: "text-green-500 bg-green-100",
+      link: "/dashboard/sales"
     },
     { 
-      title: "Staff", 
-      value: "6",
-      subtitle: "Active",
-      hasAvatars: true,
-      link: "/dashboard/staff"
+      title: "Wallet & Cards", 
+      value: "P 1,210",
+      subtitle: "45% of sales",
+      icon: Wallet,
+      iconColor: "text-purple-500 bg-purple-100",
+      link: "/dashboard/sales"
     },
+  ];
+
+  const quickLinks = [
+    { title: "Payment Links", value: "3 unpaid", icon: Link2, link: "/dashboard/sales" },
+    { title: "Products", value: "12 active", icon: Package, link: "/dashboard/products" },
   ];
 
   const reportCards = [
@@ -154,40 +163,40 @@ const DashboardHome = () => {
                   </div>
                   <p className="text-lg font-semibold text-[#141414]">{card.value}</p>
                 </>
-              ) : card.hasAvatars ? (
-                <>
-                  <div className="flex -space-x-2 mb-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div 
-                        key={i} 
-                        className="w-8 h-8 rounded-full bg-gradient-to-br from-[#00C8E6] to-[#0095AB] border-2 border-white flex items-center justify-center"
-                      >
-                        <span className="text-xs text-white font-medium">{i}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <p className="text-sm text-[#141414]">
-                    <span className="font-medium">{card.subtitle}</span> · {card.value}
-                  </p>
-                </>
               ) : (
                 <>
-                  {card.icon && <card.icon className="w-5 h-5 text-[#141414]/40 mb-2" />}
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg font-semibold text-[#141414]">{card.value}</span>
-                    {card.change && (
-                      <span className={`text-sm font-medium ${
-                        card.changePositive ? 'text-green-600' : 'text-red-500'
-                      }`}>
-                        {card.change}
-                      </span>
-                    )}
-                  </div>
+                  {card.icon && (
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${card.iconColor}`}>
+                      <card.icon className="w-5 h-5" />
+                    </div>
+                  )}
+                  <p className="text-lg font-semibold text-[#141414]">{card.value}</p>
                   {card.subtitle && (
                     <p className="text-sm text-[#141414]/60">{card.subtitle}</p>
                   )}
                 </>
               )}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Quick Links */}
+      <section className="mb-8">
+        <div className="grid grid-cols-2 gap-4">
+          {quickLinks.map((item) => (
+            <Link
+              key={item.title}
+              to={item.link}
+              className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
+            >
+              <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-xl flex items-center justify-center">
+                <item.icon className="w-6 h-6 text-[#00C8E6]" />
+              </div>
+              <div>
+                <p className="font-semibold text-[#141414]">{item.title}</p>
+                <p className="text-sm text-[#141414]/60">{item.value}</p>
+              </div>
             </Link>
           ))}
         </div>

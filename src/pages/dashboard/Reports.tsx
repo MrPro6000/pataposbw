@@ -20,7 +20,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, LineChart, Line, PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 
 const salesByDate = [
   { date: "Jan 22", sales: 4500 },
@@ -41,9 +41,12 @@ const salesByProduct = [
 ];
 
 const paymentMethods = [
-  { name: "Card", value: 65, color: "#00C8E6" },
-  { name: "Tap to Pay", value: 25, color: "#141414" },
-  { name: "Online", value: 10, color: "#9333EA" },
+  { name: "Card", value: 35, color: "#00C8E6" },
+  { name: "Mobile Money", value: 28, color: "#F97316" },
+  { name: "Cash", value: 18, color: "#22C55E" },
+  { name: "Wallet", value: 10, color: "#8B5CF6" },
+  { name: "Tap to Pay", value: 5, color: "#141414" },
+  { name: "QR Payment", value: 4, color: "#EC4899" },
 ];
 
 const Reports = () => {
@@ -55,7 +58,6 @@ const Reports = () => {
   };
 
   const handleExport = (type: string) => {
-    // Mock export functionality
     alert(`Exporting ${type} report...`);
   };
 
@@ -169,14 +171,14 @@ const Reports = () => {
                 </Pie>
               </PieChart>
             </ChartContainer>
-            <div className="flex-1 space-y-3">
+            <div className="flex-1 space-y-2">
               {paymentMethods.map((method) => (
                 <div key={method.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full" style={{ backgroundColor: method.color }} />
-                    <span className="text-[#141414]">{method.name}</span>
+                    <span className="text-[#141414] text-sm">{method.name}</span>
                   </div>
-                  <span className="font-semibold text-[#141414]">{method.value}%</span>
+                  <span className="font-semibold text-[#141414] text-sm">{method.value}%</span>
                 </div>
               ))}
             </div>
