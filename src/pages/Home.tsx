@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
-    <div className="yoco-dark-page">
+    <div className="pata-dark-page">
       <MainNav theme="dark" />
       
       {/* Hero Section */}
@@ -17,13 +17,13 @@ const Home = () => {
               <div className="flex items-center gap-2 mb-6">
                 <Star className="w-4 h-4 text-[#00C8E6]" />
                 <span className="text-[#00C8E6] font-medium">202,107</span>
-                <span className="text-white/80">businesses run smarter with Yoco</span>
+                <span className="text-white/80">businesses run smarter with Pata</span>
               </div>
               
-              <h1 className="yoco-hero-title text-white mb-2">
+              <h1 className="pata-hero-title text-white mb-2">
                 SAVE TIME, MONEY
               </h1>
-              <h1 className="yoco-hero-title text-[#D4B896] mb-6">
+              <h1 className="pata-hero-title text-[#D4B896] mb-6">
                 AND GUESSWORK
               </h1>
               
@@ -32,7 +32,7 @@ const Home = () => {
               </p>
               
               <div className="flex items-center gap-4">
-                <Link to="/signup" className="yoco-btn-cyan">
+                <Link to="/signup" className="pata-btn-cyan">
                   Sign up
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -96,7 +96,7 @@ const Home = () => {
                 link: "/online-payments"
               },
               {
-                title: "Yoco Capital",
+                title: "Pata Capital",
                 description: "Grow your business with a fast, flexible cash advance.",
                 link: "/capital"
               }

@@ -50,10 +50,10 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        yoco: {
-          gray: "hsl(var(--yoco-gray))",
-          dark: "hsl(var(--yoco-dark))",
-          white: "hsl(var(--yoco-white))",
+        pata: {
+          gray: "hsl(var(--pata-gray))",
+          dark: "hsl(var(--pata-dark))",
+          white: "hsl(var(--pata-white))",
         },
       },
       borderRadius: {

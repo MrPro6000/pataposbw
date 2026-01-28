@@ -20,7 +20,7 @@ const OnlinePayments = () => {
   ];
 
   return (
-    <div className="yoco-light-page">
+    <div className="pata-light-page">
       <MainNav theme="light" />
 
       {/* Hero Section */}
@@ -28,7 +28,7 @@ const OnlinePayments = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="yoco-badge-light mb-6">
+              <div className="pata-badge-light mb-6">
                 <Star className="w-4 h-4 text-[#00C8E6]" />
                 <span>Trusted by 200,000 businesses</span>
               </div>
@@ -41,11 +41,11 @@ const OnlinePayments = () => {
               </h1>
 
               <p className="text-lg text-[#141414]/70 mb-8 max-w-lg">
-                Whether it's via payment links, on your website, or through invoices – Yoco makes online selling simple.
+                Whether it's via payment links, on your website, or through invoices – Pata makes online selling simple.
               </p>
 
               <div className="flex items-center gap-4">
-                <Link to="/signup" className="yoco-btn-cyan">
+                <Link to="/signup" className="pata-btn-cyan">
                   Discover more
                   <ArrowDown className="w-4 h-4" />
                 </Link>
@@ -63,7 +63,7 @@ const OnlinePayments = () => {
                 </div>
               </div>
               <p className="text-sm text-[#141414]/60 mt-3">
-                NEW! With Yoco, your customers can now pay you online using Google Pay and Apple Pay–with just one click.
+                NEW! With Pata, your customers can now pay you online using Google Pay and Apple Pay–with just one click.
               </p>
             </div>
 
@@ -84,7 +84,7 @@ const OnlinePayments = () => {
               </div>
               <div className="space-y-3">
                 <div className="bg-white rounded-2xl aspect-[3/4] p-4 shadow-lg">
-                  <div className="text-xs text-[#00C8E6] font-semibold mb-1">YOCO</div>
+                  <div className="text-xs text-[#00C8E6] font-semibold mb-1">PATA</div>
                   <div className="text-sm font-medium text-[#141414]">Cafe Grand</div>
                   <div className="text-2xl font-bold text-[#141414] my-4">R500.00</div>
                   <div className="space-y-2">

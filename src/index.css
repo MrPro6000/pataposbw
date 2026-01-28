@@ -37,12 +37,12 @@
 
     --radius: 0.75rem;
 
-    /* Yoco brand colors */
-    --yoco-cyan: 192 100% 50%;
-    --yoco-dark: 0 0% 9%;
-    --yoco-gray: 0 0% 96.5%;
-    --yoco-white: 0 0% 100%;
-    --yoco-cream: 45 50% 90%;
+    /* Pata brand colors */
+    --pata-cyan: 192 100% 50%;
+    --pata-dark: 0 0% 9%;
+    --pata-gray: 0 0% 96.5%;
+    --pata-white: 0 0% 100%;
+    --pata-cream: 45 50% 90%;
   }
 }
 
@@ -64,60 +64,60 @@
 
 @layer components {
   /* Dark page background */
-  .yoco-dark-page {
+  .pata-dark-page {
     @apply bg-[#141414] text-white min-h-screen;
   }
 
   /* Light page background */
-  .yoco-light-page {
+  .pata-light-page {
     @apply bg-[#E8F4F8] text-[#141414] min-h-screen;
   }
 
   /* Cyan primary button */
-  .yoco-btn-cyan {
+  .pata-btn-cyan {
     @apply inline-flex items-center gap-2 px-6 py-3.5 bg-[#00C8E6] text-[#141414] rounded-full text-sm font-semibold transition-all duration-200 hover:bg-[#00b8d4];
   }
 
   /* Outline button (dark theme) */
-  .yoco-btn-outline-dark {
+  .pata-btn-outline-dark {
     @apply px-6 py-2.5 border border-white/80 text-white rounded-full text-sm font-medium transition-all duration-200 hover:bg-white hover:text-[#141414];
   }
 
   /* Outline button (light theme) */
-  .yoco-btn-outline-light {
+  .pata-btn-outline-light {
     @apply px-6 py-2.5 border border-[#141414] text-[#141414] rounded-full text-sm font-medium transition-all duration-200 hover:bg-[#141414] hover:text-white;
   }
 
   /* Primary dark button for auth */
-  .yoco-btn-primary {
+  .pata-btn-primary {
     @apply w-full py-4 bg-[#141414] text-white rounded-xl text-base font-medium transition-all duration-200 hover:bg-[#2a2a2a];
   }
 
   /* Link styles */
-  .yoco-link-dark {
+  .pata-link-dark {
     @apply text-sm text-white/70 hover:text-white transition-colors duration-200;
   }
 
-  .yoco-link-light {
+  .pata-link-light {
     @apply text-sm text-[#141414]/70 hover:text-[#141414] transition-colors duration-200;
   }
 
   /* Card styles */
-  .yoco-card {
+  .pata-card {
     @apply bg-white rounded-2xl p-8 shadow-none;
   }
 
   /* Hero text gradient */
-  .yoco-hero-title {
+  .pata-hero-title {
     @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight;
   }
 
   /* Badge/pill */
-  .yoco-badge {
+  .pata-badge {
     @apply inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm;
   }
 
-  .yoco-badge-light {
+  .pata-badge-light {
     @apply inline-flex items-center gap-2 px-4 py-2 bg-[#141414]/10 rounded-full text-sm;
   }
 }
