@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import YocoLogo from "@/components/YocoLogo";
+import PataLogo from "@/components/PataLogo";
 import { ExternalLink, ChevronRight, Eye, EyeOff } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import hubPreview from "@/assets/hub-preview.png";
@@ -121,9 +121,9 @@ const Auth = ({ mode }: AuthProps) => {
       {/* Header */}
       <header className="flex items-center justify-between px-10 md:px-20 py-6">
         <Link to="/">
-          <YocoLogo className="h-6 text-[#141414]" />
+          <PataLogo className="h-6 text-[#141414]" />
         </Link>
-        <Link to={mode === "login" ? "/signup" : "/login"} className="yoco-btn-outline-light">
+        <Link to={mode === "login" ? "/signup" : "/login"} className="pata-btn-outline-light">
           {mode === "login" ? "Sign up" : "Log in"}
         </Link>
       </header>
@@ -144,7 +144,7 @@ const Auth = ({ mode }: AuthProps) => {
                     </div>
                     <img 
                       src={hubPreview} 
-                      alt="Yoco Dashboard Preview" 
+                      alt="Pata Dashboard Preview" 
                       className="w-full rounded-t-md"
                     />
                   </div>
@@ -214,7 +214,7 @@ const Auth = ({ mode }: AuthProps) => {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="yoco-btn-primary disabled:opacity-50"
+                  className="pata-btn-primary disabled:opacity-50"
                 >
                   {loading ? "Please wait..." : mode === "login" ? "Log in" : "Create account"}
                 </button>

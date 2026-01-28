@@ -6,15 +6,15 @@ import { Link } from "react-router-dom";
 const CardMachines = () => {
   const machines = [
     {
-      name: "Yoco Go",
+      name: "Pata Go",
       price: "R799",
       originalPrice: "R999",
       description: "Perfect for businesses just getting started.",
-      features: ["Accepts all cards", "Connects to phone", "Free Yoco app"],
+      features: ["Accepts all cards", "Connects to phone", "Free Pata app"],
       badge: "Most Popular",
     },
     {
-      name: "Yoco Khumo",
+      name: "Pata Khumo",
       price: "R1,999",
       originalPrice: "R2,499",
       description: "Stand-alone card machine with built-in printer.",
@@ -22,7 +22,7 @@ const CardMachines = () => {
       badge: "Best Value",
     },
     {
-      name: "Yoco Neo",
+      name: "Pata Neo",
       price: "R3,999",
       originalPrice: "R4,999",
       description: "Our most advanced card machine with large screen.",
@@ -32,7 +32,7 @@ const CardMachines = () => {
   ];
 
   return (
-    <div className="yoco-dark-page">
+    <div className="pata-dark-page">
       <MainNav theme="dark" />
 
       {/* Hero Section */}
@@ -40,7 +40,7 @@ const CardMachines = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <div className="yoco-badge mb-6">
+              <div className="pata-badge mb-6">
                 <Star className="w-4 h-4 text-[#00C8E6]" />
                 <span>Limited-time <span className="text-[#00C8E6]">sale</span> – don't miss out</span>
               </div>
@@ -53,11 +53,11 @@ const CardMachines = () => {
               </h1>
 
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Reliable, fast, and easy to use–Yoco card machines are loaded with smart features to keep your business moving.
+                Reliable, fast, and easy to use–Pata card machines are loaded with smart features to keep your business moving.
               </p>
 
               <div className="flex items-center gap-4">
-                <Link to="/shop" className="yoco-btn-cyan">
+                <Link to="/shop" className="pata-btn-cyan">
                   Shop deals
                   <ArrowDown className="w-4 h-4" />
                 </Link>
@@ -71,7 +71,7 @@ const CardMachines = () => {
             <div className="relative">
               <div className="bg-[#00C8E6] rounded-3xl p-6 aspect-[4/3] flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-[#141414] font-bold text-lg mb-2">YOCO</div>
+                  <div className="text-[#141414] font-bold text-lg mb-2">PATA</div>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
                     <div className="text-[#141414] font-medium">Lekker Cafe</div>
                     <div className="text-[#141414]/60 text-sm">Payment approved</div>
@@ -128,7 +128,7 @@ const CardMachines = () => {
                   ))}
                 </ul>
                 
-                <button className="w-full yoco-btn-cyan justify-center">
+                <button className="w-full pata-btn-cyan justify-center">
                   Buy now
                 </button>
               </div>

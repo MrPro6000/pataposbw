@@ -15,7 +15,7 @@ const Pricing = () => {
         "No hidden costs",
         "All card types accepted",
         "Next-day payouts",
-        "Free Yoco app",
+        "Free Pata app",
       ],
     },
     {
@@ -48,7 +48,7 @@ const Pricing = () => {
   ];
 
   return (
-    <div className="yoco-dark-page">
+    <div className="pata-dark-page">
       {/* Hero with background image effect */}
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-b from-[#2a1a0a]/80 to-[#141414]"></div>
@@ -70,7 +70,7 @@ const Pricing = () => {
                 </p>
 
                 <div className="flex items-center gap-4">
-                  <Link to="/signup" className="yoco-btn-cyan">
+                  <Link to="/signup" className="pata-btn-cyan">
                     Get started
                     <ArrowRight className="w-4 h-4" />
                   </Link>

@@ -14,7 +14,7 @@ const Capital = () => {
   ];
 
   return (
-    <div className="yoco-dark-page">
+    <div className="pata-dark-page">
       <MainNav theme="dark" />
 
       {/* Hero Section */}
@@ -30,11 +30,11 @@ const Capital = () => {
               </h1>
 
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Yoco Capital is a fast, flexible cash advance available to eligible Yoco customers. We've disbursed over R3B to our merchants so far.
+                Pata Capital is a fast, flexible cash advance available to eligible Pata customers. We've disbursed over R3B to our merchants so far.
               </p>
 
               <div className="flex items-center gap-4">
-                <Link to="/signup" className="yoco-btn-cyan">
+                <Link to="/signup" className="pata-btn-cyan">
                   Check for offer
                   <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -67,7 +67,7 @@ const Capital = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-                Why Yoco Capital?
+                Why Pata Capital?
               </h2>
               
               <ul className="space-y-4">
@@ -87,7 +87,7 @@ const Capital = () => {
               
               <div className="space-y-6">
                 {[
-                  { step: "1", title: "Check your offer", description: "See if you're eligible for a cash advance in the Yoco app." },
+                  { step: "1", title: "Check your offer", description: "See if you're eligible for a cash advance in the Pata app." },
                   { step: "2", title: "Accept the offer", description: "Choose how much you need and accept the offer." },
                   { step: "3", title: "Get funded", description: "Funds are deposited into your bank account within 24 hours." },
                   { step: "4", title: "Pay as you earn", description: "A small percentage of your daily sales goes towards repayment." },

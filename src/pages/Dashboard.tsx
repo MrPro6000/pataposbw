@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import YocoLogo from "@/components/YocoLogo";
+import PataLogo from "@/components/PataLogo";
 import { 
   LogOut, 
   Home, 
@@ -72,7 +72,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-[#F6F6F6] flex">
       {/* Sidebar */}
       <aside className="w-64 bg-[#141414] text-white p-6 hidden md:flex flex-col">
-        <YocoLogo className="h-5 mb-8" />
+        <PataLogo className="h-5 mb-8" />
         
         <nav className="flex-1 space-y-1">
           {[
@@ -113,7 +113,7 @@ const Dashboard = () => {
             <h1 className="text-2xl font-bold text-[#141414]">Welcome back!</h1>
             <p className="text-[#141414]/60">{user?.email}</p>
           </div>
-          <button className="yoco-btn-cyan">
+          <button className="pata-btn-cyan">
             New Sale
           </button>
         </div>

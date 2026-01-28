@@ -1,4 +1,4 @@
-import YocoLogo from "./YocoLogo";
+import PataLogo from "./PataLogo";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 
 interface MainFooterProps {
@@ -16,8 +16,8 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
       "Card Machines",
       "Point of Sale",
       "Online Payments",
-      "Yoco Capital",
-      "Yoco App",
+      "Pata Capital",
+      "Pata App",
       "Product Finder",
     ],
     "Business Type": [
@@ -47,7 +47,7 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
-            <YocoLogo className="h-5 mb-6" />
+            <PataLogo className="h-5 mb-6" />
             <p className={`text-sm ${mutedClass} mb-6`}>
               Market leader in card machines, online payments, point of sale solutions and flexible business funding.
             </p>
@@ -88,7 +88,7 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
 
         <div className={`border-t ${isDark ? 'border-white/10' : 'border-[#141414]/10'} pt-8 flex flex-col md:flex-row items-center justify-between gap-4`}>
           <p className={`text-sm ${mutedClass}`}>
-            © 2024 Yoco Technologies (Pty) Ltd. All rights reserved.
+            © 2024 Pata Technologies (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className={`text-sm ${mutedClass} hover:${textClass} transition-colors`}>
