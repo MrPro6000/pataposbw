@@ -1,12 +1,30 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import Header from "@/components/Header";
+import DevicePreview from "@/components/DevicePreview";
+import HeroCarousel from "@/components/HeroCarousel";
+import CookieBanner from "@/components/CookieBanner";
+import Footer from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <Header />
+      
+      <main className="px-10 md:px-20 pb-24">
+        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
+          {/* Left side - Device Preview */}
+          <div className="flex-1 w-full lg:w-auto order-2 lg:order-1">
+            <DevicePreview />
+          </div>
+          
+          {/* Right side - Hero Carousel */}
+          <div className="w-full lg:w-[400px] order-1 lg:order-2">
+            <HeroCarousel />
+          </div>
+        </div>
+      </main>
+
+      <CookieBanner />
+      <Footer />
     </div>
   );
 };
