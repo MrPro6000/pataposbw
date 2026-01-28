@@ -165,7 +165,7 @@ const Sales = () => {
                     </div>
                   </td>
                   <td className="p-4 font-semibold text-[#141414]">
-                    R{tx.amount.toFixed(2)}
+                    P{tx.amount.toFixed(2)}
                   </td>
                   <td className="p-4">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(tx.status)}`}>
@@ -206,7 +206,7 @@ const Sales = () => {
                 <div className="w-16 h-16 bg-[#00C8E6]/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   {getTypeIcon(selectedTransaction.type)}
                 </div>
-                <p className="text-3xl font-bold text-[#141414]">R{selectedTransaction.amount.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-[#141414]">P{selectedTransaction.amount.toFixed(2)}</p>
                 <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTransaction.status)}`}>
                   {selectedTransaction.status}
                 </span>

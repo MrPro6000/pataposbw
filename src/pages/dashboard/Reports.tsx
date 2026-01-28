@@ -94,7 +94,7 @@ const Reports = () => {
             <TrendingUp className="w-4 h-4 text-[#00C8E6]" />
             <span className="text-sm text-[#141414]/60">Total Revenue</span>
           </div>
-          <p className="text-2xl font-bold text-[#141414]">R67,890</p>
+          <p className="text-2xl font-bold text-[#141414]">P67,890</p>
         </div>
         <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
@@ -115,7 +115,7 @@ const Reports = () => {
             <TrendingUp className="w-4 h-4 text-[#00C8E6]" />
             <span className="text-sm text-[#141414]/60">Avg. Order</span>
           </div>
-          <p className="text-2xl font-bold text-[#141414]">R198</p>
+          <p className="text-2xl font-bold text-[#141414]">P198</p>
         </div>
       </div>
 
@@ -141,7 +141,7 @@ const Reports = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#666', fontSize: 12 }}
-                tickFormatter={(value) => `R${value}`}
+                tickFormatter={(value) => `P${value}`}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
               <Bar dataKey="sales" fill="#00C8E6" radius={[4, 4, 0, 0]} />
@@ -216,7 +216,7 @@ const Reports = () => {
                     </div>
                   </td>
                   <td className="p-4 text-[#141414]">{product.sales}</td>
-                  <td className="p-4 font-semibold text-[#141414]">R{product.revenue.toFixed(2)}</td>
+                  <td className="p-4 font-semibold text-[#141414]">P{product.revenue.toFixed(2)}</td>
                   <td className="p-4">
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 bg-[#f0f0f0] rounded-full overflow-hidden">

@@ -22,7 +22,7 @@ const Pricing = () => {
       name: "Growing",
       rate: "2.3%",
       rateLabel: "per transaction",
-      description: "For businesses processing over R50,000 per month.",
+      description: "For businesses processing over P50,000 per month.",
       features: [
         "Lower transaction fees",
         "Priority support",

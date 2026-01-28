@@ -30,7 +30,7 @@ const Capital = () => {
               </h1>
 
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Pata Capital is a fast, flexible cash advance available to eligible Pata customers. We've disbursed over R3B to our merchants so far.
+                Pata Capital is a fast, flexible cash advance available to eligible Pata customers. We've disbursed over P3B to our merchants so far.
               </p>
 
               <div className="flex items-center gap-4">
