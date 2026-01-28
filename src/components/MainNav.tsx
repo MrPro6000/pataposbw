@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import PataLogo from "./PataLogo";
+import ThemeToggle from "./ThemeToggle";
 import { ChevronDown } from "lucide-react";
 
 interface MainNavProps {
@@ -35,6 +36,7 @@ const MainNav = ({ theme = "dark" }: MainNavProps) => {
       </div>
       
       <div className="flex items-center gap-4">
+        <ThemeToggle className={isDark ? 'text-white' : 'text-[#141414]'} />
         <Link to="/support" className={`hidden md:block text-sm font-medium ${isDark ? 'text-white/80 hover:text-white' : 'text-[#141414]/80 hover:text-[#141414]'} transition-colors`}>
           Support
         </Link>

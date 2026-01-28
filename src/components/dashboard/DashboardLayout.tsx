@@ -102,7 +102,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         />
       )}
 
-      {/* Sidebar - Yoco style: white bg, clean design */}
+      {/* Sidebar - Pata style: white bg, clean design */}
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
         w-56 bg-white border-r border-[#E8E8E8]
