@@ -1,23 +1,13 @@
+import pataLogo from "@/assets/pata-logo.png";
+
 const PataLogo = ({ className = "h-6" }: { className?: string }) => {
   return (
-    <svg 
-      viewBox="0 0 200 60" 
+    <img 
+      src={pataLogo} 
+      alt="Pata" 
       className={className}
-      style={{ aspectRatio: '3.33 / 1' }}
-    >
-      <text 
-        x="100" 
-        y="45" 
-        textAnchor="middle" 
-        fill="currentColor"
-        fontFamily="Inter, sans-serif"
-        fontWeight="800"
-        fontSize="50"
-        letterSpacing="-2"
-      >
-        PATA
-      </text>
-    </svg>
+      style={{ objectFit: 'contain' }}
+    />
   );
 };
 
