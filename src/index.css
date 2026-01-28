@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,6 +6,7 @@
 
 @layer base {
   :root {
+    /* Light theme - used for some pages */
     --background: 0 0% 96.5%;
     --foreground: 0 0% 9%;
 
@@ -36,41 +37,12 @@
 
     --radius: 0.75rem;
 
-    /* Yoco specific */
+    /* Yoco brand colors */
+    --yoco-cyan: 192 100% 50%;
+    --yoco-dark: 0 0% 9%;
     --yoco-gray: 0 0% 96.5%;
-    --yoco-dark: 0 0% 13%;
     --yoco-white: 0 0% 100%;
-    --yoco-text-muted: 0 0% 45%;
-  }
-
-  .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 98%;
-
-    --card: 0 0% 13%;
-    --card-foreground: 0 0% 98%;
-
-    --popover: 0 0% 13%;
-    --popover-foreground: 0 0% 98%;
-
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-
-    --secondary: 0 0% 17%;
-    --secondary-foreground: 0 0% 98%;
-
-    --muted: 0 0% 17%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 0 0% 17%;
-    --accent-foreground: 0 0% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-
-    --border: 0 0% 17%;
-    --input: 0 0% 17%;
-    --ring: 0 0% 83.9%;
+    --yoco-cream: 45 50% 90%;
   }
 }
 
@@ -91,19 +63,61 @@
 }
 
 @layer components {
-  .yoco-btn-outline {
-    @apply px-6 py-2.5 border border-foreground rounded-full text-sm font-medium transition-all duration-200 hover:bg-foreground hover:text-background;
+  /* Dark page background */
+  .yoco-dark-page {
+    @apply bg-[#141414] text-white min-h-screen;
   }
 
+  /* Light page background */
+  .yoco-light-page {
+    @apply bg-[#E8F4F8] text-[#141414] min-h-screen;
+  }
+
+  /* Cyan primary button */
+  .yoco-btn-cyan {
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-[#00C8E6] text-[#141414] rounded-full text-sm font-semibold transition-all duration-200 hover:bg-[#00b8d4];
+  }
+
+  /* Outline button (dark theme) */
+  .yoco-btn-outline-dark {
+    @apply px-6 py-2.5 border border-white/80 text-white rounded-full text-sm font-medium transition-all duration-200 hover:bg-white hover:text-[#141414];
+  }
+
+  /* Outline button (light theme) */
+  .yoco-btn-outline-light {
+    @apply px-6 py-2.5 border border-[#141414] text-[#141414] rounded-full text-sm font-medium transition-all duration-200 hover:bg-[#141414] hover:text-white;
+  }
+
+  /* Primary dark button for auth */
   .yoco-btn-primary {
-    @apply w-full py-4 bg-primary text-primary-foreground rounded-xl text-base font-medium transition-all duration-200 hover:opacity-90;
+    @apply w-full py-4 bg-[#141414] text-white rounded-xl text-base font-medium transition-all duration-200 hover:bg-[#2a2a2a];
   }
 
-  .yoco-link {
-    @apply text-sm text-muted-foreground hover:text-foreground transition-colors duration-200;
+  /* Link styles */
+  .yoco-link-dark {
+    @apply text-sm text-white/70 hover:text-white transition-colors duration-200;
   }
 
+  .yoco-link-light {
+    @apply text-sm text-[#141414]/70 hover:text-[#141414] transition-colors duration-200;
+  }
+
+  /* Card styles */
   .yoco-card {
-    @apply bg-card rounded-2xl p-8 shadow-none;
+    @apply bg-white rounded-2xl p-8 shadow-none;
+  }
+
+  /* Hero text gradient */
+  .yoco-hero-title {
+    @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight;
+  }
+
+  /* Badge/pill */
+  .yoco-badge {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm;
+  }
+
+  .yoco-badge-light {
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-[#141414]/10 rounded-full text-sm;
   }
 }
