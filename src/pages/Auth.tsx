@@ -7,7 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ExternalLink, ChevronRight, Eye, EyeOff, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import hubPreview from "@/assets/hub-preview.png";
+import pataMacbook from "@/assets/pata-macbook.jpg";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 
@@ -284,29 +284,16 @@ const Auth = ({ mode }: AuthProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-6 md:px-20 pb-24">
-        <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16 max-w-7xl mx-auto">
-          {/* Left side - Device Preview */}
-          <div className="flex-1 w-full lg:w-auto order-2 lg:order-1">
+      <main className="flex-1 px-4 md:px-20 pb-24 pt-4 md:pt-0">
+        <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-16 max-w-7xl mx-auto">
+          {/* Left side - MacBook Image (hidden on mobile) */}
+          <div className="hidden lg:flex flex-1 w-full lg:w-auto order-2 lg:order-1 items-center justify-center">
             <div className="relative w-full max-w-2xl mx-auto">
-              <div className="relative">
-                <div className="bg-[#141414] rounded-t-lg overflow-hidden shadow-2xl">
-                  <div className="relative pt-6 px-4 pb-0">
-                    <div className="absolute top-2 left-4 flex gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/20"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/20"></div>
-                      <div className="w-2.5 h-2.5 rounded-full bg-white/20"></div>
-                    </div>
-                    <img 
-                      src={hubPreview} 
-                      alt="Pata Dashboard Preview" 
-                      className="w-full rounded-t-md"
-                    />
-                  </div>
-                </div>
-                <div className="bg-[#141414] h-4 rounded-b-lg"></div>
-                <div className="bg-[#141414]/20 h-1 mx-auto w-1/3 rounded-b-full"></div>
-              </div>
+              <img 
+                src={pataMacbook} 
+                alt="Pata Dashboard Preview" 
+                className="w-full rounded-xl shadow-2xl"
+              />
             </div>
           </div>
 
