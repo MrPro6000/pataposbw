@@ -1,6 +1,6 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { 
-  ChevronRight, 
   Building2, 
   Store, 
   CreditCard, 
@@ -8,41 +8,81 @@ import {
   Receipt, 
   Bell,
   HelpCircle,
-  LogOut
+  LogOut,
+  ChevronRight
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileSettingsSheet from "./MobileSettingsSheet";
+import MobileProfileSheet from "./MobileProfileSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface MobileSettingsViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
   userEmail?: string;
 }
 
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support";
+
 const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<SettingsSection>("business");
+  const [sectionTitle, setSectionTitle] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
+
+  const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
+                           userEmail?.slice(0, 2).toUpperCase() || "U";
+
+  const handleOpenSettings = (section: SettingsSection, title: string) => {
+    setSelectedSection(section);
+    setSectionTitle(title);
+    setSettingsSheetOpen(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+      });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out",
+        variant: "destructive",
+      });
+    }
+  };
 
   const settingsGroups = [
     {
       title: "Business",
       items: [
-        { label: "Business Profile", icon: Building2, description: "Company details and registration" },
-        { label: "Store Details", icon: Store, description: "Operating hours and location" },
+        { id: "business" as const, label: "Business Profile", icon: Building2, description: "Company details and registration" },
+        { id: "store" as const, label: "Store Details", icon: Store, description: "Operating hours and location" },
       ]
     },
     {
       title: "Payments",
       items: [
-        { label: "Payment Methods", icon: CreditCard, description: "Card, mobile money, wallet" },
-        { label: "Tax / VAT", icon: Percent, description: "VAT settings and number" },
-        { label: "Receipts", icon: Receipt, description: "Receipt customization" },
+        { id: "payments" as const, label: "Payment Methods", icon: CreditCard, description: "Card, mobile money, wallet" },
+        { id: "tax" as const, label: "Tax / VAT", icon: Percent, description: "VAT settings and number" },
+        { id: "receipts" as const, label: "Receipts", icon: Receipt, description: "Receipt customization" },
       ]
     },
     {
       title: "Preferences",
       items: [
-        { label: "Notifications", icon: Bell, description: "Alerts and summaries" },
-        { label: "Help & Support", icon: HelpCircle, description: "FAQs and contact" },
+        { id: "notifications" as const, label: "Notifications", icon: Bell, description: "Alerts and summaries" },
+        { id: "support" as const, label: "Help & Support", icon: HelpCircle, description: "FAQs and contact" },
       ]
     },
   ];
@@ -52,14 +92,20 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <div className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white">
-            {initials}
-          </div>
-          <div className="px-3 py-1.5 bg-[#F5F5F5] rounded-full">
+          <button 
+            onClick={() => setProfileOpen(true)}
+            className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+          >
+            {personalInitials}
+          </button>
+          <button 
+            onClick={() => handleOpenSettings("business", "Business Profile")}
+            className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
+          >
             <span className="text-sm font-medium text-[#141414]">
               {profile?.business_name || "One Guy Can"}
             </span>
-          </div>
+          </button>
         </div>
       </header>
 
@@ -82,6 +128,7 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
               {group.items.map((item) => (
                 <button 
                   key={item.label}
+                  onClick={() => handleOpenSettings(item.id, item.label)}
                   className="w-full flex items-center justify-between px-4 py-4 active:bg-[#F5F5F5] transition-colors"
                 >
                   <div className="flex items-center gap-3">
@@ -101,13 +148,32 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
         ))}
 
         {/* Logout Button */}
-        <button className="w-full bg-white rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 transition-colors">
+        <button 
+          onClick={handleLogout}
+          className="w-full bg-white rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 transition-colors"
+        >
           <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
             <LogOut className="w-5 h-5 text-red-500" />
           </div>
           <span className="font-medium text-red-500">Log Out</span>
         </button>
       </div>
+
+      {/* Settings Sheet */}
+      <MobileSettingsSheet
+        open={settingsSheetOpen}
+        onClose={() => setSettingsSheetOpen(false)}
+        section={selectedSection}
+        title={sectionTitle}
+      />
+
+      {/* Profile Sheet */}
+      <MobileProfileSheet
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        profile={profile}
+        userEmail={userEmail}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />

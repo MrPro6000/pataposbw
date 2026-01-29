@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Zap, Percent } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileFeesSheet from "./MobileFeesSheet";
+import MobileCapitalSheet from "./MobileCapitalSheet";
+import MobileProfileSheet from "./MobileProfileSheet";
 
 interface MobileMoneyViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -8,9 +12,16 @@ interface MobileMoneyViewProps {
 }
 
 const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
+  const [feesOpen, setFeesOpen] = useState(false);
+  const [capitalOpen, setCapitalOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
+
+  const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
+                           userEmail?.slice(0, 2).toUpperCase() || "U";
 
   // Mock payouts data
   const payouts = [
@@ -24,12 +35,12 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-6 sticky top-0 z-40">
         <div className="flex items-center justify-between mb-6">
-          <Link 
-            to="/dashboard/settings"
+          <button 
+            onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
-            {initials}
-          </Link>
+            {personalInitials}
+          </button>
           <Link 
             to="/dashboard/settings"
             className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
@@ -82,7 +93,10 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
 
       {/* Pata Capital Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/payouts" className="block bg-white rounded-2xl p-5 active:scale-98 transition-transform">
+        <button 
+          onClick={() => setCapitalOpen(true)}
+          className="w-full bg-white rounded-2xl p-5 active:scale-98 transition-transform text-left"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#F5F5F5] rounded-full flex items-center justify-center">
               <span className="text-lg">💰</span>
@@ -92,12 +106,15 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
               <p className="text-sm text-[#141414]/60">Find out more</p>
             </div>
           </div>
-        </Link>
+        </button>
       </div>
 
       {/* Fees Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/settings" className="block bg-white rounded-2xl p-5 active:scale-98 transition-transform">
+        <button 
+          onClick={() => setFeesOpen(true)}
+          className="w-full bg-white rounded-2xl p-5 active:scale-98 transition-transform text-left"
+        >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#F5F5F5] rounded-full flex items-center justify-center">
               <Percent className="w-5 h-5 text-[#141414]/60" />
@@ -107,8 +124,28 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
               <p className="text-sm text-[#141414]/60">All the fees related to your business</p>
             </div>
           </div>
-        </Link>
+        </button>
       </div>
+
+      {/* Fees Sheet */}
+      <MobileFeesSheet
+        open={feesOpen}
+        onClose={() => setFeesOpen(false)}
+      />
+
+      {/* Capital Sheet */}
+      <MobileCapitalSheet
+        open={capitalOpen}
+        onClose={() => setCapitalOpen(false)}
+      />
+
+      {/* Profile Sheet */}
+      <MobileProfileSheet
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        profile={profile}
+        userEmail={userEmail}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />

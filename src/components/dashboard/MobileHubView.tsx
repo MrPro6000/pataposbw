@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronRight, Package, Users } from "lucide-react";
 import {
@@ -5,6 +6,9 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis } from "recharts";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileReportSheet from "./MobileReportSheet";
+import MobileProfileSheet from "./MobileProfileSheet";
+import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
 
 interface MobileHubViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -12,6 +16,12 @@ interface MobileHubViewProps {
 }
 
 const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
+  const [productReportOpen, setProductReportOpen] = useState(false);
+  const [staffReportOpen, setStaffReportOpen] = useState(false);
+  const [revenueReportOpen, setRevenueReportOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const [salesHistoryOpen, setSalesHistoryOpen] = useState(false);
+
   // Chart data
   const weeklyChartData = [
     { day: "M", value: 0 },
@@ -31,17 +41,20 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
 
+  const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
+                           userEmail?.slice(0, 2).toUpperCase() || "U";
+
   return (
     <div className="min-h-screen bg-[#F5F5F5] pb-24">
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <Link 
-            to="/dashboard/settings" 
+          <button 
+            onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
-            {initials}
-          </Link>
+            {personalInitials}
+          </button>
           <Link 
             to="/dashboard/settings"
             className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
@@ -67,12 +80,15 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             <p className="text-xs text-[#141414]/40">Last week</p>
           </Link>
           
-          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform">
+          <button 
+            onClick={() => setSalesHistoryOpen(true)}
+            className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform text-left"
+          >
             <p className="text-sm text-[#141414]/60 mb-1">Sales history</p>
             <p className="text-sm text-[#141414]">card</p>
             <p className="text-xl font-semibold text-[#141414]">- P12</p>
             <p className="text-sm text-green-600">Approved</p>
-          </Link>
+          </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
@@ -99,7 +115,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           <ChevronRight className="w-5 h-5 text-[#141414]/40" />
         </Link>
 
-        <Link to="/dashboard/reports" className="block bg-white rounded-2xl p-4 active:scale-98 transition-transform mb-4">
+        <button 
+          onClick={() => setRevenueReportOpen(true)}
+          className="w-full bg-white rounded-2xl p-4 active:scale-98 transition-transform mb-4 text-left"
+        >
           <p className="text-sm text-[#141414]/60 mb-4">Gross revenue</p>
           
           <div className="h-28 mb-4">
@@ -124,21 +143,58 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             <p className="text-sm text-[#141414]/60">Last week</p>
             <p className="text-lg font-bold text-[#141414]">P0.00</p>
           </div>
-        </Link>
+        </button>
 
         {/* Product & Staff Reports - 2 column grid */}
         <div className="grid grid-cols-2 gap-3">
-          <Link to="/dashboard/reports" className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+          <button 
+            onClick={() => setProductReportOpen(true)}
+            className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left"
+          >
             <p className="text-sm text-[#141414]/60 mb-auto">Product report</p>
             <Package className="w-8 h-8 text-[#141414]/20" />
-          </Link>
+          </button>
           
-          <Link to="/dashboard/reports" className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+          <button 
+            onClick={() => setStaffReportOpen(true)}
+            className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left"
+          >
             <p className="text-sm text-[#141414]/60 mb-auto">Staff report</p>
             <Users className="w-8 h-8 text-[#141414]/20" />
-          </Link>
+          </button>
         </div>
       </div>
+
+      {/* Report Sheets */}
+      <MobileReportSheet
+        open={productReportOpen}
+        onClose={() => setProductReportOpen(false)}
+        reportType="product"
+      />
+      <MobileReportSheet
+        open={staffReportOpen}
+        onClose={() => setStaffReportOpen(false)}
+        reportType="staff"
+      />
+      <MobileReportSheet
+        open={revenueReportOpen}
+        onClose={() => setRevenueReportOpen(false)}
+        reportType="revenue"
+      />
+
+      {/* Profile Sheet */}
+      <MobileProfileSheet
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        profile={profile}
+        userEmail={userEmail}
+      />
+
+      {/* Sales History Sheet */}
+      <MobileSalesHistorySheet
+        open={salesHistoryOpen}
+        onClose={() => setSalesHistoryOpen(false)}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />
