@@ -1,13 +1,36 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, CreditCard } from "lucide-react";
+import { 
+  ChevronRight, 
+  CreditCard, 
+  Building2, 
+  Store, 
+  Percent, 
+  Receipt, 
+  Bell, 
+  HelpCircle,
+  LogOut
+} from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileSettingsSheet from "./MobileSettingsSheet";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface MobileManageViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
   userEmail?: string;
 }
 
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support";
+
 const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
+  const [selectedSection, setSelectedSection] = useState<SettingsSection>("business");
+  const [sectionTitle, setSectionTitle] = useState("");
+
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
@@ -26,25 +49,59 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
     { name: "Nicholas Haralambous", role: "Administrator" },
   ];
 
+  // Settings items
+  const settingsItems = [
+    { id: "business" as const, label: "Business Profile", description: "Company details", icon: Building2 },
+    { id: "store" as const, label: "Store Details", description: "Hours & location", icon: Store },
+    { id: "payments" as const, label: "Payment Methods", description: "Card, mobile, cash", icon: CreditCard },
+    { id: "tax" as const, label: "Tax / VAT", description: "VAT settings", icon: Percent },
+    { id: "receipts" as const, label: "Receipts", description: "Customization", icon: Receipt },
+    { id: "notifications" as const, label: "Notifications", description: "Alerts & summaries", icon: Bell },
+    { id: "support" as const, label: "Help & Support", description: "FAQs & contact", icon: HelpCircle },
+  ];
+
+  const handleOpenSettings = (section: SettingsSection, title: string) => {
+    setSelectedSection(section);
+    setSectionTitle(title);
+    setSettingsSheetOpen(true);
+  };
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Logged out",
+        description: "You have been logged out successfully",
+      });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to log out",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#F5F5F5] pb-24">
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <Link 
-            to="/dashboard/settings"
+          <button 
+            onClick={() => handleOpenSettings("business", "Business Profile")}
             className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {initials}
-          </Link>
-          <Link 
-            to="/dashboard/settings"
+          </button>
+          <button 
+            onClick={() => handleOpenSettings("business", "Business Profile")}
             className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
           >
             <span className="text-sm font-medium text-[#141414]">
               {profile?.business_name || "One Guy Can"}
             </span>
-          </Link>
+          </button>
         </div>
       </header>
 
@@ -117,6 +174,52 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
           </div>
         </Link>
       </div>
+
+      {/* Settings Section */}
+      <div className="px-5 py-2">
+        <h2 className="text-sm text-[#141414]/60 mb-3">Settings</h2>
+        <div className="bg-white rounded-2xl overflow-hidden divide-y divide-[#E8E8E8]">
+          {settingsItems.map((item) => (
+            <button 
+              key={item.id}
+              onClick={() => handleOpenSettings(item.id, item.label)}
+              className="w-full flex items-center justify-between px-4 py-4 active:bg-[#F5F5F5] transition-colors"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
+                  <item.icon className="w-5 h-5 text-[#141414]/60" />
+                </div>
+                <div className="text-left">
+                  <p className="font-medium text-[#141414]">{item.label}</p>
+                  <p className="text-xs text-[#141414]/50">{item.description}</p>
+                </div>
+              </div>
+              <ChevronRight className="w-5 h-5 text-[#141414]/30" />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Logout Button */}
+      <div className="px-5 py-2">
+        <button 
+          onClick={handleLogout}
+          className="w-full bg-white rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 transition-colors"
+        >
+          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+            <LogOut className="w-5 h-5 text-red-500" />
+          </div>
+          <span className="font-medium text-red-500">Log Out</span>
+        </button>
+      </div>
+
+      {/* Settings Sheet */}
+      <MobileSettingsSheet
+        open={settingsSheetOpen}
+        onClose={() => setSettingsSheetOpen(false)}
+        section={selectedSection}
+        title={sectionTitle}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />
