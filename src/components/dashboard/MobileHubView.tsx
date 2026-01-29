@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Package, Users } from "lucide-react";
 import {
   ChartContainer,
 } from "@/components/ui/chart";
@@ -93,13 +93,13 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       </div>
 
       {/* Reports Section */}
-      <div className="px-5 py-4">
+      <div className="px-5 py-2">
         <Link to="/dashboard/reports" className="flex items-center justify-between mb-3">
           <h2 className="font-semibold text-[#141414]">Reports</h2>
           <ChevronRight className="w-5 h-5 text-[#141414]/40" />
         </Link>
 
-        <Link to="/dashboard/reports" className="block bg-white rounded-2xl p-4 active:scale-98 transition-transform">
+        <Link to="/dashboard/reports" className="block bg-white rounded-2xl p-4 active:scale-98 transition-transform mb-4">
           <p className="text-sm text-[#141414]/60 mb-4">Gross revenue</p>
           
           <div className="h-28 mb-4">
@@ -125,6 +125,19 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             <p className="text-lg font-bold text-[#141414]">P0.00</p>
           </div>
         </Link>
+
+        {/* Product & Staff Reports - 2 column grid */}
+        <div className="grid grid-cols-2 gap-3">
+          <Link to="/dashboard/reports" className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+            <p className="text-sm text-[#141414]/60 mb-auto">Product report</p>
+            <Package className="w-8 h-8 text-[#141414]/20" />
+          </Link>
+          
+          <Link to="/dashboard/reports" className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+            <p className="text-sm text-[#141414]/60 mb-auto">Staff report</p>
+            <Users className="w-8 h-8 text-[#141414]/20" />
+          </Link>
+        </div>
       </div>
 
       {/* Bottom Navigation */}
