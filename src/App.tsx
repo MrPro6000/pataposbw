@@ -9,6 +9,9 @@ import CardMachines from "./pages/CardMachines";
 import OnlinePayments from "./pages/OnlinePayments";
 import Capital from "./pages/Capital";
 import Pricing from "./pages/Pricing";
+import Products from "./pages/Products";
+import BusinessType from "./pages/BusinessType";
+import Shop from "./pages/Shop";
 import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
@@ -16,7 +19,7 @@ import NotFound from "./pages/NotFound";
 // Dashboard pages
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import Sales from "./pages/dashboard/Sales";
-import Products from "./pages/dashboard/Products";
+import DashboardProducts from "./pages/dashboard/Products";
 import Customers from "./pages/dashboard/Customers";
 import Payouts from "./pages/dashboard/Payouts";
 import Reports from "./pages/dashboard/Reports";
@@ -51,6 +54,9 @@ const App = () => (
           <Route path="/online-payments" element={<OnlinePayments />} />
           <Route path="/capital" element={<Capital />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/business-type" element={<BusinessType />} />
+          <Route path="/shop" element={<Shop />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/kyc" element={<KYC />} />
@@ -58,7 +64,7 @@ const App = () => (
           {/* Dashboard routes */}
           <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/dashboard/sales" element={<Sales />} />
-          <Route path="/dashboard/products" element={<Products />} />
+          <Route path="/dashboard/products" element={<DashboardProducts />} />
           <Route path="/dashboard/customers" element={<Customers />} />
           <Route path="/dashboard/payouts" element={<Payouts />} />
           <Route path="/dashboard/reports" element={<Reports />} />

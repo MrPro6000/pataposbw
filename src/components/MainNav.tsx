@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import PataLogo from "./PataLogo";
 import ThemeToggle from "./ThemeToggle";
-import { ChevronDown } from "lucide-react";
 
 interface MainNavProps {
   theme?: "dark" | "light";
@@ -18,14 +17,12 @@ const MainNav = ({ theme = "dark" }: MainNavProps) => {
         </Link>
         
         <nav className="hidden lg:flex items-center gap-8">
-          <button className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity">
+          <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity">
             Products
-            <ChevronDown className="w-4 h-4" />
-          </button>
-          <button className="flex items-center gap-1 text-sm font-medium hover:opacity-80 transition-opacity">
+          </Link>
+          <Link to="/business-type" className="text-sm font-medium hover:opacity-80 transition-opacity">
             Business Type
-            <ChevronDown className="w-4 h-4" />
-          </button>
+          </Link>
           <Link to="/pricing" className="text-sm font-medium hover:opacity-80 transition-opacity">
             Pricing
           </Link>
