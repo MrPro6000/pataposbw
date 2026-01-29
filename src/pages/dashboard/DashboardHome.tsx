@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import MobileHubView from "@/components/dashboard/MobileHubView";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   TrendingUp,
   Link2,
@@ -25,6 +28,7 @@ const DashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -54,6 +58,11 @@ const DashboardHome = () => {
         <div className="animate-spin w-8 h-8 border-4 border-[#00C8E6] border-t-transparent rounded-full"></div>
       </div>
     );
+  }
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileHubView />;
   }
 
   // Mini chart data for Today's sales card
@@ -121,12 +130,6 @@ const DashboardHome = () => {
   const quickLinks = [
     { title: "Payment Links", value: "3 unpaid", icon: Link2, link: "/dashboard/sales" },
     { title: "Products", value: "12 active", icon: Package, link: "/dashboard/products" },
-  ];
-
-  const reportCards = [
-    { title: "Gross revenue", icon: BarChart3, link: "/dashboard/reports" },
-    { title: "Product report", icon: Package, link: "/dashboard/reports" },
-    { title: "Staff report", icon: User, link: "/dashboard/reports" },
   ];
 
   return (

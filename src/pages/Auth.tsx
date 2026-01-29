@@ -27,16 +27,43 @@ const Auth = ({ mode }: AuthProps) => {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         if (session?.user) {
-          navigate("/dashboard");
+          // Check if user has completed KYC
+          if (event === "SIGNED_IN") {
+            const { data: kyc } = await supabase
+              .from("kyc_submissions")
+              .select("status")
+              .eq("user_id", session.user.id)
+              .maybeSingle();
+
+            if (!kyc) {
+              // No KYC submission, redirect to KYC page
+              navigate("/kyc");
+            } else {
+              navigate("/dashboard");
+            }
+          } else {
+            navigate("/dashboard");
+          }
         }
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        navigate("/dashboard");
+        // Check if user has completed KYC
+        const { data: kyc } = await supabase
+          .from("kyc_submissions")
+          .select("status")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (!kyc) {
+          navigate("/kyc");
+        } else {
+          navigate("/dashboard");
+        }
       }
     });
 
@@ -89,9 +116,9 @@ const Auth = ({ mode }: AuthProps) => {
         } else {
           toast({
             title: "Account created!",
-            description: "You can now log in to your account.",
+            description: "Please complete your KYC verification.",
           });
-          navigate("/login");
+          // The onAuthStateChange will handle redirect to KYC
         }
       } else {
         const { error } = await supabase.auth.signInWithPassword({
