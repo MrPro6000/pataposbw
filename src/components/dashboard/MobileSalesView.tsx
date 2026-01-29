@@ -1,4 +1,5 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 import { 
   CreditCard, 
   Wallet, 
@@ -9,10 +10,10 @@ import {
   Smartphone,
   RefreshCw,
   CheckCircle,
-  Globe,
-  Settings
+  Globe
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import MobilePaymentSheet from "./MobilePaymentSheet";
 
 // Quick Action Button Component
 const QuickActionButton = ({ 
@@ -44,8 +45,11 @@ interface MobileSalesViewProps {
   userEmail?: string;
 }
 
+type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
+
 const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
-  const navigate = useNavigate();
+  const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
+  const [selectedPaymentType, setSelectedPaymentType] = useState<PaymentType>("card-sale");
   
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
@@ -65,8 +69,9 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { status: "Draft", customer: "Nic", amount: "P320.00" },
   ];
 
-  const handleQuickAction = (action: string) => {
-    navigate(`/dashboard/sales?action=${action}`);
+  const handleQuickAction = (paymentType: PaymentType) => {
+    setSelectedPaymentType(paymentType);
+    setPaymentSheetOpen(true);
   };
 
   return (
@@ -143,7 +148,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
       {/* Sales History */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/sales" className="block bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform">
+        <div className="bg-white rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
             <h2 className="font-semibold text-[#141414]">Sales history</h2>
             <ChevronRight className="w-5 h-5 text-[#141414]/40" />
@@ -151,12 +156,12 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           
           <div className="divide-y divide-[#E8E8E8]">
             {salesHistory.map((sale, index) => (
-              <div key={index} className="flex items-center justify-between px-5 py-4">
+              <button key={index} className="w-full flex items-center justify-between px-5 py-4 active:bg-[#F5F5F5] transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center">
                     <sale.icon className="w-5 h-5 text-[#141414]/60" />
                   </div>
-                  <div>
+                  <div className="text-left">
                     <p className="font-medium text-[#141414]">{sale.type}</p>
                     <p className="text-sm text-[#141414]/60">{sale.status}</p>
                   </div>
@@ -164,15 +169,15 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
                 <p className={`font-semibold ${sale.amount > 0 ? "text-green-600" : "text-[#141414]"}`}>
                   {sale.amount > 0 ? "+" : "-"}P{Math.abs(sale.amount).toFixed(2)}
                 </p>
-              </div>
+              </button>
             ))}
           </div>
-        </Link>
+        </div>
       </div>
 
       {/* Invoices Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/sales" className="block bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform">
+        <div className="bg-white rounded-2xl overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
             <h2 className="font-semibold text-[#141414]">Invoices</h2>
             <ChevronRight className="w-5 h-5 text-[#141414]/40" />
@@ -180,7 +185,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           
           <div className="divide-y divide-[#E8E8E8]">
             {invoices.map((invoice, index) => (
-              <div key={index} className="flex items-center justify-between px-5 py-4">
+              <button key={index} className="w-full flex items-center justify-between px-5 py-4 active:bg-[#F5F5F5] transition-colors">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
                     <FileText className="w-4 h-4 text-[#141414]/60" />
@@ -190,31 +195,34 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
                   </span>
                 </div>
                 <p className="font-semibold text-[#141414]">{invoice.amount}</p>
-              </div>
+              </button>
             ))}
           </div>
-        </Link>
+        </div>
       </div>
 
       {/* Payment Links & Payment Page */}
       <div className="px-5 py-2">
         <div className="grid grid-cols-2 gap-3">
-          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4 active:scale-98 transition-transform">
+          <button 
+            onClick={() => handleQuickAction('payment-link')}
+            className="bg-white rounded-2xl p-4 active:scale-98 transition-transform text-left"
+          >
             <p className="font-semibold text-[#141414] mb-1">Payment Links</p>
             <p className="text-2xl font-bold text-[#141414]">13</p>
             <p className="text-sm text-[#141414]/60">unpaid links</p>
-          </Link>
+          </button>
           
-          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4 active:scale-98 transition-transform">
+          <button className="bg-white rounded-2xl p-4 active:scale-98 transition-transform text-left">
             <p className="font-semibold text-[#141414] mb-1">Payment Page</p>
             <p className="text-sm text-[#141414]/60 mt-4">Configure & share</p>
-          </Link>
+          </button>
         </div>
       </div>
 
       {/* Payment Gateway */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/sales" className="block bg-white rounded-2xl p-5 active:scale-98 transition-transform">
+        <button className="w-full bg-white rounded-2xl p-5 active:scale-98 transition-transform text-left">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
               <Globe className="w-5 h-5 text-[#141414]/60" />
@@ -224,8 +232,15 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
               <p className="text-sm text-[#141414]/60">Add the Pata Payment gateway to your online store.</p>
             </div>
           </div>
-        </Link>
+        </button>
       </div>
+
+      {/* Payment Sheet */}
+      <MobilePaymentSheet
+        open={paymentSheetOpen}
+        onClose={() => setPaymentSheetOpen(false)}
+        paymentType={selectedPaymentType}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />
