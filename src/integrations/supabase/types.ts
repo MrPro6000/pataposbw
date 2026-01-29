@@ -86,7 +86,10 @@ export type Database = {
       kyc_submissions: {
         Row: {
           id: string
+          id_back_url: string | null
+          id_front_url: string | null
           omang_number: string
+          phone_number: string | null
           rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
@@ -96,7 +99,10 @@ export type Database = {
         }
         Insert: {
           id?: string
+          id_back_url?: string | null
+          id_front_url?: string | null
           omang_number: string
+          phone_number?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -106,7 +112,10 @@ export type Database = {
         }
         Update: {
           id?: string
+          id_back_url?: string | null
+          id_front_url?: string | null
           omang_number?: string
+          phone_number?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
@@ -146,6 +155,36 @@ export type Database = {
           published_at?: string | null
           target_audience?: string | null
           title?: string
+        }
+        Relationships: []
+      }
+      otp_verifications: {
+        Row: {
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          otp_code: string
+          phone_number: string
+          user_id: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          otp_code: string
+          phone_number: string
+          user_id?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          otp_code?: string
+          phone_number?: string
+          user_id?: string | null
+          verified_at?: string | null
         }
         Relationships: []
       }
