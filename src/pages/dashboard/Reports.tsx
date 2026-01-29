@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Download, 
   Calendar,
@@ -51,6 +53,12 @@ const paymentMethods = [
 
 const Reports = () => {
   const [dateRange, setDateRange] = useState("week");
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const chartConfig = {
     sales: { label: "Sales", color: "#00C8E6" },

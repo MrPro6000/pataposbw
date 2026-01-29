@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Search, 
   Plus, 
@@ -48,6 +50,12 @@ const Customers = () => {
     email: "",
     phone: "",
   });
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const filteredCustomers = customers.filter(c => 
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

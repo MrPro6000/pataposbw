@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Smartphone, 
   Plus, 
@@ -47,6 +49,12 @@ const Devices = () => {
   const [devices, setDevices] = useState<Device[]>(initialDevices);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [pairingCode, setPairingCode] = useState("");
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const handleRemoveDevice = (id: string) => {
     setDevices(devices.filter(d => d.id !== id));

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   UserPlus, 
   Shield,
@@ -65,6 +67,12 @@ const Staff = () => {
     email: "",
     role: "cashier" as "admin" | "manager" | "cashier",
   });
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const getRoleColor = (role: string) => {
     switch (role) {

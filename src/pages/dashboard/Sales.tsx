@@ -1,6 +1,8 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import { 
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
+import {
   Search, 
   Download, 
   CreditCard,
@@ -71,6 +73,12 @@ const Sales = () => {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const getTypeIcon = (type: string) => {
     switch (type) {

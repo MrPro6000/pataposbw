@@ -6,6 +6,13 @@ import MobileHubView from "./MobileHubView";
 import MobileSalesView from "./MobileSalesView";
 import MobileMoneyView from "./MobileMoneyView";
 import MobileManageView from "./MobileManageView";
+import MobileSettingsView from "./MobileSettingsView";
+import MobileReportsView from "./MobileReportsView";
+import MobileDevicesView from "./MobileDevicesView";
+import MobileStaffView from "./MobileStaffView";
+import MobileProductsView from "./MobileProductsView";
+import MobileCustomersView from "./MobileCustomersView";
+import MobileSupportView from "./MobileSupportView";
 
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -59,25 +66,53 @@ const MobileDashboardHome = () => {
   const profileProps = { profile, userEmail: user?.email };
   const pathname = location.pathname;
 
-  // Route to appropriate mobile view
+  // Route to appropriate mobile view based on current path
+  // Sales tab routes
   if (pathname === "/dashboard/sales") {
     return <MobileSalesView {...profileProps} />;
   }
   
+  // Money tab routes
   if (pathname === "/dashboard/payouts") {
     return <MobileMoneyView {...profileProps} />;
   }
   
-  // Settings and other manage routes
-  if (pathname === "/dashboard/settings" || 
-      pathname === "/dashboard/staff" || 
-      pathname === "/dashboard/devices" ||
-      pathname === "/dashboard/products" ||
-      pathname === "/dashboard/customers") {
-    return <MobileManageView {...profileProps} />;
+  // Reports route
+  if (pathname === "/dashboard/reports") {
+    return <MobileReportsView {...profileProps} />;
+  }
+  
+  // Settings route
+  if (pathname === "/dashboard/settings") {
+    return <MobileSettingsView {...profileProps} />;
+  }
+  
+  // Devices route
+  if (pathname === "/dashboard/devices") {
+    return <MobileDevicesView {...profileProps} />;
+  }
+  
+  // Staff route
+  if (pathname === "/dashboard/staff") {
+    return <MobileStaffView {...profileProps} />;
+  }
+  
+  // Products route
+  if (pathname === "/dashboard/products") {
+    return <MobileProductsView {...profileProps} />;
+  }
+  
+  // Customers route
+  if (pathname === "/dashboard/customers") {
+    return <MobileCustomersView {...profileProps} />;
+  }
+  
+  // Support route
+  if (pathname === "/dashboard/support") {
+    return <MobileSupportView {...profileProps} />;
   }
 
-  // Default: Hub view
+  // Default: Hub view for /dashboard and other routes
   return <MobileHubView {...profileProps} />;
 };
 
