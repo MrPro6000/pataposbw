@@ -28,13 +28,8 @@ import {
 type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications";
 
 const Settings = () => {
-  const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   const isMobile = useIsMobile();
-
-  // Show mobile view on mobile devices
-  if (isMobile) {
-    return <MobileDashboardHome />;
-  }
+  const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   
   const [businessInfo, setBusinessInfo] = useState({
     name: "Pata Business (Pty) Ltd",
@@ -71,6 +66,11 @@ const Settings = () => {
     newSale: false,
     payoutComplete: true,
   });
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const sections = [
     { id: "business" as const, label: "Business Profile", icon: Building2 },
