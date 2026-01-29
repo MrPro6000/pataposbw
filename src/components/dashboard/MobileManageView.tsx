@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileSettingsSheet from "./MobileSettingsSheet";
+import MobileProfileSheet from "./MobileProfileSheet";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -30,10 +31,14 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
   const [selectedSection, setSelectedSection] = useState<SettingsSection>("business");
   const [sectionTitle, setSectionTitle] = useState("");
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
+
+  const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
+                           userEmail?.slice(0, 2).toUpperCase() || "U";
 
   // Mock stock data
   const stockData = [
@@ -89,10 +94,10 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <button 
-            onClick={() => handleOpenSettings("business", "Business Profile")}
+            onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
-            {initials}
+            {personalInitials}
           </button>
           <button 
             onClick={() => handleOpenSettings("business", "Business Profile")}
@@ -219,6 +224,14 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
         onClose={() => setSettingsSheetOpen(false)}
         section={selectedSection}
         title={sectionTitle}
+      />
+
+      {/* Profile Sheet */}
+      <MobileProfileSheet
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        profile={profile}
+        userEmail={userEmail}
       />
 
       {/* Bottom Navigation */}
