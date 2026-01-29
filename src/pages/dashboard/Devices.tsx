@@ -40,9 +40,12 @@ interface Device {
 }
 
 const initialDevices: Device[] = [
-  { id: "DEV001", name: "Counter Terminal", model: "Pata Neo", status: "online", battery: 85, lastSeen: "Now", serialNumber: "NEO-2025-001234" },
-  { id: "DEV002", name: "Mobile Device", model: "Pata Go", status: "online", battery: 42, lastSeen: "2 min ago", serialNumber: "GO-2025-005678" },
-  { id: "DEV003", name: "Backup Terminal", model: "Pata Khumo", status: "offline", battery: 0, lastSeen: "3 days ago", serialNumber: "KHU-2024-009012" },
+  { id: "DEV001", name: "Counter Terminal", model: "Pata Spaza", status: "online", battery: 85, lastSeen: "Now", serialNumber: "SPAZA-2025-001234" },
+  { id: "DEV002", name: "Mobile Device", model: "Go Pata", status: "online", battery: 42, lastSeen: "2 min ago", serialNumber: "GOPATA-2025-005678" },
+  { id: "DEV003", name: "Pro Terminal", model: "Pata Pro", status: "online", battery: 78, lastSeen: "5 min ago", serialNumber: "PRO-2025-007890" },
+  { id: "DEV004", name: "Silver POS", model: "Patapos Silver", status: "offline", battery: 0, lastSeen: "2 days ago", serialNumber: "SILVER-2024-009012" },
+  { id: "DEV005", name: "Diamond Terminal", model: "Pata Diamond", status: "online", battery: 95, lastSeen: "Now", serialNumber: "DIAMOND-2025-003456" },
+  { id: "DEV006", name: "Platinum Station", model: "Pata Platinum", status: "offline", battery: 0, lastSeen: "1 week ago", serialNumber: "PLATINUM-2024-001122" },
 ];
 
 const Devices = () => {
