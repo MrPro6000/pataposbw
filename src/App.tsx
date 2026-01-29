@@ -10,6 +10,7 @@ import OnlinePayments from "./pages/OnlinePayments";
 import Capital from "./pages/Capital";
 import Pricing from "./pages/Pricing";
 import Auth from "./pages/Auth";
+import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
 
 // Dashboard pages
@@ -23,6 +24,17 @@ import Devices from "./pages/dashboard/Devices";
 import Staff from "./pages/dashboard/Staff";
 import Settings from "./pages/dashboard/Settings";
 import Support from "./pages/dashboard/Support";
+
+// Admin pages
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminKYC from "./pages/admin/AdminKYC";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAML from "./pages/admin/AdminAML";
+import AdminTickets from "./pages/admin/AdminTickets";
+import AdminFAQs from "./pages/admin/AdminFAQs";
+import AdminNotifications from "./pages/admin/AdminNotifications";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +53,7 @@ const App = () => (
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
+          <Route path="/kyc" element={<KYC />} />
           
           {/* Dashboard routes */}
           <Route path="/dashboard" element={<DashboardHome />} />
@@ -53,6 +66,17 @@ const App = () => (
           <Route path="/dashboard/staff" element={<Staff />} />
           <Route path="/dashboard/settings" element={<Settings />} />
           <Route path="/dashboard/support" element={<Support />} />
+          
+          {/* Admin routes */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/kyc" element={<AdminKYC />} />
+          <Route path="/admin/users" element={<AdminUsers />} />
+          <Route path="/admin/aml" element={<AdminAML />} />
+          <Route path="/admin/tickets" element={<AdminTickets />} />
+          <Route path="/admin/faqs" element={<AdminFAQs />} />
+          <Route path="/admin/notifications" element={<AdminNotifications />} />
+          <Route path="/admin/analytics" element={<AdminAnalytics />} />
           
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
