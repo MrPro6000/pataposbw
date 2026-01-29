@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Building2, 
   Store,
@@ -27,6 +29,12 @@ type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | 
 
 const Settings = () => {
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
   
   const [businessInfo, setBusinessInfo] = useState({
     name: "Pata Business (Pty) Ltd",

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Wallet, 
   Building2,
@@ -44,6 +46,12 @@ const Payouts = () => {
     branchCode: "250655",
     accountHolder: "Pata Business (Pty) Ltd",
   });
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const getStatusIcon = (status: string) => {
     switch (status) {

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   HelpCircle, 
   MessageCircle,
@@ -63,6 +65,12 @@ const Support = () => {
     category: "",
     message: "",
   });
+  const isMobile = useIsMobile();
+
+  // Show mobile view on mobile devices
+  if (isMobile) {
+    return <MobileDashboardHome />;
+  }
 
   const filteredFaqs = faqs.filter(faq => 
     faq.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
