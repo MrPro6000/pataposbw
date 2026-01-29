@@ -6,20 +6,28 @@ import { Link } from "react-router-dom";
 const CardMachines = () => {
   const machines = [
     {
-      name: "Pata Spaza",
+      name: "Pata Go",
       price: "P799",
       originalPrice: "P999",
-      description: "Perfect for spaza shops and small businesses.",
+      description: "Perfect for businesses just getting started.",
       features: ["Accepts all cards", "Connects to phone", "Free Pata app"],
       badge: "Most Popular",
     },
     {
-      name: "Pata Pro",
+      name: "Pata Khumo",
       price: "P1,999",
       originalPrice: "P2,499",
-      description: "Professional card machine with advanced features.",
+      description: "Stand-alone card machine with built-in printer.",
       features: ["Built-in printer", "4G connectivity", "Long battery life"],
       badge: "Best Value",
+    },
+    {
+      name: "Pata Neo",
+      price: "P3,999",
+      originalPrice: "P4,999",
+      description: "Our most advanced card machine with large screen.",
+      features: ["Large touchscreen", "Built-in printer", "Fastest processing"],
+      badge: null,
     },
   ];
 
