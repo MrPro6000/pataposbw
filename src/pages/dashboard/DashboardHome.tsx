@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
-import MobileHubView from "@/components/dashboard/MobileHubView";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   TrendingUp,
@@ -62,7 +61,7 @@ const DashboardHome = () => {
 
   // Show mobile view on mobile devices
   if (isMobile) {
-    return <MobileHubView />;
+    return <MobileDashboardHome />;
   }
 
   // Mini chart data for Today's sales card

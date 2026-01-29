@@ -29,6 +29,9 @@ interface KYCSubmission {
   submitted_at: string;
   reviewed_at: string | null;
   rejection_reason: string | null;
+  id_front_url: string | null;
+  id_back_url: string | null;
+  phone_number: string | null;
   profiles: {
     email: string;
     full_name: string | null;
@@ -42,6 +45,7 @@ const AdminKYC = () => {
   const [search, setSearch] = useState("");
   const [selectedKyc, setSelectedKyc] = useState<KYCSubmission | null>(null);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
+  const [showViewDialog, setShowViewDialog] = useState(false);
   const [rejectionReason, setRejectionReason] = useState("");
   const [processing, setProcessing] = useState(false);
   const { toast } = useToast();
@@ -260,36 +264,50 @@ const AdminKYC = () => {
                     </td>
                     <td className="py-4 px-6">{getStatusBadge(kyc.status)}</td>
                     <td className="py-4 px-6 text-right">
-                      {kyc.status === "pending" && (
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            size="sm"
-                            onClick={() => handleApprove(kyc)}
-                            disabled={processing}
-                            className="bg-green-500 hover:bg-green-600 text-white"
-                          >
-                            <CheckCircle className="w-4 h-4 mr-1" />
-                            Approve
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => {
-                              setSelectedKyc(kyc);
-                              setShowRejectDialog(true);
-                            }}
-                            disabled={processing}
-                          >
-                            <XCircle className="w-4 h-4 mr-1" />
-                            Reject
-                          </Button>
-                        </div>
-                      )}
-                      {kyc.status !== "pending" && (
-                        <span className="text-white/40 text-sm">
-                          Reviewed {kyc.reviewed_at ? new Date(kyc.reviewed_at).toLocaleDateString() : ""}
-                        </span>
-                      )}
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            setSelectedKyc(kyc);
+                            setShowViewDialog(true);
+                          }}
+                          className="border-white/20 text-white hover:bg-white/10"
+                        >
+                          <Eye className="w-4 h-4 mr-1" />
+                          View
+                        </Button>
+                        {kyc.status === "pending" && (
+                          <>
+                            <Button
+                              size="sm"
+                              onClick={() => handleApprove(kyc)}
+                              disabled={processing}
+                              className="bg-green-500 hover:bg-green-600 text-white"
+                            >
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Approve
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => {
+                                setSelectedKyc(kyc);
+                                setShowRejectDialog(true);
+                              }}
+                              disabled={processing}
+                            >
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Reject
+                            </Button>
+                          </>
+                        )}
+                        {kyc.status !== "pending" && (
+                          <span className="text-white/40 text-sm">
+                            Reviewed {kyc.reviewed_at ? new Date(kyc.reviewed_at).toLocaleDateString() : ""}
+                          </span>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -330,6 +348,99 @@ const AdminKYC = () => {
               {processing ? "Rejecting..." : "Reject Submission"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Details Dialog */}
+      <Dialog open={showViewDialog} onOpenChange={setShowViewDialog}>
+        <DialogContent className="bg-[#1a1a1a] border-white/10 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>KYC Submission Details</DialogTitle>
+            <DialogDescription className="text-white/60">
+              Review the submitted ID documents
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedKyc && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-white/60 mb-1">Full Name</p>
+                  <p className="text-white font-medium">{selectedKyc.profiles?.full_name || "Not provided"}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/60 mb-1">Email</p>
+                  <p className="text-white font-medium">{selectedKyc.profiles?.email}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/60 mb-1">Omang Number</p>
+                  <p className="text-white font-mono">{selectedKyc.omang_number}</p>
+                </div>
+                <div>
+                  <p className="text-sm text-white/60 mb-1">Phone Number</p>
+                  <p className="text-white font-mono">{selectedKyc.phone_number || "Not provided"}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-sm text-white/60 mb-2">ID Front</p>
+                  {selectedKyc.id_front_url ? (
+                    <img 
+                      src={selectedKyc.id_front_url} 
+                      alt="ID Front" 
+                      className="w-full rounded-xl border border-white/10"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[16/10] rounded-xl border border-white/10 flex items-center justify-center bg-white/5">
+                      <span className="text-white/40">No image uploaded</span>
+                    </div>
+                  )}
+                </div>
+                <div>
+                  <p className="text-sm text-white/60 mb-2">ID Back</p>
+                  {selectedKyc.id_back_url ? (
+                    <img 
+                      src={selectedKyc.id_back_url} 
+                      alt="ID Back" 
+                      className="w-full rounded-xl border border-white/10"
+                    />
+                  ) : (
+                    <div className="w-full aspect-[16/10] rounded-xl border border-white/10 flex items-center justify-center bg-white/5">
+                      <span className="text-white/40">No image uploaded</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {selectedKyc.status === "pending" && (
+                <div className="flex gap-2 justify-end pt-4 border-t border-white/10">
+                  <Button
+                    onClick={() => {
+                      handleApprove(selectedKyc);
+                      setShowViewDialog(false);
+                    }}
+                    disabled={processing}
+                    className="bg-green-500 hover:bg-green-600 text-white"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-1" />
+                    Approve
+                  </Button>
+                  <Button
+                    variant="destructive"
+                    onClick={() => {
+                      setShowViewDialog(false);
+                      setShowRejectDialog(true);
+                    }}
+                    disabled={processing}
+                  >
+                    <XCircle className="w-4 h-4 mr-1" />
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>

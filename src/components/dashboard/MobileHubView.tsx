@@ -1,20 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { Link, useLocation } from "react-router-dom";
 import { 
   LayoutGrid,
   CreditCard, 
   Wallet, 
   Settings,
   ChevronRight,
-  Package,
-  User
 } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   ChartContainer,
-  ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis } from "recharts";
 
@@ -54,54 +48,12 @@ const MobileBottomNav = () => {
   );
 };
 
-const MobileHubView = () => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ full_name: string | null; business_name: string | null } | null>(null);
-  const navigate = useNavigate();
+interface MobileHubViewProps {
+  profile: { full_name: string | null; business_name: string | null } | null;
+  userEmail?: string;
+}
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-        setLoading(false);
-        if (!session?.user) {
-          navigate("/login");
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      if (!session?.user) {
-        navigate("/login");
-      } else {
-        fetchProfile(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("full_name, business_name")
-      .eq("user_id", userId)
-      .maybeSingle();
-    
-    setProfile(data);
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-[#00C8E6] border-t-transparent rounded-full"></div>
-      </div>
-    );
-  }
-
+const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   // Chart data
   const weeklyChartData = [
     { day: "M", value: 0 },
@@ -119,7 +71,7 @@ const MobileHubView = () => {
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   user?.email?.slice(0, 2).toUpperCase() || "PA";
+                   userEmail?.slice(0, 2).toUpperCase() || "NH";
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] pb-20">
@@ -131,7 +83,7 @@ const MobileHubView = () => {
           </div>
           <div className="px-3 py-1.5 bg-[#F5F5F5] rounded-full">
             <span className="text-sm font-medium text-[#141414]">
-              {profile?.business_name || "My Business"}
+              {profile?.business_name || "One Guy Can"}
             </span>
           </div>
         </div>
@@ -142,34 +94,34 @@ const MobileHubView = () => {
         <h1 className="text-2xl font-bold text-[#141414]">Hub</h1>
       </div>
 
-      {/* Stats Cards */}
+      {/* Stats Cards - 2x2 Grid matching reference */}
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4">
+          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col">
             <p className="text-sm text-[#141414]/60 mb-1">Sales made</p>
-            <p className="text-2xl font-bold text-[#141414] mb-1">0</p>
+            <p className="text-3xl font-bold text-[#141414] mb-auto">0</p>
             <p className="text-xs text-[#141414]/40">Last week</p>
           </Link>
           
-          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4">
+          <Link to="/dashboard/sales" className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col">
             <p className="text-sm text-[#141414]/60 mb-1">Sales history</p>
             <p className="text-sm text-[#141414]">card</p>
-            <p className="text-lg font-semibold text-[#141414]">- P12</p>
+            <p className="text-xl font-semibold text-[#141414]">- P12</p>
             <p className="text-sm text-green-600">Approved</p>
           </Link>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/dashboard/payouts" className="bg-white rounded-2xl p-4">
+          <Link to="/dashboard/payouts" className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col">
             <p className="text-sm text-[#141414]/60 mb-1">Payouts</p>
             <p className="text-sm text-[#141414]/60">Payout</p>
-            <p className="text-lg font-bold text-[#141414]">P16</p>
+            <p className="text-xl font-bold text-[#141414]">P16</p>
             <p className="text-xs text-[#141414]/40">9 May 2024</p>
           </Link>
           
-          <Link to="/dashboard/settings" className="bg-white rounded-2xl p-4">
+          <Link to="/dashboard/settings" className="bg-white rounded-2xl p-4 min-h-[110px] flex flex-col">
             <p className="text-sm text-[#141414]/60 mb-1">Business details</p>
-            <p className="text-sm text-[#141414]/60 line-clamp-2">
+            <p className="text-sm text-[#141414]/60 line-clamp-2 mt-auto">
               Trading name, Address, conta...
             </p>
           </Link>
@@ -184,28 +136,28 @@ const MobileHubView = () => {
         </div>
 
         <div className="bg-white rounded-2xl p-4">
-          <p className="text-sm text-[#141414]/60 mb-3">Gross revenue</p>
+          <p className="text-sm text-[#141414]/60 mb-4">Gross revenue</p>
           
-          <div className="h-24 mb-3">
+          <div className="h-28 mb-4">
             <ChartContainer config={chartConfig} className="h-full w-full">
-              <BarChart data={weeklyChartData} barSize={12}>
+              <BarChart data={weeklyChartData} barSize={20}>
                 <XAxis 
                   dataKey="day" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#999', fontSize: 10 }}
+                  tick={{ fill: '#999', fontSize: 12 }}
                 />
                 <Bar 
                   dataKey="value" 
                   fill="#E8E8E8" 
-                  radius={[2, 2, 0, 0]}
+                  radius={[4, 4, 0, 0]}
                 />
               </BarChart>
             </ChartContainer>
           </div>
           
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-[#141414]/40">Last week</p>
+          <div className="flex items-center justify-between border-t border-[#E8E8E8] pt-3">
+            <p className="text-sm text-[#141414]/60">Last week</p>
             <p className="text-lg font-bold text-[#141414]">P0.00</p>
           </div>
         </div>
