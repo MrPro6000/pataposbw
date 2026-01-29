@@ -33,10 +33,10 @@ interface Customer {
 }
 
 const initialCustomers: Customer[] = [
-  { id: "CUS001", name: "John Smith", email: "john@email.com", phone: "+27 82 123 4567", totalSpent: 2450.00, transactions: 12, lastVisit: "2025-01-28" },
-  { id: "CUS002", name: "Sarah Johnson", email: "sarah@email.com", phone: "+27 83 234 5678", totalSpent: 1890.00, transactions: 8, lastVisit: "2025-01-27" },
+  { id: "CUS001", name: "John Smith", email: "john@email.com", phone: "+267 72 123 4567", totalSpent: 2450.00, transactions: 12, lastVisit: "2025-01-28" },
+  { id: "CUS002", name: "Sarah Johnson", email: "sarah@email.com", phone: "+267 73 234 5678", totalSpent: 1890.00, transactions: 8, lastVisit: "2025-01-27" },
   { id: "CUS003", name: "Michael Brown", email: "michael@email.com", totalSpent: 3200.00, transactions: 15, lastVisit: "2025-01-26" },
-  { id: "CUS004", name: "Emily Davis", email: "emily@email.com", phone: "+27 84 345 6789", totalSpent: 950.00, transactions: 5, lastVisit: "2025-01-25" },
+  { id: "CUS004", name: "Emily Davis", email: "emily@email.com", phone: "+267 74 345 6789", totalSpent: 950.00, transactions: 5, lastVisit: "2025-01-25" },
   { id: "CUS005", name: "David Wilson", email: "david@email.com", totalSpent: 4100.00, transactions: 20, lastVisit: "2025-01-24" },
 ];
 
@@ -134,7 +134,7 @@ const Customers = () => {
             </div>
             <div className="flex items-center gap-6">
               <div className="text-right hidden md:block">
-                <p className="font-semibold text-[#141414]">R{customer.totalSpent.toFixed(2)}</p>
+                <p className="font-semibold text-[#141414]">P{customer.totalSpent.toFixed(2)}</p>
                 <p className="text-sm text-[#141414]/60">{customer.transactions} transactions</p>
               </div>
               <ChevronRight className="w-5 h-5 text-[#141414]/30" />
@@ -180,9 +180,9 @@ const Customers = () => {
               </div>
 
               {/* Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="grid grid-cols-2 gap-4 mb-6">
                 <div className="bg-[#F6F6F6] rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-[#141414]">R{selectedCustomer.totalSpent.toFixed(2)}</p>
+                  <p className="text-2xl font-bold text-[#141414]">P{selectedCustomer.totalSpent.toFixed(2)}</p>
                   <p className="text-sm text-[#141414]/60">Total Spent</p>
                 </div>
                 <div className="bg-[#F6F6F6] rounded-xl p-4 text-center">
@@ -198,7 +198,7 @@ const Customers = () => {
                   {purchaseHistory.map((purchase) => (
                     <div key={purchase.id} className="p-3 bg-[#F6F6F6] rounded-xl">
                       <div className="flex justify-between mb-1">
-                        <span className="font-medium text-[#141414]">R{purchase.amount.toFixed(2)}</span>
+                        <span className="font-medium text-[#141414]">P{purchase.amount.toFixed(2)}</span>
                         <span className="text-sm text-[#141414]/60">{purchase.date}</span>
                       </div>
                       <p className="text-sm text-[#141414]/60">{purchase.items}</p>
@@ -246,7 +246,7 @@ const Customers = () => {
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="+27 00 000 0000"
+                placeholder="+267 70 000 0000"
               />
             </div>
           </div>

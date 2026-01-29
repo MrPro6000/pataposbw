@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Package, Users } from "lucide-react";
+import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet } from "lucide-react";
 import {
   ChartContainer,
 } from "@/components/ui/chart";
@@ -9,6 +9,8 @@ import MobileBottomNav from "./MobileBottomNav";
 import MobileReportSheet from "./MobileReportSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
+import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
+import MobileCapitalSheet from "./MobileCapitalSheet";
 
 interface MobileHubViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -21,6 +23,8 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [revenueReportOpen, setRevenueReportOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [salesHistoryOpen, setSalesHistoryOpen] = useState(false);
+  const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
+  const [capitalOpen, setCapitalOpen] = useState(false);
 
   // Chart data
   const weeklyChartData = [
@@ -165,6 +169,64 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
         </div>
       </div>
 
+      {/* Quick Access - POS, Card machine, Payment gateway, Wallet */}
+      <div className="px-5 py-2">
+        <h2 className="font-semibold text-[#141414] mb-3">Quick Access</h2>
+        <div className="grid grid-cols-2 gap-3">
+          <Link 
+            to="/dashboard"
+            className="bg-white rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform"
+          >
+            <div className="w-10 h-10 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
+              <CreditCard className="w-5 h-5 text-[#00C8E6]" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414] text-sm">POS</p>
+              <p className="text-xs text-[#141414]/50">Point of Sale</p>
+            </div>
+          </Link>
+          
+          <Link 
+            to="/dashboard/devices"
+            className="bg-white rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform"
+          >
+            <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
+              <Smartphone className="w-5 h-5 text-purple-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414] text-sm">Card machine</p>
+              <p className="text-xs text-[#141414]/50">4 devices</p>
+            </div>
+          </Link>
+          
+          <button 
+            onClick={() => setPaymentGatewayOpen(true)}
+            className="bg-white rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+          >
+            <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+              <Globe className="w-5 h-5 text-green-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414] text-sm">Payment gateway</p>
+              <p className="text-xs text-[#141414]/50">Online payments</p>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => setCapitalOpen(true)}
+            className="bg-white rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+          >
+            <div className="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-amber-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414] text-sm">Wallet</p>
+              <p className="text-xs text-[#141414]/50">P0.00 balance</p>
+            </div>
+          </button>
+        </div>
+      </div>
+
       {/* Report Sheets */}
       <MobileReportSheet
         open={productReportOpen}
@@ -194,6 +256,18 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <MobileSalesHistorySheet
         open={salesHistoryOpen}
         onClose={() => setSalesHistoryOpen(false)}
+      />
+
+      {/* Payment Gateway Sheet */}
+      <MobilePaymentGatewaySheet
+        open={paymentGatewayOpen}
+        onClose={() => setPaymentGatewayOpen(false)}
+      />
+
+      {/* Capital Sheet */}
+      <MobileCapitalSheet
+        open={capitalOpen}
+        onClose={() => setCapitalOpen(false)}
       />
 
       {/* Bottom Navigation */}

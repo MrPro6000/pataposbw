@@ -27,9 +27,12 @@ interface Device {
 
 const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
   const [devices] = useState<Device[]>([
-    { id: "DEV001", name: "Counter Terminal", model: "Pata Neo", status: "online", battery: 85, lastSeen: "Now" },
-    { id: "DEV002", name: "Mobile Device", model: "Pata Go", status: "online", battery: 42, lastSeen: "2 min ago" },
-    { id: "DEV003", name: "Backup Terminal", model: "Pata Khumo", status: "offline", battery: 0, lastSeen: "3 days ago" },
+    { id: "DEV001", name: "Counter Terminal", model: "Pata Spaza", status: "online", battery: 85, lastSeen: "Now" },
+    { id: "DEV002", name: "Mobile Device", model: "Go Pata", status: "online", battery: 42, lastSeen: "2 min ago" },
+    { id: "DEV003", name: "Pro Terminal", model: "Pata Pro", status: "online", battery: 78, lastSeen: "5 min ago" },
+    { id: "DEV004", name: "Silver POS", model: "Patapos Silver", status: "offline", battery: 0, lastSeen: "2 days ago" },
+    { id: "DEV005", name: "Diamond Terminal", model: "Pata Diamond", status: "online", battery: 95, lastSeen: "Now" },
+    { id: "DEV006", name: "Platinum Station", model: "Pata Platinum", status: "offline", battery: 0, lastSeen: "1 week ago" },
   ]);
 
   const getBatteryColor = (level: number) => {

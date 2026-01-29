@@ -19,11 +19,11 @@ interface Customer {
 
 const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) => {
   const customers: Customer[] = [
-    { id: "1", name: "John Doe", email: "john@example.com", phone: "+267 71 234 5678", totalSpent: 2450, visits: 12 },
-    { id: "2", name: "Sarah Smith", email: "sarah@example.com", phone: "+267 72 345 6789", totalSpent: 1890, visits: 8 },
-    { id: "3", name: "Mike Johnson", email: "mike@example.com", phone: "+267 73 456 7890", totalSpent: 3200, visits: 15 },
-    { id: "4", name: "Emily Brown", email: "emily@example.com", phone: "+267 74 567 8901", totalSpent: 980, visits: 4 },
-    { id: "5", name: "David Lee", email: "david@example.com", phone: "+267 75 678 9012", totalSpent: 4500, visits: 22 },
+    { id: "1", name: "John Doe", email: "john@example.com", phone: "+267 72 234 5678", totalSpent: 2450, visits: 12 },
+    { id: "2", name: "Sarah Smith", email: "sarah@example.com", phone: "+267 73 345 6789", totalSpent: 1890, visits: 8 },
+    { id: "3", name: "Mike Johnson", email: "mike@example.com", phone: "+267 74 456 7890", totalSpent: 3200, visits: 15 },
+    { id: "4", name: "Emily Brown", email: "emily@example.com", phone: "+267 75 567 8901", totalSpent: 980, visits: 4 },
+    { id: "5", name: "David Lee", email: "david@example.com", phone: "+267 76 678 9012", totalSpent: 4500, visits: 22 },
   ];
 
   return (

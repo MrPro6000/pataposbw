@@ -9,7 +9,9 @@ import {
   Receipt, 
   Bell, 
   HelpCircle,
-  LogOut
+  LogOut,
+  Users,
+  Smartphone
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileSettingsSheet from "./MobileSettingsSheet";
@@ -23,7 +25,7 @@ interface MobileManageViewProps {
   userEmail?: string;
 }
 
-type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support";
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support" | "devices" | "customers";
 
 const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
   const navigate = useNavigate();
@@ -63,6 +65,8 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
     { id: "receipts" as const, label: "Receipts", description: "Customization", icon: Receipt },
     { id: "notifications" as const, label: "Notifications", description: "Alerts & summaries", icon: Bell },
     { id: "support" as const, label: "Help & Support", description: "FAQs & contact", icon: HelpCircle },
+    { id: "devices" as const, label: "Devices", description: "Card machines & POS", icon: Smartphone },
+    { id: "customers" as const, label: "Customers", description: "Customer database", icon: Users },
   ];
 
   const handleOpenSettings = (section: SettingsSection, title: string) => {

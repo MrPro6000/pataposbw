@@ -37,7 +37,7 @@ const faqs: FAQ[] = [
   },
   { 
     question: "What are the transaction fees?", 
-    answer: "Our standard rate is 2.95% per transaction with no monthly fees. Volume discounts are available for businesses processing over R50,000 per month." 
+    answer: "Our standard rate is 2.95% per transaction with no monthly fees. Volume discounts are available for businesses processing over P50,000 per month." 
   },
   { 
     question: "How do I connect a new device?", 

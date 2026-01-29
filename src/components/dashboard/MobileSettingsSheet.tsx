@@ -28,7 +28,9 @@ type SettingsSection =
   | "tax" 
   | "receipts" 
   | "notifications"
-  | "support";
+  | "support"
+  | "devices"
+  | "customers";
 
 interface MobileSettingsSheetProps {
   open: boolean;
@@ -422,6 +424,71 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           </div>
         );
 
+      case "devices":
+        return (
+          <div className="space-y-4">
+            <div className="bg-[#00C8E6]/10 rounded-xl p-4">
+              <p className="font-medium text-[#141414] mb-1">Your Devices</p>
+              <p className="text-sm text-[#141414]/60">Manage your POS terminals and card machines</p>
+            </div>
+            {[
+              { name: "Counter Terminal", model: "Pata Spaza", status: "online" },
+              { name: "Mobile Device", model: "Go Pata", status: "online" },
+              { name: "Pro Terminal", model: "Pata Pro", status: "online" },
+              { name: "Silver POS", model: "Patapos Silver", status: "offline" },
+              { name: "Diamond Terminal", model: "Pata Diamond", status: "online" },
+              { name: "Platinum Station", model: "Pata Platinum", status: "offline" },
+            ].map((device, index) => (
+              <div key={index} className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-[#141414]">{device.name}</p>
+                  <p className="text-sm text-[#141414]/60">{device.model}</p>
+                </div>
+                <span className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  device.status === "online" 
+                    ? "bg-green-100 text-green-700" 
+                    : "bg-gray-100 text-gray-500"
+                }`}>
+                  {device.status}
+                </span>
+              </div>
+            ))}
+            <Button className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+              + Add New Device
+            </Button>
+          </div>
+        );
+
+      case "customers":
+        return (
+          <div className="space-y-4">
+            <div className="bg-[#00C8E6]/10 rounded-xl p-4">
+              <p className="font-medium text-[#141414] mb-1">Customer Database</p>
+              <p className="text-sm text-[#141414]/60">View and manage your customers</p>
+            </div>
+            {[
+              { name: "John Smith", email: "john@email.com", spent: 2450 },
+              { name: "Sarah Johnson", email: "sarah@email.com", spent: 1890 },
+              { name: "Michael Brown", email: "michael@email.com", spent: 3200 },
+              { name: "Emily Davis", email: "emily@email.com", spent: 950 },
+              { name: "David Wilson", email: "david@email.com", spent: 4100 },
+            ].map((customer, index) => (
+              <div key={index} className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-[#141414]">{customer.name}</p>
+                  <p className="text-sm text-[#141414]/60">{customer.email}</p>
+                </div>
+                <span className="text-sm font-semibold text-[#00C8E6]">
+                  P{customer.spent.toLocaleString()}
+                </span>
+              </div>
+            ))}
+            <Button className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+              + Add Customer
+            </Button>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -452,7 +519,7 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           {renderContent()}
         </div>
 
-        {section !== "support" && (
+        {section !== "support" && section !== "devices" && section !== "customers" && (
           <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E8E8E8]">
             <Button
               onClick={handleSave}
