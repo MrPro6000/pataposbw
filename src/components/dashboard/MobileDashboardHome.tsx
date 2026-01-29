@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
-import { useIsMobile } from "@/hooks/use-mobile";
 import MobileHubView from "./MobileHubView";
 import MobileSalesView from "./MobileSalesView";
+import MobileMoneyView from "./MobileMoneyView";
+import MobileManageView from "./MobileManageView";
 
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -12,7 +13,6 @@ const MobileDashboardHome = () => {
   const [profile, setProfile] = useState<{ full_name: string | null; business_name: string | null } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -56,24 +56,29 @@ const MobileDashboardHome = () => {
     );
   }
 
-  // Determine which view to show based on route
-  const isSalesRoute = location.pathname === "/dashboard/sales";
+  const profileProps = { profile, userEmail: user?.email };
+  const pathname = location.pathname;
 
-  if (isSalesRoute) {
-    return (
-      <MobileSalesView 
-        profile={profile} 
-        userEmail={user?.email} 
-      />
-    );
+  // Route to appropriate mobile view
+  if (pathname === "/dashboard/sales") {
+    return <MobileSalesView {...profileProps} />;
+  }
+  
+  if (pathname === "/dashboard/payouts") {
+    return <MobileMoneyView {...profileProps} />;
+  }
+  
+  // Settings and other manage routes
+  if (pathname === "/dashboard/settings" || 
+      pathname === "/dashboard/staff" || 
+      pathname === "/dashboard/devices" ||
+      pathname === "/dashboard/products" ||
+      pathname === "/dashboard/customers") {
+    return <MobileManageView {...profileProps} />;
   }
 
-  return (
-    <MobileHubView 
-      profile={profile} 
-      userEmail={user?.email} 
-    />
-  );
+  // Default: Hub view
+  return <MobileHubView {...profileProps} />;
 };
 
 export default MobileDashboardHome;
