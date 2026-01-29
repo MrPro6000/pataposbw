@@ -6,6 +6,7 @@ import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ExternalLink, ChevronRight, Eye, EyeOff, Phone } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import pataMacbook from "@/assets/pata-macbook.jpg";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ const Auth = ({ mode }: AuthProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
   
   const isDark = theme === "dark";
 
@@ -541,18 +543,20 @@ const Auth = ({ mode }: AuthProps) => {
         </div>
       )}
 
-      {/* Footer */}
-      <footer className={`fixed bottom-0 left-0 right-0 ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} px-10 md:px-20 py-4 flex items-center justify-between transition-colors duration-300`}>
-        <a href="#" className={`flex items-center gap-1.5 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>
-          System status
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
-        <div className="flex items-center gap-6">
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Help</a>
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Privacy</a>
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Terms</a>
-        </div>
-      </footer>
+      {/* Footer - Hidden on mobile */}
+      {!isMobile && (
+        <footer className={`fixed bottom-0 left-0 right-0 ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} px-10 md:px-20 py-4 flex items-center justify-between transition-colors duration-300`}>
+          <a href="#" className={`flex items-center gap-1.5 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>
+            System status
+            <ExternalLink className="w-3.5 h-3.5" />
+          </a>
+          <div className="flex items-center gap-6">
+            <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Help</a>
+            <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Privacy</a>
+            <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Terms</a>
+          </div>
+        </footer>
+      )}
     </div>
   );
 };

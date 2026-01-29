@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { User as SupabaseUser } from "@supabase/supabase-js";
-import MobileHubView from "./MobileHubView";
+import MobilePOSView from "./MobilePOSView";
 import MobileSalesView from "./MobileSalesView";
 import MobileMoneyView from "./MobileMoneyView";
 import MobileManageView from "./MobileManageView";
@@ -13,6 +13,7 @@ import MobileStaffView from "./MobileStaffView";
 import MobileProductsView from "./MobileProductsView";
 import MobileCustomersView from "./MobileCustomersView";
 import MobileSupportView from "./MobileSupportView";
+import MobileHubView from "./MobileHubView";
 
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -112,8 +113,8 @@ const MobileDashboardHome = () => {
     return <MobileSupportView {...profileProps} />;
   }
 
-  // Default: Hub view for /dashboard and other routes
-  return <MobileHubView {...profileProps} />;
+  // Default: POS view for /dashboard
+  return <MobilePOSView {...profileProps} />;
 };
 
 export default MobileDashboardHome;

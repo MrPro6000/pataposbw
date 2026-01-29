@@ -1,19 +1,19 @@
 import { Link, useLocation } from "react-router-dom";
 import { 
-  LayoutGrid,
+  ShoppingCart,
   CreditCard, 
-  Wallet, 
-  Settings
+  Globe, 
+  Wallet
 } from "lucide-react";
 
 const MobileBottomNav = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
-    { icon: CreditCard, label: "Sales", path: "/dashboard/sales" },
-    { icon: Wallet, label: "Money", path: "/dashboard/payouts" },
-    { icon: Settings, label: "Manage", path: "/dashboard/settings" },
+    { icon: ShoppingCart, label: "POS", path: "/dashboard" },
+    { icon: CreditCard, label: "Card machine", path: "/dashboard/sales" },
+    { icon: Globe, label: "Payment gateway", path: "/dashboard/payouts" },
+    { icon: Wallet, label: "Wallet", path: "/dashboard/settings" },
   ];
 
   const isActive = (path: string) => {
@@ -28,12 +28,12 @@ const MobileBottomNav = () => {
           <Link
             key={item.label}
             to={item.path}
-            className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
+            className={`flex flex-col items-center gap-1 px-3 py-2 transition-colors ${
               isActive(item.path) ? "text-[#00C8E6]" : "text-[#141414]/60"
             }`}
           >
             <item.icon className="w-5 h-5" />
-            <span className="text-xs font-medium">{item.label}</span>
+            <span className="text-[10px] font-medium">{item.label}</span>
           </Link>
         ))}
       </div>
