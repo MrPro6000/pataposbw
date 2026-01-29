@@ -7,24 +7,24 @@ const CardMachines = () => {
   const machines = [
     {
       name: "Pata Go",
-      price: "R799",
-      originalPrice: "R999",
+      price: "P799",
+      originalPrice: "P999",
       description: "Perfect for businesses just getting started.",
       features: ["Accepts all cards", "Connects to phone", "Free Pata app"],
       badge: "Most Popular",
     },
     {
       name: "Pata Khumo",
-      price: "R1,999",
-      originalPrice: "R2,499",
+      price: "P1,999",
+      originalPrice: "P2,499",
       description: "Stand-alone card machine with built-in printer.",
       features: ["Built-in printer", "4G connectivity", "Long battery life"],
       badge: "Best Value",
     },
     {
       name: "Pata Neo",
-      price: "R3,999",
-      originalPrice: "R4,999",
+      price: "P3,999",
+      originalPrice: "P4,999",
       description: "Our most advanced card machine with large screen.",
       features: ["Large touchscreen", "Built-in printer", "Fastest processing"],
       badge: null,
@@ -75,7 +75,7 @@ const CardMachines = () => {
                   <div className="bg-white rounded-xl p-4 shadow-lg">
                     <div className="text-[#141414] font-medium">Lekker Cafe</div>
                     <div className="text-[#141414]/60 text-sm">Payment approved</div>
-                    <div className="text-[#00C8E6] text-2xl font-bold mt-2">R100.00</div>
+                    <div className="text-[#00C8E6] text-2xl font-bold mt-2">P100.00</div>
                   </div>
                 </div>
               </div>
