@@ -22,14 +22,14 @@ const MobileBottomNav = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#E8E8E8] md:hidden z-50 safe-area-pb">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border md:hidden z-50 safe-area-pb">
       <div className="flex items-center justify-around py-2 pb-safe">
         {navItems.map((item) => (
           <Link
             key={item.label}
             to={item.path}
             className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
-              isActive(item.path) ? "text-[#0066FF]" : "text-[#141414]/60"
+              isActive(item.path) ? "text-primary" : "text-muted-foreground"
             }`}
           >
             <item.icon className="w-5 h-5" />
