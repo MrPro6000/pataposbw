@@ -5,6 +5,7 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, PieChart, Pie, Cell } from "recharts";
 import MobileBottomNav from "./MobileBottomNav";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileReportsViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -23,15 +24,15 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
   ];
 
   const paymentMethods = [
-    { name: "Card", value: 35, color: "#00C8E6" },
+    { name: "Card", value: 35, color: "#0066FF" },
     { name: "Mobile Money", value: 28, color: "#F97316" },
     { name: "Cash", value: 18, color: "#22C55E" },
-    { name: "Wallet", value: 10, color: "#8B5CF6" },
+    { name: "Payment Link", value: 10, color: "#8B5CF6" },
     { name: "Other", value: 9, color: "#141414" },
   ];
 
   const chartConfig = {
-    sales: { label: "Sales", color: "#00C8E6" },
+    sales: { label: "Sales", color: "#0066FF" },
   };
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
@@ -46,7 +47,7 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
             <ChevronLeft className="w-6 h-6 text-[#141414]" />
           </Link>
-          <h1 className="font-semibold text-[#141414]">Reports</h1>
+          <PataLogo className="h-5" />
           <div className="w-10" />
         </div>
       </header>
@@ -72,14 +73,14 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-white rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-[#00C8E6]" />
+              <TrendingUp className="w-4 h-4 text-[#0066FF]" />
               <span className="text-xs text-[#141414]/60">Revenue</span>
             </div>
             <p className="text-xl font-bold text-[#141414]">P67,890</p>
           </div>
           <div className="bg-white rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Package className="w-4 h-4 text-[#00C8E6]" />
+              <Package className="w-4 h-4 text-[#0066FF]" />
               <span className="text-xs text-[#141414]/60">Items Sold</span>
             </div>
             <p className="text-xl font-bold text-[#141414]">1,247</p>
@@ -89,14 +90,14 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
         <div className="grid grid-cols-2 gap-3 mb-4">
           <div className="bg-white rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="w-4 h-4 text-[#00C8E6]" />
+              <Users className="w-4 h-4 text-[#0066FF]" />
               <span className="text-xs text-[#141414]/60">Customers</span>
             </div>
             <p className="text-xl font-bold text-[#141414]">342</p>
           </div>
           <div className="bg-white rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-4 h-4 text-[#00C8E6]" />
+              <Calendar className="w-4 h-4 text-[#0066FF]" />
               <span className="text-xs text-[#141414]/60">Avg. Order</span>
             </div>
             <p className="text-xl font-bold text-[#141414]">P198</p>
@@ -119,7 +120,7 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
                 />
                 <Bar 
                   dataKey="sales" 
-                  fill="#00C8E6" 
+                  fill="#0066FF" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>

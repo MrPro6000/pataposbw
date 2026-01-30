@@ -29,7 +29,7 @@ const MobileBottomNav = () => {
             key={item.label}
             to={item.path}
             className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
-              isActive(item.path) ? "text-[#00C8E6]" : "text-[#141414]/60"
+              isActive(item.path) ? "text-[#0066FF]" : "text-[#141414]/60"
             }`}
           >
             <item.icon className="w-5 h-5" />

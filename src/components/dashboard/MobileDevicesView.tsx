@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import { getDeviceImage } from "@/data/devices";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileDevicesViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -49,7 +50,7 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
             <ChevronLeft className="w-6 h-6 text-[#141414]" />
           </Link>
-          <h1 className="font-semibold text-[#141414]">Devices</h1>
+          <PataLogo className="h-5" />
           <button className="w-10 h-10 flex items-center justify-center">
             <Plus className="w-6 h-6 text-[#0066FF]" />
           </button>

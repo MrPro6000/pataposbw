@@ -21,6 +21,7 @@ import MobilePaymentLinksSheet from "./MobilePaymentLinksSheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileProductSaleSheet from "./MobileProductSaleSheet";
+import PataLogo from "@/components/PataLogo";
 
 // Quick Action Button Component
 const QuickActionButton = ({ 
@@ -94,20 +95,13 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-6 sticky top-0 z-40">
         <div className="flex items-center justify-between mb-6">
+          <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+            className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
           </button>
-          <Link 
-            to="/dashboard/settings"
-            className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
-          >
-            <span className="text-sm font-medium text-[#141414]">
-              {profile?.business_name || "One Guy Can"}
-            </span>
-          </Link>
         </div>
 
         <div className="text-center">
@@ -122,7 +116,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         {/* Products/POS Button - Full Width */}
         <button 
           onClick={() => setProductSaleOpen(true)}
-          className="w-full flex items-center justify-between p-4 bg-[#00C8E6] rounded-2xl mb-3 active:scale-98 transition-transform"
+          className="w-full flex items-center justify-between p-4 bg-[#0066FF] rounded-2xl mb-3 active:scale-98 transition-transform"
         >
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
@@ -191,8 +185,8 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           
           <div className="px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
-                <Package className="w-5 h-5 text-[#00C8E6]" />
+              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
+                <Package className="w-5 h-5 text-[#0066FF]" />
               </div>
               <div>
                 <p className="font-medium text-[#141414]">Manage Products</p>

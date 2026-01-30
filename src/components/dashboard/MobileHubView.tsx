@@ -11,6 +11,7 @@ import MobileProfileSheet from "./MobileProfileSheet";
 import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileHubViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -53,26 +54,27 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
+          <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
           </button>
-          <Link 
-            to="/dashboard/settings"
-            className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
-          >
-            <span className="text-sm font-medium text-[#141414]">
-              {profile?.business_name || "One Guy Can"}
-            </span>
-          </Link>
         </div>
       </header>
 
       {/* Hub Title */}
       <div className="px-5 py-4">
         <h1 className="text-2xl font-bold text-[#141414]">Hub</h1>
+        <Link 
+          to="/dashboard/settings"
+          className="inline-block mt-1 px-3 py-1 bg-[#F5F5F5] rounded-full"
+        >
+          <span className="text-sm font-medium text-[#141414]">
+            {profile?.business_name || "One Guy Can"}
+          </span>
+        </Link>
       </div>
 
       {/* Stats Cards - 2x2 Grid matching reference */}

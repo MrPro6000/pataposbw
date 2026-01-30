@@ -10,6 +10,7 @@ import {
   Video
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileSupportViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -38,14 +39,14 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
             <ChevronLeft className="w-6 h-6 text-[#141414]" />
           </Link>
-          <h1 className="font-semibold text-[#141414]">Support</h1>
+          <PataLogo className="h-5" />
           <div className="w-10" />
         </div>
       </header>
 
       {/* Support Hero */}
       <div className="px-5 py-6">
-        <div className="bg-[#00C8E6] rounded-2xl p-5 text-center">
+        <div className="bg-[#0066FF] rounded-2xl p-5 text-center">
           <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
             <HelpCircle className="w-7 h-7 text-white" />
           </div>
@@ -63,8 +64,8 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
               key={option.label}
               className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 active:scale-98 transition-transform"
             >
-              <div className="w-10 h-10 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
-                <option.icon className="w-5 h-5 text-[#00C8E6]" />
+              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
+                <option.icon className="w-5 h-5 text-[#0066FF]" />
               </div>
               <span className="text-sm font-medium text-[#141414]">{option.label}</span>
             </button>
@@ -104,7 +105,7 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
             <MessageSquare className="w-6 h-6 text-[#141414]/30" />
           </div>
           <p className="text-[#141414]/60 text-sm">No open tickets</p>
-          <button className="mt-3 px-4 py-2 bg-[#00C8E6] text-[#141414] font-medium rounded-xl text-sm">
+          <button className="mt-3 px-4 py-2 bg-[#0066FF] text-white font-medium rounded-xl text-sm">
             Create Ticket
           </button>
         </div>
