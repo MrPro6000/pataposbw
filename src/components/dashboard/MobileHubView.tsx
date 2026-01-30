@@ -27,19 +27,19 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
 
-  // Chart data
+  // Chart data - show sample stats by default
   const weeklyChartData = [
-    { day: "M", value: 0 },
-    { day: "T", value: 0 },
-    { day: "W", value: 0 },
-    { day: "T", value: 0 },
-    { day: "F", value: 0 },
-    { day: "S", value: 0 },
-    { day: "S", value: 0 },
+    { day: "M", value: 4500 },
+    { day: "T", value: 6200 },
+    { day: "W", value: 5100 },
+    { day: "T", value: 7800 },
+    { day: "F", value: 9200 },
+    { day: "S", value: 8400 },
+    { day: "S", value: 6800 },
   ];
 
   const chartConfig = {
-    value: { label: "Revenue", color: "#E8E8E8" },
+    value: { label: "Revenue", color: "#0066FF" },
   };
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
@@ -138,7 +138,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
                 />
                 <Bar 
                   dataKey="value" 
-                  fill="#E8E8E8" 
+                  fill="#0066FF" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -147,7 +147,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <div className="flex items-center justify-between border-t border-[#E8E8E8] pt-3">
             <p className="text-sm text-[#141414]/60">Last week</p>
-            <p className="text-lg font-bold text-[#141414]">P0.00</p>
+            <p className="text-lg font-bold text-[#141414]">P48,000</p>
           </div>
         </button>
 

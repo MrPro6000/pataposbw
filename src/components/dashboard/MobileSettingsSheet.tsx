@@ -43,7 +43,7 @@ interface MobileSettingsSheetProps {
 
 const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSheetProps) => {
   const { toast } = useToast();
-  const { theme, toggleTheme, colors, setColors, colorPresets } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   // Business settings state
   const [businessInfo, setBusinessInfo] = useState({
     name: "Pata Business (Pty) Ltd",
@@ -494,74 +494,37 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "theme":
         return (
           <div className="space-y-5">
-            {/* Theme Mode */}
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                {theme === "light" ? (
-                  <Sun className="w-5 h-5 text-amber-500" />
-                ) : (
-                  <Moon className="w-5 h-5 text-indigo-500" />
-                )}
-                <div>
-                  <p className="font-medium text-[#141414]">Theme Mode</p>
-                  <p className="text-sm text-[#141414]/60">
-                    {theme === "light" ? "Light mode" : "Dark mode"}
-                  </p>
-                </div>
-              </div>
-              <Switch 
-                checked={theme === "dark"} 
-                onCheckedChange={toggleTheme}
-              />
-            </div>
-
-            {/* Accent Color */}
+            {/* Theme Mode - Light/Dark only */}
             <div>
-              <p className="font-medium text-[#141414] mb-3">Accent Color</p>
-              <p className="text-sm text-[#141414]/60 mb-4">Choose a color theme for your dashboard</p>
+              <p className="font-medium text-[#141414] mb-3">Appearance</p>
+              <p className="text-sm text-[#141414]/60 mb-4">Choose between light and dark mode</p>
               
               <div className="grid grid-cols-2 gap-3">
-                {colorPresets.map((preset) => {
-                  const isSelected = colors.primary === preset.primary;
-                  const hslMatch = preset.primary.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
-                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#00C8E6';
-                  
-                  return (
-                    <button
-                      key={preset.name}
-                      onClick={() => setColors({ primary: preset.primary, accent: preset.accent })}
-                      className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
-                        isSelected ? "border-[#141414]" : "border-[#E8E8E8]"
-                      }`}
-                    >
-                      <div 
-                        className="w-8 h-8 rounded-full flex items-center justify-center"
-                        style={{ backgroundColor: bgColor }}
-                      >
-                        {isSelected && <Check className="w-4 h-4 text-white" />}
-                      </div>
-                      <span className="font-medium text-[#141414]">{preset.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Preview */}
-            <div className="bg-[#F5F5F5] rounded-xl p-4">
-              <p className="text-sm text-[#141414]/60 mb-3">Preview</p>
-              <div className="flex gap-3">
-                <Button 
-                  className="text-white flex-1"
-                  style={{ 
-                    backgroundColor: `hsl(${colors.primary})`,
-                  }}
+                <button
+                  onClick={() => theme === "dark" && toggleTheme()}
+                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-3 ${
+                    theme === "light" ? "border-[#0066FF] bg-[#0066FF]/10" : "border-[#E8E8E8]"
+                  }`}
                 >
-                  Primary
-                </Button>
-                <Button variant="outline" className="flex-1">
-                  Secondary
-                </Button>
+                  <div className="w-12 h-12 bg-white border border-[#E8E8E8] rounded-xl flex items-center justify-center">
+                    <Sun className="w-6 h-6 text-amber-500" />
+                  </div>
+                  <span className="font-medium text-[#141414]">Light</span>
+                  {theme === "light" && <Check className="w-5 h-5 text-[#0066FF]" />}
+                </button>
+                
+                <button
+                  onClick={() => theme === "light" && toggleTheme()}
+                  className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-3 ${
+                    theme === "dark" ? "border-[#0066FF] bg-[#0066FF]/10" : "border-[#E8E8E8]"
+                  }`}
+                >
+                  <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
+                    <Moon className="w-6 h-6 text-indigo-400" />
+                  </div>
+                  <span className="font-medium text-[#141414]">Dark</span>
+                  {theme === "dark" && <Check className="w-5 h-5 text-[#0066FF]" />}
+                </button>
               </div>
             </div>
           </div>
