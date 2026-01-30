@@ -15,8 +15,7 @@ const Shop = () => {
   const devices = [
     {
       name: "Go Pata",
-      price: "P499",
-      originalPrice: "P699",
+      price: "P780",
       image: goPataImg,
       description: "Compact handheld terminal with physical keypad. Perfect for quick transactions.",
       features: ["Physical keypad", "Built-in printer", "All-day battery"],
@@ -24,16 +23,14 @@ const Shop = () => {
     },
     {
       name: "Pata Silver",
-      price: "P799",
-      originalPrice: "P999",
+      price: "P4,880",
       image: pataSilverImg,
       description: "Sleek touchscreen tablet. Modern and portable for any business.",
       features: ["Touchscreen display", "Compact design", "Fast processing"],
     },
     {
       name: "Pata Pro",
-      price: "P1,299",
-      originalPrice: "P1,599",
+      price: "P3,880",
       image: pataProImg,
       description: "Powerful handheld with built-in thermal printer and NFC tap.",
       features: ["Built-in printer", "NFC tap to pay", "Touchscreen"],
@@ -41,8 +38,7 @@ const Shop = () => {
     },
     {
       name: "Pata Diamond",
-      price: "P1,799",
-      originalPrice: "P2,199",
+      price: "P680",
       image: pataDiamondImg,
       description: "Premium handheld with large touchscreen and thermal printer.",
       features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
@@ -50,15 +46,13 @@ const Shop = () => {
     {
       name: "Pata Platinum",
       price: "P999",
-      originalPrice: "P1,299",
       image: pataPlatinumImg,
       description: "Classic keypad terminal with reliable performance and durability.",
       features: ["Durable design", "Physical keypad", "Card chip reader"],
     },
     {
       name: "Pata Spaza",
-      price: "P3,499",
-      originalPrice: "P3,999",
+      price: "P3,800",
       image: pataSpazaImg,
       description: "Full POS system with large display and customer-facing screen. Ideal for retail stores.",
       features: ["Customer display", "Receipt printer", "Full POS system"],
@@ -116,9 +110,6 @@ const Shop = () => {
                   <h3 className="text-xl font-bold text-white mb-1">{device.name}</h3>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="text-2xl font-bold text-[#00C8E6]">{device.price}</span>
-                    {device.originalPrice && (
-                      <span className="text-white/40 line-through text-sm">{device.originalPrice}</span>
-                    )}
                   </div>
                   <p className="text-white/60 text-sm mb-4">{device.description}</p>
                   
