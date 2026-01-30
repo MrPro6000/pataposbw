@@ -99,7 +99,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
         <div className="flex items-center justify-between">
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+            className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
           </button>
@@ -171,8 +171,8 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
         <Link to="/dashboard/devices" className="block bg-white rounded-2xl p-5 active:scale-98 transition-transform">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-[#00C8E6]" />
+              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-[#0066FF]" />
               </div>
               <div>
                 <p className="font-semibold text-[#141414]">Card machines</p>

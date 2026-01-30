@@ -8,13 +8,13 @@ interface ThemeColors {
 }
 
 const defaultColors: ThemeColors = {
-  primary: "192 100% 45%", // Cyan
-  accent: "192 100% 45%",
+  primary: "217 100% 50%", // Pata Blue (matching logo)
+  accent: "217 100% 50%",
 };
 
 const colorPresets = [
+  { name: "Blue", primary: "217 100% 50%", accent: "217 100% 50%" },
   { name: "Cyan", primary: "192 100% 45%", accent: "192 100% 45%" },
-  { name: "Blue", primary: "217 91% 60%", accent: "217 91% 60%" },
   { name: "Purple", primary: "262 83% 58%", accent: "262 83% 58%" },
   { name: "Green", primary: "142 71% 45%", accent: "142 71% 45%" },
   { name: "Orange", primary: "25 95% 53%", accent: "25 95% 53%" },

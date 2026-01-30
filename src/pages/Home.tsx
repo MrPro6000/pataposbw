@@ -15,8 +15,8 @@ const Home = () => {
             {/* Left Content */}
             <div>
               <div className="flex items-center gap-2 mb-6">
-                <Star className="w-4 h-4 text-[#00C8E6]" />
-                <span className="text-[#00C8E6] font-medium">202,107</span>
+                <Star className="w-4 h-4 text-[#0066FF]" />
+                <span className="text-[#0066FF] font-medium">202,107</span>
                 <span className="text-white/80">businesses run smarter with Pata</span>
               </div>
               
@@ -63,7 +63,7 @@ const Home = () => {
                   </div>
                 </div>
                 <div className="bg-[#2a2a2a] rounded-2xl aspect-video overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-[#00C8E6]/20 to-[#00C8E6]/10 flex items-center justify-center">
+                  <div className="w-full h-full bg-gradient-to-br from-[#0066FF]/20 to-[#0066FF]/10 flex items-center justify-center">
                     <span className="text-white/40 text-sm">App Screen</span>
                   </div>
                 </div>
@@ -106,12 +106,12 @@ const Home = () => {
                 to={feature.link}
                 className="bg-[#2a2a2a] rounded-2xl p-8 hover:bg-[#333] transition-colors group"
               >
-                <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-xl mb-6 flex items-center justify-center">
-                  <div className="w-6 h-6 bg-[#00C8E6] rounded-lg"></div>
+                <div className="w-12 h-12 bg-[#0066FF]/20 rounded-xl mb-6 flex items-center justify-center">
+                  <div className="w-6 h-6 bg-[#0066FF] rounded-lg"></div>
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
                 <p className="text-white/60 mb-4">{feature.description}</p>
-                <span className="text-[#00C8E6] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                <span className="text-[#0066FF] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
                   Learn more
                   <ArrowRight className="w-4 h-4" />
                 </span>
