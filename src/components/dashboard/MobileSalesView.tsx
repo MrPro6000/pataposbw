@@ -91,23 +91,23 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] pb-24">
+    <div className="min-h-screen bg-muted pb-24">
       {/* Header */}
-      <header className="bg-white px-5 pt-4 pb-6 sticky top-0 z-40">
+      <header className="bg-background px-5 pt-4 pb-6 sticky top-0 z-40">
         <div className="flex items-center justify-between mb-6">
           <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+            className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-sm font-bold text-primary-foreground"
           >
             {personalInitials}
           </button>
         </div>
 
         <div className="text-center">
-          <p className="text-sm text-[#141414]/60 mb-1">Last 7 days</p>
-          <p className="text-5xl font-bold text-[#141414] mb-2">P0.00</p>
-          <p className="text-sm text-[#141414]/60">Today's the day to make things happen.</p>
+          <p className="text-sm text-muted-foreground mb-1">Last 7 days</p>
+          <p className="text-5xl font-bold text-foreground mb-2">P0.00</p>
+          <p className="text-sm text-muted-foreground">Today's the day to make things happen.</p>
         </div>
       </header>
 
