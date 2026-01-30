@@ -10,7 +10,9 @@ import {
   Smartphone,
   RefreshCw,
   CheckCircle,
-  Globe
+  Globe,
+  Package,
+  ShoppingBag
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobilePaymentSheet from "./MobilePaymentSheet";
@@ -18,6 +20,7 @@ import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
 import MobilePaymentLinksSheet from "./MobilePaymentLinksSheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileProfileSheet from "./MobileProfileSheet";
+import MobileProductSaleSheet from "./MobileProductSaleSheet";
 
 // Quick Action Button Component
 const QuickActionButton = ({ 
@@ -58,6 +61,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentLinksOpen, setPaymentLinksOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [productSaleOpen, setProductSaleOpen] = useState(false);
   
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
@@ -115,6 +119,23 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
       {/* Quick Actions */}
       <div className="px-5 py-4">
+        {/* Products/POS Button - Full Width */}
+        <button 
+          onClick={() => setProductSaleOpen(true)}
+          className="w-full flex items-center justify-between p-4 bg-[#00C8E6] rounded-2xl mb-3 active:scale-98 transition-transform"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+              <ShoppingBag className="w-5 h-5 text-white" />
+            </div>
+            <div className="text-left">
+              <p className="font-semibold text-white">Sell Products</p>
+              <p className="text-sm text-white/70">Select items & checkout</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-white" />
+        </button>
+
         <div className="grid grid-cols-3 gap-3 mb-3">
           <QuickActionButton 
             icon={CreditCard} 
@@ -155,6 +176,31 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
             onClick={() => handleQuickAction('wallet')}
           />
         </div>
+      </div>
+
+      {/* Products Quick View */}
+      <div className="px-5 py-2">
+        <Link 
+          to="/dashboard/products"
+          className="w-full bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform block"
+        >
+          <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
+            <h2 className="font-semibold text-[#141414]">Products</h2>
+            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+          </div>
+          
+          <div className="px-5 py-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
+                <Package className="w-5 h-5 text-[#00C8E6]" />
+              </div>
+              <div>
+                <p className="font-medium text-[#141414]">Manage Products</p>
+                <p className="text-sm text-[#141414]/60">Add, edit, and view inventory</p>
+              </div>
+            </div>
+          </div>
+        </Link>
       </div>
 
       {/* Sales History */}
@@ -281,6 +327,12 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobilePaymentGatewaySheet
         open={paymentGatewayOpen}
         onClose={() => setPaymentGatewayOpen(false)}
+      />
+
+      {/* Product Sale Sheet */}
+      <MobileProductSaleSheet
+        open={productSaleOpen}
+        onClose={() => setProductSaleOpen(false)}
       />
 
       {/* Profile Sheet */}
