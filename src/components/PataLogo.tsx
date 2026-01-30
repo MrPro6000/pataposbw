@@ -9,8 +9,8 @@ interface PataLogoProps {
 const PataLogo = ({ className = "h-6" }: PataLogoProps) => {
   const { theme } = useTheme();
   
-  // dark theme = blue+white logo, light theme = blue-only logo
-  const logoSrc = theme === "dark" ? pataLogoWhite : pataLogoBlue;
+  // light theme = blue+white logo, dark theme = blue-only logo
+  const logoSrc = theme === "dark" ? pataLogoBlue : pataLogoWhite;
   
   return (
     <div className={`flex items-center gap-1.5 ${className}`}>
