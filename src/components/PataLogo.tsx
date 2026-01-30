@@ -7,6 +7,7 @@ interface PataLogoProps {
 }
 
 const PataLogo = ({ className = "h-6", variant = "dark" }: PataLogoProps) => {
+  // dark theme = blue+white logo, light theme = blue logo
   const logoSrc = variant === "dark" ? pataLogoWhite : pataLogoBlue;
   
   return (
@@ -16,13 +17,7 @@ const PataLogo = ({ className = "h-6", variant = "dark" }: PataLogoProps) => {
         alt="Pata"
         className="h-full w-auto object-contain"
       />
-      <span 
-        className="font-extrabold tracking-tight leading-none"
-        style={{ 
-          fontSize: 'calc(100% * 1.6)',
-          letterSpacing: '-0.04em'
-        }}
-      >
+      <span className="font-extrabold tracking-tight leading-none">
         PATA
       </span>
     </div>
