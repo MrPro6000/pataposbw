@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ChevronLeft } from "lucide-react";
+import { X, ChevronLeft, Sun, Moon, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useTheme } from "@/contexts/ThemeContext";
 
 type SettingsSection = 
   | "business" 
@@ -30,7 +31,8 @@ type SettingsSection =
   | "notifications"
   | "support"
   | "devices"
-  | "customers";
+  | "customers"
+  | "theme";
 
 interface MobileSettingsSheetProps {
   open: boolean;
@@ -41,7 +43,7 @@ interface MobileSettingsSheetProps {
 
 const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSheetProps) => {
   const { toast } = useToast();
-  
+  const { theme, toggleTheme, colors, setColors, colorPresets } = useTheme();
   // Business settings state
   const [businessInfo, setBusinessInfo] = useState({
     name: "Pata Business (Pty) Ltd",
@@ -489,6 +491,82 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           </div>
         );
 
+      case "theme":
+        return (
+          <div className="space-y-5">
+            {/* Theme Mode */}
+            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {theme === "light" ? (
+                  <Sun className="w-5 h-5 text-amber-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-indigo-500" />
+                )}
+                <div>
+                  <p className="font-medium text-[#141414]">Theme Mode</p>
+                  <p className="text-sm text-[#141414]/60">
+                    {theme === "light" ? "Light mode" : "Dark mode"}
+                  </p>
+                </div>
+              </div>
+              <Switch 
+                checked={theme === "dark"} 
+                onCheckedChange={toggleTheme}
+              />
+            </div>
+
+            {/* Accent Color */}
+            <div>
+              <p className="font-medium text-[#141414] mb-3">Accent Color</p>
+              <p className="text-sm text-[#141414]/60 mb-4">Choose a color theme for your dashboard</p>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {colorPresets.map((preset) => {
+                  const isSelected = colors.primary === preset.primary;
+                  const hslMatch = preset.primary.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
+                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#00C8E6';
+                  
+                  return (
+                    <button
+                      key={preset.name}
+                      onClick={() => setColors({ primary: preset.primary, accent: preset.accent })}
+                      className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                        isSelected ? "border-[#141414]" : "border-[#E8E8E8]"
+                      }`}
+                    >
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: bgColor }}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      </div>
+                      <span className="font-medium text-[#141414]">{preset.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="bg-[#F5F5F5] rounded-xl p-4">
+              <p className="text-sm text-[#141414]/60 mb-3">Preview</p>
+              <div className="flex gap-3">
+                <Button 
+                  className="text-white flex-1"
+                  style={{ 
+                    backgroundColor: `hsl(${colors.primary})`,
+                  }}
+                >
+                  Primary
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  Secondary
+                </Button>
+              </div>
+            </div>
+          </div>
+        );
+
       default:
         return null;
     }
@@ -519,7 +597,7 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           {renderContent()}
         </div>
 
-        {section !== "support" && section !== "devices" && section !== "customers" && (
+        {section !== "support" && section !== "devices" && section !== "customers" && section !== "theme" && (
           <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E8E8E8]">
             <Button
               onClick={handleSave}

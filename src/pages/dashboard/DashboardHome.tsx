@@ -3,6 +3,8 @@ import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
+import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   TrendingUp,
@@ -13,7 +15,9 @@ import {
   BarChart3,
   User,
   Wallet,
-  Banknote
+  Banknote,
+  CreditCard,
+  Globe
 } from "lucide-react";
 import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
@@ -26,6 +30,8 @@ import { BarChart, Bar, XAxis } from "recharts";
 const DashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
+  const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
+  const [capitalOpen, setCapitalOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -131,6 +137,13 @@ const DashboardHome = () => {
     { title: "Products", value: "12 active", icon: Package, link: "/dashboard/products" },
   ];
 
+  const quickAccessItems = [
+    { title: "POS", subtitle: "Point of Sale", icon: CreditCard, iconBg: "bg-[#00C8E6]/10", iconColor: "text-[#00C8E6]", link: "/dashboard", action: undefined },
+    { title: "Card Machine", subtitle: "4 devices", icon: Smartphone, iconBg: "bg-purple-100", iconColor: "text-purple-600", link: "/dashboard/devices", action: undefined },
+    { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-green-100", iconColor: "text-green-600", link: undefined, action: () => setPaymentGatewayOpen(true) },
+    { title: "Pata Capital", subtitle: "Business funding", icon: Wallet, iconBg: "bg-amber-100", iconColor: "text-amber-600", link: undefined, action: () => setCapitalOpen(true) },
+  ];
+
   return (
     <DashboardLayout>
       {/* Page Header */}
@@ -204,6 +217,44 @@ const DashboardHome = () => {
         </div>
       </section>
 
+      {/* Quick Access Section */}
+      <section className="mb-8">
+        <h2 className="text-sm text-[#141414]/60 mb-4">Quick Access</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {quickAccessItems.map((item) => 
+            item.link ? (
+              <Link
+                key={item.title}
+                to={item.link}
+                className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
+              >
+                <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
+                  <item.icon className={`w-6 h-6 ${item.iconColor}`} />
+                </div>
+                <div>
+                  <p className="font-semibold text-[#141414]">{item.title}</p>
+                  <p className="text-sm text-[#141414]/60">{item.subtitle}</p>
+                </div>
+              </Link>
+            ) : (
+              <button
+                key={item.title}
+                onClick={item.action}
+                className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4 text-left"
+              >
+                <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
+                  <item.icon className={`w-6 h-6 ${item.iconColor}`} />
+                </div>
+                <div>
+                  <p className="font-semibold text-[#141414]">{item.title}</p>
+                  <p className="text-sm text-[#141414]/60">{item.subtitle}</p>
+                </div>
+              </button>
+            )
+          )}
+        </div>
+      </section>
+
       {/* Sales Reports Section */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -268,6 +319,18 @@ const DashboardHome = () => {
           </Link>
         </div>
       </section>
+
+      {/* Payment Gateway Dialog */}
+      <PaymentGatewayDialog
+        open={paymentGatewayOpen}
+        onClose={() => setPaymentGatewayOpen(false)}
+      />
+
+      {/* Capital Dialog */}
+      <CapitalDialog
+        open={capitalOpen}
+        onClose={() => setCapitalOpen(false)}
+      />
     </DashboardLayout>
   );
 };

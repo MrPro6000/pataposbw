@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTheme } from "@/contexts/ThemeContext";
 import { 
   Building2, 
   Store,
@@ -10,7 +11,11 @@ import {
   Bell,
   Percent,
   ChevronRight,
-  Save
+  Save,
+  Palette,
+  Sun,
+  Moon,
+  Check
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,10 +30,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications";
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "theme";
 
 const Settings = () => {
   const isMobile = useIsMobile();
+  const { theme, toggleTheme, colors, setColors, colorPresets } = useTheme();
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   
   const [businessInfo, setBusinessInfo] = useState({
@@ -79,6 +85,7 @@ const Settings = () => {
     { id: "tax" as const, label: "Tax / VAT", icon: Percent },
     { id: "receipts" as const, label: "Receipts", icon: Receipt },
     { id: "notifications" as const, label: "Notifications", icon: Bell },
+    { id: "theme" as const, label: "Appearance", icon: Palette },
   ];
 
   const renderContent = () => {
@@ -349,6 +356,82 @@ const Settings = () => {
                 checked={notifications.payoutComplete} 
                 onCheckedChange={(v) => setNotifications({ ...notifications, payoutComplete: v })}
               />
+            </div>
+          </div>
+        );
+
+      case "theme":
+        return (
+          <div className="space-y-6">
+            {/* Theme Mode */}
+            <div className="flex items-center justify-between p-4 bg-[#F6F6F6] rounded-xl">
+              <div className="flex items-center gap-3">
+                {theme === "light" ? (
+                  <Sun className="w-5 h-5 text-amber-500" />
+                ) : (
+                  <Moon className="w-5 h-5 text-indigo-500" />
+                )}
+                <div>
+                  <p className="font-medium text-[#141414]">Theme Mode</p>
+                  <p className="text-sm text-[#141414]/60">
+                    {theme === "light" ? "Light mode" : "Dark mode"}
+                  </p>
+                </div>
+              </div>
+              <Switch 
+                checked={theme === "dark"} 
+                onCheckedChange={toggleTheme}
+              />
+            </div>
+
+            {/* Accent Color */}
+            <div>
+              <h3 className="font-medium text-[#141414] mb-4">Accent Color</h3>
+              <p className="text-sm text-[#141414]/60 mb-4">Choose a color theme for your dashboard</p>
+              
+              <div className="grid grid-cols-3 gap-3">
+                {colorPresets.map((preset) => {
+                  const isSelected = colors.primary === preset.primary;
+                  const hslMatch = preset.primary.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
+                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#00C8E6';
+                  
+                  return (
+                    <button
+                      key={preset.name}
+                      onClick={() => setColors({ primary: preset.primary, accent: preset.accent })}
+                      className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${
+                        isSelected ? "border-[#141414]" : "border-[#E8E8E8]"
+                      }`}
+                    >
+                      <div 
+                        className="w-8 h-8 rounded-full flex items-center justify-center"
+                        style={{ backgroundColor: bgColor }}
+                      >
+                        {isSelected && <Check className="w-4 h-4 text-white" />}
+                      </div>
+                      <span className="font-medium text-[#141414]">{preset.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Preview */}
+            <div className="bg-[#F6F6F6] rounded-xl p-4">
+              <p className="text-sm text-[#141414]/60 mb-3">Preview</p>
+              <div className="flex gap-3">
+                <Button 
+                  className="text-white"
+                  style={{ 
+                    backgroundColor: `hsl(${colors.primary})`,
+                  }}
+                >
+                  Primary Button
+                </Button>
+                <Button variant="outline">
+                  Secondary Button
+                </Button>
+              </div>
             </div>
           </div>
         );
