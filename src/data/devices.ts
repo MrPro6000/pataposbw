@@ -22,7 +22,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Pata Spaza",
     image: pataSpazaImg,
     description: "Full POS system with customer display",
-    price: "P3,499",
+    price: "P3,800",
   },
   "Patapos Silver": {
     id: "silver",
@@ -30,7 +30,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Patapos Silver",
     image: pataSilverImg,
     description: "Sleek touchscreen tablet terminal",
-    price: "P799",
+    price: "P4,880",
   },
   "Go Pata": {
     id: "go",
@@ -38,7 +38,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Go Pata",
     image: goPataImg,
     description: "Compact handheld with keypad",
-    price: "P499",
+    price: "P780",
   },
   "Pata Diamond": {
     id: "diamond",
@@ -46,7 +46,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Pata Diamond",
     image: pataDiamondImg,
     description: "Premium handheld with large touchscreen",
-    price: "P1,799",
+    price: "P680",
   },
   "Pata Pro": {
     id: "pro",
@@ -54,7 +54,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Pata Pro",
     image: pataProImg,
     description: "Powerful handheld with built-in printer",
-    price: "P1,299",
+    price: "P3,880",
   },
   "Pata Platinum": {
     id: "platinum",

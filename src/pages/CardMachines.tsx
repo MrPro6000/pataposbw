@@ -15,8 +15,7 @@ const CardMachines = () => {
   const machines = [
     {
       name: "Go Pata",
-      price: "P499",
-      originalPrice: "P699",
+      price: "P780",
       image: goPataImg,
       description: "Compact handheld terminal. Perfect for quick transactions.",
       features: ["Physical keypad", "Built-in printer", "All-day battery"],
@@ -24,8 +23,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Silver",
-      price: "P799",
-      originalPrice: "P999",
+      price: "P4,880",
       image: pataSilverImg,
       description: "Sleek touchscreen tablet. Modern and portable.",
       features: ["Touchscreen display", "Compact design", "Fast processing"],
@@ -33,8 +31,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Pro",
-      price: "P1,299",
-      originalPrice: "P1,599",
+      price: "P3,880",
       image: pataProImg,
       description: "Powerful handheld with built-in thermal printer.",
       features: ["Built-in printer", "NFC tap to pay", "Touchscreen"],
@@ -42,8 +39,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Diamond",
-      price: "P1,799",
-      originalPrice: "P2,199",
+      price: "P680",
       image: pataDiamondImg,
       description: "Premium handheld with large touchscreen.",
       features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
@@ -52,7 +48,6 @@ const CardMachines = () => {
     {
       name: "Pata Platinum",
       price: "P999",
-      originalPrice: "P1,299",
       image: pataPlatinumImg,
       description: "Classic keypad terminal with reliable performance.",
       features: ["Durable design", "Physical keypad", "Card chip reader"],
@@ -60,8 +55,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Spaza",
-      price: "P3,499",
-      originalPrice: "P3,999",
+      price: "P3,800",
       image: pataSpazaImg,
       description: "Full POS system with customer-facing display.",
       features: ["Customer display", "Receipt printer", "Full POS system"],
@@ -153,7 +147,6 @@ const CardMachines = () => {
                 <h3 className="text-xl font-bold text-white mb-2">{machine.name}</h3>
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-2xl font-bold text-white">{machine.price}</span>
-                  <span className="text-white/40 line-through">{machine.originalPrice}</span>
                 </div>
                 <p className="text-white/60 text-sm mb-4">{machine.description}</p>
                 
