@@ -147,7 +147,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       onClick={() => setSidebarOpen(false)}
                       className={`block pl-4 pr-5 py-2 text-sm transition-colors ${
                         isActive(item.path) 
-                          ? 'text-[#00C8E6] font-medium border-l-2 border-[#00C8E6] -ml-[1px]' 
+                          ? 'text-[#0066FF] font-medium border-l-2 border-[#0066FF] -ml-[1px]' 
                           : 'text-[#141414]/60 hover:text-[#141414]'
                       }`}
                     >
@@ -163,7 +163,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Business Switcher & Sign Out */}
         <div className="border-t border-[#E8E8E8] p-4">
           <div className="flex items-center gap-3 px-2 py-2 mb-2">
-            <div className="w-8 h-8 bg-[#00C8E6] rounded-lg flex items-center justify-center text-xs font-bold text-white">
+            <div className="w-8 h-8 bg-[#0066FF] rounded-lg flex items-center justify-center text-xs font-bold text-white">
               PA
             </div>
             <div className="flex-1 min-w-0">

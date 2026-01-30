@@ -89,8 +89,8 @@ const Payouts = () => {
       <div className="grid md:grid-cols-3 gap-4 mb-8">
         <div className="bg-[#141414] text-white rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-[#00C8E6] rounded-full flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-[#141414]" />
+            <div className="w-10 h-10 bg-[#0066FF] rounded-full flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
             <span className="text-white/70">Available Balance</span>
           </div>
@@ -259,7 +259,7 @@ const Payouts = () => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsBankModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => setIsBankModalOpen(false)} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+            <Button onClick={() => setIsBankModalOpen(false)} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
               Save Changes
             </Button>
           </DialogFooter>

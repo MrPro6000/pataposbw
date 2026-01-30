@@ -97,8 +97,8 @@ const Support = () => {
           href="tel:0800123456"
           className="bg-white rounded-2xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow"
         >
-          <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-xl flex items-center justify-center">
-            <Phone className="w-6 h-6 text-[#00C8E6]" />
+          <div className="w-12 h-12 bg-[#0066FF]/20 rounded-xl flex items-center justify-center">
+            <Phone className="w-6 h-6 text-[#0066FF]" />
           </div>
           <div>
             <p className="font-semibold text-[#141414]">Call Us</p>
@@ -133,7 +133,7 @@ const Support = () => {
         <div className="bg-white rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-[#141414]">Frequently Asked Questions</h2>
-            <a href="#" className="text-[#00C8E6] text-sm font-medium flex items-center gap-1 hover:underline">
+            <a href="#" className="text-[#0066FF] text-sm font-medium flex items-center gap-1 hover:underline">
               View all <ExternalLink className="w-3 h-3" />
             </a>
           </div>
@@ -221,7 +221,7 @@ const Support = () => {
 
             <Button 
               onClick={handleSubmitTicket}
-              className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
+              className="w-full bg-[#0066FF] hover:bg-[#0052CC] text-white"
             >
               <Send className="w-4 h-4 mr-2" />
               Submit Ticket

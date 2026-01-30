@@ -287,7 +287,7 @@ const Sales = () => {
 
   const getPaymentTypeConfig = (type: PaymentType) => {
     switch (type) {
-      case "card": return { title: "Card Sale", icon: CreditCard, color: "bg-[#00C8E6]" };
+      case "card": return { title: "Card Sale", icon: CreditCard, color: "bg-[#0066FF]" };
       case "payment-link": return { title: "Payment Link", icon: Link2, color: "bg-purple-500" };
       case "invoice": return { title: "New Invoice", icon: FileText, color: "bg-blue-500" };
       case "cash": return { title: "Cash Payment", icon: Banknote, color: "bg-green-500" };
@@ -307,7 +307,7 @@ const Sales = () => {
           <h1 className="text-2xl font-bold text-[#141414]">Sales & Transactions</h1>
           <p className="text-[#141414]/60">Manage payments, invoices, and payment links</p>
         </div>
-        <Button className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
           <Download className="w-4 h-4 mr-2" />
           Export
         </Button>
@@ -378,13 +378,13 @@ const Sales = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-white p-1 h-auto">
-          <TabsTrigger value="transactions" className="data-[state=active]:bg-[#00C8E6] data-[state=active]:text-[#141414] px-6 py-2">
+          <TabsTrigger value="transactions" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
             Transactions
           </TabsTrigger>
-          <TabsTrigger value="payment-links" className="data-[state=active]:bg-[#00C8E6] data-[state=active]:text-[#141414] px-6 py-2">
+          <TabsTrigger value="payment-links" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
             Payment Links
           </TabsTrigger>
-          <TabsTrigger value="invoices" className="data-[state=active]:bg-[#00C8E6] data-[state=active]:text-[#141414] px-6 py-2">
+          <TabsTrigger value="invoices" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
             Invoices
           </TabsTrigger>
         </TabsList>
@@ -440,7 +440,7 @@ const Sales = () => {
                 <thead className="bg-[#F6F6F6]">
                   <tr>
                     <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Reference</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Date & Time</th>
+                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Date</th>
                     <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Type</th>
                     <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Amount</th>
                     <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Status</th>
@@ -454,20 +454,13 @@ const Sales = () => {
                         <span className="font-medium text-[#141414]">{tx.reference}</span>
                       </td>
                       <td className="p-4 text-[#141414]/70">
-                        {tx.date} • {tx.time}
+                        {tx.date} at {tx.time}
                       </td>
                       <td className="p-4">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${getTypeColor(tx.type)}`}>
-                            {getTypeIcon(tx.type)}
-                          </div>
-                          <div>
-                            <span className="text-[#141414] text-sm">{paymentTypeLabels[tx.type]}</span>
-                            {tx.provider && (
-                              <p className="text-xs text-[#141414]/50">{tx.provider}</p>
-                            )}
-                          </div>
-                        </div>
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getTypeColor(tx.type)}`}>
+                          {getTypeIcon(tx.type)}
+                          {paymentTypeLabels[tx.type]}
+                        </span>
                       </td>
                       <td className="p-4 font-semibold text-[#141414]">
                         P{tx.amount.toFixed(2)}
@@ -487,7 +480,7 @@ const Sales = () => {
                           </button>
                           {tx.status === "success" && tx.type !== "cash" && (
                             <button className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors">
-                              <RotateCcw className="w-4 h-4 text-orange-500" />
+                              <RotateCcw className="w-4 h-4 text-[#141414]/60" />
                             </button>
                           )}
                         </div>
@@ -505,7 +498,7 @@ const Sales = () => {
           <div className="flex justify-between items-center mb-4">
             <p className="text-[#141414]/60">Manage and track your payment links</p>
             <Button 
-              className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
+              className="bg-[#0066FF] hover:bg-[#0052CC] text-white"
               onClick={() => setPaymentLinkDialogOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -577,7 +570,7 @@ const Sales = () => {
           <div className="flex justify-between items-center mb-4">
             <p className="text-[#141414]/60">Create and manage invoices for your customers</p>
             <Button 
-              className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
+              className="bg-[#0066FF] hover:bg-[#0052CC] text-white"
               onClick={() => setInvoiceDialogOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -756,7 +749,7 @@ const Sales = () => {
                           onClick={() => setSelectedProvider(provider.id)}
                           className={`p-4 rounded-xl border-2 transition-all ${
                             selectedProvider === provider.id
-                              ? "border-[#00C8E6] bg-[#00C8E6]/10"
+                              ? "border-[#0066FF] bg-[#0066FF]/10"
                               : "border-[#E8E8E8] bg-white"
                           }`}
                         >
@@ -799,11 +792,11 @@ const Sales = () => {
                 <Button
                   onClick={handlePaymentSubmit}
                   disabled={isProcessing}
-                  className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+                  className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
                 >
                   {isProcessing ? (
                     <div className="flex items-center gap-2">
-                      <div className="animate-spin w-5 h-5 border-2 border-[#141414] border-t-transparent rounded-full" />
+                      <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
                       Processing...
                     </div>
                   ) : (
@@ -860,7 +853,7 @@ const Sales = () => {
 
             <Button
               onClick={handleCreatePaymentLink}
-              className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+              className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
             >
               Create & Copy Link
             </Button>
@@ -910,9 +903,9 @@ const Sales = () => {
             </div>
 
             <div className="space-y-2">
-              <Label>Items/Description</Label>
+              <Label>Items / Description</Label>
               <Input
-                placeholder="e.g., Web Development Services"
+                placeholder="List items or services"
                 value={invoiceItems}
                 onChange={(e) => setInvoiceItems(e.target.value)}
               />
@@ -920,7 +913,7 @@ const Sales = () => {
 
             <Button
               onClick={handleCreateInvoice}
-              className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+              className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
             >
               Create Invoice
             </Button>

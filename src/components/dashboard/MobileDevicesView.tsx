@@ -51,7 +51,7 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
           </Link>
           <h1 className="font-semibold text-[#141414]">Devices</h1>
           <button className="w-10 h-10 flex items-center justify-center">
-            <Plus className="w-6 h-6 text-[#00C8E6]" />
+            <Plus className="w-6 h-6 text-[#0066FF]" />
           </button>
         </div>
       </header>
@@ -126,7 +126,7 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
         </div>
 
         {/* Add Device Card */}
-        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#00C8E6] active:bg-[#00C8E6]/5 transition-colors">
+        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#0066FF] active:bg-[#0066FF]/5 transition-colors">
           <div className="w-12 h-12 bg-[#F0F0F0] rounded-full flex items-center justify-center">
             <Plus className="w-6 h-6 text-[#141414]/40" />
           </div>

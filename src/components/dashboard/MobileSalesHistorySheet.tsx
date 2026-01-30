@@ -84,7 +84,7 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                 onClick={() => setSelectedFilter(filter.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedFilter === filter.id
-                    ? "bg-[#00C8E6] text-[#141414]"
+                    ? "bg-[#0066FF] text-white"
                     : "bg-[#F5F5F5] text-[#141414]/60"
                 }`}
               >

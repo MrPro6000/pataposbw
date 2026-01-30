@@ -187,8 +187,8 @@ const Settings = () => {
           <div className="space-y-4">
             <div className="p-4 bg-[#F6F6F6] rounded-xl flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#00C8E6]/20 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-[#00C8E6]" />
+                <div className="w-10 h-10 bg-[#0066FF]/20 rounded-lg flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-[#0066FF]" />
                 </div>
                 <div>
                   <p className="font-medium text-[#141414]">Card Payments</p>
@@ -393,7 +393,7 @@ const Settings = () => {
                 {colorPresets.map((preset) => {
                   const isSelected = colors.primary === preset.primary;
                   const hslMatch = preset.primary.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
-                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#00C8E6';
+                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#0066FF';
                   
                   return (
                     <button
@@ -444,40 +444,40 @@ const Settings = () => {
   return (
     <DashboardLayout>
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#141414]">Settings</h1>
-          <p className="text-[#141414]/60">Configure your business preferences</p>
+          <p className="text-[#141414]/60">Manage your business preferences</p>
         </div>
-        <Button className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
           <Save className="w-4 h-4 mr-2" />
           Save Changes
         </Button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-6">
-        {/* Sidebar Navigation */}
-        <div className="md:w-64 bg-white rounded-2xl p-3 h-fit">
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Settings Navigation */}
+        <div className="lg:w-64 space-y-1">
           {sections.map((section) => (
             <button
               key={section.id}
               onClick={() => setActiveSection(section.id)}
-              className={`w-full flex items-center justify-between p-3 rounded-xl transition-colors ${
+              className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-colors ${
                 activeSection === section.id 
-                  ? 'bg-[#00C8E6]/10 text-[#00C8E6]' 
-                  : 'text-[#141414]/70 hover:bg-[#f0f0f0]'
+                  ? "bg-[#0066FF] text-white" 
+                  : "bg-white text-[#141414] hover:bg-[#F5F5F5]"
               }`}
             >
-              <div className="flex items-center gap-3">
-                <section.icon className="w-5 h-5" />
-                <span className="font-medium">{section.label}</span>
-              </div>
-              <ChevronRight className="w-4 h-4" />
+              <section.icon className="w-5 h-5" />
+              <span className="font-medium">{section.label}</span>
+              <ChevronRight className={`w-4 h-4 ml-auto ${
+                activeSection === section.id ? "opacity-100" : "opacity-30"
+              }`} />
             </button>
           ))}
         </div>
 
-        {/* Content Area */}
+        {/* Settings Content */}
         <div className="flex-1 bg-white rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-[#141414] mb-6">
             {sections.find(s => s.id === activeSection)?.label}

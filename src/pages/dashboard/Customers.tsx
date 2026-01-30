@@ -94,7 +94,7 @@ const Customers = () => {
           <h1 className="text-2xl font-bold text-[#141414]">Customers</h1>
           <p className="text-[#141414]/60">Manage your customer relationships</p>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
           <Plus className="w-4 h-4 mr-2" />
           Add Customer
         </Button>
@@ -124,8 +124,8 @@ const Customers = () => {
             }`}
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-full flex items-center justify-center">
-                <Users className="w-5 h-5 text-[#00C8E6]" />
+              <div className="w-12 h-12 bg-[#0066FF]/20 rounded-full flex items-center justify-center">
+                <Users className="w-5 h-5 text-[#0066FF]" />
               </div>
               <div>
                 <h3 className="font-semibold text-[#141414]">{customer.name}</h3>
@@ -158,8 +158,8 @@ const Customers = () => {
             <div className="p-6 overflow-y-auto h-[calc(100vh-80px)]">
               {/* Profile Header */}
               <div className="text-center mb-6">
-                <div className="w-20 h-20 bg-[#00C8E6]/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <Users className="w-10 h-10 text-[#00C8E6]" />
+                <div className="w-20 h-20 bg-[#0066FF]/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Users className="w-10 h-10 text-[#0066FF]" />
                 </div>
                 <h3 className="text-xl font-bold text-[#141414]">{selectedCustomer.name}</h3>
                 <p className="text-[#141414]/60">Customer since Jan 2025</p>
@@ -253,7 +253,7 @@ const Customers = () => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleAddCustomer} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+            <Button onClick={handleAddCustomer} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
               Add Customer
             </Button>
           </DialogFooter>
