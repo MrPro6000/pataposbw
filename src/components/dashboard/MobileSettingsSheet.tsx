@@ -496,34 +496,34 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           <div className="space-y-5">
             {/* Theme Mode - Light/Dark only */}
             <div>
-              <p className="font-medium text-[#141414] mb-3">Appearance</p>
-              <p className="text-sm text-[#141414]/60 mb-4">Choose between light and dark mode</p>
+              <p className="font-medium text-foreground mb-3">Appearance</p>
+              <p className="text-sm text-muted-foreground mb-4">Choose between light and dark mode</p>
               
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => theme === "dark" && toggleTheme()}
                   className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-3 ${
-                    theme === "light" ? "border-[#0066FF] bg-[#0066FF]/10" : "border-[#E8E8E8]"
+                    theme === "light" ? "border-primary bg-primary/10" : "border-border"
                   }`}
                 >
-                  <div className="w-12 h-12 bg-white border border-[#E8E8E8] rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-white border border-border rounded-xl flex items-center justify-center">
                     <Sun className="w-6 h-6 text-amber-500" />
                   </div>
-                  <span className="font-medium text-[#141414]">Light</span>
-                  {theme === "light" && <Check className="w-5 h-5 text-[#0066FF]" />}
+                  <span className="font-medium text-foreground">Light</span>
+                  {theme === "light" && <Check className="w-5 h-5 text-primary" />}
                 </button>
                 
                 <button
                   onClick={() => theme === "light" && toggleTheme()}
                   className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center gap-3 ${
-                    theme === "dark" ? "border-[#0066FF] bg-[#0066FF]/10" : "border-[#E8E8E8]"
+                    theme === "dark" ? "border-primary bg-primary/10" : "border-border"
                   }`}
                 >
                   <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
                     <Moon className="w-6 h-6 text-indigo-400" />
                   </div>
-                  <span className="font-medium text-[#141414]">Dark</span>
-                  {theme === "dark" && <Check className="w-5 h-5 text-[#0066FF]" />}
+                  <span className="font-medium text-foreground">Dark</span>
+                  {theme === "dark" && <Check className="w-5 h-5 text-primary" />}
                 </button>
               </div>
             </div>
@@ -537,20 +537,20 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
-                <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
-              <DrawerTitle className="text-[#141414]">{title}</DrawerTitle>
+              <DrawerTitle className="text-foreground">{title}</DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -561,10 +561,10 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
         </div>
 
         {section !== "support" && section !== "devices" && section !== "customers" && section !== "theme" && (
-          <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E8E8E8]">
+          <div className="absolute bottom-0 left-0 right-0 p-5 bg-background border-t border-border">
             <Button
               onClick={handleSave}
-              className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
             >
               Save Changes
             </Button>
