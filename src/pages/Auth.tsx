@@ -542,7 +542,7 @@ const Auth = ({ mode }: AuthProps) => {
       )}
 
       {/* Footer */}
-      <footer className={`fixed bottom-0 left-0 right-0 ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} px-10 md:px-20 py-4 flex items-center justify-between transition-colors duration-300`}>
+      <footer className={`fixed bottom-0 left-0 right-0 ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} px-10 md:px-20 py-4 hidden md:flex items-center justify-between transition-colors duration-300`}>
         <a href="#" className={`flex items-center gap-1.5 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>
           System status
           <ExternalLink className="w-3.5 h-3.5" />
