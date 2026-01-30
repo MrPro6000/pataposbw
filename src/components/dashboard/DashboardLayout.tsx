@@ -93,7 +93,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] flex">
+    <div className="min-h-screen bg-muted flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -102,21 +102,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         />
       )}
 
-      {/* Sidebar - Pata style: white bg, clean design */}
+      {/* Sidebar - Pata style: theme-aware bg, clean design */}
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
-        w-56 bg-white border-r border-[#E8E8E8]
+        w-56 bg-background border-r border-border
         flex flex-col
         transform transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
         {/* Logo */}
-        <div className="flex items-center justify-between px-5 py-5 border-b border-[#E8E8E8]">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-border">
           <Link to="/">
-            <PataLogo className="h-5 text-[#141414]" />
+            <PataLogo className="h-5" />
           </Link>
           <button 
-            className="md:hidden text-[#141414]/60 hover:text-[#141414]"
+            className="md:hidden text-muted-foreground hover:text-foreground"
             onClick={() => setSidebarOpen(false)}
           >
             <X className="w-5 h-5" />
@@ -129,17 +129,17 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
             <div key={section.label} className="mb-1">
               <button
                 onClick={() => toggleSection(section.label)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-[#141414] hover:bg-[#F5F5F5] transition-colors"
+                className="w-full flex items-center gap-3 px-5 py-2.5 text-foreground hover:bg-muted transition-colors"
               >
-                <section.icon className="w-5 h-5 text-[#141414]/70" />
+                <section.icon className="w-5 h-5 text-muted-foreground" />
                 <span className="flex-1 text-left text-sm font-medium">{section.label}</span>
-                <ChevronDown className={`w-4 h-4 text-[#141414]/40 transition-transform ${
+                <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${
                   expandedSections.includes(section.label) ? 'rotate-180' : ''
                 }`} />
               </button>
               
               {expandedSections.includes(section.label) && (
-                <div className="ml-8 border-l border-[#E8E8E8]">
+                <div className="ml-8 border-l border-border">
                   {section.items.map((item) => (
                     <Link
                       key={item.path}
@@ -147,8 +147,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       onClick={() => setSidebarOpen(false)}
                       className={`block pl-4 pr-5 py-2 text-sm transition-colors ${
                         isActive(item.path) 
-                          ? 'text-[#0066FF] font-medium border-l-2 border-[#0066FF] -ml-[1px]' 
-                          : 'text-[#141414]/60 hover:text-[#141414]'
+                          ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
+                          : 'text-muted-foreground hover:text-foreground'
                       }`}
                     >
                       {item.label}
@@ -161,18 +161,18 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </nav>
 
         {/* Business Switcher & Sign Out */}
-        <div className="border-t border-[#E8E8E8] p-4">
+        <div className="border-t border-border p-4">
           <div className="flex items-center gap-3 px-2 py-2 mb-2">
-            <div className="w-8 h-8 bg-[#0066FF] rounded-lg flex items-center justify-center text-xs font-bold text-white">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground">
               PA
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-[#141414] truncate">Pata Business</p>
+              <p className="text-sm font-medium text-foreground truncate">Pata Business</p>
             </div>
           </div>
           <button 
             onClick={handleSignOut}
-            className="w-full flex items-center gap-2 px-2 py-2 text-sm text-[#141414]/60 hover:text-[#141414] hover:bg-[#F5F5F5] rounded-lg transition-colors"
+            className="w-full flex items-center gap-2 px-2 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Sign out
@@ -183,14 +183,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Mobile header */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-white border-b border-[#E8E8E8]">
+        <header className="md:hidden flex items-center justify-between p-4 bg-background border-b border-border">
           <button 
             onClick={() => setSidebarOpen(true)}
-            className="p-2 text-[#141414]"
+            className="p-2 text-foreground"
           >
             <Menu className="w-6 h-6" />
           </button>
-          <PataLogo className="h-4 text-[#141414]" />
+          <PataLogo className="h-4" />
           <div className="w-10" />
         </header>
 

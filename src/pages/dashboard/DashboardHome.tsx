@@ -59,8 +59,8 @@ const DashboardHome = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-[#00C8E6] border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-muted flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
@@ -95,7 +95,7 @@ const DashboardHome = () => {
   const chartConfig = {
     value: {
       label: "Sales",
-      color: "#00C8E6",
+      color: "#0066FF",
     },
   };
 
@@ -138,30 +138,30 @@ const DashboardHome = () => {
   ];
 
   const quickAccessItems = [
-    { title: "POS", subtitle: "Point of Sale", icon: CreditCard, iconBg: "bg-[#00C8E6]/10", iconColor: "text-[#00C8E6]", link: "/dashboard", action: undefined },
-    { title: "Card Machine", subtitle: "4 devices", icon: Smartphone, iconBg: "bg-purple-100", iconColor: "text-purple-600", link: "/dashboard/devices", action: undefined },
-    { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-green-100", iconColor: "text-green-600", link: undefined, action: () => setPaymentGatewayOpen(true) },
-    { title: "Pata Capital", subtitle: "Business funding", icon: Wallet, iconBg: "bg-amber-100", iconColor: "text-amber-600", link: undefined, action: () => setCapitalOpen(true) },
+    { title: "POS", subtitle: "Point of Sale", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", link: "/dashboard", action: undefined },
+    { title: "Card Machine", subtitle: "4 devices", icon: Smartphone, iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400", link: "/dashboard/devices", action: undefined },
+    { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-green-100 dark:bg-green-900/30", iconColor: "text-green-600 dark:text-green-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
+    { title: "Pata Capital", subtitle: "Business funding", icon: Wallet, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
   ];
 
   return (
     <DashboardLayout>
       {/* Page Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#141414]">Hub</h1>
+        <h1 className="text-2xl font-bold text-foreground">Hub</h1>
       </div>
 
       {/* Most Visited Section */}
       <section className="mb-8">
-        <h2 className="text-sm text-[#141414]/60 mb-4">Most visited</h2>
+        <h2 className="text-sm text-muted-foreground mb-4">Most visited</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {mostVisitedCards.map((card) => (
             <Link
               key={card.title}
               to={card.link}
-              className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow group"
+              className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group"
             >
-              <p className="text-sm text-[#141414]/60 mb-3">{card.title}</p>
+              <p className="text-sm text-muted-foreground mb-3">{card.title}</p>
               
               {card.hasChart ? (
                 <>
@@ -170,13 +170,13 @@ const DashboardHome = () => {
                       <BarChart data={miniChartData} barSize={6}>
                         <Bar 
                           dataKey="value" 
-                          fill="#00C8E6" 
+                          fill="#0066FF" 
                           radius={[2, 2, 0, 0]}
                         />
                       </BarChart>
                     </ChartContainer>
                   </div>
-                  <p className="text-lg font-semibold text-[#141414]">{card.value}</p>
+                  <p className="text-lg font-semibold text-foreground">{card.value}</p>
                 </>
               ) : (
                 <>
@@ -185,9 +185,9 @@ const DashboardHome = () => {
                       <card.icon className="w-5 h-5" />
                     </div>
                   )}
-                  <p className="text-lg font-semibold text-[#141414]">{card.value}</p>
+                  <p className="text-lg font-semibold text-foreground">{card.value}</p>
                   {card.subtitle && (
-                    <p className="text-sm text-[#141414]/60">{card.subtitle}</p>
+                    <p className="text-sm text-muted-foreground">{card.subtitle}</p>
                   )}
                 </>
               )}
@@ -203,14 +203,14 @@ const DashboardHome = () => {
             <Link
               key={item.title}
               to={item.link}
-              className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
+              className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
             >
-              <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-xl flex items-center justify-center">
-                <item.icon className="w-6 h-6 text-[#00C8E6]" />
+              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                <item.icon className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <p className="font-semibold text-[#141414]">{item.title}</p>
-                <p className="text-sm text-[#141414]/60">{item.value}</p>
+                <p className="font-semibold text-foreground">{item.title}</p>
+                <p className="text-sm text-muted-foreground">{item.value}</p>
               </div>
             </Link>
           ))}
@@ -219,35 +219,35 @@ const DashboardHome = () => {
 
       {/* Quick Access Section */}
       <section className="mb-8">
-        <h2 className="text-sm text-[#141414]/60 mb-4">Quick Access</h2>
+        <h2 className="text-sm text-muted-foreground mb-4">Quick Access</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {quickAccessItems.map((item) => 
             item.link ? (
               <Link
                 key={item.title}
                 to={item.link}
-                className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
+                className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
               >
                 <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
                   <item.icon className={`w-6 h-6 ${item.iconColor}`} />
                 </div>
                 <div>
-                  <p className="font-semibold text-[#141414]">{item.title}</p>
-                  <p className="text-sm text-[#141414]/60">{item.subtitle}</p>
+                  <p className="font-semibold text-foreground">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">{item.subtitle}</p>
                 </div>
               </Link>
             ) : (
               <button
                 key={item.title}
                 onClick={item.action}
-                className="bg-white rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4 text-left"
+                className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4 text-left"
               >
                 <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
                   <item.icon className={`w-6 h-6 ${item.iconColor}`} />
                 </div>
                 <div>
-                  <p className="font-semibold text-[#141414]">{item.title}</p>
-                  <p className="text-sm text-[#141414]/60">{item.subtitle}</p>
+                  <p className="font-semibold text-foreground">{item.title}</p>
+                  <p className="text-sm text-muted-foreground">{item.subtitle}</p>
                 </div>
               </button>
             )
@@ -258,10 +258,10 @@ const DashboardHome = () => {
       {/* Sales Reports Section */}
       <section>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm text-[#141414]/60">Sales reports</h2>
+          <h2 className="text-sm text-muted-foreground">Sales reports</h2>
           <Link 
             to="/dashboard/reports" 
-            className="text-sm text-[#00C8E6] font-medium flex items-center gap-1 hover:underline"
+            className="text-sm text-primary font-medium flex items-center gap-1 hover:underline"
           >
             View all
             <ChevronRight className="w-4 h-4" />
@@ -270,9 +270,9 @@ const DashboardHome = () => {
 
         <div className="grid md:grid-cols-3 gap-4">
           {/* Gross Revenue Chart */}
-          <div className="bg-white rounded-2xl p-5 md:col-span-1">
-            <p className="text-sm text-[#141414]/60 mb-1">Gross revenue</p>
-            <p className="text-xs text-[#141414]/40 mb-4">Last week</p>
+          <div className="bg-card rounded-2xl p-5 md:col-span-1">
+            <p className="text-sm text-muted-foreground mb-1">Gross revenue</p>
+            <p className="text-xs text-muted-foreground mb-4">Last week</p>
             
             <div className="h-32">
               <ChartContainer config={chartConfig} className="h-full w-full">
@@ -286,35 +286,35 @@ const DashboardHome = () => {
                   <ChartTooltip content={<ChartTooltipContent />} />
                   <Bar 
                     dataKey="value" 
-                    fill="#00C8E6" 
+                    fill="#0066FF" 
                     radius={[4, 4, 0, 0]}
                   />
                 </BarChart>
               </ChartContainer>
             </div>
             
-            <p className="text-lg font-semibold text-[#141414] mt-3">P 19,789.07</p>
+            <p className="text-lg font-semibold text-foreground mt-3">P 19,789.07</p>
           </div>
 
           {/* Product Report Card */}
           <Link 
             to="/dashboard/reports"
-            className="bg-white rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
+            className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
           >
-            <p className="text-sm text-[#141414]/60 mb-1">Product report</p>
+            <p className="text-sm text-muted-foreground mb-1">Product report</p>
             <div className="flex-1 flex items-center justify-center">
-              <Package className="w-12 h-12 text-[#141414]/20" />
+              <Package className="w-12 h-12 text-muted-foreground/50" />
             </div>
           </Link>
 
           {/* Staff Report Card */}
           <Link 
             to="/dashboard/reports"
-            className="bg-white rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
+            className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
           >
-            <p className="text-sm text-[#141414]/60 mb-1">Staff report</p>
+            <p className="text-sm text-muted-foreground mb-1">Staff report</p>
             <div className="flex-1 flex items-center justify-center">
-              <User className="w-12 h-12 text-[#141414]/20" />
+              <User className="w-12 h-12 text-muted-foreground/50" />
             </div>
           </Link>
         </div>
