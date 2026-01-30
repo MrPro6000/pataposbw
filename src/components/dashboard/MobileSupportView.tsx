@@ -32,12 +32,12 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] pb-24">
+    <div className="min-h-screen bg-muted pb-24">
       {/* Header */}
-      <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
+      <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
-            <ChevronLeft className="w-6 h-6 text-[#141414]" />
+            <ChevronLeft className="w-6 h-6 text-foreground" />
           </Link>
           <PataLogo className="h-5" />
           <div className="w-10" />

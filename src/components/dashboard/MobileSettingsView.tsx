@@ -91,14 +91,14 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F5F5] pb-24">
+    <div className="min-h-screen bg-muted pb-24">
       {/* Header */}
-      <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
+      <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
           <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+            className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-sm font-bold text-primary-foreground"
           >
             {personalInitials}
           </button>
