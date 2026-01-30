@@ -3,31 +3,69 @@ import MainFooter from "@/components/MainFooter";
 import { ArrowDown, Star, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Import device images
+import pataSpazaImg from "@/assets/devices/pata-spaza.jpeg";
+import pataSilverImg from "@/assets/devices/pata-silver.jpeg";
+import goPataImg from "@/assets/devices/go-pata.jpeg";
+import pataDiamondImg from "@/assets/devices/pata-diamond.jpeg";
+import pataProImg from "@/assets/devices/pata-pro.jpeg";
+import pataPlatinumImg from "@/assets/devices/pata-platinum.jpeg";
+
 const CardMachines = () => {
   const machines = [
     {
-      name: "Pata Go",
+      name: "Go Pata",
+      price: "P499",
+      originalPrice: "P699",
+      image: goPataImg,
+      description: "Compact handheld terminal. Perfect for quick transactions.",
+      features: ["Physical keypad", "Built-in printer", "All-day battery"],
+      badge: "Best Seller",
+    },
+    {
+      name: "Pata Silver",
       price: "P799",
       originalPrice: "P999",
-      description: "Perfect for businesses just getting started.",
-      features: ["Accepts all cards", "Connects to phone", "Free Pata app"],
+      image: pataSilverImg,
+      description: "Sleek touchscreen tablet. Modern and portable.",
+      features: ["Touchscreen display", "Compact design", "Fast processing"],
+      badge: null,
+    },
+    {
+      name: "Pata Pro",
+      price: "P1,299",
+      originalPrice: "P1,599",
+      image: pataProImg,
+      description: "Powerful handheld with built-in thermal printer.",
+      features: ["Built-in printer", "NFC tap to pay", "Touchscreen"],
       badge: "Most Popular",
     },
     {
-      name: "Pata Khumo",
-      price: "P1,999",
-      originalPrice: "P2,499",
-      description: "Stand-alone card machine with built-in printer.",
-      features: ["Built-in printer", "4G connectivity", "Long battery life"],
-      badge: "Best Value",
+      name: "Pata Diamond",
+      price: "P1,799",
+      originalPrice: "P2,199",
+      image: pataDiamondImg,
+      description: "Premium handheld with large touchscreen.",
+      features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
+      badge: null,
     },
     {
-      name: "Pata Neo",
-      price: "P3,999",
-      originalPrice: "P4,999",
-      description: "Our most advanced card machine with large screen.",
-      features: ["Large touchscreen", "Built-in printer", "Fastest processing"],
+      name: "Pata Platinum",
+      price: "P999",
+      originalPrice: "P1,299",
+      image: pataPlatinumImg,
+      description: "Classic keypad terminal with reliable performance.",
+      features: ["Durable design", "Physical keypad", "Card chip reader"],
       badge: null,
+    },
+    {
+      name: "Pata Spaza",
+      price: "P3,499",
+      originalPrice: "P3,999",
+      image: pataSpazaImg,
+      description: "Full POS system with customer-facing display.",
+      features: ["Customer display", "Receipt printer", "Full POS system"],
+      badge: "Enterprise",
     },
   ];
 
@@ -108,8 +146,8 @@ const CardMachines = () => {
                   </div>
                 )}
                 
-                <div className="aspect-square bg-[#2a2a2a] rounded-xl mb-6 flex items-center justify-center">
-                  <div className="w-24 h-32 bg-[#00C8E6] rounded-lg"></div>
+                <div className="aspect-square bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] rounded-xl mb-6 flex items-center justify-center p-4">
+                  <img src={machine.image} alt={machine.name} className="w-full h-full object-contain" />
                 </div>
                 
                 <h3 className="text-xl font-bold text-white mb-2">{machine.name}</h3>
