@@ -29,11 +29,14 @@ const paymentConfig = {
   "wallet": { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" },
 };
 
+import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
+import smegaLogo from "@/assets/mobile-money/smega.png";
+import myzakaLogo from "@/assets/mobile-money/myzaka.png";
+
 const mobileMoneyProviders = [
-  { id: "orange", name: "Orange Money", color: "bg-orange-500" },
-  { id: "smega", name: "Smega", color: "bg-blue-600" },
-  { id: "myzaka", name: "MyZaka", color: "bg-green-600" },
-  { id: "mascom", name: "Mascom MyZaka", color: "bg-yellow-500" },
+  { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
+  { id: "smega", name: "Smega", logo: smegaLogo },
+  { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
 ];
 
 const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetProps) => {
@@ -158,19 +161,23 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               {paymentType === "mobile-money" && (
                 <div className="space-y-3">
                   <Label className="text-[#141414]">Select Provider</Label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-3 gap-3">
                     {mobileMoneyProviders.map((provider) => (
                       <button
                         key={provider.id}
                         onClick={() => setSelectedProvider(provider.id)}
-                        className={`p-4 rounded-xl border-2 transition-all ${
+                        className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${
                           selectedProvider === provider.id
                             ? "border-[#0066FF] bg-[#0066FF]/10"
                             : "border-[#E8E8E8] bg-white"
                         }`}
                       >
-                        <div className={`w-8 h-8 ${provider.color} rounded-lg mb-2`} />
-                        <p className="text-sm font-medium text-[#141414]">{provider.name}</p>
+                        <img 
+                          src={provider.logo} 
+                          alt={provider.name} 
+                          className="w-12 h-12 object-contain mb-2 rounded-lg"
+                        />
+                        <p className="text-xs font-medium text-[#141414] text-center">{provider.name}</p>
                       </button>
                     ))}
                   </div>

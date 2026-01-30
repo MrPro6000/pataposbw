@@ -34,9 +34,29 @@ const Auth = ({ mode }: AuthProps) => {
   const isDark = theme === "dark";
 
   useEffect(() => {
+    const checkAdminAndRedirect = async (userId: string) => {
+      // Check if user is an admin
+      const { data: roles } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .eq("role", "admin");
+
+      if (roles && roles.length > 0) {
+        // User is admin, redirect to admin dashboard
+        navigate("/admin");
+        return true;
+      }
+      return false;
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
+          // Check if user is admin first
+          const isAdmin = await checkAdminAndRedirect(session.user.id);
+          if (isAdmin) return;
+
           // Check if user has completed KYC
           if (event === "SIGNED_IN") {
             const { data: kyc } = await supabase
@@ -60,6 +80,10 @@ const Auth = ({ mode }: AuthProps) => {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
+        // Check if user is admin first
+        const isAdmin = await checkAdminAndRedirect(session.user.id);
+        if (isAdmin) return;
+
         // Check if user has completed KYC
         const { data: kyc } = await supabase
           .from("kyc_submissions")
@@ -517,9 +541,9 @@ const Auth = ({ mode }: AuthProps) => {
         </div>
       </main>
 
-      {/* Cookie Banner */}
+      {/* Cookie Banner - Hidden on mobile */}
       {showCookieBanner && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-lg mx-auto px-4 z-50">
+        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-lg mx-auto px-4 z-50 hidden md:block">
           <div className={`${isDark ? 'bg-[#1a1a1a] border border-white/10' : 'bg-white border border-[#e0e0e0]'} rounded-2xl p-6 shadow-lg transition-colors duration-300`}>
             <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-3`}>Cookie notice</h3>
             <p className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'} mb-4 leading-relaxed`}>

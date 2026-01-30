@@ -15,6 +15,7 @@ import {
 import MobileBottomNav from "./MobileBottomNav";
 import MobileSettingsSheet from "./MobileSettingsSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
+import PataLogo from "@/components/PataLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -94,19 +95,12 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
+          <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
-          </button>
-          <button 
-            onClick={() => handleOpenSettings("business", "Business Profile")}
-            className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
-          >
-            <span className="text-sm font-medium text-[#141414]">
-              {profile?.business_name || "One Guy Can"}
-            </span>
           </button>
         </div>
       </header>
