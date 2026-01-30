@@ -134,7 +134,7 @@ const Staff = () => {
           <h1 className="text-2xl font-bold text-[#141414]">Staff</h1>
           <p className="text-[#141414]/60">Manage team members and permissions</p>
         </div>
-        <Button onClick={handleOpenAddModal} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button onClick={handleOpenAddModal} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
           <UserPlus className="w-4 h-4 mr-2" />
           Invite Staff
         </Button>
@@ -273,7 +273,7 @@ const Staff = () => {
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+            <Button onClick={handleSave} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
               {editingMember ? 'Save Changes' : 'Send Invite'}
             </Button>
           </DialogFooter>

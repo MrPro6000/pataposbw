@@ -43,7 +43,7 @@ const salesByProduct = [
 ];
 
 const paymentMethods = [
-  { name: "Card", value: 35, color: "#00C8E6" },
+  { name: "Card", value: 35, color: "#0066FF" },
   { name: "Mobile Money", value: 28, color: "#F97316" },
   { name: "Cash", value: 18, color: "#22C55E" },
   { name: "Wallet", value: 10, color: "#8B5CF6" },
@@ -61,7 +61,7 @@ const Reports = () => {
   }
 
   const chartConfig = {
-    sales: { label: "Sales", color: "#00C8E6" },
+    sales: { label: "Sales", color: "#0066FF" },
     revenue: { label: "Revenue", color: "#141414" },
   };
 
@@ -101,28 +101,28 @@ const Reports = () => {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-[#00C8E6]" />
+            <TrendingUp className="w-4 h-4 text-[#0066FF]" />
             <span className="text-sm text-[#141414]/60">Total Revenue</span>
           </div>
           <p className="text-2xl font-bold text-[#141414]">P67,890</p>
         </div>
         <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <Package className="w-4 h-4 text-[#00C8E6]" />
+            <Package className="w-4 h-4 text-[#0066FF]" />
             <span className="text-sm text-[#141414]/60">Items Sold</span>
           </div>
           <p className="text-2xl font-bold text-[#141414]">1,247</p>
         </div>
         <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <Users className="w-4 h-4 text-[#00C8E6]" />
+            <Users className="w-4 h-4 text-[#0066FF]" />
             <span className="text-sm text-[#141414]/60">Customers</span>
           </div>
           <p className="text-2xl font-bold text-[#141414]">342</p>
         </div>
         <div className="bg-white rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-4 h-4 text-[#00C8E6]" />
+            <TrendingUp className="w-4 h-4 text-[#0066FF]" />
             <span className="text-sm text-[#141414]/60">Avg. Order</span>
           </div>
           <p className="text-2xl font-bold text-[#141414]">P198</p>
@@ -154,7 +154,7 @@ const Reports = () => {
                 tickFormatter={(value) => `P${value}`}
               />
               <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="sales" fill="#00C8E6" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="sales" fill="#0066FF" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ChartContainer>
         </div>
@@ -219,7 +219,7 @@ const Reports = () => {
                 <tr key={product.name} className="border-t border-[#f0f0f0]">
                   <td className="p-4">
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 bg-[#00C8E6]/20 rounded-full flex items-center justify-center text-xs font-medium text-[#00C8E6]">
+                      <span className="w-6 h-6 bg-[#0066FF]/20 rounded-full flex items-center justify-center text-xs font-medium text-[#0066FF]">
                         {index + 1}
                       </span>
                       <span className="font-medium text-[#141414]">{product.name}</span>
@@ -231,7 +231,7 @@ const Reports = () => {
                     <div className="flex items-center gap-2">
                       <div className="flex-1 h-2 bg-[#f0f0f0] rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-[#00C8E6]" 
+                          className="h-full bg-[#0066FF]" 
                           style={{ width: `${(product.revenue / salesByProduct[0].revenue) * 100}%` }}
                         />
                       </div>

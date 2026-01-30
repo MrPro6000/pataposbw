@@ -77,7 +77,7 @@ const Devices = () => {
           <h1 className="text-2xl font-bold text-[#141414]">Devices</h1>
           <p className="text-[#141414]/60">Manage your POS terminals and card machines</p>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button onClick={() => setIsAddModalOpen(true)} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
           <Plus className="w-4 h-4 mr-2" />
           Add Device
         </Button>
@@ -164,7 +164,7 @@ const Devices = () => {
         {/* Add Device Card */}
         <button 
           onClick={() => setIsAddModalOpen(true)}
-          className="border-2 border-dashed border-[#e0e0e0] rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-[#00C8E6] hover:bg-[#00C8E6]/5 transition-colors"
+          className="border-2 border-dashed border-[#e0e0e0] rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-[#0066FF] hover:bg-[#0066FF]/5 transition-colors"
         >
           <div className="w-12 h-12 bg-[#f0f0f0] rounded-full flex items-center justify-center">
             <Plus className="w-6 h-6 text-[#141414]/40" />
@@ -182,7 +182,7 @@ const Devices = () => {
           
           <div className="py-6">
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-[#00C8E6]/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+              <div className="w-16 h-16 bg-[#0066FF]/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <img 
                   src={getDeviceImage("Go Pata")} 
                   alt="Device"
@@ -211,7 +211,7 @@ const Devices = () => {
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
             <Button 
               onClick={() => setIsAddModalOpen(false)} 
-              className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
+              className="bg-[#0066FF] hover:bg-[#0052CC] text-white"
               disabled={pairingCode.length !== 6}
             >
               Pair Device
