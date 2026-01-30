@@ -1,6 +1,8 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import CapitalDialog from "@/components/dashboard/CapitalDialog";
+import FeesDialog from "@/components/dashboard/FeesDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   Wallet, 
@@ -9,7 +11,9 @@ import {
   Clock,
   CheckCircle,
   Edit,
-  ChevronRight
+  ChevronRight,
+  Percent,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -40,6 +44,8 @@ const payouts: Payout[] = [
 
 const Payouts = () => {
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  const [capitalOpen, setCapitalOpen] = useState(false);
+  const [feesOpen, setFeesOpen] = useState(false);
   const [bankDetails, setBankDetails] = useState({
     bankName: "First National Bank",
     accountNumber: "•••• •••• 4532",
@@ -135,6 +141,41 @@ const Payouts = () => {
         </div>
       </div>
 
+      {/* Pata Capital & Fees Section */}
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <button
+          onClick={() => setCapitalOpen(true)}
+          className="bg-white rounded-2xl p-6 text-left hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+              <Wallet className="w-6 h-6 text-amber-600" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414]">Pata Capital</p>
+              <p className="text-sm text-[#141414]/60">Get business funding with flexible repayment</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[#141414]/30 ml-auto" />
+          </div>
+        </button>
+
+        <button
+          onClick={() => setFeesOpen(true)}
+          className="bg-white rounded-2xl p-6 text-left hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
+              <Percent className="w-6 h-6 text-[#141414]/60" />
+            </div>
+            <div>
+              <p className="font-semibold text-[#141414]">Fees</p>
+              <p className="text-sm text-[#141414]/60">All the fees related to your business</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-[#141414]/30 ml-auto" />
+          </div>
+        </button>
+      </div>
+
       {/* Payout History */}
       <div className="bg-white rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-[#f0f0f0]">
@@ -224,6 +265,18 @@ const Payouts = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Capital Dialog */}
+      <CapitalDialog
+        open={capitalOpen}
+        onClose={() => setCapitalOpen(false)}
+      />
+
+      {/* Fees Dialog */}
+      <FeesDialog
+        open={feesOpen}
+        onClose={() => setFeesOpen(false)}
+      />
     </DashboardLayout>
   );
 };
