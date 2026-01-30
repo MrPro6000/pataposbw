@@ -1,23 +1,31 @@
-const PataLogo = ({ className = "h-6" }: { className?: string }) => {
+import pataLogoBlue from "@/assets/pata-logo-blue.png";
+import pataLogoWhite from "@/assets/pata-logo-white.png";
+
+interface PataLogoProps {
+  className?: string;
+  variant?: "dark" | "light";
+}
+
+const PataLogo = ({ className = "h-6", variant = "dark" }: PataLogoProps) => {
+  const logoSrc = variant === "dark" ? pataLogoWhite : pataLogoBlue;
+  
   return (
-    <svg 
-      viewBox="0 0 200 60" 
-      className={className}
-      style={{ aspectRatio: '3.33 / 1' }}
-    >
-      <text 
-        x="100" 
-        y="45" 
-        textAnchor="middle" 
-        fill="currentColor"
-        fontFamily="Inter, sans-serif"
-        fontWeight="800"
-        fontSize="50"
-        letterSpacing="-2"
+    <div className={`flex items-center gap-1.5 ${className}`}>
+      <img 
+        src={logoSrc}
+        alt="Pata"
+        className="h-full w-auto object-contain"
+      />
+      <span 
+        className="font-extrabold tracking-tight leading-none"
+        style={{ 
+          fontSize: 'calc(100% * 1.6)',
+          letterSpacing: '-0.04em'
+        }}
       >
         PATA
-      </text>
-    </svg>
+      </span>
+    </div>
   );
 };
 
