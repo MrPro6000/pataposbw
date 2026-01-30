@@ -5,6 +5,7 @@ import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileMoneyViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -35,20 +36,13 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
       {/* Header */}
       <header className="bg-white px-5 pt-4 pb-6 sticky top-0 z-40">
         <div className="flex items-center justify-between mb-6">
+          <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
             className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
           </button>
-          <Link 
-            to="/dashboard/settings"
-            className="px-3 py-1.5 bg-[#F5F5F5] rounded-full"
-          >
-            <span className="text-sm font-medium text-[#141414]">
-              {profile?.business_name || "One Guy Can"}
-            </span>
-          </Link>
         </div>
 
         <div className="text-center">

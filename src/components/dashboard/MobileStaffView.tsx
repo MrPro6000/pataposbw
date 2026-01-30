@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ChevronLeft, Plus, User, MoreVertical, Shield } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import PataLogo from "@/components/PataLogo";
 
 interface MobileStaffViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -39,9 +40,9 @@ const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
           <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
             <ChevronLeft className="w-6 h-6 text-[#141414]" />
           </Link>
-          <h1 className="font-semibold text-[#141414]">Staff</h1>
+          <PataLogo className="h-5" />
           <button className="w-10 h-10 flex items-center justify-center">
-            <Plus className="w-6 h-6 text-[#00C8E6]" />
+            <Plus className="w-6 h-6 text-[#0066FF]" />
           </button>
         </div>
       </header>
@@ -54,8 +55,8 @@ const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
               <p className="text-sm text-[#141414]/60">Team members</p>
               <p className="text-2xl font-bold text-[#141414]">{staffMembers.length}</p>
             </div>
-            <div className="w-12 h-12 bg-[#00C8E6]/10 rounded-xl flex items-center justify-center">
-              <User className="w-6 h-6 text-[#00C8E6]" />
+            <div className="w-12 h-12 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
+              <User className="w-6 h-6 text-[#0066FF]" />
             </div>
           </div>
         </div>
@@ -69,7 +70,7 @@ const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
             <div key={member.id} className="bg-white rounded-2xl p-4">
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#00C8E6] rounded-xl flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 bg-[#0066FF] rounded-xl flex items-center justify-center text-white font-bold">
                     {member.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
@@ -98,7 +99,7 @@ const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
         </div>
 
         {/* Add Staff Card */}
-        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#00C8E6] active:bg-[#00C8E6]/5 transition-colors">
+        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#0066FF] active:bg-[#0066FF]/5 transition-colors">
           <div className="w-12 h-12 bg-[#F0F0F0] rounded-full flex items-center justify-center">
             <Plus className="w-6 h-6 text-[#141414]/40" />
           </div>

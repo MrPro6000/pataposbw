@@ -21,7 +21,7 @@ interface MobilePaymentSheetProps {
 }
 
 const paymentConfig = {
-  "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-[#00C8E6]" },
+  "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-[#0066FF]" },
   "payment-link": { title: "Payment Link", icon: Link2, color: "bg-purple-500" },
   "invoice": { title: "New Invoice", icon: FileText, color: "bg-blue-500" },
   "cash": { title: "Cash Payment", icon: Banknote, color: "bg-green-500" },
@@ -134,7 +134,9 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               <div className="space-y-2">
                 <Label className="text-[#141414]">Amount (P)</Label>
                 <Input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9.]*"
                   placeholder="0.00"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
@@ -163,7 +165,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
                         onClick={() => setSelectedProvider(provider.id)}
                         className={`p-4 rounded-xl border-2 transition-all ${
                           selectedProvider === provider.id
-                            ? "border-[#00C8E6] bg-[#00C8E6]/10"
+                            ? "border-[#0066FF] bg-[#0066FF]/10"
                             : "border-[#E8E8E8] bg-white"
                         }`}
                       >
@@ -181,6 +183,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
                   <Label className="text-[#141414]">Customer Phone</Label>
                   <Input
                     type="tel"
+                    inputMode="tel"
                     placeholder="+267 71 234 5678"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
@@ -223,7 +226,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               <Button
                 onClick={handleSubmit}
                 disabled={isProcessing}
-                className="w-full h-14 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold text-lg"
+                className="w-full h-14 bg-[#0066FF] hover:bg-[#0052cc] text-white font-semibold text-lg"
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
