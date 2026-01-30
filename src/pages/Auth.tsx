@@ -321,7 +321,7 @@ const Auth = ({ mode }: AuthProps) => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C8E6] focus:border-transparent transition-colors`}
+                        className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-transparent transition-colors`}
                         placeholder="you@example.com"
                       />
                     </div>
@@ -335,7 +335,7 @@ const Auth = ({ mode }: AuthProps) => {
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00C8E6] focus:border-transparent pr-12 transition-colors`}
+                          className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-transparent pr-12 transition-colors`}
                           placeholder="••••••••"
                         />
                         <button
@@ -350,7 +350,7 @@ const Auth = ({ mode }: AuthProps) => {
 
                     {mode === "login" && (
                       <div className="text-right">
-                        <a href="#" className="text-sm text-[#00C8E6] hover:underline">
+                        <a href="#" className="text-sm text-[#0066FF] hover:underline">
                           Forgot password?
                         </a>
                       </div>
@@ -359,7 +359,7 @@ const Auth = ({ mode }: AuthProps) => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`w-full py-4 ${isDark ? 'bg-[#00C8E6] text-[#141414] hover:bg-[#00b8d4]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                      className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
                     >
                       {loading ? "Please wait..." : mode === "login" ? "Log in" : "Continue"}
                     </button>
@@ -402,9 +402,9 @@ const Auth = ({ mode }: AuthProps) => {
                     ← Back
                   </button>
 
-                  <div className="text-center mb-6">
-                    <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center ${isDark ? 'bg-[#00C8E6]/20' : 'bg-[#00C8E6]/10'}`}>
-                      <Phone className="w-7 h-7 text-[#00C8E6]" />
+                    <div className="text-center mb-6">
+                      <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center ${isDark ? 'bg-[#0066FF]/20' : 'bg-[#0066FF]/10'}`}>
+                        <Phone className="w-7 h-7 text-[#0066FF]" />
                     </div>
                     <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
                       Verify your phone
@@ -439,7 +439,7 @@ const Auth = ({ mode }: AuthProps) => {
                     <button
                       onClick={handleSendOTP}
                       disabled={loading || phoneNumber.length < 8}
-                      className={`w-full py-4 ${isDark ? 'bg-[#00C8E6] text-[#141414] hover:bg-[#00b8d4]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                      className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
                     >
                       {loading ? "Sending..." : "Send verification code"}
                     </button>
@@ -486,7 +486,7 @@ const Auth = ({ mode }: AuthProps) => {
                   <button
                     onClick={handleVerifyOTP}
                     disabled={loading || otp.length !== 6}
-                    className={`w-full py-4 ${isDark ? 'bg-[#00C8E6] text-[#141414] hover:bg-[#00b8d4]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                    className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
                   >
                     {loading ? "Verifying..." : "Create account"}
                   </button>
@@ -496,7 +496,7 @@ const Auth = ({ mode }: AuthProps) => {
                     disabled={loading}
                     className={`w-full mt-4 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}
                   >
-                    Didn't receive the code? <span className="text-[#00C8E6]">Resend</span>
+                    Didn't receive the code? <span className="text-[#0066FF]">Resend</span>
                   </button>
                 </>
               )}
@@ -506,7 +506,7 @@ const Auth = ({ mode }: AuthProps) => {
                   {mode === "login" ? "Don't have an account? " : "Already have an account? "}
                   <Link 
                     to={mode === "login" ? "/signup" : "/login"} 
-                    className="text-[#00C8E6] hover:underline font-medium"
+                    className="text-[#0066FF] hover:underline font-medium"
                   >
                     {mode === "login" ? "Sign up" : "Log in"}
                   </Link>
@@ -532,7 +532,7 @@ const Auth = ({ mode }: AuthProps) => {
               </button>
               <button 
                 onClick={() => setShowCookieBanner(false)}
-                className={`${isDark ? 'bg-[#00C8E6] text-[#141414]' : 'bg-[#141414] text-white'} px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-colors`}
+                className={`${isDark ? 'bg-[#0066FF] text-white' : 'bg-[#141414] text-white'} px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-colors`}
               >
                 I understand
               </button>

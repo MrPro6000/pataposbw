@@ -96,7 +96,7 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
         <div className="flex items-center justify-between">
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-sm font-bold text-white"
+            className="w-10 h-10 bg-[#0066FF] rounded-xl flex items-center justify-center text-sm font-bold text-white"
           >
             {personalInitials}
           </button>

@@ -84,7 +84,7 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
           {/* Profile Avatar */}
           <div className="flex flex-col items-center mb-6">
             <div className="relative mb-3">
-              <div className="w-24 h-24 bg-[#00C8E6] rounded-2xl flex items-center justify-center text-3xl font-bold text-white">
+              <div className="w-24 h-24 bg-[#0066FF] rounded-2xl flex items-center justify-center text-3xl font-bold text-white">
                 {initials}
               </div>
               <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#141414] rounded-full flex items-center justify-center">
@@ -165,7 +165,7 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
         <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E8E8E8]">
           <Button 
             onClick={handleSave}
-            className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+            className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
           >
             Save Changes
           </Button>
