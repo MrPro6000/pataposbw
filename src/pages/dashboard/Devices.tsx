@@ -1,9 +1,8 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import MobileDevicesView from "@/components/dashboard/MobileDevicesView";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
-  Smartphone, 
   Plus, 
   Wifi,
   WifiOff,
@@ -28,6 +27,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { getDeviceImage } from "@/data/devices";
 
 interface Device {
   id: string;
@@ -56,7 +56,7 @@ const Devices = () => {
 
   // Show mobile view on mobile devices
   if (isMobile) {
-    return <MobileDashboardHome />;
+    return <MobileDevicesView profile={null} userEmail="" />;
   }
 
   const handleRemoveDevice = (id: string) => {
@@ -89,12 +89,12 @@ const Devices = () => {
           <div key={device.id} className="bg-white rounded-2xl p-5">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                  device.status === "online" ? "bg-green-100" : "bg-gray-100"
-                }`}>
-                  <Smartphone className={`w-6 h-6 ${
-                    device.status === "online" ? "text-green-600" : "text-gray-400"
-                  }`} />
+                <div className="w-16 h-16 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <img 
+                    src={getDeviceImage(device.model)} 
+                    alt={device.model}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-semibold text-[#141414]">{device.name}</h3>
@@ -183,7 +183,11 @@ const Devices = () => {
           <div className="py-6">
             <div className="text-center mb-6">
               <div className="w-16 h-16 bg-[#00C8E6]/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <Smartphone className="w-8 h-8 text-[#00C8E6]" />
+                <img 
+                  src={getDeviceImage("Go Pata")} 
+                  alt="Device"
+                  className="w-12 h-12 object-contain"
+                />
               </div>
               <p className="text-[#141414]/70">
                 Enter the pairing code displayed on your Pata device

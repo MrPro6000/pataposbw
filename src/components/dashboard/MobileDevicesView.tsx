@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { 
   ChevronLeft, 
   Plus, 
-  Smartphone, 
   Wifi, 
   WifiOff, 
   Battery,
   MoreVertical 
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
+import { getDeviceImage } from "@/data/devices";
 
 interface MobileDevicesViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -81,12 +81,12 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
             <div key={device.id} className="bg-white rounded-2xl p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    device.status === "online" ? "bg-green-100" : "bg-gray-100"
-                  }`}>
-                    <Smartphone className={`w-6 h-6 ${
-                      device.status === "online" ? "text-green-600" : "text-gray-400"
-                    }`} />
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                    <img 
+                      src={getDeviceImage(device.model)} 
+                      alt={device.model}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h3 className="font-semibold text-[#141414]">{device.name}</h3>

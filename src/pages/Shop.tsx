@@ -3,33 +3,66 @@ import MainFooter from "@/components/MainFooter";
 import { ArrowRight, ShoppingCart, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Import device images
+import pataSpazaImg from "@/assets/devices/pata-spaza.jpeg";
+import pataSilverImg from "@/assets/devices/pata-silver.jpeg";
+import goPataImg from "@/assets/devices/go-pata.jpeg";
+import pataDiamondImg from "@/assets/devices/pata-diamond.jpeg";
+import pataProImg from "@/assets/devices/pata-pro.jpeg";
+import pataPlatinumImg from "@/assets/devices/pata-platinum.jpeg";
+
 const Shop = () => {
   const devices = [
     {
-      name: "Pata Go",
+      name: "Go Pata",
       price: "P499",
       originalPrice: "P699",
-      image: "/placeholder.svg",
-      description: "Compact and portable. Perfect for businesses on the move.",
-      features: ["Bluetooth connected", "All-day battery", "Accepts all cards"],
+      image: goPataImg,
+      description: "Compact handheld terminal with physical keypad. Perfect for quick transactions.",
+      features: ["Physical keypad", "Built-in printer", "All-day battery"],
       badge: "Best Seller",
     },
     {
+      name: "Pata Silver",
+      price: "P799",
+      originalPrice: "P999",
+      image: pataSilverImg,
+      description: "Sleek touchscreen tablet. Modern and portable for any business.",
+      features: ["Touchscreen display", "Compact design", "Fast processing"],
+    },
+    {
       name: "Pata Pro",
-      price: "P999",
-      originalPrice: "P1,299",
-      image: "/placeholder.svg",
-      description: "Built-in receipt printer and touchscreen display.",
-      features: ["Receipt printer", "4G connectivity", "Touchscreen"],
+      price: "P1,299",
+      originalPrice: "P1,599",
+      image: pataProImg,
+      description: "Powerful handheld with built-in thermal printer and NFC tap.",
+      features: ["Built-in printer", "NFC tap to pay", "Touchscreen"],
       badge: "Most Popular",
     },
     {
-      name: "Pata Hub",
-      price: "P2,499",
-      originalPrice: "P2,999",
-      image: "/placeholder.svg",
-      description: "Full POS system with customer display and barcode scanner.",
-      features: ["Customer display", "Barcode scanner", "Full POS"],
+      name: "Pata Diamond",
+      price: "P1,799",
+      originalPrice: "P2,199",
+      image: pataDiamondImg,
+      description: "Premium handheld with large touchscreen and thermal printer.",
+      features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
+    },
+    {
+      name: "Pata Platinum",
+      price: "P999",
+      originalPrice: "P1,299",
+      image: pataPlatinumImg,
+      description: "Classic keypad terminal with reliable performance and durability.",
+      features: ["Durable design", "Physical keypad", "Card chip reader"],
+    },
+    {
+      name: "Pata Spaza",
+      price: "P3,499",
+      originalPrice: "P3,999",
+      image: pataSpazaImg,
+      description: "Full POS system with large display and customer-facing screen. Ideal for retail stores.",
+      features: ["Customer display", "Receipt printer", "Full POS system"],
+      badge: "Enterprise",
     },
   ];
 
@@ -58,16 +91,16 @@ const Shop = () => {
           </div>
 
           {/* Devices Grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {devices.map((device) => (
               <div
                 key={device.name}
                 className="bg-[#1a1a1a] rounded-2xl overflow-hidden group"
               >
                 {/* Image */}
-                <div className="relative aspect-square bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] p-8">
+                <div className="relative aspect-square bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] p-4 flex items-center justify-center">
                   {device.badge && (
-                    <span className="absolute top-4 left-4 bg-[#00C8E6] text-[#141414] px-3 py-1 rounded-full text-xs font-semibold">
+                    <span className="absolute top-4 left-4 bg-[#00C8E6] text-[#141414] px-3 py-1 rounded-full text-xs font-semibold z-10">
                       {device.badge}
                     </span>
                   )}
