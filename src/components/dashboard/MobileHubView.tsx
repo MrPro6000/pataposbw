@@ -11,6 +11,7 @@ import MobileProfileSheet from "./MobileProfileSheet";
 import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
+import MobilePOSSheet from "./MobilePOSSheet";
 import PataLogo from "@/components/PataLogo";
 
 interface MobileHubViewProps {
@@ -26,6 +27,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [salesHistoryOpen, setSalesHistoryOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
+  const [posOpen, setPosOpen] = useState(false);
 
   // Chart data - show sample stats by default
   const weeklyChartData = [
@@ -175,9 +177,9 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <div className="px-5 py-2">
         <h2 className="font-semibold text-foreground mb-3">Quick Access</h2>
         <div className="grid grid-cols-2 gap-3">
-          <Link 
-            to="/dashboard"
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform"
+          <button 
+            onClick={() => setPosOpen(true)}
+            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
           >
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
               <CreditCard className="w-5 h-5 text-primary" />
@@ -186,7 +188,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
               <p className="font-semibold text-foreground text-sm">POS</p>
               <p className="text-xs text-muted-foreground">Point of Sale</p>
             </div>
-          </Link>
+          </button>
           
           <Link 
             to="/dashboard/devices"
@@ -270,6 +272,12 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <MobileCapitalSheet
         open={capitalOpen}
         onClose={() => setCapitalOpen(false)}
+      />
+
+      {/* POS Sheet */}
+      <MobilePOSSheet
+        open={posOpen}
+        onClose={() => setPosOpen(false)}
       />
 
       {/* Bottom Navigation */}
