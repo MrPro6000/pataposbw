@@ -134,19 +134,19 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           <QuickActionButton 
             icon={CreditCard} 
             label="Card sale" 
-            variant="dark" 
+            variant="light" 
             onClick={() => handleQuickAction('card-sale')}
           />
           <QuickActionButton 
             icon={Link2} 
             label="Payment Link" 
-            variant="dark" 
+            variant="light" 
             onClick={() => handleQuickAction('payment-link')}
           />
           <QuickActionButton 
             icon={FileText} 
             label="New invoice" 
-            variant="dark" 
+            variant="light" 
             onClick={() => handleQuickAction('invoice')}
           />
         </div>
