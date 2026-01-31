@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ShoppingBag, Plus, Minus, CreditCard, Banknote, Smartphone } from "lucide-react";
+import { X, ShoppingBag, Monitor, Keyboard, Receipt, Printer, Calculator, Settings, Wifi, Battery, Signal } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 
@@ -8,61 +8,29 @@ interface MobilePOSSheetProps {
   onClose: () => void;
 }
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  quantity: number;
-}
-
 const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState<string | null>(null);
 
-  // Mock products
-  const products = [
-    { id: "1", name: "Coffee", price: 35, category: "Beverages" },
-    { id: "2", name: "Sandwich", price: 55, category: "Food" },
-    { id: "3", name: "Muffin", price: 25, category: "Food" },
-    { id: "4", name: "Juice", price: 20, category: "Beverages" },
-    { id: "5", name: "Salad", price: 45, category: "Food" },
-    { id: "6", name: "Water", price: 10, category: "Beverages" },
+  // POS device status
+  const posDevices = [
+    { id: "1", name: "Main Register", status: "online", lastSync: "2 min ago", battery: 85 },
+    { id: "2", name: "Counter 2", status: "online", lastSync: "5 min ago", battery: 72 },
+    { id: "3", name: "Mobile POS", status: "offline", lastSync: "1 hour ago", battery: 45 },
   ];
 
-  const addToCart = (product: typeof products[0]) => {
-    setCart(prev => {
-      const existing = prev.find(item => item.id === product.id);
-      if (existing) {
-        return prev.map(item => 
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-  };
+  // POS quick actions
+  const posActions = [
+    { id: "open-register", label: "Open Register", icon: Monitor, description: "Start a new shift" },
+    { id: "close-register", label: "Close Register", icon: Calculator, description: "End shift & count cash" },
+    { id: "print-receipt", label: "Print Receipt", icon: Printer, description: "Reprint last receipt" },
+    { id: "view-transactions", label: "Transactions", icon: Receipt, description: "View today's sales" },
+    { id: "settings", label: "POS Settings", icon: Settings, description: "Configure terminal" },
+    { id: "pair-device", label: "Pair Device", icon: Keyboard, description: "Connect new hardware" },
+  ];
 
-  const updateQuantity = (id: string, delta: number) => {
-    setCart(prev => {
-      return prev.map(item => {
-        if (item.id === id) {
-          const newQuantity = item.quantity + delta;
-          if (newQuantity <= 0) return null;
-          return { ...item, quantity: newQuantity };
-        }
-        return item;
-      }).filter(Boolean) as CartItem[];
-    });
-  };
-
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  const itemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
-  const handleCheckout = (method: string) => {
-    // TODO: Implement checkout logic
-    console.log(`Checkout with ${method}`, cart);
-    setCart([]);
-    onClose();
+  const handleAction = (actionId: string) => {
+    console.log(`POS Action: ${actionId}`);
+    // TODO: Implement POS actions
   };
 
   return (
@@ -78,103 +46,129 @@ const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
         </DrawerHeader>
         
         <div className="flex-1 overflow-y-auto px-5 py-4">
-          {/* Products Grid */}
+          {/* POS Status Overview */}
           <div className="mb-6">
-            <h3 className="text-sm font-medium text-muted-foreground mb-3">Products</h3>
-            <div className="grid grid-cols-3 gap-2">
-              {products.map((product) => (
+            <div className="bg-primary/10 rounded-2xl p-4 mb-4">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                  <Monitor className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">POS System Active</p>
+                  <p className="text-sm text-muted-foreground">2 of 3 devices online</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-1.5">
+                  <Wifi className="w-4 h-4 text-green-500" />
+                  <span className="text-muted-foreground">Connected</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <Signal className="w-4 h-4 text-green-500" />
+                  <span className="text-muted-foreground">Synced</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* POS Devices */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Devices</h3>
+            <div className="space-y-2">
+              {posDevices.map((device) => (
                 <button
-                  key={product.id}
-                  onClick={() => addToCart(product)}
-                  className="bg-card border border-border rounded-xl p-3 text-left active:scale-95 transition-transform"
+                  key={device.id}
+                  onClick={() => setSelectedDevice(device.id)}
+                  className={`w-full bg-card border rounded-xl p-4 text-left active:scale-98 transition-all ${
+                    selectedDevice === device.id ? "border-primary" : "border-border"
+                  }`}
                 >
-                  <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                    <ShoppingBag className="w-4 h-4 text-primary" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
+                        device.status === "online" ? "bg-green-500/10" : "bg-muted"
+                      }`}>
+                        <Monitor className={`w-5 h-5 ${
+                          device.status === "online" ? "text-green-500" : "text-muted-foreground"
+                        }`} />
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{device.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {device.status === "online" ? `Synced ${device.lastSync}` : "Offline"}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Battery className={`w-4 h-4 ${
+                          device.battery > 50 ? "text-green-500" : device.battery > 20 ? "text-orange-500" : "text-red-500"
+                        }`} />
+                        <span className="text-xs text-muted-foreground">{device.battery}%</span>
+                      </div>
+                      <div className={`w-2 h-2 rounded-full ${
+                        device.status === "online" ? "bg-green-500" : "bg-muted-foreground"
+                      }`} />
+                    </div>
                   </div>
-                  <p className="text-sm font-medium text-foreground truncate">{product.name}</p>
-                  <p className="text-xs text-muted-foreground">P{product.price}</p>
                 </button>
               ))}
             </div>
           </div>
 
-          {/* Cart */}
-          {cart.length > 0 && (
-            <div className="mb-6">
-              <h3 className="text-sm font-medium text-muted-foreground mb-3">
-                Cart ({itemCount} items)
-              </h3>
-              <div className="bg-card border border-border rounded-2xl divide-y divide-border">
-                {cart.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between p-4">
-                    <div>
-                      <p className="font-medium text-foreground">{item.name}</p>
-                      <p className="text-sm text-muted-foreground">P{item.price} each</p>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <button 
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center"
-                      >
-                        <Minus className="w-4 h-4 text-foreground" />
-                      </button>
-                      <span className="font-medium text-foreground w-6 text-center">{item.quantity}</span>
-                      <button 
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center"
-                      >
-                        <Plus className="w-4 h-4 text-foreground" />
-                      </button>
-                    </div>
+          {/* Quick Actions Grid */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Quick Actions</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {posActions.map((action) => (
+                <button
+                  key={action.id}
+                  onClick={() => handleAction(action.id)}
+                  className="bg-card border border-border rounded-xl p-4 text-left active:scale-95 transition-transform"
+                >
+                  <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
+                    <action.icon className="w-5 h-5 text-primary" />
                   </div>
-                ))}
+                  <p className="font-medium text-foreground text-sm">{action.label}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{action.description}</p>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Today's Summary */}
+          <div className="mb-6">
+            <h3 className="text-sm font-medium text-muted-foreground mb-3">Today's Summary</h3>
+            <div className="bg-card border border-border rounded-2xl p-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground">Transactions</p>
+                  <p className="text-2xl font-bold text-foreground">24</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Total Sales</p>
+                  <p className="text-2xl font-bold text-foreground">P1,245</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Avg. Sale</p>
+                  <p className="text-lg font-semibold text-foreground">P51.87</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">Items Sold</p>
+                  <p className="text-lg font-semibold text-foreground">67</p>
+                </div>
               </div>
             </div>
-          )}
+          </div>
         </div>
 
-        {/* Footer with Total & Payment Options */}
-        {cart.length > 0 && (
-          <div className="border-t border-border px-5 py-4 bg-background">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-muted-foreground">Total</span>
-              <span className="text-2xl font-bold text-foreground">P{total.toFixed(2)}</span>
-            </div>
-            
-            <div className="grid grid-cols-3 gap-2">
-              <Button 
-                onClick={() => handleCheckout('card')}
-                className="flex flex-col items-center gap-1 h-auto py-3"
-              >
-                <CreditCard className="w-5 h-5" />
-                <span className="text-xs">Card</span>
-              </Button>
-              <Button 
-                onClick={() => handleCheckout('cash')}
-                variant="outline"
-                className="flex flex-col items-center gap-1 h-auto py-3"
-              >
-                <Banknote className="w-5 h-5" />
-                <span className="text-xs">Cash</span>
-              </Button>
-              <Button 
-                onClick={() => handleCheckout('mobile')}
-                variant="outline"
-                className="flex flex-col items-center gap-1 h-auto py-3"
-              >
-                <Smartphone className="w-5 h-5" />
-                <span className="text-xs">Mobile</span>
-              </Button>
-            </div>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {cart.length === 0 && (
-          <div className="px-5 pb-6 text-center">
-            <p className="text-muted-foreground">Tap products above to add to cart</p>
-          </div>
-        )}
+        {/* Footer */}
+        <div className="border-t border-border px-5 py-4 bg-background">
+          <Button className="w-full" size="lg">
+            <ShoppingBag className="w-5 h-5 mr-2" />
+            Start New Sale
+          </Button>
+        </div>
       </DrawerContent>
     </Drawer>
   );
