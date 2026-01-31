@@ -39,8 +39,8 @@ const QuickActionButton = ({
     onClick={onClick}
     className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all min-h-[88px] w-full active:scale-95 ${
       variant === "dark" 
-        ? "bg-[#141414] text-white active:bg-[#2a2a2a]" 
-        : "bg-white border border-[#E8E8E8] text-[#141414] active:bg-[#F5F5F5]"
+        ? "bg-foreground text-background active:opacity-80" 
+        : "bg-card border border-border text-foreground active:bg-muted"
     }`}
   >
     <Icon className="w-6 h-6" />
@@ -176,21 +176,21 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <div className="px-5 py-2">
         <Link 
           to="/dashboard/products"
-          className="w-full bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform block"
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform block"
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
-            <h2 className="font-semibold text-[#141414]">Products</h2>
-            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Products</h2>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
           
           <div className="px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
-                <Package className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <Package className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="font-medium text-[#141414]">Manage Products</p>
-                <p className="text-sm text-[#141414]/60">Add, edit, and view inventory</p>
+                <p className="font-medium text-foreground">Manage Products</p>
+                <p className="text-sm text-muted-foreground">Add, edit, and view inventory</p>
               </div>
             </div>
           </div>
@@ -201,26 +201,26 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <div className="px-5 py-2">
         <button 
           onClick={() => setSalesHistoryOpen(true)}
-          className="w-full bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
-            <h2 className="font-semibold text-[#141414]">Sales history</h2>
-            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Sales history</h2>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
           
-          <div className="divide-y divide-[#E8E8E8]">
+          <div className="divide-y divide-border">
             {salesHistory.map((sale, index) => (
               <div key={index} className="flex items-center justify-between px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                    <sale.icon className="w-5 h-5 text-[#141414]/60" />
+                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                    <sale.icon className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div className="text-left">
-                    <p className="font-medium text-[#141414]">{sale.type}</p>
-                    <p className="text-sm text-[#141414]/60">{sale.status}</p>
+                    <p className="font-medium text-foreground">{sale.type}</p>
+                    <p className="text-sm text-muted-foreground">{sale.status}</p>
                   </div>
                 </div>
-                <p className={`font-semibold ${sale.amount > 0 ? "text-green-600" : "text-[#141414]"}`}>
+                <p className={`font-semibold ${sale.amount > 0 ? "text-green-600" : "text-foreground"}`}>
                   {sale.amount > 0 ? "+" : "-"}P{Math.abs(sale.amount).toFixed(2)}
                 </p>
               </div>
@@ -233,25 +233,25 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <div className="px-5 py-2">
         <button 
           onClick={() => handleQuickAction('invoice')}
-          className="w-full bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
         >
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
-            <h2 className="font-semibold text-[#141414]">Invoices</h2>
-            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Invoices</h2>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
           
-          <div className="divide-y divide-[#E8E8E8]">
+          <div className="divide-y divide-border">
             {invoices.map((invoice, index) => (
               <div key={index} className="flex items-center justify-between px-5 py-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-[#141414]/60" />
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-muted-foreground" />
                   </div>
-                  <span className="text-sm text-[#141414]">
+                  <span className="text-sm text-foreground">
                     {invoice.status} • {invoice.customer}
                   </span>
                 </div>
-                <p className="font-semibold text-[#141414]">{invoice.amount}</p>
+                <p className="font-semibold text-foreground">{invoice.amount}</p>
               </div>
             ))}
           </div>
@@ -263,19 +263,19 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         <div className="grid grid-cols-2 gap-3">
           <button 
             onClick={() => setPaymentLinksOpen(true)}
-            className="bg-white rounded-2xl p-4 active:scale-98 transition-transform text-left"
+            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
           >
-            <p className="font-semibold text-[#141414] mb-1">Payment Links</p>
-            <p className="text-2xl font-bold text-[#141414]">13</p>
-            <p className="text-sm text-[#141414]/60">unpaid links</p>
+            <p className="font-semibold text-foreground mb-1">Payment Links</p>
+            <p className="text-2xl font-bold text-foreground">13</p>
+            <p className="text-sm text-muted-foreground">unpaid links</p>
           </button>
           
           <button 
             onClick={() => setPaymentGatewayOpen(true)}
-            className="bg-white rounded-2xl p-4 active:scale-98 transition-transform text-left"
+            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
           >
-            <p className="font-semibold text-[#141414] mb-1">Payment Page</p>
-            <p className="text-sm text-[#141414]/60 mt-4">Configure & share</p>
+            <p className="font-semibold text-foreground mb-1">Payment Page</p>
+            <p className="text-sm text-muted-foreground mt-4">Configure & share</p>
           </button>
         </div>
       </div>
@@ -284,15 +284,15 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <div className="px-5 py-2">
         <button 
           onClick={() => setPaymentGatewayOpen(true)}
-          className="w-full bg-white rounded-2xl p-5 active:scale-98 transition-transform text-left"
+          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
-              <Globe className="w-5 h-5 text-[#141414]/60" />
+            <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+              <Globe className="w-5 h-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-semibold text-[#141414]">Payment Gateway</p>
-              <p className="text-sm text-[#141414]/60">Add the Pata Payment gateway to your online store.</p>
+              <p className="font-semibold text-foreground">Payment Gateway</p>
+              <p className="text-sm text-muted-foreground">Add the Pata Payment gateway to your online store.</p>
             </div>
           </div>
         </button>

@@ -110,12 +110,12 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
 
       {/* Manage Title */}
       <div className="px-5 py-4">
-        <h1 className="text-2xl font-bold text-[#141414]">Manage</h1>
+        <h1 className="text-2xl font-bold text-foreground">Manage</h1>
         <button 
           onClick={() => handleOpenSettings("business", "Business Profile")}
-          className="inline-block mt-1 px-3 py-1 bg-[#F5F5F5] rounded-full"
+          className="inline-block mt-1 px-3 py-1 bg-muted rounded-full"
         >
-          <span className="text-sm font-medium text-[#141414]">
+          <span className="text-sm font-medium text-foreground">
             {profile?.business_name || "One Guy Can"}
           </span>
         </button>
@@ -125,25 +125,25 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/* Stock Card */}
-          <Link to="/dashboard/products" className="bg-white rounded-2xl p-4 active:scale-98 transition-transform">
-            <p className="font-semibold text-[#141414] mb-3">Stock</p>
+          <Link to="/dashboard/products" className="bg-card rounded-2xl p-4 active:scale-98 transition-transform">
+            <p className="font-semibold text-foreground mb-3">Stock</p>
             <div className="space-y-2">
               {stockData.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <span className={`text-sm ${item.color}`}>{item.label}</span>
-                  <span className="text-sm font-medium text-[#141414]">{item.count}</span>
+                  <span className="text-sm font-medium text-foreground">{item.count}</span>
                 </div>
               ))}
             </div>
           </Link>
           
           {/* Products Card */}
-          <Link to="/dashboard/products" className="bg-white rounded-2xl p-4 active:scale-98 transition-transform">
-            <p className="font-semibold text-[#141414] mb-2">Products</p>
-            <p className="text-4xl font-bold text-[#141414]">7</p>
+          <Link to="/dashboard/products" className="bg-card rounded-2xl p-4 active:scale-98 transition-transform">
+            <p className="font-semibold text-foreground mb-2">Products</p>
+            <p className="text-4xl font-bold text-foreground">7</p>
             <div className="flex items-center justify-between mt-2">
-              <span className="text-sm text-[#141414]/60">Categories</span>
-              <span className="text-sm font-medium text-[#141414]">3</span>
+              <span className="text-sm text-muted-foreground">Categories</span>
+              <span className="text-sm font-medium text-foreground">3</span>
             </div>
           </Link>
         </div>
@@ -151,17 +151,17 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
 
       {/* Staff Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/staff" className="block bg-white rounded-2xl overflow-hidden active:scale-98 transition-transform">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-[#E8E8E8]">
-            <h2 className="font-semibold text-[#141414]">Staff</h2>
-            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+        <Link to="/dashboard/staff" className="block bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Staff</h2>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
           
-          <div className="divide-y divide-[#E8E8E8]">
+          <div className="divide-y divide-border">
             {staffMembers.map((member, index) => (
               <div key={index} className="flex items-center justify-between px-5 py-4">
-                <p className="font-medium text-[#141414]">{member.name}</p>
-                <p className="text-sm text-[#141414]/60">{member.role}</p>
+                <p className="font-medium text-foreground">{member.name}</p>
+                <p className="text-sm text-muted-foreground">{member.role}</p>
               </div>
             ))}
           </div>
@@ -170,42 +170,42 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
 
       {/* Card Machines Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/devices" className="block bg-white rounded-2xl p-5 active:scale-98 transition-transform">
+        <Link to="/dashboard/devices" className="block bg-card rounded-2xl p-5 active:scale-98 transition-transform">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <CreditCard className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="font-semibold text-[#141414]">Card machines</p>
+                <p className="font-semibold text-foreground">Card machines</p>
                 <p className="text-sm text-green-500">1 active</p>
               </div>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#141414]/40" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
         </Link>
       </div>
 
       {/* Settings Section */}
       <div className="px-5 py-2">
-        <h2 className="text-sm text-[#141414]/60 mb-3">Settings</h2>
-        <div className="bg-white rounded-2xl overflow-hidden divide-y divide-[#E8E8E8]">
+        <h2 className="text-sm text-muted-foreground mb-3">Settings</h2>
+        <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border">
           {settingsItems.map((item) => (
             <button 
               key={item.id}
               onClick={() => handleOpenSettings(item.id, item.label)}
-              className="w-full flex items-center justify-between px-4 py-4 active:bg-[#F5F5F5] transition-colors"
+              className="w-full flex items-center justify-between px-4 py-4 active:bg-muted transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
-                  <item.icon className="w-5 h-5 text-[#141414]/60" />
+                <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                  <item.icon className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-[#141414]">{item.label}</p>
-                  <p className="text-xs text-[#141414]/50">{item.description}</p>
+                  <p className="font-medium text-foreground">{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.description}</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#141414]/30" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </button>
           ))}
         </div>
@@ -215,9 +215,9 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       <div className="px-5 py-2">
         <button 
           onClick={handleLogout}
-          className="w-full bg-white rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 transition-colors"
+          className="w-full bg-card rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 dark:active:bg-red-900/20 transition-colors"
         >
-          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-red-50 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
             <LogOut className="w-5 h-5 text-red-500" />
           </div>
           <span className="font-medium text-red-500">Log Out</span>
