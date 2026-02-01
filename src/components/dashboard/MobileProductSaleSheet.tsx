@@ -11,6 +11,11 @@ import {
 } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 
+// Mobile Money Logos
+import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
+import smegaLogo from "@/assets/mobile-money/smega.png";
+import myzakaLogo from "@/assets/mobile-money/myzaka.png";
+
 interface Product {
   id: string;
   name: string;
@@ -42,10 +47,9 @@ const products: Product[] = [
 const categories = ["All", "Beverages", "Food", "Bakery"];
 
 const mobileMoneyProviders = [
-  { id: "orange", name: "Orange Money", color: "bg-orange-500" },
-  { id: "smega", name: "Smega", color: "bg-blue-600" },
-  { id: "myzaka", name: "MyZaka", color: "bg-green-600" },
-  { id: "mascom", name: "Mascom MyZaka", color: "bg-yellow-500" },
+  { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
+  { id: "smega", name: "Smega", logo: smegaLogo },
+  { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
 ];
 
 type PaymentMethod = "card" | "cash" | "mobile-money";
@@ -342,19 +346,23 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </div>
 
               <p className="font-semibold text-[#141414]">Select Provider</p>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 {mobileMoneyProviders.map((provider) => (
                   <button
                     key={provider.id}
                     onClick={() => setSelectedProvider(provider.id)}
-                    className={`p-4 rounded-xl border-2 transition-all ${
+                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${
                       selectedProvider === provider.id
-                        ? "border-[#00C8E6] bg-[#00C8E6]/10"
-                        : "border-[#E8E8E8] bg-white"
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-card"
                     }`}
                   >
-                    <div className={`w-10 h-10 ${provider.color} rounded-lg mb-2`} />
-                    <p className="text-sm font-medium text-[#141414]">{provider.name}</p>
+                    <img 
+                      src={provider.logo} 
+                      alt={provider.name} 
+                      className="w-12 h-12 object-contain mb-2 rounded-lg"
+                    />
+                    <p className="text-xs font-medium text-foreground text-center">{provider.name}</p>
                   </button>
                 ))}
               </div>

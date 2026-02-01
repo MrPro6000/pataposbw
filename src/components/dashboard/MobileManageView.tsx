@@ -96,7 +96,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
   return (
     <div className="min-h-screen bg-muted pb-24">
       {/* Header */}
-      <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40">
+      <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40 border-b border-border">
         <div className="flex items-center justify-between">
           <PataLogo className="h-5" />
           <button 
@@ -113,7 +113,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
         <h1 className="text-2xl font-bold text-foreground">Manage</h1>
         <button 
           onClick={() => handleOpenSettings("business", "Business Profile")}
-          className="inline-block mt-1 px-3 py-1 bg-muted rounded-full"
+          className="inline-block mt-1 px-3 py-1 bg-card border border-border rounded-full"
         >
           <span className="text-sm font-medium text-foreground">
             {profile?.business_name || "One Guy Can"}
@@ -125,7 +125,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
           {/* Stock Card */}
-          <Link to="/dashboard/products" className="bg-card rounded-2xl p-4 active:scale-98 transition-transform">
+          <Link to="/dashboard/products" className="bg-card border border-border rounded-2xl p-4 active:scale-98 transition-transform">
             <p className="font-semibold text-foreground mb-3">Stock</p>
             <div className="space-y-2">
               {stockData.map((item, index) => (
@@ -138,7 +138,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
           </Link>
           
           {/* Products Card */}
-          <Link to="/dashboard/products" className="bg-card rounded-2xl p-4 active:scale-98 transition-transform">
+          <Link to="/dashboard/products" className="bg-card border border-border rounded-2xl p-4 active:scale-98 transition-transform">
             <p className="font-semibold text-foreground mb-2">Products</p>
             <p className="text-4xl font-bold text-foreground">7</p>
             <div className="flex items-center justify-between mt-2">
@@ -151,7 +151,7 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
 
       {/* Staff Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/staff" className="block bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform">
+        <Link to="/dashboard/staff" className="block bg-card border border-border rounded-2xl overflow-hidden active:scale-98 transition-transform">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <h2 className="font-semibold text-foreground">Staff</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
@@ -170,10 +170,10 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
 
       {/* Card Machines Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/devices" className="block bg-card rounded-2xl p-5 active:scale-98 transition-transform">
+        <Link to="/dashboard/devices" className="block bg-card border border-border rounded-2xl p-5 active:scale-98 transition-transform">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary/10 border border-primary/20 rounded-xl flex items-center justify-center">
                 <CreditCard className="w-5 h-5 text-primary" />
               </div>
               <div>
@@ -189,15 +189,15 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       {/* Settings Section */}
       <div className="px-5 py-2">
         <h2 className="text-sm text-muted-foreground mb-3">Settings</h2>
-        <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border">
+        <div className="bg-card border border-border rounded-2xl overflow-hidden divide-y divide-border">
           {settingsItems.map((item) => (
             <button 
               key={item.id}
               onClick={() => handleOpenSettings(item.id, item.label)}
-              className="w-full flex items-center justify-between px-4 py-4 active:bg-muted transition-colors"
+              className="w-full flex items-center justify-between px-4 py-4 active:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                <div className="w-10 h-10 bg-muted border border-border rounded-xl flex items-center justify-center">
                   <item.icon className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="text-left">
@@ -215,9 +215,9 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
       <div className="px-5 py-2">
         <button 
           onClick={handleLogout}
-          className="w-full bg-card rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 dark:active:bg-red-900/20 transition-colors"
+          className="w-full bg-card border border-border rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-500/10 transition-colors"
         >
-          <div className="w-10 h-10 bg-red-50 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
             <LogOut className="w-5 h-5 text-red-500" />
           </div>
           <span className="font-medium text-red-500">Log Out</span>
