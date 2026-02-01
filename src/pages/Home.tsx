@@ -3,6 +3,12 @@ import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// Device images
+import pataPro from "@/assets/devices/pata-pro.jpeg";
+import pataDiamond from "@/assets/devices/pata-diamond.jpeg";
+import pataPlatinum from "@/assets/devices/pata-platinum.jpeg";
+import goPata from "@/assets/devices/go-pata.jpeg";
+
 const Home = () => {
   return (
     <div className="pata-dark-page">
@@ -46,26 +52,34 @@ const Home = () => {
             <div className="relative grid grid-cols-2 gap-3">
               <div className="space-y-3">
                 <div className="bg-[#2a2a2a] rounded-2xl aspect-video overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-[#1a3a4a] to-[#0a2a3a] flex items-center justify-center">
-                    <span className="text-white/40 text-sm">POS Display</span>
-                  </div>
+                  <img 
+                    src={pataPro} 
+                    alt="Pata Pro POS Display" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="bg-[#2a2a2a] rounded-2xl aspect-square overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-[#3a2a1a] to-[#2a1a0a] flex items-center justify-center">
-                    <span className="text-white/40 text-sm">Business Owner</span>
-                  </div>
+                  <img 
+                    src={pataDiamond} 
+                    alt="Pata Diamond Card Machine" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
               <div className="space-y-3 pt-8">
                 <div className="bg-[#2a2a2a] rounded-2xl aspect-square overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-[#1a2a3a] to-[#0a1a2a] flex items-center justify-center">
-                    <span className="text-white/40 text-sm">Card Machine</span>
-                  </div>
+                  <img 
+                    src={pataPlatinum} 
+                    alt="Pata Platinum Card Machine" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <div className="bg-[#2a2a2a] rounded-2xl aspect-video overflow-hidden">
-                  <div className="w-full h-full bg-gradient-to-br from-[#0066FF]/20 to-[#0066FF]/10 flex items-center justify-center">
-                    <span className="text-white/40 text-sm">App Screen</span>
-                  </div>
+                  <img 
+                    src={goPata} 
+                    alt="Go Pata Mobile Device" 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               </div>
             </div>
