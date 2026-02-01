@@ -107,36 +107,36 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
 
       {/* Settings Title */}
       <div className="px-5 py-4">
-        <h1 className="text-2xl font-bold text-[#141414]">Settings</h1>
-        <p className="text-sm text-[#141414]/60">{userEmail}</p>
+        <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+        <p className="text-sm text-muted-foreground">{userEmail}</p>
       </div>
 
       {/* Settings Groups */}
       <div className="px-5 space-y-4">
         {settingsGroups.map((group) => (
-          <div key={group.title} className="bg-white rounded-2xl overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#E8E8E8]">
-              <h2 className="text-sm font-semibold text-[#141414]/60 uppercase tracking-wide">
+          <div key={group.title} className="bg-card border border-border rounded-2xl overflow-hidden">
+            <div className="px-4 py-3 border-b border-border">
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
                 {group.title}
               </h2>
             </div>
-            <div className="divide-y divide-[#E8E8E8]">
+            <div className="divide-y divide-border">
               {group.items.map((item) => (
                 <button 
                   key={item.label}
                   onClick={() => handleOpenSettings(item.id, item.label)}
-                  className="w-full flex items-center justify-between px-4 py-4 active:bg-[#F5F5F5] transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-4 active:bg-muted/50 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
-                      <item.icon className="w-5 h-5 text-[#141414]/60" />
+                    <div className="w-10 h-10 bg-muted border border-border rounded-xl flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div className="text-left">
-                      <p className="font-medium text-[#141414]">{item.label}</p>
-                      <p className="text-xs text-[#141414]/50">{item.description}</p>
+                      <p className="font-medium text-foreground">{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.description}</p>
                     </div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-[#141414]/30" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground" />
                 </button>
               ))}
             </div>
@@ -146,9 +146,9 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
         {/* Logout Button */}
         <button 
           onClick={handleLogout}
-          className="w-full bg-white rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-50 transition-colors"
+          className="w-full bg-card border border-border rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-500/10 transition-colors"
         >
-          <div className="w-10 h-10 bg-red-50 rounded-xl flex items-center justify-center">
+          <div className="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
             <LogOut className="w-5 h-5 text-red-500" />
           </div>
           <span className="font-medium text-red-500">Log Out</span>
