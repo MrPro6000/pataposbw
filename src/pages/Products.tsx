@@ -47,12 +47,13 @@ const Products = () => {
       <section className="px-6 md:px-20 py-16 md:py-24">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16">
+            <p className="text-[#00C8E6] text-sm font-medium uppercase tracking-wide mb-4">Payments made simple</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Everything you need<br />
-              <span className="text-[#D4B896]">to get paid</span>
+              One platform,<br />
+              <span className="text-[#D4B896]">infinite ways to get paid</span>
             </h1>
             <p className="text-lg text-white/70">
-              From card machines to online payments to business funding—we've built the tools to help your business thrive.
+              From mobile POS to card machines, payment links to international transfers—Pata puts the power of payments in your pocket.
             </p>
           </div>
 

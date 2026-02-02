@@ -23,27 +23,27 @@ const Home = () => {
               <div className="flex items-center gap-2 mb-6">
                 <Star className="w-4 h-4 text-[#0066FF]" />
                 <span className="text-[#0066FF] font-medium">202,107</span>
-                <span className="text-white/80">businesses run smarter with Pata</span>
+                <span className="text-white/80">businesses trust Pata</span>
               </div>
               
               <h1 className="pata-hero-title text-white mb-2">
-                SAVE TIME, MONEY
+                YOUR BUSINESS,
               </h1>
               <h1 className="pata-hero-title text-[#D4B896] mb-6">
-                AND GUESSWORK
+                YOUR POCKET
               </h1>
               
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Market leader in card machines, online payments, point of sale solutions and flexible business funding, all in one place.
+                Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money worldwide, and manage your entire business—all from your pocket.
               </p>
               
               <div className="flex items-center gap-4">
                 <Link to="/signup" className="pata-btn-cyan">
-                  Sign up
+                  Start accepting payments
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link to="/products" className="text-white font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-                  Find a product
+                  Explore products
                 </Link>
               </div>
             </div>
@@ -91,46 +91,83 @@ const Home = () => {
       <section className="px-6 md:px-20 py-20 bg-[#1a1a1a]">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
-            Everything you need to grow
+            One app. Endless possibilities.
           </h2>
           <p className="text-white/60 text-center mb-12 max-w-2xl mx-auto">
-            From accepting payments to managing your business, we've got you covered.
+            Accept payments, sell products, transfer money globally, and grow your business—all from one powerful platform.
           </p>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
-                title: "Card Machines",
-                description: "Smart, reliable card machines built for small businesses.",
-                link: "/card-machines"
+                title: "Mobile POS",
+                description: "Turn your phone into a complete point of sale. Sell products, manage inventory, and accept payments anywhere.",
+                link: "/products",
+                tagline: "Your store in your pocket"
               },
               {
-                title: "Online Payments",
-                description: "Start selling online in minutes with payment links and invoices.",
-                link: "/online-payments"
+                title: "Card Payments",
+                description: "Tap, swipe, or scan. Accept all major cards and mobile wallets with instant confirmation.",
+                link: "/card-machines",
+                tagline: "Every card, everywhere"
               },
               {
-                title: "Pata Capital",
-                description: "Grow your business with a fast, flexible cash advance.",
-                link: "/capital"
+                title: "Payment Gateway",
+                description: "Connect your online store and accept payments on your website, app, or via payment links.",
+                link: "/online-payments",
+                tagline: "Sell online in minutes"
+              },
+              {
+                title: "Money Transfer",
+                description: "Send money internationally like Western Union, Mukuru, and WorldRemit. Fast, secure, affordable.",
+                link: "/products",
+                tagline: "Send money worldwide"
               }
             ].map((feature) => (
               <Link
                 key={feature.title}
                 to={feature.link}
-                className="bg-[#2a2a2a] rounded-2xl p-8 hover:bg-[#333] transition-colors group"
+                className="bg-[#2a2a2a] rounded-2xl p-6 hover:bg-[#333] transition-colors group"
               >
-                <div className="w-12 h-12 bg-[#0066FF]/20 rounded-xl mb-6 flex items-center justify-center">
+                <div className="w-12 h-12 bg-[#0066FF]/20 rounded-xl mb-4 flex items-center justify-center">
                   <div className="w-6 h-6 bg-[#0066FF] rounded-lg"></div>
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
-                <p className="text-white/60 mb-4">{feature.description}</p>
-                <span className="text-[#0066FF] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                <p className="text-[#00C8E6] text-xs font-medium uppercase tracking-wide mb-2">{feature.tagline}</p>
+                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
+                <p className="text-white/60 text-sm mb-4">{feature.description}</p>
+                <span className="text-[#0066FF] font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                   Learn more
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Additional Services */}
+      <section className="px-6 md:px-20 py-16">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6">
+            <Link to="/capital" className="bg-gradient-to-br from-[#D4B896]/20 to-[#D4B896]/5 rounded-2xl p-8 hover:from-[#D4B896]/30 transition-colors group">
+              <p className="text-[#D4B896] text-xs font-medium uppercase tracking-wide mb-2">Grow faster</p>
+              <h3 className="text-2xl font-bold text-white mb-3">Pata Capital</h3>
+              <p className="text-white/60 mb-4">Get funding in 24 hours. No paperwork, no credit checks. Pay back as you earn.</p>
+              <span className="text-[#D4B896] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                Check your offer
+                <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
+            
+            <Link to="/products" className="bg-gradient-to-br from-[#00C8E6]/20 to-[#00C8E6]/5 rounded-2xl p-8 hover:from-[#00C8E6]/30 transition-colors group">
+              <p className="text-[#00C8E6] text-xs font-medium uppercase tracking-wide mb-2">Complete solution</p>
+              <h3 className="text-2xl font-bold text-white mb-3">Business Hub</h3>
+              <p className="text-white/60 mb-4">Track sales, manage customers, view reports, and control your entire business from one dashboard.</p>
+              <span className="text-[#00C8E6] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                Explore Hub
+                <ArrowRight className="w-4 h-4" />
+              </span>
+            </Link>
           </div>
         </div>
       </section>

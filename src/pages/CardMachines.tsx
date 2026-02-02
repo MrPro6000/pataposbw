@@ -78,14 +78,13 @@ const CardMachines = () => {
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                Smart, reliable<br />
-                card machines–<br />
-                built for small<br />
-                businesses
+                Accept every<br />
+                payment,<br />
+                <span className="text-[#00C8E6]">anywhere</span>
               </h1>
 
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Reliable, fast, and easy to use–Pata card machines are loaded with smart features to keep your business moving.
+                Tap, swipe, scan, or insert. Our smart terminals accept all cards, mobile wallets, and QR payments—so you never miss a sale.
               </p>
 
               <div className="flex items-center gap-4">

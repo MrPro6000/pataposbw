@@ -34,14 +34,13 @@ const OnlinePayments = () => {
               </div>
 
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#141414] leading-tight mb-6">
-                Expand your<br />
-                reach–start<br />
-                selling online in<br />
-                minutes.
+                Your online<br />
+                store,<br />
+                <span className="text-[#00C8E6]">connected</span>
               </h1>
 
               <p className="text-lg text-[#141414]/70 mb-8 max-w-lg">
-                Whether it's via payment links, on your website, or through invoices – Pata makes online selling simple.
+                Accept payments on your website, send payment links via WhatsApp, or integrate with Shopify & WooCommerce. Get paid from anywhere in the world.
               </p>
 
               <div className="flex items-center gap-4">

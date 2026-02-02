@@ -185,8 +185,8 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
               <CreditCard className="w-5 h-5 text-primary" />
             </div>
             <div>
-              <p className="font-semibold text-foreground text-sm">POS</p>
-              <p className="text-xs text-muted-foreground">Point of Sale</p>
+              <p className="font-semibold text-foreground text-sm">Mobile POS</p>
+              <p className="text-xs text-muted-foreground">Sell from your phone</p>
             </div>
           </button>
           
