@@ -22,15 +22,14 @@ const Capital = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
+              <p className="text-[#00C8E6] text-sm font-medium uppercase tracking-wide mb-4">Funding that flows with you</p>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-                Grow your<br />
-                business with<br />
-                a cash<br />
-                advance
+                Get funded.<br />
+                <span className="text-[#D4B896]">Grow faster.</span>
               </h1>
 
               <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Pata Capital is a fast, flexible cash advance available to eligible Pata customers. We've disbursed over P3B to our merchants so far.
+                No banks. No paperwork. No waiting. Get a cash advance in 24 hours and pay back automatically as you earn. Over P3B disbursed to Pata merchants.
               </p>
 
               <div className="flex items-center gap-4">

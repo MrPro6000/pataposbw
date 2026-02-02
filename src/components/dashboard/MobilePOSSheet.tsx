@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ShoppingBag, Monitor, Keyboard, Receipt, Printer, Calculator, Settings, Wifi, Battery, Signal } from "lucide-react";
+import { X, ShoppingBag, Monitor, Keyboard, Receipt, Printer, Calculator, Settings, Wifi, Battery, Signal, Smartphone } from "lucide-react";
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 
@@ -38,7 +38,10 @@ const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
       <DrawerContent className="bg-background max-h-[95vh]">
         <DrawerHeader className="border-b border-border px-5 py-4">
           <div className="flex items-center justify-between">
-            <DrawerTitle className="text-xl font-bold text-foreground">Point of Sale</DrawerTitle>
+            <div>
+              <DrawerTitle className="text-xl font-bold text-foreground">Mobile POS</DrawerTitle>
+              <p className="text-xs text-muted-foreground mt-0.5">Your store in your pocket</p>
+            </div>
             <button onClick={onClose} className="p-2 -mr-2">
               <X className="w-6 h-6 text-muted-foreground" />
             </button>
@@ -51,11 +54,11 @@ const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
             <div className="bg-primary/10 rounded-2xl p-4 mb-4">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                  <Monitor className="w-6 h-6 text-primary-foreground" />
+                  <Smartphone className="w-6 h-6 text-primary-foreground" />
                 </div>
                 <div>
-                  <p className="font-semibold text-foreground">POS System Active</p>
-                  <p className="text-sm text-muted-foreground">2 of 3 devices online</p>
+                  <p className="font-semibold text-foreground">Mobile POS Ready</p>
+                  <p className="text-sm text-muted-foreground">Sell products, scan & pay</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 text-sm">
