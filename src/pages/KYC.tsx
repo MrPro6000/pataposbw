@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { submitKYC, getKYCSubmission } from "@/integrations/firebase/firestore";
-import { uploadKYCDocument } from "@/integrations/firebase/storage";
+import { submitKYC, getKYCSubmission } from "@/integrations/supabase/profile";
+import { uploadKYCDocument } from "@/integrations/supabase/storage";
 import PataLogo from "@/components/PataLogo";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -45,7 +45,7 @@ const KYC = () => {
         return;
       }
 
-      const { data: kyc } = await getKYCSubmission(user.uid);
+      const { data: kyc } = await getKYCSubmission(user.id);
 
       if (kyc) {
         if (kyc.status === "approved") {
@@ -119,8 +119,8 @@ const KYC = () => {
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(file);
 
-      // Upload to Firebase Storage
-      const { url, error } = await uploadKYCDocument(user.uid, type === "front" ? "id_front" : "id_back", file);
+      // Upload to Supabase Storage
+      const { url, error } = await uploadKYCDocument(user.id, type === "front" ? "id_front" : "id_back", file);
 
       if (error) throw new Error(error);
 
@@ -159,7 +159,7 @@ const KYC = () => {
 
     setLoading(true);
     try {
-      const { error } = await submitKYC(user.uid, {
+      const { error } = await submitKYC(user.id, {
         omangNumber: omangNumber.trim(),
         phoneNumber: user.email || "",
         idFrontUrl,

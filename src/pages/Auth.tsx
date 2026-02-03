@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { getKYCSubmission } from "@/integrations/firebase/firestore";
+import { getKYCSubmission } from "@/integrations/supabase/profile";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useIsMobile } from "@/hooks/use-mobile";
 import OnboardingCarousel from "@/components/onboarding/OnboardingCarousel";
+import { lovable } from "@/integrations/lovable/index";
 
 interface AuthProps {
   mode: "login" | "signup";
@@ -33,7 +34,7 @@ const Auth = ({ mode }: AuthProps) => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const isMobile = useIsMobile();
-  const { user, userProfile, signIn: firebaseSignIn, signUp: firebaseSignUp } = useAuth();
+  const { user, userProfile, isAdmin, signIn: authSignIn, signUp: authSignUp } = useAuth();
 
   // Check if user has seen onboarding
   useEffect(() => {
@@ -53,14 +54,18 @@ const Auth = ({ mode }: AuthProps) => {
   // Redirect authenticated users
   useEffect(() => {
     const checkAndRedirect = async () => {
-      if (user && userProfile) {
+      if (user) {
+        // Check if admin
+        if (isAdmin) {
+          navigate("/admin");
+          return;
+        }
+
         // Check KYC status
-        const { data: kyc } = await getKYCSubmission(user.uid);
+        const { data: kyc } = await getKYCSubmission(user.id);
         
         if (!kyc || kyc.status === "pending") {
           navigate("/kyc");
-        } else if (!userProfile.businessSetupComplete) {
-          navigate("/business-setup");
         } else {
           navigate("/dashboard");
         }
@@ -68,7 +73,7 @@ const Auth = ({ mode }: AuthProps) => {
     };
 
     checkAndRedirect();
-  }, [user, userProfile, navigate]);
+  }, [user, isAdmin, navigate]);
 
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");
@@ -141,10 +146,10 @@ const Auth = ({ mode }: AuthProps) => {
 
     setLoading(true);
     try {
-      const { user: newUser, error } = await firebaseSignUp(email, password);
+      const { user: newUser, error } = await authSignUp(email, password);
 
       if (error) {
-        if (error.includes("already-in-use")) {
+        if (error.includes("already registered") || error.includes("already been registered")) {
           toast({
             title: "Account exists",
             description: "This email is already registered. Please log in instead.",
@@ -156,7 +161,7 @@ const Auth = ({ mode }: AuthProps) => {
       } else if (newUser) {
         toast({
           title: "Account created!",
-          description: "Please verify your email and complete KYC verification.",
+          description: "Please check your email to verify your account, then complete KYC verification.",
         });
         navigate("/kyc");
       }
@@ -200,27 +205,30 @@ const Auth = ({ mode }: AuthProps) => {
     setLoading(true);
 
     try {
-      const { user: loggedInUser, error } = await firebaseSignIn(email, password);
+      const { user: loggedInUser, error } = await authSignIn(email, password);
 
       if (error) {
-        if (error.includes("user-not-found") || error.includes("wrong-password") || error.includes("invalid-credential")) {
+        if (error.includes("Invalid login credentials")) {
           toast({
             title: "Invalid credentials",
             description: "Please check your email and password.",
+            variant: "destructive",
+          });
+        } else if (error.includes("Email not confirmed")) {
+          toast({
+            title: "Email not verified",
+            description: "Please check your email and click the verification link.",
             variant: "destructive",
           });
         } else {
           throw new Error(error);
         }
       } else if (loggedInUser) {
-        // Check KYC and business setup status
-        const { data: kyc } = await getKYCSubmission(loggedInUser.uid);
-        
-        if (!kyc) {
-          navigate("/kyc");
-        } else {
-          navigate("/dashboard");
-        }
+        // Redirect will happen via useEffect
+        toast({
+          title: "Welcome back!",
+          description: "Logging you in...",
+        });
       }
     } catch (error: any) {
       toast({
@@ -234,10 +242,28 @@ const Auth = ({ mode }: AuthProps) => {
   };
 
   const handleGoogleSignIn = async () => {
-    toast({
-      title: "Coming soon",
-      description: "Google sign-in will be available soon.",
-    });
+    setLoading(true);
+    try {
+      const { error } = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: error.message || "Failed to sign in with Google",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Show onboarding carousel for mobile first-time users
@@ -455,61 +481,56 @@ const Auth = ({ mode }: AuthProps) => {
                     </p>
                   </div>
 
-                  <div className="flex justify-center mb-6">
-                    <InputOTP
-                      maxLength={6}
-                      value={otp}
-                      onChange={(value) => setOtp(value)}
+                  <div className="space-y-4">
+                    <div className="flex justify-center">
+                      <InputOTP
+                        maxLength={6}
+                        value={otp}
+                        onChange={setOtp}
+                      >
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} />
+                          <InputOTPSlot index={1} />
+                          <InputOTPSlot index={2} />
+                          <InputOTPSlot index={3} />
+                          <InputOTPSlot index={4} />
+                          <InputOTPSlot index={5} />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </div>
+
+                    <button
+                      onClick={handleVerifyOTP}
+                      disabled={loading || otp.length !== 6}
+                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
                     >
-                      <InputOTPGroup>
-                        <InputOTPSlot index={0} className="border-input bg-muted" />
-                        <InputOTPSlot index={1} className="border-input bg-muted" />
-                        <InputOTPSlot index={2} className="border-input bg-muted" />
-                        <InputOTPSlot index={3} className="border-input bg-muted" />
-                        <InputOTPSlot index={4} className="border-input bg-muted" />
-                        <InputOTPSlot index={5} className="border-input bg-muted" />
-                      </InputOTPGroup>
-                    </InputOTP>
-                  </div>
+                      {loading ? "Verifying..." : "Verify & Create Account"}
+                    </button>
 
-                  <button
-                    onClick={handleVerifyOTP}
-                    disabled={loading || otp.length !== 6}
-                    className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
-                  >
-                    {loading ? "Verifying..." : "Verify & Create Account"}
-                  </button>
-
-                  <p className="text-center text-sm text-muted-foreground mt-4">
-                    Didn't receive the code?{" "}
                     <button
                       onClick={handleSendOTP}
-                      className="text-primary hover:underline"
+                      disabled={loading}
+                      className="w-full text-sm text-muted-foreground hover:text-foreground"
                     >
-                      Resend
+                      Didn't receive the code? Resend
                     </button>
-                  </p>
+                  </div>
                 </>
               )}
-            </div>
 
-            <p className="text-center text-sm text-muted-foreground mt-6">
-              {mode === "login" ? (
-                <>
-                  Don't have an account?{" "}
-                  <Link to="/signup" className="text-primary hover:underline font-medium">
-                    Sign up
-                  </Link>
-                </>
-              ) : (
-                <>
-                  Already have an account?{" "}
-                  <Link to="/login" className="text-primary hover:underline font-medium">
-                    Log in
-                  </Link>
-                </>
-              )}
-            </p>
+              {/* Mobile only - Link to alternate auth mode */}
+              <div className="sm:hidden mt-6 text-center">
+                <Link
+                  to={mode === "login" ? "/signup" : "/login"}
+                  className="text-sm text-muted-foreground"
+                >
+                  {mode === "login" ? "Don't have an account? " : "Already have an account? "}
+                  <span className="text-primary font-medium">
+                    {mode === "login" ? "Sign up" : "Log in"}
+                  </span>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </main>

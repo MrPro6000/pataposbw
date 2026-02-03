@@ -32,7 +32,7 @@ const BusinessSetup = () => {
 
   if (!user) return null;
 
-  return <BusinessSetupForm userId={user.uid} onComplete={handleComplete} />;
+  return <BusinessSetupForm userId={user.id} onComplete={handleComplete} />;
 };
 
 export default BusinessSetup;
