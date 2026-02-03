@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Zap, Percent } from "lucide-react";
+import { ChevronRight, Zap, Percent, Send, Banknote } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
+import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
+import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
 import PataLogo from "@/components/PataLogo";
 
 interface MobileMoneyViewProps {
@@ -16,6 +18,8 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
   const [feesOpen, setFeesOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
+  const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
@@ -85,6 +89,24 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </Link>
       </div>
 
+      {/* Send Money Section */}
+      <div className="px-5 py-2">
+        <button 
+          onClick={() => setMoneyTransferOpen(true)}
+          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
+              <Send className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Send Money</p>
+              <p className="text-sm text-muted-foreground">International transfers via Mukuru</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
       {/* Pata Capital Section */}
       <div className="px-5 py-2">
         <button 
@@ -98,6 +120,24 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
             <div>
               <p className="font-semibold text-foreground">Pata Capital</p>
               <p className="text-sm text-muted-foreground">Find out more</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Business Loan Section */}
+      <div className="px-5 py-2">
+        <button 
+          onClick={() => setLoanApplicationOpen(true)}
+          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center">
+              <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Business Loan</p>
+              <p className="text-sm text-muted-foreground">Apply for funding</p>
             </div>
           </div>
         </button>
@@ -139,6 +179,18 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         onClose={() => setProfileOpen(false)}
         profile={profile}
         userEmail={userEmail}
+      />
+
+      {/* Money Transfer Sheet */}
+      <MobileMoneyTransferSheet
+        open={moneyTransferOpen}
+        onClose={() => setMoneyTransferOpen(false)}
+      />
+
+      {/* Loan Application Sheet */}
+      <MobileLoanApplicationSheet
+        open={loanApplicationOpen}
+        onClose={() => setLoanApplicationOpen(false)}
       />
 
       {/* Bottom Navigation */}
