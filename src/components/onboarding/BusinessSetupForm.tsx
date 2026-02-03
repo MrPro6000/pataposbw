@@ -8,6 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { 
   Building2, 
   MapPin, 
@@ -16,7 +24,10 @@ import {
   ArrowLeft,
   Upload,
   CheckCircle,
-  Briefcase
+  Briefcase,
+  Clock,
+  CreditCard,
+  Banknote
 } from "lucide-react";
 
 interface BusinessSetupFormProps {
@@ -24,7 +35,7 @@ interface BusinessSetupFormProps {
   onComplete: () => void;
 }
 
-type SetupStep = "business" | "address" | "logo" | "complete";
+type SetupStep = "business" | "address" | "operations" | "banking" | "logo" | "complete";
 
 const businessTypes = [
   "Retail Store",
@@ -37,6 +48,14 @@ const businessTypes = [
   "Agriculture",
   "Manufacturing",
   "Other",
+];
+
+const currencies = [
+  { code: "BWP", name: "Botswana Pula (P)" },
+  { code: "ZAR", name: "South African Rand (R)" },
+  { code: "USD", name: "US Dollar ($)" },
+  { code: "EUR", name: "Euro (€)" },
+  { code: "GBP", name: "British Pound (£)" },
 ];
 
 const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
@@ -53,10 +72,21 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const [city, setCity] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
+  
+  // New fields
+  const [operatingHours, setOperatingHours] = useState("");
+  const [currency, setCurrency] = useState("BWP");
+  const [bankSetupOption, setBankSetupOption] = useState<"now" | "later" | null>(null);
+  const [bankName, setBankName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [branchCode, setBranchCode] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const steps = [
     { key: "business", label: "Business Info", icon: Building2 },
     { key: "address", label: "Location", icon: MapPin },
+    { key: "operations", label: "Operations", icon: Clock },
+    { key: "banking", label: "Banking", icon: Banknote },
     { key: "logo", label: "Branding", icon: Upload },
   ];
 
@@ -119,8 +149,36 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       }
       setCurrentStep("address");
     } else if (currentStep === "address") {
+      setCurrentStep("operations");
+    } else if (currentStep === "operations") {
+      if (!currency) {
+        toast({
+          title: "Required field",
+          description: "Please select your preferred currency.",
+          variant: "destructive",
+        });
+        return;
+      }
+      setCurrentStep("banking");
+    } else if (currentStep === "banking") {
+      if (!bankSetupOption) {
+        toast({
+          title: "Required selection",
+          description: "Please choose whether to set up banking now or later.",
+          variant: "destructive",
+        });
+        return;
+      }
       setCurrentStep("logo");
     } else if (currentStep === "logo") {
+      if (!termsAccepted) {
+        toast({
+          title: "Terms Required",
+          description: "You must accept the Terms and Conditions to continue.",
+          variant: "destructive",
+        });
+        return;
+      }
       handleSubmit();
     }
   };
@@ -128,8 +186,12 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const handleBack = () => {
     if (currentStep === "address") {
       setCurrentStep("business");
-    } else if (currentStep === "logo") {
+    } else if (currentStep === "operations") {
       setCurrentStep("address");
+    } else if (currentStep === "banking") {
+      setCurrentStep("operations");
+    } else if (currentStep === "logo") {
+      setCurrentStep("banking");
     }
   };
 
@@ -352,6 +414,141 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
             </div>
           )}
 
+          {currentStep === "operations" && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 text-purple-500" />
+                </div>
+                <h1 className="text-2xl font-bold text-foreground mb-2">
+                  Business Operations
+                </h1>
+                <p className="text-muted-foreground">
+                  Tell us about your operating schedule and currency
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="hours">Operating Hours</Label>
+                  <Input
+                    id="hours"
+                    value={operatingHours}
+                    onChange={(e) => setOperatingHours(e.target.value)}
+                    placeholder="e.g., Mon-Fri 8:00 AM - 5:00 PM"
+                    className="mt-2"
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Your regular business hours
+                  </p>
+                </div>
+
+                <div>
+                  <Label>Currency *</Label>
+                  <Select value={currency} onValueChange={setCurrency}>
+                    <SelectTrigger className="mt-2">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {currencies.map((cur) => (
+                        <SelectItem key={cur.code} value={cur.code}>
+                          {cur.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Primary currency for your transactions
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {currentStep === "banking" && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-cyan-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Banknote className="w-8 h-8 text-cyan-500" />
+                </div>
+                <h1 className="text-2xl font-bold text-foreground mb-2">
+                  Bank Account Setup
+                </h1>
+                <p className="text-muted-foreground">
+                  Where should we send your payouts?
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setBankSetupOption("now")}
+                    className={`p-4 rounded-xl border text-center transition-all ${
+                      bankSetupOption === "now"
+                        ? "bg-primary/10 border-primary text-primary"
+                        : "bg-muted border-border text-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <CreditCard className="w-6 h-6 mx-auto mb-2" />
+                    <p className="font-medium text-sm">Add Now</p>
+                  </button>
+                  <button
+                    onClick={() => setBankSetupOption("later")}
+                    className={`p-4 rounded-xl border text-center transition-all ${
+                      bankSetupOption === "later"
+                        ? "bg-primary/10 border-primary text-primary"
+                        : "bg-muted border-border text-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <Clock className="w-6 h-6 mx-auto mb-2" />
+                    <p className="font-medium text-sm">Connect Later</p>
+                  </button>
+                </div>
+
+                {bankSetupOption === "now" && (
+                  <div className="space-y-4 pt-4 border-t border-border">
+                    <div>
+                      <Label htmlFor="bankName">Bank Name</Label>
+                      <Input
+                        id="bankName"
+                        value={bankName}
+                        onChange={(e) => setBankName(e.target.value)}
+                        placeholder="e.g., First National Bank"
+                        className="mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="accountNumber">Account Number</Label>
+                      <Input
+                        id="accountNumber"
+                        value={accountNumber}
+                        onChange={(e) => setAccountNumber(e.target.value.replace(/\D/g, ""))}
+                        placeholder="Enter account number"
+                        className="mt-2"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="branchCode">Branch Code</Label>
+                      <Input
+                        id="branchCode"
+                        value={branchCode}
+                        onChange={(e) => setBranchCode(e.target.value)}
+                        placeholder="e.g., 260050"
+                        className="mt-2"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {bankSetupOption === "later" && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    You can add your bank account from Settings anytime.
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+
           {currentStep === "logo" && (
             <div className="space-y-6">
               <div className="text-center mb-8">
@@ -412,6 +609,30 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                 <p className="text-sm text-muted-foreground text-center">
                   You can skip this step and add a logo later from Settings
                 </p>
+
+                {/* Terms and Conditions */}
+                <div className="mt-6 pt-4 border-t border-border">
+                  <div className="flex items-start gap-3">
+                    <Checkbox
+                      id="terms"
+                      checked={termsAccepted}
+                      onCheckedChange={(checked) => setTermsAccepted(checked === true)}
+                      className="mt-0.5"
+                    />
+                    <label htmlFor="terms" className="text-sm text-muted-foreground cursor-pointer">
+                      I agree to the{" "}
+                      <a href="#" className="text-primary hover:underline">Terms and Conditions</a>
+                      {" "}and{" "}
+                      <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+                      , and agree to join PATA as a merchant.
+                    </label>
+                  </div>
+                  {!termsAccepted && (
+                    <p className="text-xs text-destructive mt-2 ml-7">
+                      * Required to complete setup
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           )}

@@ -46,28 +46,28 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
 
       {/* Support Hero */}
       <div className="px-5 py-6">
-        <div className="bg-[#0066FF] rounded-2xl p-5 text-center">
-          <div className="w-14 h-14 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <HelpCircle className="w-7 h-7 text-white" />
+        <div className="bg-primary rounded-2xl p-5 text-center">
+          <div className="w-14 h-14 bg-primary-foreground/20 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <HelpCircle className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h2 className="text-xl font-bold text-white mb-1">How can we help?</h2>
-          <p className="text-white/80 text-sm">We're here to support you 24/7</p>
+          <h2 className="text-xl font-bold text-primary-foreground mb-1">How can we help?</h2>
+          <p className="text-primary-foreground/80 text-sm">We're here to support you 24/7</p>
         </div>
       </div>
 
       {/* Contact Options */}
       <div className="px-5 mb-6">
-        <h2 className="text-sm text-[#141414]/60 mb-3">Contact us</h2>
+        <h2 className="text-sm text-muted-foreground mb-3">Contact us</h2>
         <div className="grid grid-cols-3 gap-3">
           {contactOptions.map((option) => (
             <button 
               key={option.label}
-              className="bg-white rounded-2xl p-4 flex flex-col items-center gap-2 active:scale-98 transition-transform"
+              className="bg-card rounded-2xl p-4 flex flex-col items-center gap-2 active:scale-98 transition-transform border border-border"
             >
-              <div className="w-10 h-10 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
-                <option.icon className="w-5 h-5 text-[#0066FF]" />
+              <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                <option.icon className="w-5 h-5 text-primary" />
               </div>
-              <span className="text-sm font-medium text-[#141414]">{option.label}</span>
+              <span className="text-sm font-medium text-foreground">{option.label}</span>
             </button>
           ))}
         </div>
@@ -75,23 +75,23 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
 
       {/* Help Topics */}
       <div className="px-5 mb-6">
-        <h2 className="text-sm text-[#141414]/60 mb-3">Help topics</h2>
-        <div className="bg-white rounded-2xl overflow-hidden divide-y divide-[#E8E8E8]">
+        <h2 className="text-sm text-muted-foreground mb-3">Help topics</h2>
+        <div className="bg-card rounded-2xl overflow-hidden divide-y divide-border">
           {helpTopics.map((topic) => (
             <button 
               key={topic.title}
-              className="w-full flex items-center justify-between px-4 py-4 active:bg-[#F5F5F5] transition-colors"
+              className="w-full flex items-center justify-between px-4 py-4 active:bg-muted transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
-                  <topic.icon className="w-5 h-5 text-[#141414]/60" />
+                <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                  <topic.icon className="w-5 h-5 text-muted-foreground" />
                 </div>
                 <div className="text-left">
-                  <p className="font-medium text-[#141414]">{topic.title}</p>
-                  <p className="text-xs text-[#141414]/50">{topic.description}</p>
+                  <p className="font-medium text-foreground">{topic.title}</p>
+                  <p className="text-xs text-muted-foreground">{topic.description}</p>
                 </div>
               </div>
-              <ChevronRight className="w-5 h-5 text-[#141414]/30" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground/50" />
             </button>
           ))}
         </div>
@@ -99,13 +99,13 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
 
       {/* Open Tickets */}
       <div className="px-5">
-        <h2 className="text-sm text-[#141414]/60 mb-3">Your tickets</h2>
-        <div className="bg-white rounded-2xl p-5 text-center">
-          <div className="w-12 h-12 bg-[#F5F5F5] rounded-xl flex items-center justify-center mx-auto mb-3">
-            <MessageSquare className="w-6 h-6 text-[#141414]/30" />
+        <h2 className="text-sm text-muted-foreground mb-3">Your tickets</h2>
+        <div className="bg-card rounded-2xl p-5 text-center border border-border">
+          <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mx-auto mb-3">
+            <MessageSquare className="w-6 h-6 text-muted-foreground/50" />
           </div>
-          <p className="text-[#141414]/60 text-sm">No open tickets</p>
-          <button className="mt-3 px-4 py-2 bg-[#0066FF] text-white font-medium rounded-xl text-sm">
+          <p className="text-muted-foreground text-sm">No open tickets</p>
+          <button className="mt-3 px-4 py-2 bg-primary text-primary-foreground font-medium rounded-xl text-sm">
             Create Ticket
           </button>
         </div>
