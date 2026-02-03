@@ -49,31 +49,31 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               {view !== "info" ? (
                 <button 
                   onClick={() => setView("info")}
-                  className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center"
+                  className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
                 >
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               ) : (
                 <DrawerClose asChild>
-                  <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                    <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                  <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                    <ChevronLeft className="w-4 h-4 text-foreground" />
                   </button>
                 </DrawerClose>
               )}
-              <DrawerTitle className="text-[#141414]">
+              <DrawerTitle className="text-foreground">
                 {view === "setup" ? "Integration Guide" : view === "contact" ? "Contact Sales" : "Payment Gateway"}
               </DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -83,7 +83,7 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
           {view === "info" && (
             <>
               {/* Hero */}
-              <div className="bg-gradient-to-br from-[#00C8E6] to-[#00b8d4] rounded-2xl p-5 mb-5 text-center">
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-5 mb-5 text-center">
                 <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Globe className="w-8 h-8 text-white" />
                 </div>
@@ -92,15 +92,15 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
               </div>
 
               {/* Features */}
-              <h3 className="font-semibold text-[#141414] mb-3">Features</h3>
+              <h3 className="font-semibold text-foreground mb-3">Features</h3>
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {features.map((feature) => (
-                  <div key={feature.title} className="bg-[#F5F5F5] rounded-xl p-3">
+                  <div key={feature.title} className="bg-muted rounded-xl p-3">
                     <div className="flex items-center gap-2 mb-1">
-                      <CheckCircle className="w-4 h-4 text-[#00C8E6]" />
-                      <p className="font-medium text-[#141414] text-sm">{feature.title}</p>
+                      <CheckCircle className="w-4 h-4 text-emerald-500" />
+                      <p className="font-medium text-foreground text-sm">{feature.title}</p>
                     </div>
-                    <p className="text-xs text-[#141414]/60 ml-6">{feature.description}</p>
+                    <p className="text-xs text-muted-foreground ml-6">{feature.description}</p>
                   </div>
                 ))}
               </div>
@@ -109,7 +109,7 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
               <div className="space-y-3">
                 <Button
                   onClick={() => setView("setup")}
-                  className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-medium"
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium"
                 >
                   <Code className="w-4 h-4 mr-2" />
                   View Integration Guide
@@ -130,11 +130,11 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
             <>
               {/* Integration Steps */}
               <div className="space-y-5">
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <h4 className="font-medium text-[#141414] mb-2">Step 1: Copy the code</h4>
-                  <p className="text-sm text-[#141414]/60 mb-3">Add this code to your website's checkout page</p>
-                  <div className="bg-[#141414] rounded-lg p-3 mb-3">
-                    <code className="text-xs text-green-400 break-all">
+                <div className="bg-muted rounded-xl p-4">
+                  <h4 className="font-medium text-foreground mb-2">Step 1: Copy the code</h4>
+                  <p className="text-sm text-muted-foreground mb-3">Add this code to your website's checkout page</p>
+                  <div className="bg-card dark:bg-background rounded-lg p-3 mb-3 border border-border">
+                    <code className="text-xs text-emerald-600 dark:text-emerald-400 break-all">
                       {`<script src="https://pay.pata.co.bw/widget.js"></script>`}
                       <br />
                       {`<div id="pata-checkout" data-merchant="your-id"></div>`}
@@ -151,23 +151,23 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
                   </Button>
                 </div>
 
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <h4 className="font-medium text-[#141414] mb-2">Step 2: Configure settings</h4>
-                  <p className="text-sm text-[#141414]/60">Replace "your-id" with your merchant ID from the dashboard settings</p>
+                <div className="bg-muted rounded-xl p-4">
+                  <h4 className="font-medium text-foreground mb-2">Step 2: Configure settings</h4>
+                  <p className="text-sm text-muted-foreground">Replace "your-id" with your merchant ID from the dashboard settings</p>
                 </div>
 
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <h4 className="font-medium text-[#141414] mb-2">Step 3: Test & Go Live</h4>
-                  <p className="text-sm text-[#141414]/60">Use test mode to verify everything works, then switch to live</p>
+                <div className="bg-muted rounded-xl p-4">
+                  <h4 className="font-medium text-foreground mb-2">Step 3: Test & Go Live</h4>
+                  <p className="text-sm text-muted-foreground">Use test mode to verify everything works, then switch to live</p>
                 </div>
 
-                <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-                  <p className="text-sm text-[#141414]">
+                <div className="bg-emerald-500/10 rounded-xl p-4">
+                  <p className="text-sm text-foreground">
                     <strong>Need help?</strong> Our team can help you integrate the payment gateway with any platform.
                   </p>
                   <Button
                     onClick={() => setView("contact")}
-                    className="mt-3 w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
+                    className="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-white"
                   >
                     Contact Integration Team
                   </Button>
@@ -178,53 +178,57 @@ const MobilePaymentGatewaySheet = ({ open, onClose }: MobilePaymentGatewaySheetP
 
           {view === "contact" && (
             <>
-              <div className="bg-[#00C8E6]/10 rounded-xl p-4 mb-5">
-                <p className="text-sm text-[#141414]">
+              <div className="bg-emerald-500/10 rounded-xl p-4 mb-5">
+                <p className="text-sm text-foreground">
                   Fill out the form below and our team will reach out to help you set up the payment gateway for your online store.
                 </p>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Your Name *</Label>
+                  <Label className="text-foreground">Your Name *</Label>
                   <Input
                     placeholder="Enter your name"
                     value={contactForm.name}
                     onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                    className="bg-muted border-0"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Email *</Label>
+                  <Label className="text-foreground">Email *</Label>
                   <Input
                     type="email"
                     placeholder="you@company.com"
                     value={contactForm.email}
                     onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
+                    className="bg-muted border-0"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Website URL</Label>
+                  <Label className="text-foreground">Website URL</Label>
                   <Input
                     placeholder="https://yourstore.com"
                     value={contactForm.website}
                     onChange={(e) => setContactForm({ ...contactForm, website: e.target.value })}
+                    className="bg-muted border-0"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Message (optional)</Label>
+                  <Label className="text-foreground">Message (optional)</Label>
                   <Input
                     placeholder="Tell us about your integration needs"
                     value={contactForm.message}
                     onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
+                    className="bg-muted border-0"
                   />
                 </div>
 
                 <Button
                   onClick={handleSubmitContact}
-                  className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+                  className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold"
                 >
                   Submit Request
                 </Button>

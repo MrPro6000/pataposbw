@@ -40,10 +40,10 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "approved": return "text-green-600 bg-green-50";
-      case "refunded": return "text-orange-600 bg-orange-50";
-      case "pending": return "text-yellow-600 bg-yellow-50";
-      default: return "text-red-600 bg-red-50";
+      case "approved": return "text-green-600 bg-green-500/10 dark:text-green-400";
+      case "refunded": return "text-orange-600 bg-orange-500/10 dark:text-orange-400";
+      case "pending": return "text-yellow-600 bg-yellow-500/10 dark:text-yellow-400";
+      default: return "text-red-600 bg-red-500/10 dark:text-red-400";
     }
   };
 
@@ -56,20 +56,20 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
-                <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
-              <DrawerTitle className="text-[#141414]">Sales History</DrawerTitle>
+              <DrawerTitle className="text-foreground">Sales History</DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -84,8 +84,8 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                 onClick={() => setSelectedFilter(filter.id)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   selectedFilter === filter.id
-                    ? "bg-[#0066FF] text-white"
-                    : "bg-[#F5F5F5] text-[#141414]/60"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
                 }`}
               >
                 {filter.label}
@@ -98,26 +98,26 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
             {filteredHistory.map((sale) => (
               <button
                 key={sale.id}
-                className="w-full bg-[#F5F5F5] rounded-2xl p-4 text-left active:bg-[#E8E8E8] transition-colors"
+                className="w-full bg-muted rounded-2xl p-4 text-left active:bg-muted/70 transition-colors"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                      <CreditCard className="w-5 h-5 text-[#141414]/60" />
+                    <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center">
+                      <CreditCard className="w-5 h-5 text-muted-foreground" />
                     </div>
                     <div>
-                      <p className="font-medium text-[#141414]">{sale.type}</p>
-                      <p className="text-xs text-[#141414]/60">{sale.customer}</p>
+                      <p className="font-medium text-foreground">{sale.type}</p>
+                      <p className="text-xs text-muted-foreground">{sale.customer}</p>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className={`font-bold ${sale.status === "refunded" ? "text-orange-500" : "text-[#141414]"}`}>
+                    <p className={`font-bold ${sale.status === "refunded" ? "text-orange-500" : "text-foreground"}`}>
                       {sale.status === "refunded" ? "-" : ""}P{sale.amount.toFixed(2)}
                     </p>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-xs text-[#141414]/50">{sale.method}</p>
+                  <p className="text-xs text-muted-foreground">{sale.method}</p>
                   <div className="flex items-center gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize flex items-center gap-1 ${getStatusColor(sale.status)}`}>
                       {getStatusIcon(sale.status)}
@@ -125,14 +125,14 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                     </span>
                   </div>
                 </div>
-                <p className="text-xs text-[#141414]/40 mt-2">{sale.date}</p>
+                <p className="text-xs text-muted-foreground mt-2">{sale.date}</p>
               </button>
             ))}
           </div>
 
           {filteredHistory.length === 0 && (
             <div className="text-center py-10">
-              <p className="text-[#141414]/60">No sales found</p>
+              <p className="text-muted-foreground">No sales found</p>
             </div>
           )}
         </div>

@@ -54,20 +54,20 @@ const MobileFeesSheet = ({ open, onClose }: MobileFeesSheetProps) => {
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
-                <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
-              <DrawerTitle className="text-[#141414]">Fees</DrawerTitle>
+              <DrawerTitle className="text-foreground">Fees</DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -75,12 +75,12 @@ const MobileFeesSheet = ({ open, onClose }: MobileFeesSheetProps) => {
 
         <div className="p-5 overflow-y-auto pb-10">
           {/* Info Banner */}
-          <div className="bg-[#00C8E6]/10 rounded-2xl p-4 mb-5">
+          <div className="bg-primary/10 rounded-2xl p-4 mb-5">
             <div className="flex items-center gap-2 mb-2">
-              <Zap className="w-5 h-5 text-[#00C8E6]" />
-              <p className="font-medium text-[#141414]">Transparent Pricing</p>
+              <Zap className="w-5 h-5 text-primary" />
+              <p className="font-medium text-foreground">Transparent Pricing</p>
             </div>
-            <p className="text-sm text-[#141414]/60">
+            <p className="text-sm text-muted-foreground">
               All fees related to your business. No hidden charges.
             </p>
           </div>
@@ -88,21 +88,21 @@ const MobileFeesSheet = ({ open, onClose }: MobileFeesSheetProps) => {
           {/* Fee Categories */}
           <div className="space-y-5">
             {feeCategories.map((category) => (
-              <div key={category.title} className="bg-[#F5F5F5] rounded-2xl overflow-hidden">
-                <div className="flex items-center gap-3 p-4 border-b border-[#E8E8E8]">
-                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center">
-                    <category.icon className="w-5 h-5 text-[#141414]/60" />
+              <div key={category.title} className="bg-muted rounded-2xl overflow-hidden">
+                <div className="flex items-center gap-3 p-4 border-b border-border">
+                  <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center">
+                    <category.icon className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <h3 className="font-semibold text-[#141414]">{category.title}</h3>
+                  <h3 className="font-semibold text-foreground">{category.title}</h3>
                 </div>
-                <div className="divide-y divide-[#E8E8E8]">
+                <div className="divide-y divide-border">
                   {category.fees.map((fee) => (
                     <div key={fee.name} className="flex items-center justify-between p-4">
                       <div>
-                        <p className="font-medium text-[#141414]">{fee.name}</p>
-                        <p className="text-xs text-[#141414]/50">{fee.description}</p>
+                        <p className="font-medium text-foreground">{fee.name}</p>
+                        <p className="text-xs text-muted-foreground">{fee.description}</p>
                       </div>
-                      <p className={`font-semibold ${fee.rate === "Free" ? "text-green-600" : "text-[#141414]"}`}>
+                      <p className={`font-semibold ${fee.rate === "Free" ? "text-success" : "text-foreground"}`}>
                         {fee.rate}
                       </p>
                     </div>
@@ -114,7 +114,7 @@ const MobileFeesSheet = ({ open, onClose }: MobileFeesSheetProps) => {
 
           {/* Footer Note */}
           <div className="mt-5 text-center">
-            <p className="text-xs text-[#141414]/50">
+            <p className="text-xs text-muted-foreground">
               Fees may vary based on your business volume. Contact us for custom rates.
             </p>
           </div>
