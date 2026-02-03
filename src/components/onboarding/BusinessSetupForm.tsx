@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { createBusinessProfile } from "@/integrations/firebase/firestore";
+import { uploadBusinessLogo } from "@/integrations/firebase/storage";
 import { useToast } from "@/hooks/use-toast";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -71,15 +72,23 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const [businessAddress, setBusinessAddress] = useState("");
   const [city, setCity] = useState("");
   const [contactPhone, setContactPhone] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
   const [logoUrl, setLogoUrl] = useState("");
   
-  // New fields
-  const [operatingHours, setOperatingHours] = useState("");
+  // Operations fields
+  const [operatingHoursOpen, setOperatingHoursOpen] = useState("08:00");
+  const [operatingHoursClose, setOperatingHoursClose] = useState("17:00");
+  const [operatingDays, setOperatingDays] = useState<string[]>(["Mon", "Tue", "Wed", "Thu", "Fri"]);
   const [currency, setCurrency] = useState("BWP");
+  
+  // Banking fields
   const [bankSetupOption, setBankSetupOption] = useState<"now" | "later" | null>(null);
   const [bankName, setBankName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [branchCode, setBranchCode] = useState("");
+  const [accountHolder, setAccountHolder] = useState("");
+  
+  // Terms
   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const steps = [
@@ -91,6 +100,16 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   ];
 
   const currentStepIndex = steps.findIndex(s => s.key === currentStep);
+
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const toggleDay = (day: string) => {
+    if (operatingDays.includes(day)) {
+      setOperatingDays(operatingDays.filter(d => d !== day));
+    } else {
+      setOperatingDays([...operatingDays, day]);
+    }
+  };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -107,20 +126,11 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
 
     setLoading(true);
     try {
-      const fileExt = file.name.split(".").pop();
-      const fileName = `${userId}/logo.${fileExt}`;
+      const { url, error } = await uploadBusinessLogo(userId, file);
 
-      const { error: uploadError, data } = await supabase.storage
-        .from("business-logos")
-        .upload(fileName, file, { upsert: true });
+      if (error) throw new Error(error);
 
-      if (uploadError) throw uploadError;
-
-      const { data: { publicUrl } } = supabase.storage
-        .from("business-logos")
-        .getPublicUrl(fileName);
-
-      setLogoUrl(publicUrl);
+      setLogoUrl(url || "");
       toast({
         title: "Logo uploaded",
         description: "Your business logo has been uploaded successfully.",
@@ -198,15 +208,35 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const handleSubmit = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase
-        .from("profiles")
-        .update({
-          business_name: businessName.trim(),
-          phone: contactPhone.trim() || null,
-        })
-        .eq("user_id", userId);
+      const businessData = {
+        businessName: businessName.trim(),
+        businessType,
+        registrationNumber: registrationNumber.trim() || undefined,
+        address: businessAddress.trim(),
+        city: city.trim(),
+        country: "Botswana",
+        contactEmail: contactEmail.trim(),
+        contactPhone: contactPhone.trim(),
+        logoUrl: logoUrl || undefined,
+        operatingHours: {
+          open: operatingHoursOpen,
+          close: operatingHoursClose,
+          days: operatingDays,
+        },
+        currency,
+        bankDetails: bankSetupOption === "now" ? {
+          bankName: bankName.trim(),
+          accountNumber: accountNumber.trim(),
+          branchCode: branchCode.trim(),
+          accountHolder: accountHolder.trim(),
+        } : undefined,
+        termsAccepted: true,
+        termsAcceptedAt: new Date().toISOString(),
+      };
 
-      if (error) throw error;
+      const { error } = await createBusinessProfile(userId, businessData);
+
+      if (error) throw new Error(error);
 
       toast({
         title: "Business setup complete!",
@@ -240,8 +270,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center px-8">
-          <div className="w-20 h-20 bg-success/20 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-success" />
+          <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-green-500" />
           </div>
           <h1 className="text-2xl font-bold text-foreground mb-2">You're all set!</h1>
           <p className="text-muted-foreground mb-4">
@@ -396,6 +426,18 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                 </div>
 
                 <div>
+                  <Label htmlFor="email">Business Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={contactEmail}
+                    onChange={(e) => setContactEmail(e.target.value)}
+                    placeholder="business@example.com"
+                    className="mt-2"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor="phone">Business Phone</Label>
                   <div className="relative mt-2">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
@@ -430,17 +472,46 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
 
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="hours">Operating Hours</Label>
-                  <Input
-                    id="hours"
-                    value={operatingHours}
-                    onChange={(e) => setOperatingHours(e.target.value)}
-                    placeholder="e.g., Mon-Fri 8:00 AM - 5:00 PM"
-                    className="mt-2"
-                  />
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Your regular business hours
-                  </p>
+                  <Label>Operating Hours</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Opens</Label>
+                      <Input
+                        type="time"
+                        value={operatingHoursOpen}
+                        onChange={(e) => setOperatingHoursOpen(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-xs text-muted-foreground">Closes</Label>
+                      <Input
+                        type="time"
+                        value={operatingHoursClose}
+                        onChange={(e) => setOperatingHoursClose(e.target.value)}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <Label>Operating Days</Label>
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {daysOfWeek.map((day) => (
+                      <button
+                        key={day}
+                        onClick={() => toggleDay(day)}
+                        className={`px-3 py-2 rounded-lg text-sm border transition-all ${
+                          operatingDays.includes(day)
+                            ? "bg-primary/10 border-primary text-primary"
+                            : "bg-muted border-border text-muted-foreground hover:border-primary/50"
+                        }`}
+                      >
+                        {day}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 <div>
@@ -518,6 +589,16 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                       />
                     </div>
                     <div>
+                      <Label htmlFor="accountHolder">Account Holder Name</Label>
+                      <Input
+                        id="accountHolder"
+                        value={accountHolder}
+                        onChange={(e) => setAccountHolder(e.target.value)}
+                        placeholder="Name on the account"
+                        className="mt-2"
+                      />
+                    </div>
+                    <div>
                       <Label htmlFor="accountNumber">Account Number</Label>
                       <Input
                         id="accountNumber"
@@ -572,7 +653,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                         alt="Business logo"
                         className="w-24 h-24 object-contain mx-auto rounded-xl"
                       />
-                      <p className="text-sm text-success">Logo uploaded!</p>
+                      <p className="text-sm text-green-500">Logo uploaded!</p>
                       <label className="inline-block cursor-pointer">
                         <span className="text-sm text-primary hover:underline">
                           Change logo

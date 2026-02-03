@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { submitKYC, getKYCSubmission } from "@/integrations/firebase/firestore";
+import { uploadKYCDocument } from "@/integrations/firebase/storage";
 import PataLogo from "@/components/PataLogo";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -8,8 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Shield, CheckCircle, ArrowRight, ArrowLeft } from "lucide-react";
-import IDPhotoUpload from "@/components/kyc/IDPhotoUpload";
+import { Shield, CheckCircle, ArrowRight, ArrowLeft, Camera, Upload, X } from "lucide-react";
 
 type KYCStep = "omang" | "photos" | "pending" | "rejected";
 
@@ -17,34 +18,34 @@ const KYC = () => {
   const [omangNumber, setOmangNumber] = useState("");
   const [idFrontUrl, setIdFrontUrl] = useState("");
   const [idBackUrl, setIdBackUrl] = useState("");
+  const [idFrontPreview, setIdFrontPreview] = useState("");
+  const [idBackPreview, setIdBackPreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingKyc, setCheckingKyc] = useState(true);
   const [currentStep, setCurrentStep] = useState<KYCStep>("omang");
-  const [userId, setUserId] = useState<string | null>(null);
+  const [uploadingFront, setUploadingFront] = useState(false);
+  const [uploadingBack, setUploadingBack] = useState(false);
+  
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { toast } = useToast();
   const isDark = theme === "dark";
+  const { user, loading: authLoading } = useAuth();
 
   useEffect(() => {
-    checkExistingKyc();
-  }, []);
+    if (!authLoading) {
+      checkExistingKyc();
+    }
+  }, [authLoading, user]);
 
   const checkExistingKyc = async () => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         navigate("/login");
         return;
       }
 
-      setUserId(user.id);
-
-      const { data: kyc } = await supabase
-        .from("kyc_submissions")
-        .select("status, omang_number, id_front_url, id_back_url")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const { data: kyc } = await getKYCSubmission(user.uid);
 
       if (kyc) {
         if (kyc.status === "approved") {
@@ -86,6 +87,61 @@ const KYC = () => {
     setCurrentStep("photos");
   };
 
+  const handleFileUpload = async (file: File, type: "front" | "back") => {
+    if (!user) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({
+        title: "Invalid file type",
+        description: "Please upload an image file",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 5MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const setUploading = type === "front" ? setUploadingFront : setUploadingBack;
+    const setPreview = type === "front" ? setIdFrontPreview : setIdBackPreview;
+    const setUrl = type === "front" ? setIdFrontUrl : setIdBackUrl;
+
+    setUploading(true);
+    try {
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => setPreview(e.target?.result as string);
+      reader.readAsDataURL(file);
+
+      // Upload to Firebase Storage
+      const { url, error } = await uploadKYCDocument(user.uid, type === "front" ? "id_front" : "id_back", file);
+
+      if (error) throw new Error(error);
+
+      setUrl(url || "");
+      toast({
+        title: "Photo uploaded",
+        description: `ID ${type} photo uploaded successfully`,
+      });
+    } catch (error: any) {
+      console.error("Upload error:", error);
+      toast({
+        title: "Upload failed",
+        description: error.message || "Failed to upload photo",
+        variant: "destructive",
+      });
+      setPreview("");
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const handleFinalSubmit = async () => {
     if (!idFrontUrl || !idBackUrl) {
       toast({
@@ -96,42 +152,28 @@ const KYC = () => {
       return;
     }
 
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/login");
-        return;
-      }
+      const { error } = await submitKYC(user.uid, {
+        omangNumber: omangNumber.trim(),
+        phoneNumber: user.email || "",
+        idFrontUrl,
+        idBackUrl,
+      });
 
-      const { error } = await supabase
-        .from("kyc_submissions")
-        .insert({
-          user_id: user.id,
-          omang_number: omangNumber.trim(),
-          id_front_url: idFrontUrl,
-          id_back_url: idBackUrl,
-        });
-
-      if (error) {
-        if (error.code === "23505") {
-          toast({
-            title: "Already Submitted",
-            description: "You have already submitted your KYC. Please wait for approval.",
-            variant: "destructive",
-          });
-        } else {
-          throw error;
-        }
-        return;
-      }
+      if (error) throw new Error(error);
 
       toast({
         title: "KYC Submitted",
         description: "Your verification is pending approval. Setting up your business...",
       });
       
-      // Redirect to business setup instead of pending
+      // Redirect to business setup
       navigate("/business-setup");
     } catch (error: any) {
       toast({
@@ -144,13 +186,81 @@ const KYC = () => {
     }
   };
 
-  if (checkingKyc) {
+  if (authLoading || checkingKyc) {
     return (
-      <div className={`min-h-screen ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} flex items-center justify-center`}>
-        <div className="animate-spin w-8 h-8 border-4 border-[#00C8E6] border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
+
+  const renderPhotoUpload = (type: "front" | "back") => {
+    const preview = type === "front" ? idFrontPreview : idBackPreview;
+    const url = type === "front" ? idFrontUrl : idBackUrl;
+    const uploading = type === "front" ? uploadingFront : uploadingBack;
+    const setPreview = type === "front" ? setIdFrontPreview : setIdBackPreview;
+    const setUrl = type === "front" ? setIdFrontUrl : setIdBackUrl;
+
+    return (
+      <div className={`rounded-2xl p-4 ${isDark ? "bg-[#2a2a2a] border border-white/10" : "bg-white border border-[#e0e0e0]"}`}>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className={`font-medium ${isDark ? "text-white" : "text-[#141414]"}`}>
+            ID {type === "front" ? "Front" : "Back"}
+          </h3>
+          {url && <CheckCircle className="w-5 h-5 text-green-500" />}
+        </div>
+
+        {preview || url ? (
+          <div className="relative">
+            <img
+              src={preview || url}
+              alt={`ID ${type}`}
+              className="w-full rounded-xl aspect-[16/10] object-cover"
+            />
+            <button
+              onClick={() => {
+                setPreview("");
+                setUrl("");
+              }}
+              className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <label className={`aspect-[16/10] rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 cursor-pointer ${
+            isDark ? "border-white/20 hover:border-white/40" : "border-[#e0e0e0] hover:border-[#c0c0c0]"
+          }`}>
+            <div className={`p-3 rounded-full ${isDark ? "bg-white/10" : "bg-[#f5f5f5]"}`}>
+              <Upload className={`w-6 h-6 ${isDark ? "text-white/60" : "text-[#141414]/60"}`} />
+            </div>
+            <p className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
+              {uploading ? "Uploading..." : `Upload ID ${type}`}
+            </p>
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              disabled={uploading}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file, type);
+              }}
+            />
+          </label>
+        )}
+
+        {uploading && (
+          <div className="mt-3 flex items-center gap-2">
+            <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
+            <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
+              Uploading...
+            </span>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -160,15 +270,15 @@ const KYC = () => {
             <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               Verification Pending
             </h2>
-            <p className={`${isDark ? 'text-white/60' : 'text-[#141414]/60'} mb-6`}>
+            <p className="text-muted-foreground mb-6">
               Your KYC submission is being reviewed. You'll be notified once approved.
             </p>
             <Button
               onClick={() => navigate("/dashboard")}
-              className="w-full py-4 bg-[#00C8E6] text-white hover:bg-[#00b8d4] rounded-xl"
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
             >
               Continue to Dashboard
             </Button>
@@ -181,15 +291,15 @@ const KYC = () => {
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-red-500 text-2xl">✕</span>
             </div>
-            <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               Verification Rejected
             </h2>
-            <p className={`${isDark ? 'text-white/60' : 'text-[#141414]/60'} mb-6`}>
+            <p className="text-muted-foreground mb-6">
               Please contact support for assistance.
             </p>
             <Button
               onClick={() => navigate("/dashboard/support")}
-              className="w-full py-4 bg-[#00C8E6] text-white hover:bg-[#00b8d4] rounded-xl"
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
             >
               Contact Support
             </Button>
@@ -201,53 +311,39 @@ const KYC = () => {
           <div className="space-y-6">
             <button
               onClick={() => setCurrentStep("omang")}
-              className={`flex items-center gap-2 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
             </button>
 
             <div className="text-center">
-              <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+              <h2 className="text-xl font-semibold text-foreground mb-2">
                 Upload ID Photos
               </h2>
-              <p className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
+              <p className="text-sm text-muted-foreground">
                 Take a clear photo or scan both sides of your Omang ID
               </p>
             </div>
 
-            {userId && (
-              <div className="space-y-4">
-                <IDPhotoUpload
-                  type="front"
-                  userId={userId}
-                  onUploadComplete={setIdFrontUrl}
-                  uploadedUrl={idFrontUrl}
-                  isDark={isDark}
-                />
-                <IDPhotoUpload
-                  type="back"
-                  userId={userId}
-                  onUploadComplete={setIdBackUrl}
-                  uploadedUrl={idBackUrl}
-                  isDark={isDark}
-                />
-              </div>
-            )}
+            <div className="space-y-4">
+              {renderPhotoUpload("front")}
+              {renderPhotoUpload("back")}
+            </div>
 
             <div className="flex items-center gap-2 mb-2">
-              <CheckCircle className={`w-4 h-4 ${idFrontUrl ? 'text-green-500' : isDark ? 'text-white/20' : 'text-[#141414]/20'}`} />
-              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>ID Front uploaded</span>
+              <CheckCircle className={`w-4 h-4 ${idFrontUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
+              <span className="text-sm text-muted-foreground">ID Front uploaded</span>
             </div>
             <div className="flex items-center gap-2 mb-4">
-              <CheckCircle className={`w-4 h-4 ${idBackUrl ? 'text-green-500' : isDark ? 'text-white/20' : 'text-[#141414]/20'}`} />
-              <span className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>ID Back uploaded</span>
+              <CheckCircle className={`w-4 h-4 ${idBackUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
+              <span className="text-sm text-muted-foreground">ID Back uploaded</span>
             </div>
 
             <Button
               onClick={handleFinalSubmit}
               disabled={loading || !idFrontUrl || !idBackUrl}
-              className={`w-full py-4 ${isDark ? 'bg-[#00C8E6] text-[#141414] hover:bg-[#00b8d4]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium disabled:opacity-50`}
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
             >
               {loading ? "Submitting..." : "Submit for Verification"}
             </Button>
@@ -256,7 +352,7 @@ const KYC = () => {
               type="button"
               variant="ghost"
               onClick={() => navigate("/dashboard")}
-              className={`w-full py-4 ${isDark ? 'text-white/60 hover:text-white hover:bg-white/10' : 'text-[#141414]/60 hover:text-[#141414] hover:bg-[#141414]/5'} rounded-xl`}
+              className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl"
             >
               Skip for now
             </Button>
@@ -267,7 +363,7 @@ const KYC = () => {
         return (
           <form onSubmit={handleOmangSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="omang" className={`${isDark ? 'text-white' : 'text-[#141414]'}`}>
+              <Label htmlFor="omang" className="text-foreground">
                 Omang Number (National ID)
               </Label>
               <Input
@@ -276,17 +372,17 @@ const KYC = () => {
                 placeholder="Enter your 9-digit Omang Number"
                 value={omangNumber}
                 onChange={(e) => setOmangNumber(e.target.value.replace(/\D/g, '').slice(0, 9))}
-                className={`mt-2 ${isDark ? 'bg-[#2a2a2a] border-white/20 text-white placeholder:text-white/40' : 'bg-white border-[#e0e0e0]'} rounded-xl py-4`}
+                className="mt-2 bg-muted border-input rounded-xl py-4"
                 maxLength={9}
               />
-              <p className={`mt-2 text-sm ${isDark ? 'text-white/40' : 'text-[#141414]/40'}`}>
+              <p className="mt-2 text-sm text-muted-foreground">
                 Your Omang Number will be verified by our team
               </p>
             </div>
 
             <Button
               type="submit"
-              className={`w-full py-4 ${isDark ? 'bg-[#00C8E6] text-[#141414] hover:bg-[#00b8d4]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium flex items-center justify-center gap-2`}
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2"
             >
               Continue
               <ArrowRight className="w-4 h-4" />
@@ -296,7 +392,7 @@ const KYC = () => {
               type="button"
               variant="ghost"
               onClick={() => navigate("/dashboard")}
-              className={`w-full py-4 ${isDark ? 'text-white/60 hover:text-white hover:bg-white/10' : 'text-[#141414]/60 hover:text-[#141414] hover:bg-[#141414]/5'} rounded-xl`}
+              className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl"
             >
               Skip for now
             </Button>
@@ -306,40 +402,40 @@ const KYC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} flex flex-col transition-colors duration-300`}>
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className={`flex items-center justify-between px-6 py-4 ${isDark ? 'border-white/10' : 'border-[#e0e0e0]'} border-b`}>
-        <PataLogo className={`h-5 ${isDark ? 'text-white' : 'text-[#141414]'}`} />
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
+        <PataLogo className="h-5 text-foreground" />
         <ThemeToggle />
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className={`w-full max-w-md ${isDark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-2xl p-8 shadow-lg`}>
+        <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8 shadow-lg">
           {currentStep === "omang" && (
             <div className="text-center mb-8">
-              <div className={`w-16 h-16 ${isDark ? 'bg-[#00C8E6]/20' : 'bg-[#00C8E6]/10'} rounded-2xl flex items-center justify-center mx-auto mb-4`}>
-                <Shield className="w-8 h-8 text-[#00C8E6]" />
+              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-primary" />
               </div>
-              <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+              <h1 className="text-2xl font-bold text-foreground mb-2">
                 Verify Your Identity
               </h1>
-              <p className={`${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
+              <p className="text-muted-foreground">
                 Complete KYC verification to access all features
               </p>
 
               {/* Progress indicator */}
               <div className="flex items-center justify-center gap-2 mt-6">
-                <div className="w-8 h-1 rounded-full bg-[#00C8E6]"></div>
-                <div className={`w-8 h-1 rounded-full ${isDark ? 'bg-white/20' : 'bg-[#141414]/20'}`}></div>
+                <div className="w-8 h-1 rounded-full bg-primary"></div>
+                <div className="w-8 h-1 rounded-full bg-muted"></div>
               </div>
             </div>
           )}
 
           {currentStep === "photos" && (
             <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-8 h-1 rounded-full bg-[#00C8E6]"></div>
-              <div className="w-8 h-1 rounded-full bg-[#00C8E6]"></div>
+              <div className="w-8 h-1 rounded-full bg-primary"></div>
+              <div className="w-8 h-1 rounded-full bg-primary"></div>
             </div>
           )}
 
