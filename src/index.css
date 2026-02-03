@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    /* Light theme - Warm professional palette */
-    --background: 220 20% 97%;
+    /* Light theme - Vibrant professional palette with soft blue tint */
+    --background: 210 40% 96%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -19,10 +19,10 @@
     --primary: 217 91% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
+    --secondary: 210 30% 93%;
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 220 14% 96%;
+    --muted: 210 25% 93%;
     --muted-foreground: 215 16% 47%;
 
     --accent: 217 91% 50%;
@@ -31,8 +31,8 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
+    --border: 214 20% 88%;
+    --input: 214 20% 88%;
     --ring: 217 91% 50%;
 
     --radius: 0.75rem;
@@ -40,9 +40,9 @@
     /* Pata brand colors */
     --pata-blue: 217 91% 50%;
     --pata-dark: 222 47% 11%;
-    --pata-gray: 220 14% 96%;
+    --pata-gray: 210 25% 93%;
     --pata-white: 0 0% 100%;
-    --pata-cream: 45 50% 96%;
+    --pata-cream: 200 30% 94%;
     
     /* Extended palette for dashboard */
     --success: 152 82% 39%;
@@ -51,10 +51,6 @@
     --warning-foreground: 0 0% 100%;
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
-    
-    /* Gradient backgrounds */
-    --gradient-warm: linear-gradient(135deg, hsl(220 20% 97%) 0%, hsl(45 50% 96%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(220 20% 98%) 100%);
   }
 
   .dark {

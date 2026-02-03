@@ -61,20 +61,20 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
-                <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
-              <DrawerTitle className="text-[#141414]">Personal Profile</DrawerTitle>
+              <DrawerTitle className="text-foreground">Personal Profile</DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -84,20 +84,20 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
           {/* Profile Avatar */}
           <div className="flex flex-col items-center mb-6">
             <div className="relative mb-3">
-              <div className="w-24 h-24 bg-[#0066FF] rounded-2xl flex items-center justify-center text-3xl font-bold text-white">
+              <div className="w-24 h-24 bg-primary rounded-2xl flex items-center justify-center text-3xl font-bold text-primary-foreground">
                 {initials}
               </div>
-              <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#141414] rounded-full flex items-center justify-center">
-                <Camera className="w-4 h-4 text-white" />
+              <button className="absolute -bottom-2 -right-2 w-8 h-8 bg-foreground rounded-full flex items-center justify-center">
+                <Camera className="w-4 h-4 text-background" />
               </button>
             </div>
-            <p className="text-sm text-[#141414]/60">Tap to change photo</p>
+            <p className="text-sm text-muted-foreground">Tap to change photo</p>
           </div>
 
           {/* Personal Information */}
           <div className="space-y-5 mb-6">
             <div className="space-y-2">
-              <Label className="text-[#141414] flex items-center gap-2">
+              <Label className="text-foreground flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name
               </Label>
@@ -105,11 +105,12 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
                 value={personalInfo.fullName}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, fullName: e.target.value })}
                 placeholder="Enter your full name"
+                className="bg-muted border-0"
               />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[#141414] flex items-center gap-2">
+              <Label className="text-foreground flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email
               </Label>
@@ -119,13 +120,13 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
                 onChange={(e) => setPersonalInfo({ ...personalInfo, email: e.target.value })}
                 placeholder="your@email.com"
                 disabled
-                className="bg-[#F5F5F5]"
+                className="bg-muted border-0"
               />
-              <p className="text-xs text-[#141414]/50">Email cannot be changed</p>
+              <p className="text-xs text-muted-foreground">Email cannot be changed</p>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[#141414] flex items-center gap-2">
+              <Label className="text-foreground flex items-center gap-2">
                 <Phone className="w-4 h-4" />
                 Phone Number
               </Label>
@@ -134,13 +135,14 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
                 value={personalInfo.phone}
                 onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
                 placeholder="+267 71 234 5678"
+                className="bg-muted border-0"
               />
             </div>
           </div>
 
           {/* Security Section */}
-          <div className="bg-[#F5F5F5] rounded-2xl p-4 mb-6">
-            <h3 className="font-medium text-[#141414] mb-3">Security</h3>
+          <div className="bg-muted rounded-2xl p-4 mb-6">
+            <h3 className="font-medium text-foreground mb-3">Security</h3>
             <Button variant="outline" className="w-full justify-start mb-2">
               🔒 Change Password
             </Button>
@@ -152,9 +154,9 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
           {/* Logout Button */}
           <button 
             onClick={handleLogout}
-            className="w-full bg-red-50 rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-100 transition-colors"
+            className="w-full bg-red-500/10 rounded-2xl px-4 py-4 flex items-center gap-3 active:bg-red-500/20 transition-colors"
           >
-            <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-red-500/20 rounded-xl flex items-center justify-center">
               <LogOut className="w-5 h-5 text-red-500" />
             </div>
             <span className="font-medium text-red-500">Log Out</span>
@@ -162,10 +164,10 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail }: MobileProfile
         </div>
 
         {/* Save Button */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 bg-white border-t border-[#E8E8E8]">
+        <div className="absolute bottom-0 left-0 right-0 p-5 bg-background border-t border-border">
           <Button 
             onClick={handleSave}
-            className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
+            className="w-full h-12 font-semibold"
           >
             Save Changes
           </Button>

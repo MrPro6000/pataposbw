@@ -1,4 +1,4 @@
-import { X, ChevronLeft, Package, Users, TrendingUp, BarChart3 } from "lucide-react";
+import { X, ChevronLeft, Package, Users, TrendingUp } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -7,7 +7,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { ChartContainer } from "@/components/ui/chart";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 
 interface MobileReportSheetProps {
   open: boolean;
@@ -42,10 +42,10 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
   ];
 
   const chartConfig = {
-    sales: { label: "Sales", color: "#00C8E6" },
-    revenue: { label: "Revenue", color: "#00C8E6" },
-    transactions: { label: "Transactions", color: "#00C8E6" },
-    amount: { label: "Amount", color: "#00C8E6" },
+    sales: { label: "Sales", color: "hsl(var(--primary))" },
+    revenue: { label: "Revenue", color: "hsl(var(--primary))" },
+    transactions: { label: "Transactions", color: "hsl(var(--primary))" },
+    amount: { label: "Amount", color: "hsl(var(--primary))" },
   };
 
   const getTitle = () => {
@@ -68,23 +68,23 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
-                <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
               <div className="flex items-center gap-2">
-                <Icon className="w-5 h-5 text-[#00C8E6]" />
-                <DrawerTitle className="text-[#141414]">{getTitle()}</DrawerTitle>
+                <Icon className="w-5 h-5 text-primary" />
+                <DrawerTitle className="text-foreground">{getTitle()}</DrawerTitle>
               </div>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -98,8 +98,8 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
                 key={period}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   period === "This Week"
-                    ? "bg-[#00C8E6] text-[#141414]"
-                    : "bg-[#F5F5F5] text-[#141414]/60"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
                 }`}
               >
                 {period}
@@ -110,30 +110,30 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
           {reportType === "product" && (
             <>
               {/* Product Chart */}
-              <div className="bg-[#F5F5F5] rounded-2xl p-4 mb-5">
-                <h3 className="font-medium text-[#141414] mb-3">Top Products by Sales</h3>
+              <div className="bg-muted rounded-2xl p-4 mb-5">
+                <h3 className="font-medium text-foreground mb-3">Top Products by Sales</h3>
                 <div className="h-48">
                   <ChartContainer config={chartConfig} className="h-full w-full">
                     <BarChart data={productData} layout="vertical">
                       <XAxis type="number" hide />
-                      <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 12 }} />
+                      <YAxis dataKey="name" type="category" width={70} tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
                       <Tooltip />
-                      <Bar dataKey="sales" fill="#00C8E6" radius={[0, 4, 4, 0]} />
+                      <Bar dataKey="sales" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} />
                     </BarChart>
                   </ChartContainer>
                 </div>
               </div>
 
               {/* Product List */}
-              <h3 className="font-medium text-[#141414] mb-3">All Products</h3>
+              <h3 className="font-medium text-foreground mb-3">All Products</h3>
               <div className="space-y-3">
                 {productData.map((product) => (
-                  <div key={product.name} className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+                  <div key={product.name} className="bg-muted rounded-xl p-4 flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-[#141414]">{product.name}</p>
-                      <p className="text-sm text-[#141414]/60">{product.sales} units sold</p>
+                      <p className="font-medium text-foreground">{product.name}</p>
+                      <p className="text-sm text-muted-foreground">{product.sales} units sold</p>
                     </div>
-                    <p className="font-bold text-[#141414]">P{product.revenue}</p>
+                    <p className="font-bold text-foreground">P{product.revenue}</p>
                   </div>
                 ))}
               </div>
@@ -144,33 +144,33 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
             <>
               {/* Staff Summary */}
               <div className="grid grid-cols-2 gap-3 mb-5">
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <p className="text-sm text-[#141414]/60">Total Staff</p>
-                  <p className="text-2xl font-bold text-[#141414]">{staffData.length}</p>
+                <div className="bg-muted rounded-xl p-4">
+                  <p className="text-sm text-muted-foreground">Total Staff</p>
+                  <p className="text-2xl font-bold text-foreground">{staffData.length}</p>
                 </div>
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <p className="text-sm text-[#141414]/60">Total Sales</p>
-                  <p className="text-2xl font-bold text-[#141414]">
+                <div className="bg-muted rounded-xl p-4">
+                  <p className="text-sm text-muted-foreground">Total Sales</p>
+                  <p className="text-2xl font-bold text-foreground">
                     P{staffData.reduce((acc, s) => acc + s.revenue, 0).toLocaleString()}
                   </p>
                 </div>
               </div>
 
               {/* Staff List */}
-              <h3 className="font-medium text-[#141414] mb-3">Staff Performance</h3>
+              <h3 className="font-medium text-foreground mb-3">Staff Performance</h3>
               <div className="space-y-3">
                 {staffData.map((staff, index) => (
-                  <div key={staff.name} className="bg-[#F5F5F5] rounded-xl p-4">
+                  <div key={staff.name} className="bg-muted rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
                           {index + 1}
                         </div>
-                        <p className="font-medium text-[#141414]">{staff.name}</p>
+                        <p className="font-medium text-foreground">{staff.name}</p>
                       </div>
-                      <p className="font-bold text-[#141414]">P{staff.revenue.toLocaleString()}</p>
+                      <p className="font-bold text-foreground">P{staff.revenue.toLocaleString()}</p>
                     </div>
-                    <div className="flex justify-between text-sm text-[#141414]/60">
+                    <div className="flex justify-between text-sm text-muted-foreground">
                       <span>{staff.transactions} transactions</span>
                       <span>Avg: P{Math.round(staff.revenue / staff.transactions)}</span>
                     </div>
@@ -183,35 +183,35 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
           {reportType === "revenue" && (
             <>
               {/* Revenue Summary */}
-              <div className="bg-gradient-to-br from-[#00C8E6] to-[#00b8d4] rounded-2xl p-5 mb-5 text-center">
-                <p className="text-white/80 text-sm mb-1">Total Revenue (This Week)</p>
-                <p className="text-3xl font-bold text-white">
+              <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 mb-5 text-center">
+                <p className="text-primary-foreground/80 text-sm mb-1">Total Revenue (This Week)</p>
+                <p className="text-3xl font-bold text-primary-foreground">
                   P{revenueData.reduce((acc, d) => acc + d.amount, 0).toLocaleString()}
                 </p>
               </div>
 
               {/* Revenue Chart */}
-              <div className="bg-[#F5F5F5] rounded-2xl p-4 mb-5">
-                <h3 className="font-medium text-[#141414] mb-3">Daily Revenue</h3>
+              <div className="bg-muted rounded-2xl p-4 mb-5">
+                <h3 className="font-medium text-foreground mb-3">Daily Revenue</h3>
                 <div className="h-48">
                   <ChartContainer config={chartConfig} className="h-full w-full">
                     <BarChart data={revenueData}>
-                      <XAxis dataKey="day" tick={{ fontSize: 12 }} />
+                      <XAxis dataKey="day" tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }} />
                       <YAxis hide />
                       <Tooltip />
-                      <Bar dataKey="amount" fill="#00C8E6" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="amount" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ChartContainer>
                 </div>
               </div>
 
               {/* Daily Breakdown */}
-              <h3 className="font-medium text-[#141414] mb-3">Daily Breakdown</h3>
+              <h3 className="font-medium text-foreground mb-3">Daily Breakdown</h3>
               <div className="space-y-2">
                 {revenueData.map((day) => (
-                  <div key={day.day} className="flex items-center justify-between p-3 bg-[#F5F5F5] rounded-xl">
-                    <span className="text-[#141414]">{day.day}</span>
-                    <span className="font-bold text-[#141414]">P{day.amount.toLocaleString()}</span>
+                  <div key={day.day} className="flex items-center justify-between p-3 bg-muted rounded-xl">
+                    <span className="text-foreground">{day.day}</span>
+                    <span className="font-bold text-foreground">P{day.amount.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
