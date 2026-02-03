@@ -57,8 +57,8 @@ const MobileDashboardHome = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F5F5F5] flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-[#00C8E6] border-t-transparent rounded-full"></div>
+      <div className="min-h-screen bg-gradient-to-b from-muted to-pata-cream dark:from-background dark:to-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
       </div>
     );
   }
