@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet } from "lucide-react";
+import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet, Send, Banknote } from "lucide-react";
 import {
   ChartContainer,
 } from "@/components/ui/chart";
@@ -12,6 +12,8 @@ import MobileSalesHistorySheet from "./MobileSalesHistorySheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobilePOSSheet from "./MobilePOSSheet";
+import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
+import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
 import PataLogo from "@/components/PataLogo";
 
 interface MobileHubViewProps {
@@ -28,6 +30,8 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [posOpen, setPosOpen] = useState(false);
+  const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
+  const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
 
   // Chart data - show sample stats by default
   const weeklyChartData = [
@@ -217,11 +221,37 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           </button>
           
           <button 
-            onClick={() => setCapitalOpen(true)}
+            onClick={() => setMoneyTransferOpen(true)}
+            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+          >
+            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
+              <Send className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Send Money</p>
+              <p className="text-xs text-muted-foreground">International transfers</p>
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setLoanApplicationOpen(true)}
             className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
           >
             <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground text-sm">Business Loan</p>
+              <p className="text-xs text-muted-foreground">Apply for funding</p>
+            </div>
+          </button>
+          
+          <button 
+            onClick={() => setCapitalOpen(true)}
+            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+          >
+            <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Wallet</p>
@@ -278,6 +308,18 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <MobilePOSSheet
         open={posOpen}
         onClose={() => setPosOpen(false)}
+      />
+
+      {/* Money Transfer Sheet */}
+      <MobileMoneyTransferSheet
+        open={moneyTransferOpen}
+        onClose={() => setMoneyTransferOpen(false)}
+      />
+
+      {/* Loan Application Sheet */}
+      <MobileLoanApplicationSheet
+        open={loanApplicationOpen}
+        onClose={() => setLoanApplicationOpen(false)}
       />
 
       {/* Bottom Navigation */}
