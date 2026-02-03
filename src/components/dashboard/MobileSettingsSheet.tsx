@@ -504,7 +504,7 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
                     theme === "light" ? "border-primary bg-primary/10" : "border-border"
                   }`}
                 >
-                  <div className="w-12 h-12 bg-white border border-border rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-card border border-border rounded-xl flex items-center justify-center">
                     <Sun className="w-6 h-6 text-amber-500" />
                   </div>
                   <span className="font-medium text-foreground">Light</span>
@@ -517,7 +517,7 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
                     theme === "dark" ? "border-primary bg-primary/10" : "border-border"
                   }`}
                 >
-                  <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
+                  <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
                     <Moon className="w-6 h-6 text-indigo-400" />
                   </div>
                   <span className="font-medium text-foreground">Dark</span>

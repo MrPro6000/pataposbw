@@ -44,18 +44,19 @@ const BusinessType = () => {
   ];
 
   return (
-    <div className="pata-dark-page">
-      <MainNav theme="dark" />
+    <div className="min-h-screen bg-background text-foreground">
+      <MainNav />
       
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-16 md:py-24">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Built for your<br />
-              <span className="text-[#D4B896]">type of business</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+              <span className="text-foreground">Built for your</span>
+              <br />
+              <span className="pata-hero-gradient">type of business</span>
             </h1>
-            <p className="text-lg text-white/70">
+            <p className="text-lg text-muted-foreground">
               Whether you run a retail store, restaurant, or mobile service—we have tailored solutions to help you accept payments and grow.
             </p>
           </div>
@@ -65,19 +66,19 @@ const BusinessType = () => {
             {businessTypes.map((business) => (
               <div
                 key={business.title}
-                className="group bg-[#1a1a1a] rounded-2xl p-6 hover:bg-[#222] transition-all"
+                className="group bg-card rounded-2xl p-6 border border-border hover:border-primary/50 hover:shadow-lg transition-all"
               >
-                <div className="w-14 h-14 rounded-xl bg-[#00C8E6]/20 flex items-center justify-center mb-5">
-                  <business.icon className="w-7 h-7 text-[#00C8E6]" />
+                <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+                  <business.icon className="w-7 h-7 text-primary" />
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-2">{business.title}</h3>
-                <p className="text-white/60 text-sm mb-4">{business.description}</p>
+                <h3 className="text-xl font-bold text-foreground mb-2">{business.title}</h3>
+                <p className="text-muted-foreground text-sm mb-4">{business.description}</p>
                 
                 <ul className="space-y-2 mb-5">
                   {business.benefits.map((benefit) => (
-                    <li key={benefit} className="text-white/70 text-sm flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 bg-[#00C8E6] rounded-full"></span>
+                    <li key={benefit} className="text-muted-foreground text-sm flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 bg-primary rounded-full"></span>
                       {benefit}
                     </li>
                   ))}
@@ -85,7 +86,7 @@ const BusinessType = () => {
                 
                 <Link 
                   to="/signup" 
-                  className="text-[#00C8E6] font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
+                  className="text-primary font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
                 >
                   Get started
                   <ArrowRight className="w-4 h-4" />
@@ -97,12 +98,12 @@ const BusinessType = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="px-6 md:px-20 py-16 bg-[#1a1a1a]">
+      <section className="px-6 md:px-20 py-16 bg-muted">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             Don't see your industry?
           </h2>
-          <p className="text-white/60 mb-8 max-w-xl mx-auto">
+          <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
             Our solutions work for businesses of all types. Contact us to learn how Pata can help your specific needs.
           </p>
           <div className="flex items-center justify-center gap-4">
@@ -110,14 +111,14 @@ const BusinessType = () => {
               Get started
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <button className="text-white font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+            <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
               Contact Sales
             </button>
           </div>
         </div>
       </section>
 
-      <MainFooter theme="dark" />
+      <MainFooter />
     </div>
   );
 };

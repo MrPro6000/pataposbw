@@ -59,12 +59,12 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
             {view === "apply" && (
               <button 
                 onClick={() => setView("info")}
-                className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center"
+                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
               >
-                <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                <ChevronLeft className="w-4 h-4 text-foreground" />
               </button>
             )}
-            <DialogTitle className="text-[#141414]">
+            <DialogTitle className="text-foreground">
               {view === "apply" ? "Apply for Capital" : "Pata Capital"}
             </DialogTitle>
           </div>
@@ -83,27 +83,27 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
               </div>
 
               {/* Eligibility */}
-              <div className="bg-[#F5F5F5] rounded-2xl p-4">
-                <h3 className="font-medium text-[#141414] mb-2">Your Eligibility</h3>
+              <div className="bg-muted rounded-2xl p-4">
+                <h3 className="font-medium text-foreground mb-2">Your Eligibility</h3>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-[#141414]/60">Available amount</p>
-                  <p className="font-bold text-[#141414]">Up to P50,000</p>
+                  <p className="text-sm text-muted-foreground">Available amount</p>
+                  <p className="font-bold text-foreground">Up to P50,000</p>
                 </div>
-                <p className="text-xs text-[#141414]/50 mt-2">Based on your sales history</p>
+                <p className="text-xs text-muted-foreground mt-2">Based on your sales history</p>
               </div>
 
               {/* Benefits */}
               <div>
-                <h3 className="font-semibold text-[#141414] mb-3">Why Pata Capital?</h3>
+                <h3 className="font-semibold text-foreground mb-3">Why Pata Capital?</h3>
                 <div className="space-y-3">
                   {benefits.map((benefit) => (
-                    <div key={benefit.title} className="flex items-start gap-3 bg-[#F5F5F5] rounded-xl p-4">
-                      <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div key={benefit.title} className="flex items-start gap-3 bg-muted rounded-xl p-4">
+                      <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center flex-shrink-0 border border-border">
                         <benefit.icon className="w-5 h-5 text-amber-500" />
                       </div>
                       <div>
-                        <p className="font-medium text-[#141414]">{benefit.title}</p>
-                        <p className="text-sm text-[#141414]/60">{benefit.description}</p>
+                        <p className="font-medium text-foreground">{benefit.title}</p>
+                        <p className="text-sm text-muted-foreground">{benefit.description}</p>
                       </div>
                     </div>
                   ))}
@@ -111,24 +111,24 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
               </div>
 
               {/* How it Works */}
-              <div className="bg-[#F5F5F5] rounded-2xl p-4">
-                <h3 className="font-semibold text-[#141414] mb-3">How it Works</h3>
+              <div className="bg-muted rounded-2xl p-4">
+                <h3 className="font-semibold text-foreground mb-3">How it Works</h3>
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                    <p className="text-sm text-[#141414]">Apply with your desired amount</p>
+                    <p className="text-sm text-foreground">Apply with your desired amount</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                    <p className="text-sm text-[#141414]">Get approved within 24 hours</p>
+                    <p className="text-sm text-foreground">Get approved within 24 hours</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                    <p className="text-sm text-[#141414]">Receive funds directly to your account</p>
+                    <p className="text-sm text-foreground">Receive funds directly to your account</p>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-8 h-8 bg-amber-500 text-white rounded-full flex items-center justify-center text-sm font-bold">4</div>
-                    <p className="text-sm text-[#141414]">Repay automatically from your sales</p>
+                    <p className="text-sm text-foreground">Repay automatically from your sales</p>
                   </div>
                 </div>
               </div>
@@ -145,7 +145,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
           ) : (
             <div className="space-y-5">
               <div className="space-y-3">
-                <Label className="text-[#141414]">Select Loan Amount</Label>
+                <Label className="text-foreground">Select Loan Amount</Label>
                 <div className="grid grid-cols-2 gap-3">
                   {loanAmounts.map((amount) => (
                     <button
@@ -153,18 +153,18 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
                       onClick={() => setApplicationForm({ ...applicationForm, amount })}
                       className={`p-4 rounded-xl border-2 transition-all ${
                         applicationForm.amount === amount
-                          ? "border-amber-500 bg-amber-50"
-                          : "border-[#E8E8E8] bg-white"
+                          ? "border-amber-500 bg-amber-500/10"
+                          : "border-border bg-card"
                       }`}
                     >
-                      <p className="font-bold text-[#141414]">{amount}</p>
+                      <p className="font-bold text-foreground">{amount}</p>
                     </button>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[#141414]">What will you use the funds for?</Label>
+                <Label className="text-foreground">What will you use the funds for?</Label>
                 <Input
                   placeholder="e.g., Expand inventory, hire staff"
                   value={applicationForm.purpose}
@@ -173,7 +173,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[#141414]">Average Monthly Revenue</Label>
+                <Label className="text-foreground">Average Monthly Revenue</Label>
                 <Input
                   placeholder="e.g., P50,000"
                   value={applicationForm.monthlyRevenue}
@@ -181,8 +181,8 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
                 />
               </div>
 
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
-                <p className="text-sm text-[#141414]/60">
+              <div className="bg-muted rounded-xl p-4">
+                <p className="text-sm text-muted-foreground">
                   By applying, you agree to our terms and allow us to review your sales history for loan eligibility.
                 </p>
               </div>
