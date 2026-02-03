@@ -24,15 +24,15 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
   ];
 
   const paymentMethods = [
-    { name: "Card", value: 35, color: "#0066FF" },
-    { name: "Mobile Money", value: 28, color: "#F97316" },
-    { name: "Cash", value: 18, color: "#22C55E" },
-    { name: "Payment Link", value: 10, color: "#8B5CF6" },
-    { name: "Other", value: 9, color: "#141414" },
+    { name: "Card", value: 35, color: "hsl(var(--primary))" },
+    { name: "Mobile Money", value: 28, color: "hsl(var(--warning))" },
+    { name: "Cash", value: 18, color: "hsl(var(--success))" },
+    { name: "Payment Link", value: 10, color: "hsl(262 83% 58%)" },
+    { name: "Other", value: 9, color: "hsl(var(--muted-foreground))" },
   ];
 
   const chartConfig = {
-    sales: { label: "Sales", color: "#0066FF" },
+    sales: { label: "Sales", color: "hsl(var(--primary))" },
   };
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
@@ -59,7 +59,7 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
             <button 
               key={period}
               className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
-                i === 1 ? "bg-[#141414] text-white" : "bg-white text-[#141414]"
+                i === 1 ? "bg-foreground text-background" : "bg-card text-foreground"
               }`}
             >
               {period}
@@ -71,44 +71,44 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
       {/* Summary Cards */}
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white rounded-2xl p-4">
+          <div className="bg-card rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-[#0066FF]" />
-              <span className="text-xs text-[#141414]/60">Revenue</span>
+              <TrendingUp className="w-4 h-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Revenue</span>
             </div>
-            <p className="text-xl font-bold text-[#141414]">P67,890</p>
+            <p className="text-xl font-bold text-foreground">P67,890</p>
           </div>
-          <div className="bg-white rounded-2xl p-4">
+          <div className="bg-card rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Package className="w-4 h-4 text-[#0066FF]" />
-              <span className="text-xs text-[#141414]/60">Items Sold</span>
+              <Package className="w-4 h-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Items Sold</span>
             </div>
-            <p className="text-xl font-bold text-[#141414]">1,247</p>
+            <p className="text-xl font-bold text-foreground">1,247</p>
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <div className="bg-white rounded-2xl p-4">
+          <div className="bg-card rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Users className="w-4 h-4 text-[#0066FF]" />
-              <span className="text-xs text-[#141414]/60">Customers</span>
+              <Users className="w-4 h-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Customers</span>
             </div>
-            <p className="text-xl font-bold text-[#141414]">342</p>
+            <p className="text-xl font-bold text-foreground">342</p>
           </div>
-          <div className="bg-white rounded-2xl p-4">
+          <div className="bg-card rounded-2xl p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Calendar className="w-4 h-4 text-[#0066FF]" />
-              <span className="text-xs text-[#141414]/60">Avg. Order</span>
+              <Calendar className="w-4 h-4 text-primary" />
+              <span className="text-xs text-muted-foreground">Avg. Order</span>
             </div>
-            <p className="text-xl font-bold text-[#141414]">P198</p>
+            <p className="text-xl font-bold text-foreground">P198</p>
           </div>
         </div>
       </div>
 
       {/* Sales Chart */}
       <div className="px-5 mb-4">
-        <div className="bg-white rounded-2xl p-4">
-          <p className="text-sm text-[#141414]/60 mb-4">Sales by Day</p>
+        <div className="bg-card rounded-2xl p-4">
+          <p className="text-sm text-muted-foreground mb-4">Sales by Day</p>
           <div className="h-32">
             <ChartContainer config={chartConfig} className="h-full w-full">
               <BarChart data={salesByDate} barSize={20}>
@@ -116,11 +116,11 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
                   dataKey="date" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#999', fontSize: 12 }}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 />
                 <Bar 
                   dataKey="sales" 
-                  fill="#0066FF" 
+                  fill="hsl(var(--primary))" 
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -131,8 +131,8 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
 
       {/* Payment Methods */}
       <div className="px-5 mb-4">
-        <div className="bg-white rounded-2xl p-4">
-          <p className="text-sm text-[#141414]/60 mb-4">Payment Methods</p>
+        <div className="bg-card rounded-2xl p-4">
+          <p className="text-sm text-muted-foreground mb-4">Payment Methods</p>
           <div className="flex items-center gap-4">
             <div className="w-24 h-24">
               <ChartContainer config={chartConfig} className="h-full w-full">
@@ -157,9 +157,9 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
                 <div key={method.name} className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: method.color }} />
-                    <span className="text-sm text-[#141414]">{method.name}</span>
+                    <span className="text-sm text-foreground">{method.name}</span>
                   </div>
-                  <span className="text-sm font-medium text-[#141414]">{method.value}%</span>
+                  <span className="text-sm font-medium text-foreground">{method.value}%</span>
                 </div>
               ))}
             </div>
@@ -170,14 +170,14 @@ const MobileReportsView = ({ profile, userEmail }: MobileReportsViewProps) => {
       {/* Quick Reports */}
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3">
-          <button className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
-            <p className="text-sm text-[#141414]/60 mb-auto">Product report</p>
-            <Package className="w-8 h-8 text-[#141414]/20" />
+          <button className="bg-card rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+            <p className="text-sm text-muted-foreground mb-auto">Product report</p>
+            <Package className="w-8 h-8 text-muted-foreground/50" />
           </button>
           
-          <button className="bg-white rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
-            <p className="text-sm text-[#141414]/60 mb-auto">Staff report</p>
-            <Users className="w-8 h-8 text-[#141414]/20" />
+          <button className="bg-card rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform">
+            <p className="text-sm text-muted-foreground mb-auto">Staff report</p>
+            <Users className="w-8 h-8 text-muted-foreground/50" />
           </button>
         </div>
       </div>

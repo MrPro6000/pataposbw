@@ -87,31 +87,31 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} flex flex-col transition-colors duration-300`}>
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className={`flex items-center justify-between px-6 py-4 ${isDark ? 'border-white/10' : 'border-[#e0e0e0]'} border-b`}>
-        <PataLogo className={`h-5 ${isDark ? 'text-white' : 'text-[#141414]'}`} />
+      <header className="flex items-center justify-between px-6 py-4 border-border border-b">
+        <PataLogo className="h-5 text-foreground" />
         <ThemeToggle />
       </header>
 
       {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-6">
-        <div className={`w-full max-w-md ${isDark ? 'bg-[#1a1a1a]' : 'bg-white'} rounded-2xl p-8 shadow-lg`}>
+        <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8 shadow-lg">
           <div className="text-center mb-8">
-            <div className={`w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4`}>
+            <div className="w-16 h-16 bg-red-500/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <Shield className="w-8 h-8 text-red-500" />
             </div>
-            <h1 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+            <h1 className="text-2xl font-bold text-foreground mb-2">
               Admin Portal
             </h1>
-            <p className={`${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
+            <p className="text-muted-foreground">
               Sign in to access the admin dashboard
             </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="email" className={`${isDark ? 'text-white' : 'text-[#141414]'}`}>
+              <Label htmlFor="email" className="text-foreground">
                 Admin Email
               </Label>
               <Input
@@ -120,13 +120,13 @@ const AdminLogin = () => {
                 placeholder="admin@pata.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`mt-2 ${isDark ? 'bg-[#2a2a2a] border-white/20 text-white placeholder:text-white/40' : 'bg-white border-[#e0e0e0]'} rounded-xl py-4`}
+                className="mt-2 bg-muted border-input rounded-xl py-4"
                 required
               />
             </div>
 
             <div>
-              <Label htmlFor="password" className={`${isDark ? 'text-white' : 'text-[#141414]'}`}>
+              <Label htmlFor="password" className="text-foreground">
                 Password
               </Label>
               <Input
@@ -135,7 +135,7 @@ const AdminLogin = () => {
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={`mt-2 ${isDark ? 'bg-[#2a2a2a] border-white/20 text-white placeholder:text-white/40' : 'bg-white border-[#e0e0e0]'} rounded-xl py-4`}
+                className="mt-2 bg-muted border-input rounded-xl py-4"
                 required
               />
             </div>
@@ -143,7 +143,7 @@ const AdminLogin = () => {
             <Button
               type="submit"
               disabled={loading}
-              className={`w-full py-4 bg-red-500 text-white hover:bg-red-600 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+              className="w-full py-4 bg-red-500 text-white hover:bg-red-600 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign in as Admin"}
             </Button>
