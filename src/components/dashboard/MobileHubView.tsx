@@ -56,14 +56,14 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
                            userEmail?.slice(0, 2).toUpperCase() || "U";
 
   return (
-    <div className="min-h-screen bg-muted pb-24">
-      {/* Header */}
-      <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40">
+    <div className="min-h-screen bg-gradient-to-b from-muted to-pata-cream dark:from-background dark:to-background pb-24">
+      {/* Header with subtle gradient */}
+      <header className="bg-gradient-to-b from-card to-transparent px-5 pt-4 pb-4 sticky top-0 z-40 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <PataLogo className="h-5" />
           <button 
             onClick={() => setProfileOpen(true)}
-            className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-sm font-bold text-primary-foreground"
+            className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center text-sm font-bold text-primary-foreground shadow-lg shadow-primary/20"
           >
             {personalInitials}
           </button>
@@ -75,7 +75,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
         <h1 className="text-2xl font-bold text-foreground">Hub</h1>
         <Link 
           to="/dashboard/settings"
-          className="inline-block mt-1 px-3 py-1 bg-muted rounded-full"
+          className="inline-block mt-1 px-3 py-1 bg-secondary/80 backdrop-blur-sm rounded-full border border-border/50"
         >
           <span className="text-sm font-medium text-foreground">
             {profile?.business_name || "One Guy Can"}
@@ -83,35 +83,38 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
         </Link>
       </div>
 
-      {/* Stats Cards - 2x2 Grid matching reference */}
+      {/* Stats Cards - 2x2 Grid with colored accents */}
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform">
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
             <p className="text-sm text-muted-foreground mb-1">Sales made</p>
             <p className="text-3xl font-bold text-foreground mb-auto">0</p>
-            <p className="text-xs text-muted-foreground">Last week</p>
+            <div className="flex items-center gap-1">
+              <span className="w-2 h-2 rounded-full bg-success"></span>
+              <p className="text-xs text-muted-foreground">Last week</p>
+            </div>
           </Link>
           
           <button 
             onClick={() => setSalesHistoryOpen(true)}
-            className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform text-left"
+            className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform text-left shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20"
           >
             <p className="text-sm text-muted-foreground mb-1">Sales history</p>
             <p className="text-sm text-foreground">card</p>
             <p className="text-xl font-semibold text-foreground">- P12</p>
-            <p className="text-sm text-green-600">Approved</p>
+            <span className="text-sm text-success font-medium">Approved</span>
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
-          <Link to="/dashboard/payouts" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform">
+          <Link to="/dashboard/payouts" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
             <p className="text-sm text-muted-foreground mb-1">Payouts</p>
             <p className="text-sm text-muted-foreground">Payout</p>
             <p className="text-xl font-bold text-foreground">P16</p>
-            <p className="text-xs text-muted-foreground">9 May 2024</p>
+            <p className="text-xs text-info font-medium">9 May 2024</p>
           </Link>
           
-          <Link to="/dashboard/settings" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform">
+          <Link to="/dashboard/settings" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
             <p className="text-sm text-muted-foreground mb-1">Business details</p>
             <p className="text-sm text-muted-foreground line-clamp-2 mt-auto">
               Trading name, Address, conta...
@@ -129,7 +132,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
 
         <button 
           onClick={() => setRevenueReportOpen(true)}
-          className="w-full bg-card rounded-2xl p-4 active:scale-98 transition-transform mb-4 text-left"
+          className="w-full bg-gradient-to-br from-card to-card/80 rounded-2xl p-4 active:scale-98 transition-transform mb-4 text-left shadow-sm border border-border/50"
         >
           <p className="text-sm text-muted-foreground mb-4">Gross revenue</p>
           
@@ -140,12 +143,12 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
                   dataKey="day" 
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fill: '#999', fontSize: 12 }}
+                  tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 />
                 <Bar 
                   dataKey="value" 
-                  fill="#0066FF" 
-                  radius={[4, 4, 0, 0]}
+                  fill="hsl(var(--primary))" 
+                  radius={[6, 6, 0, 0]}
                 />
               </BarChart>
             </ChartContainer>
@@ -153,7 +156,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <div className="flex items-center justify-between border-t border-border pt-3">
             <p className="text-sm text-muted-foreground">Last week</p>
-            <p className="text-lg font-bold text-foreground">P48,000</p>
+            <p className="text-lg font-bold text-primary">P48,000</p>
           </div>
         </button>
 
@@ -161,32 +164,32 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
         <div className="grid grid-cols-2 gap-3">
           <button 
             onClick={() => setProductReportOpen(true)}
-            className="bg-card rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/10 rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left border border-purple-200/50 dark:border-purple-800/30"
           >
-            <p className="text-sm text-muted-foreground mb-auto">Product report</p>
-            <Package className="w-8 h-8 text-muted-foreground/50" />
+            <p className="text-sm text-purple-700 dark:text-purple-300 mb-auto font-medium">Product report</p>
+            <Package className="w-8 h-8 text-purple-400 dark:text-purple-500" />
           </button>
           
           <button 
             onClick={() => setStaffReportOpen(true)}
-            className="bg-card rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-blue-50 to-blue-100/50 dark:from-blue-900/20 dark:to-blue-800/10 rounded-2xl p-4 min-h-[100px] flex flex-col active:scale-98 transition-transform text-left border border-blue-200/50 dark:border-blue-800/30"
           >
-            <p className="text-sm text-muted-foreground mb-auto">Staff report</p>
-            <Users className="w-8 h-8 text-muted-foreground/50" />
+            <p className="text-sm text-blue-700 dark:text-blue-300 mb-auto font-medium">Staff report</p>
+            <Users className="w-8 h-8 text-blue-400 dark:text-blue-500" />
           </button>
         </div>
       </div>
 
       {/* Quick Access - POS, Card machine, Payment gateway, Wallet */}
-      <div className="px-5 py-2">
+      <div className="px-5 py-4">
         <h2 className="font-semibold text-foreground mb-3">Quick Access</h2>
         <div className="grid grid-cols-2 gap-3">
           <button 
             onClick={() => setPosOpen(true)}
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/5 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-primary/20"
           >
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-primary" />
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary/80 rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+              <CreditCard className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Mobile POS</p>
@@ -196,10 +199,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <Link 
             to="/dashboard/devices"
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform"
+            className="bg-gradient-to-br from-purple-50 to-purple-100/50 dark:from-purple-900/20 dark:to-purple-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform border border-purple-200/50 dark:border-purple-700/30"
           >
-            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-xl flex items-center justify-center">
-              <Smartphone className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/20">
+              <Smartphone className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Card machine</p>
@@ -209,10 +212,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <button 
             onClick={() => setPaymentGatewayOpen(true)}
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 dark:from-emerald-900/20 dark:to-emerald-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-emerald-200/50 dark:border-emerald-700/30"
           >
-            <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-xl flex items-center justify-center">
-              <Globe className="w-5 h-5 text-green-600 dark:text-green-400" />
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <Globe className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Payment gateway</p>
@@ -222,10 +225,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <button 
             onClick={() => setMoneyTransferOpen(true)}
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-orange-200/50 dark:border-orange-700/30"
           >
-            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-xl flex items-center justify-center">
-              <Send className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <Send className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Send Money</p>
@@ -235,10 +238,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
 
           <button 
             onClick={() => setLoanApplicationOpen(true)}
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
           >
-            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center">
-              <Banknote className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <Banknote className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Business Loan</p>
@@ -248,10 +251,10 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <button 
             onClick={() => setCapitalOpen(true)}
-            className="bg-card rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left"
+            className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-900/20 dark:to-cyan-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-cyan-200/50 dark:border-cyan-700/30"
           >
-            <div className="w-10 h-10 bg-cyan-100 dark:bg-cyan-900/30 rounded-xl flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />
+            <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
+              <Wallet className="w-5 h-5 text-white" />
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Wallet</p>

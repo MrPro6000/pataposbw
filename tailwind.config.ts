@@ -50,10 +50,23 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         pata: {
           gray: "hsl(var(--pata-gray))",
           dark: "hsl(var(--pata-dark))",
           white: "hsl(var(--pata-white))",
+          cream: "hsl(var(--pata-cream))",
         },
       },
       borderRadius: {
