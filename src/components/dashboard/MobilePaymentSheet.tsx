@@ -21,7 +21,7 @@ interface MobilePaymentSheetProps {
 }
 
 const paymentConfig = {
-  "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-[#0066FF]" },
+  "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-primary" },
   "payment-link": { title: "Payment Link", icon: Link2, color: "bg-purple-500" },
   "invoice": { title: "New Invoice", icon: FileText, color: "bg-blue-500" },
   "cash": { title: "Cash Payment", icon: Banknote, color: "bg-green-500" },
@@ -105,18 +105,18 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className={`w-10 h-10 ${config.color} rounded-xl flex items-center justify-center`}>
                 <Icon className="w-5 h-5 text-white" />
               </div>
-              <DrawerTitle className="text-[#141414]">{config.title}</DrawerTitle>
+              <DrawerTitle className="text-foreground">{config.title}</DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -125,17 +125,17 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
         <div className="p-5 space-y-5 overflow-y-auto">
           {isSuccess ? (
             <div className="flex flex-col items-center justify-center py-10">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle className="w-10 h-10 text-green-500" />
               </div>
-              <p className="text-xl font-bold text-[#141414]">Payment Successful!</p>
-              <p className="text-[#141414]/60">P{parseFloat(amount).toFixed(2)}</p>
+              <p className="text-xl font-bold text-foreground">Payment Successful!</p>
+              <p className="text-muted-foreground">P{parseFloat(amount).toFixed(2)}</p>
             </div>
           ) : (
             <>
               {/* Amount Input */}
               <div className="space-y-2">
-                <Label className="text-[#141414]">Amount (P)</Label>
+                <Label className="text-foreground">Amount (P)</Label>
                 <Input
                   type="text"
                   inputMode="numeric"
@@ -149,7 +149,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
 
               {/* Description */}
               <div className="space-y-2">
-                <Label className="text-[#141414]">Description (optional)</Label>
+                <Label className="text-foreground">Description (optional)</Label>
                 <Input
                   placeholder="What is this payment for?"
                   value={description}
@@ -160,7 +160,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               {/* Mobile Money Provider Selection */}
               {paymentType === "mobile-money" && (
                 <div className="space-y-3">
-                  <Label className="text-[#141414]">Select Provider</Label>
+                  <Label className="text-foreground">Select Provider</Label>
                   <div className="grid grid-cols-3 gap-3">
                     {mobileMoneyProviders.map((provider) => (
                       <button
@@ -168,8 +168,8 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
                         onClick={() => setSelectedProvider(provider.id)}
                         className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${
                           selectedProvider === provider.id
-                            ? "border-[#0066FF] bg-[#0066FF]/10"
-                            : "border-[#E8E8E8] bg-white"
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card"
                         }`}
                       >
                         <img 
@@ -177,7 +177,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
                           alt={provider.name} 
                           className="w-12 h-12 object-contain mb-2 rounded-lg"
                         />
-                        <p className="text-xs font-medium text-[#141414] text-center">{provider.name}</p>
+                        <p className="text-xs font-medium text-foreground text-center">{provider.name}</p>
                       </button>
                     ))}
                   </div>
@@ -187,7 +187,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               {/* Customer Phone for Mobile Money & Payment Link */}
               {(paymentType === "mobile-money" || paymentType === "payment-link") && (
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Customer Phone</Label>
+                  <Label className="text-foreground">Customer Phone</Label>
                   <Input
                     type="tel"
                     inputMode="tel"
@@ -201,7 +201,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               {/* Customer Email for Invoice & Payment Link */}
               {(paymentType === "invoice" || paymentType === "payment-link") && (
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">Customer Email</Label>
+                  <Label className="text-foreground">Customer Email</Label>
                   <Input
                     type="email"
                     placeholder="customer@example.com"
@@ -213,8 +213,8 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
 
               {/* Card Sale Info */}
               {paymentType === "card-sale" && (
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <p className="text-sm text-[#141414]/60">
+                <div className="bg-muted rounded-xl p-4">
+                  <p className="text-sm text-muted-foreground">
                     Enter the amount and tap your card machine to complete the transaction.
                   </p>
                 </div>
@@ -222,8 +222,8 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
 
               {/* Cash Sale Info */}
               {paymentType === "cash" && (
-                <div className="bg-[#F5F5F5] rounded-xl p-4">
-                  <p className="text-sm text-[#141414]/60">
+                <div className="bg-muted rounded-xl p-4">
+                  <p className="text-sm text-muted-foreground">
                     Record cash received from the customer.
                   </p>
                 </div>
@@ -233,11 +233,11 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
               <Button
                 onClick={handleSubmit}
                 disabled={isProcessing}
-                className="w-full h-14 bg-[#0066FF] hover:bg-[#0052cc] text-white font-semibold text-lg"
+                className="w-full h-14 font-semibold text-lg"
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
-                    <div className="animate-spin w-5 h-5 border-2 border-[#141414] border-t-transparent rounded-full" />
+                    <div className="animate-spin w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />
                     Processing...
                   </div>
                 ) : (

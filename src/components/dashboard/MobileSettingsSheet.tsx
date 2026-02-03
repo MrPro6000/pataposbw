@@ -108,21 +108,21 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
         return (
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-[#141414]">Business Name</Label>
+              <Label className="text-foreground">Business Name</Label>
               <Input 
                 value={businessInfo.name}
                 onChange={(e) => setBusinessInfo({ ...businessInfo, name: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Registration Number</Label>
+              <Label className="text-foreground">Registration Number</Label>
               <Input 
                 value={businessInfo.registrationNumber}
                 onChange={(e) => setBusinessInfo({ ...businessInfo, registrationNumber: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Email</Label>
+              <Label className="text-foreground">Email</Label>
               <Input 
                 type="email"
                 value={businessInfo.email}
@@ -130,14 +130,14 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Phone</Label>
+              <Label className="text-foreground">Phone</Label>
               <Input 
                 value={businessInfo.phone}
                 onChange={(e) => setBusinessInfo({ ...businessInfo, phone: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Address</Label>
+              <Label className="text-foreground">Address</Label>
               <Textarea 
                 value={businessInfo.address}
                 onChange={(e) => setBusinessInfo({ ...businessInfo, address: e.target.value })}
@@ -151,26 +151,26 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
         return (
           <div className="space-y-5">
             <div className="space-y-2">
-              <Label className="text-[#141414]">Store Name</Label>
+              <Label className="text-foreground">Store Name</Label>
               <Input 
                 value={storeSettings.storeName}
                 onChange={(e) => setStoreSettings({ ...storeSettings, storeName: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Operating Hours</Label>
+              <Label className="text-foreground">Operating Hours</Label>
               <Input 
                 value={storeSettings.operatingHours}
                 onChange={(e) => setStoreSettings({ ...storeSettings, operatingHours: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Currency</Label>
+              <Label className="text-foreground">Currency</Label>
               <Select value={storeSettings.currency} onValueChange={(v) => setStoreSettings({ ...storeSettings, currency: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent>
                   <SelectItem value="BWP">BWP - Botswana Pula</SelectItem>
                   <SelectItem value="ZAR">ZAR - South African Rand</SelectItem>
                   <SelectItem value="USD">USD - US Dollar</SelectItem>
@@ -178,12 +178,12 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Timezone</Label>
+              <Label className="text-foreground">Timezone</Label>
               <Select value={storeSettings.timezone} onValueChange={(v) => setStoreSettings({ ...storeSettings, timezone: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent>
                   <SelectItem value="Africa/Gaborone">Africa/Gaborone (CAT)</SelectItem>
                   <SelectItem value="Africa/Johannesburg">Africa/Johannesburg (SAST)</SelectItem>
                   <SelectItem value="UTC">UTC</SelectItem>
@@ -196,50 +196,50 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "payments":
         return (
           <div className="space-y-4">
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Card Payments</p>
-                <p className="text-sm text-[#141414]/60">Accept Visa, Mastercard</p>
+                <p className="font-medium text-foreground">Card Payments</p>
+                <p className="text-sm text-muted-foreground">Accept Visa, Mastercard</p>
               </div>
               <Switch 
                 checked={paymentMethods.card} 
                 onCheckedChange={(v) => setPaymentMethods({ ...paymentMethods, card: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Tap to Pay</p>
-                <p className="text-sm text-[#141414]/60">NFC contactless</p>
+                <p className="font-medium text-foreground">Tap to Pay</p>
+                <p className="text-sm text-muted-foreground">NFC contactless</p>
               </div>
               <Switch 
                 checked={paymentMethods.tapToPay} 
                 onCheckedChange={(v) => setPaymentMethods({ ...paymentMethods, tapToPay: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Mobile Money</p>
-                <p className="text-sm text-[#141414]/60">Orange, Smega, MyZaka</p>
+                <p className="font-medium text-foreground">Mobile Money</p>
+                <p className="text-sm text-muted-foreground">Orange, Smega, MyZaka</p>
               </div>
               <Switch 
                 checked={paymentMethods.mobileMoney} 
                 onCheckedChange={(v) => setPaymentMethods({ ...paymentMethods, mobileMoney: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Online Payments</p>
-                <p className="text-sm text-[#141414]/60">Payment links & invoices</p>
+                <p className="font-medium text-foreground">Online Payments</p>
+                <p className="text-sm text-muted-foreground">Payment links & invoices</p>
               </div>
               <Switch 
                 checked={paymentMethods.online} 
                 onCheckedChange={(v) => setPaymentMethods({ ...paymentMethods, online: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Cash</p>
-                <p className="text-sm text-[#141414]/60">Record cash transactions</p>
+                <p className="font-medium text-foreground">Cash</p>
+                <p className="text-sm text-muted-foreground">Record cash transactions</p>
               </div>
               <Switch 
                 checked={paymentMethods.cash} 
@@ -254,8 +254,8 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           <div className="space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Enable VAT</p>
-                <p className="text-sm text-[#141414]/60">Apply VAT to transactions</p>
+                <p className="font-medium text-foreground">Enable VAT</p>
+                <p className="text-sm text-muted-foreground">Apply VAT to transactions</p>
               </div>
               <Switch 
                 checked={taxSettings.vatEnabled} 
@@ -265,14 +265,14 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
             {taxSettings.vatEnabled && (
               <>
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">VAT Rate (%)</Label>
+                  <Label className="text-foreground">VAT Rate (%)</Label>
                   <Input 
                     value={taxSettings.vatRate}
                     onChange={(e) => setTaxSettings({ ...taxSettings, vatRate: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[#141414]">VAT Number</Label>
+                  <Label className="text-foreground">VAT Number</Label>
                   <Input 
                     value={taxSettings.vatNumber}
                     onChange={(e) => setTaxSettings({ ...taxSettings, vatNumber: e.target.value })}
@@ -280,8 +280,8 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium text-[#141414]">Prices Include VAT</p>
-                    <p className="text-sm text-[#141414]/60">Prices already include VAT</p>
+                    <p className="font-medium text-foreground">Prices Include VAT</p>
+                    <p className="text-sm text-muted-foreground">Prices already include VAT</p>
                   </div>
                   <Switch 
                     checked={taxSettings.pricesIncludeVat} 
@@ -298,8 +298,8 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           <div className="space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Show Logo</p>
-                <p className="text-sm text-[#141414]/60">Display business logo</p>
+                <p className="font-medium text-foreground">Show Logo</p>
+                <p className="text-sm text-muted-foreground">Display business logo</p>
               </div>
               <Switch 
                 checked={receiptSettings.showLogo} 
@@ -307,7 +307,7 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[#141414]">Footer Message</Label>
+              <Label className="text-foreground">Footer Message</Label>
               <Input 
                 value={receiptSettings.footerMessage}
                 onChange={(e) => setReceiptSettings({ ...receiptSettings, footerMessage: e.target.value })}
@@ -315,8 +315,8 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">VAT Breakdown</p>
-                <p className="text-sm text-[#141414]/60">Show VAT separately</p>
+                <p className="font-medium text-foreground">VAT Breakdown</p>
+                <p className="text-sm text-muted-foreground">Show VAT separately</p>
               </div>
               <Switch 
                 checked={receiptSettings.includeVatBreakdown} 
@@ -325,8 +325,8 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Email Receipts</p>
-                <p className="text-sm text-[#141414]/60">Send via email</p>
+                <p className="font-medium text-foreground">Email Receipts</p>
+                <p className="text-sm text-muted-foreground">Send via email</p>
               </div>
               <Switch 
                 checked={receiptSettings.emailReceipts} 
@@ -339,40 +339,40 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "notifications":
         return (
           <div className="space-y-4">
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Daily Summary</p>
-                <p className="text-sm text-[#141414]/60">Receive daily sales summary</p>
+                <p className="font-medium text-foreground">Daily Summary</p>
+                <p className="text-sm text-muted-foreground">Receive daily sales summary</p>
               </div>
               <Switch 
                 checked={notifications.dailySummary} 
                 onCheckedChange={(v) => setNotifications({ ...notifications, dailySummary: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Low Stock Alerts</p>
-                <p className="text-sm text-[#141414]/60">Get notified when stock is low</p>
+                <p className="font-medium text-foreground">Low Stock Alerts</p>
+                <p className="text-sm text-muted-foreground">Get notified when stock is low</p>
               </div>
               <Switch 
                 checked={notifications.lowStock} 
                 onCheckedChange={(v) => setNotifications({ ...notifications, lowStock: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">New Sale</p>
-                <p className="text-sm text-[#141414]/60">Notify on every sale</p>
+                <p className="font-medium text-foreground">New Sale</p>
+                <p className="text-sm text-muted-foreground">Notify on every sale</p>
               </div>
               <Switch 
                 checked={notifications.newSale} 
                 onCheckedChange={(v) => setNotifications({ ...notifications, newSale: v })}
               />
             </div>
-            <div className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+            <div className="bg-muted rounded-xl p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#141414]">Payout Complete</p>
-                <p className="text-sm text-[#141414]/60">When payout is processed</p>
+                <p className="font-medium text-foreground">Payout Complete</p>
+                <p className="text-sm text-muted-foreground">When payout is processed</p>
               </div>
               <Switch 
                 checked={notifications.payoutComplete} 
@@ -385,9 +385,9 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "support":
         return (
           <div className="space-y-5">
-            <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-              <p className="font-medium text-[#141414] mb-2">Need Help?</p>
-              <p className="text-sm text-[#141414]/60 mb-4">
+            <div className="bg-primary/10 rounded-xl p-4">
+              <p className="font-medium text-foreground mb-2">Need Help?</p>
+              <p className="text-sm text-muted-foreground mb-4">
                 Our support team is available 24/7 to assist you.
               </p>
               <div className="space-y-3">
@@ -405,21 +405,19 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
                 >
                   ✉️ Email support@pata.co.bw
                 </Button>
-                <Button 
-                  className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
-                >
+                <Button className="w-full">
                   💬 Start Live Chat
                 </Button>
               </div>
             </div>
             <div className="space-y-3">
-              <p className="font-medium text-[#141414]">FAQ Topics</p>
+              <p className="font-medium text-foreground">FAQ Topics</p>
               {["Getting Started", "Payments", "Devices", "Account & Billing"].map((topic) => (
                 <button 
                   key={topic}
-                  className="w-full text-left p-4 bg-[#F5F5F5] rounded-xl active:bg-[#E8E8E8] transition-colors"
+                  className="w-full text-left p-4 bg-muted rounded-xl active:bg-muted/70 transition-colors"
                 >
-                  <p className="font-medium text-[#141414]">{topic}</p>
+                  <p className="font-medium text-foreground">{topic}</p>
                 </button>
               ))}
             </div>
@@ -429,9 +427,9 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "devices":
         return (
           <div className="space-y-4">
-            <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-              <p className="font-medium text-[#141414] mb-1">Your Devices</p>
-              <p className="text-sm text-[#141414]/60">Manage your POS terminals and card machines</p>
+            <div className="bg-primary/10 rounded-xl p-4">
+              <p className="font-medium text-foreground mb-1">Your Devices</p>
+              <p className="text-sm text-muted-foreground">Manage your POS terminals and card machines</p>
             </div>
             {[
               { name: "Counter Terminal", model: "Pata Spaza", status: "online" },
@@ -441,21 +439,21 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
               { name: "Diamond Terminal", model: "Pata Diamond", status: "online" },
               { name: "Platinum Station", model: "Pata Platinum", status: "offline" },
             ].map((device, index) => (
-              <div key={index} className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+              <div key={index} className="bg-muted rounded-xl p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-[#141414]">{device.name}</p>
-                  <p className="text-sm text-[#141414]/60">{device.model}</p>
+                  <p className="font-medium text-foreground">{device.name}</p>
+                  <p className="text-sm text-muted-foreground">{device.model}</p>
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                   device.status === "online" 
-                    ? "bg-green-100 text-green-700" 
-                    : "bg-gray-100 text-gray-500"
+                    ? "bg-green-500/20 text-green-600 dark:text-green-400" 
+                    : "bg-muted-foreground/20 text-muted-foreground"
                 }`}>
                   {device.status}
                 </span>
               </div>
             ))}
-            <Button className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+            <Button className="w-full">
               + Add New Device
             </Button>
           </div>
@@ -464,9 +462,9 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
       case "customers":
         return (
           <div className="space-y-4">
-            <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-              <p className="font-medium text-[#141414] mb-1">Customer Database</p>
-              <p className="text-sm text-[#141414]/60">View and manage your customers</p>
+            <div className="bg-primary/10 rounded-xl p-4">
+              <p className="font-medium text-foreground mb-1">Customer Database</p>
+              <p className="text-sm text-muted-foreground">View and manage your customers</p>
             </div>
             {[
               { name: "John Smith", email: "john@email.com", spent: 2450 },
@@ -475,17 +473,17 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
               { name: "Emily Davis", email: "emily@email.com", spent: 950 },
               { name: "David Wilson", email: "david@email.com", spent: 4100 },
             ].map((customer, index) => (
-              <div key={index} className="bg-[#F5F5F5] rounded-xl p-4 flex items-center justify-between">
+              <div key={index} className="bg-muted rounded-xl p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-[#141414]">{customer.name}</p>
-                  <p className="text-sm text-[#141414]/60">{customer.email}</p>
+                  <p className="font-medium text-foreground">{customer.name}</p>
+                  <p className="text-sm text-muted-foreground">{customer.email}</p>
                 </div>
-                <span className="text-sm font-semibold text-[#00C8E6]">
+                <span className="text-sm font-semibold text-primary">
                   P{customer.spent.toLocaleString()}
                 </span>
               </div>
             ))}
-            <Button className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+            <Button className="w-full">
               + Add Customer
             </Button>
           </div>
