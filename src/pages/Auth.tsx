@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable";
+import { useAuth } from "@/hooks/useAuth";
+import { getKYCSubmission } from "@/integrations/firebase/firestore";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -24,7 +24,6 @@ const Auth = ({ mode }: AuthProps) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [showCookieBanner, setShowCookieBanner] = useState(false); // Removed on mobile by default
   const [step, setStep] = useState<AuthStep>("credentials");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
@@ -34,6 +33,7 @@ const Auth = ({ mode }: AuthProps) => {
   const { toast } = useToast();
   const { theme } = useTheme();
   const isMobile = useIsMobile();
+  const { user, userProfile, signIn: firebaseSignIn, signUp: firebaseSignUp } = useAuth();
 
   // Check if user has seen onboarding
   useEffect(() => {
@@ -50,67 +50,25 @@ const Auth = ({ mode }: AuthProps) => {
     setShowOnboarding(false);
   };
 
+  // Redirect authenticated users
   useEffect(() => {
-    const checkAdminAndRedirect = async (userId: string) => {
-      const { data: roles } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin");
-
-      if (roles && roles.length > 0) {
-        navigate("/admin");
-        return true;
-      }
-      return false;
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          const isAdmin = await checkAdminAndRedirect(session.user.id);
-          if (isAdmin) return;
-
-          if (event === "SIGNED_IN") {
-            const { data: kyc } = await supabase
-              .from("kyc_submissions")
-              .select("status")
-              .eq("user_id", session.user.id)
-              .maybeSingle();
-
-            if (!kyc) {
-              navigate("/kyc");
-            } else {
-              navigate("/dashboard");
-            }
-          } else {
-            navigate("/dashboard");
-          }
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session?.user) {
-        const isAdmin = await checkAdminAndRedirect(session.user.id);
-        if (isAdmin) return;
-
-        const { data: kyc } = await supabase
-          .from("kyc_submissions")
-          .select("status")
-          .eq("user_id", session.user.id)
-          .maybeSingle();
-
-        if (!kyc) {
+    const checkAndRedirect = async () => {
+      if (user && userProfile) {
+        // Check KYC status
+        const { data: kyc } = await getKYCSubmission(user.uid);
+        
+        if (!kyc || kyc.status === "pending") {
           navigate("/kyc");
+        } else if (!userProfile.businessSetupComplete) {
+          navigate("/business-setup");
         } else {
           navigate("/dashboard");
         }
       }
-    });
+    };
 
-    return () => subscription.unsubscribe();
-  }, [navigate]);
+    checkAndRedirect();
+  }, [user, userProfile, navigate]);
 
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");
@@ -183,32 +141,24 @@ const Auth = ({ mode }: AuthProps) => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            phone: formatPhoneNumber(phoneNumber),
-          },
-        },
-      });
+      const { user: newUser, error } = await firebaseSignUp(email, password);
 
       if (error) {
-        if (error.message.includes("already registered")) {
+        if (error.includes("already-in-use")) {
           toast({
             title: "Account exists",
             description: "This email is already registered. Please log in instead.",
             variant: "destructive",
           });
         } else {
-          throw error;
+          throw new Error(error);
         }
-      } else {
+      } else if (newUser) {
         toast({
           title: "Account created!",
-          description: "Please complete your KYC verification.",
+          description: "Please verify your email and complete KYC verification.",
         });
+        navigate("/kyc");
       }
     } catch (error: any) {
       toast({
@@ -250,20 +200,26 @@ const Auth = ({ mode }: AuthProps) => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      const { user: loggedInUser, error } = await firebaseSignIn(email, password);
 
       if (error) {
-        if (error.message.includes("Invalid login credentials")) {
+        if (error.includes("user-not-found") || error.includes("wrong-password") || error.includes("invalid-credential")) {
           toast({
             title: "Invalid credentials",
             description: "Please check your email and password.",
             variant: "destructive",
           });
         } else {
-          throw error;
+          throw new Error(error);
+        }
+      } else if (loggedInUser) {
+        // Check KYC and business setup status
+        const { data: kyc } = await getKYCSubmission(loggedInUser.uid);
+        
+        if (!kyc) {
+          navigate("/kyc");
+        } else {
+          navigate("/dashboard");
         }
       }
     } catch (error: any) {
@@ -278,27 +234,10 @@ const Auth = ({ mode }: AuthProps) => {
   };
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
-    try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
-      });
-      if (error) {
-        toast({
-          title: "Error",
-          description: error.message || "Failed to sign in with Google",
-          variant: "destructive",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Something went wrong",
-        variant: "destructive",
-      });
-    } finally {
-      setLoading(false);
-    }
+    toast({
+      title: "Coming soon",
+      description: "Google sign-in will be available soon.",
+    });
   };
 
   // Show onboarding carousel for mobile first-time users
@@ -482,8 +421,8 @@ const Auth = ({ mode }: AuthProps) => {
                           className="pl-14 bg-muted border-input rounded-xl py-3"
                         />
                       </div>
-                      <p className="mt-2 text-xs text-muted-foreground">
-                        We'll send you a 6-digit verification code
+                      <p className="text-xs text-muted-foreground mt-2">
+                        We'll send you a verification code via SMS
                       </p>
                     </div>
 
@@ -508,100 +447,72 @@ const Auth = ({ mode }: AuthProps) => {
                   </button>
 
                   <div className="text-center mb-6">
-                    <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-success/20">
-                      <Phone className="w-7 h-7 text-success" />
-                    </div>
                     <h2 className="text-xl font-semibold text-foreground mb-2">
                       Enter verification code
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      We sent a 6-digit code to +267 {phoneNumber}
+                      We sent a 6-digit code to +267{phoneNumber}
                     </p>
                   </div>
 
-                  <div className="space-y-6">
-                    <div className="flex justify-center">
-                      <InputOTP
-                        maxLength={6}
-                        value={otp}
-                        onChange={(value) => setOtp(value)}
-                      >
-                        <InputOTPGroup>
-                          <InputOTPSlot index={0} className="bg-muted border-input" />
-                          <InputOTPSlot index={1} className="bg-muted border-input" />
-                          <InputOTPSlot index={2} className="bg-muted border-input" />
-                          <InputOTPSlot index={3} className="bg-muted border-input" />
-                          <InputOTPSlot index={4} className="bg-muted border-input" />
-                          <InputOTPSlot index={5} className="bg-muted border-input" />
-                        </InputOTPGroup>
-                      </InputOTP>
-                    </div>
-
-                    <button
-                      onClick={handleVerifyOTP}
-                      disabled={loading || otp.length !== 6}
-                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
+                  <div className="flex justify-center mb-6">
+                    <InputOTP
+                      maxLength={6}
+                      value={otp}
+                      onChange={(value) => setOtp(value)}
                     >
-                      {loading ? "Verifying..." : "Verify & Create Account"}
-                    </button>
-
-                    <p className="text-center text-sm text-muted-foreground">
-                      Didn't receive code?{" "}
-                      <button onClick={handleSendOTP} className="text-primary hover:underline">
-                        Resend
-                      </button>
-                    </p>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} className="border-input bg-muted" />
+                        <InputOTPSlot index={1} className="border-input bg-muted" />
+                        <InputOTPSlot index={2} className="border-input bg-muted" />
+                        <InputOTPSlot index={3} className="border-input bg-muted" />
+                        <InputOTPSlot index={4} className="border-input bg-muted" />
+                        <InputOTPSlot index={5} className="border-input bg-muted" />
+                      </InputOTPGroup>
+                    </InputOTP>
                   </div>
+
+                  <button
+                    onClick={handleVerifyOTP}
+                    disabled={loading || otp.length !== 6}
+                    className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
+                  >
+                    {loading ? "Verifying..." : "Verify & Create Account"}
+                  </button>
+
+                  <p className="text-center text-sm text-muted-foreground mt-4">
+                    Didn't receive the code?{" "}
+                    <button
+                      onClick={handleSendOTP}
+                      className="text-primary hover:underline"
+                    >
+                      Resend
+                    </button>
+                  </p>
                 </>
               )}
-
-              <div className="mt-6 text-center text-sm text-muted-foreground">
-                {mode === "login" ? (
-                  <>
-                    Don't have an account?{" "}
-                    <Link to="/signup" className="text-primary font-medium hover:underline">
-                      Sign up
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    Already have an account?{" "}
-                    <Link to="/login" className="text-primary font-medium hover:underline">
-                      Log in
-                    </Link>
-                  </>
-                )}
-              </div>
             </div>
+
+            <p className="text-center text-sm text-muted-foreground mt-6">
+              {mode === "login" ? (
+                <>
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="text-primary hover:underline font-medium">
+                    Sign up
+                  </Link>
+                </>
+              ) : (
+                <>
+                  Already have an account?{" "}
+                  <Link to="/login" className="text-primary hover:underline font-medium">
+                    Log in
+                  </Link>
+                </>
+              )}
+            </p>
           </div>
         </div>
       </main>
-
-      {/* Cookie Banner - Desktop only */}
-      {showCookieBanner && !isMobile && (
-        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 md:p-6">
-          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground text-center md:text-left">
-              We use cookies to improve your experience. By continuing, you agree to our{" "}
-              <a href="#" className="text-primary hover:underline">Cookie Policy</a>.
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowCookieBanner(false)}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
-              >
-                Decline
-              </button>
-              <button
-                onClick={() => setShowCookieBanner(false)}
-                className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
