@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Light theme - Vibrant professional palette with soft blue tint */
+    /* Light theme - Professional blue-tinted palette */
     --background: 210 40% 96%;
     --foreground: 222 47% 11%;
 
@@ -54,7 +54,7 @@
   }
 
   .dark {
-    /* Dark theme - Rich professional palette */
+    /* Dark theme - Rich deep navy palette */
     --background: 222 47% 8%;
     --foreground: 210 40% 96%;
 
@@ -90,6 +90,11 @@
     --warning-foreground: 0 0% 100%;
     --info: 199 89% 53%;
     --info-foreground: 0 0% 100%;
+    
+    /* Pata brand colors (dark mode) */
+    --pata-gray: 222 47% 15%;
+    --pata-white: 210 40% 96%;
+    --pata-cream: 222 47% 12%;
   }
 }
 
@@ -110,48 +115,46 @@
 }
 
 @layer components {
-  /* Dark page background */
+  /* Theme-aware page backgrounds */
   .pata-dark-page {
-    @apply bg-[#141414] text-white min-h-screen;
+    @apply bg-background text-foreground min-h-screen;
   }
 
-  /* Light page background */
   .pata-light-page {
-    @apply bg-[#E8F4F8] text-[#141414] min-h-screen;
+    @apply bg-background text-foreground min-h-screen;
   }
 
-  /* Cyan primary button - updated to Pata blue */
+  /* Primary button - theme aware */
   .pata-btn-cyan {
-    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-[#0066FF] text-white rounded-full text-sm font-semibold transition-all duration-200 hover:bg-[#0052CC];
+    @apply inline-flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold transition-all duration-200 hover:bg-primary/90;
   }
 
-  /* Outline button (dark theme) */
+  /* Outline button - theme aware */
   .pata-btn-outline-dark {
-    @apply px-6 py-2.5 border border-white/80 text-white rounded-full text-sm font-medium transition-all duration-200 hover:bg-white hover:text-[#141414];
+    @apply px-6 py-2.5 border border-foreground/80 text-foreground rounded-full text-sm font-medium transition-all duration-200 hover:bg-foreground hover:text-background;
   }
 
-  /* Outline button (light theme) */
   .pata-btn-outline-light {
-    @apply px-6 py-2.5 border border-[#141414] text-[#141414] rounded-full text-sm font-medium transition-all duration-200 hover:bg-[#141414] hover:text-white;
+    @apply px-6 py-2.5 border border-foreground text-foreground rounded-full text-sm font-medium transition-all duration-200 hover:bg-foreground hover:text-background;
   }
 
-  /* Primary dark button for auth */
+  /* Primary dark button for auth - theme aware */
   .pata-btn-primary {
-    @apply w-full py-4 bg-[#141414] text-white rounded-xl text-base font-medium transition-all duration-200 hover:bg-[#2a2a2a];
+    @apply w-full py-4 bg-foreground text-background rounded-xl text-base font-medium transition-all duration-200 hover:bg-foreground/90;
   }
 
-  /* Link styles */
+  /* Link styles - theme aware */
   .pata-link-dark {
-    @apply text-sm text-white/70 hover:text-white transition-colors duration-200;
+    @apply text-sm text-foreground/70 hover:text-foreground transition-colors duration-200;
   }
 
   .pata-link-light {
-    @apply text-sm text-[#141414]/70 hover:text-[#141414] transition-colors duration-200;
+    @apply text-sm text-foreground/70 hover:text-foreground transition-colors duration-200;
   }
 
-  /* Card styles */
+  /* Card styles - theme aware */
   .pata-card {
-    @apply bg-white rounded-2xl p-8 shadow-none;
+    @apply bg-card text-card-foreground rounded-2xl p-8 shadow-none;
   }
 
   /* Hero text gradient */
@@ -159,12 +162,25 @@
     @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight;
   }
 
-  /* Badge/pill */
+  /* Badge/pill - theme aware */
   .pata-badge {
-    @apply inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm;
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-foreground/10 backdrop-blur-sm rounded-full text-sm;
   }
 
   .pata-badge-light {
-    @apply inline-flex items-center gap-2 px-4 py-2 bg-[#141414]/10 rounded-full text-sm;
+    @apply inline-flex items-center gap-2 px-4 py-2 bg-foreground/10 rounded-full text-sm;
+  }
+
+  /* Status colors - using semantic approach for dark mode compatibility */
+  .status-paid {
+    @apply text-green-600 bg-green-500/10 dark:text-green-400 dark:bg-green-500/20;
+  }
+  
+  .status-unpaid {
+    @apply text-yellow-600 bg-yellow-500/10 dark:text-yellow-400 dark:bg-yellow-500/20;
+  }
+  
+  .status-expired {
+    @apply text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20;
   }
 }

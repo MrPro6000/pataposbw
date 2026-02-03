@@ -42,12 +42,12 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusClass = (status: string) => {
     switch (status) {
-      case "paid": return "text-green-600 bg-green-50";
-      case "unpaid": return "text-yellow-600 bg-yellow-50";
-      case "expired": return "text-red-600 bg-red-50";
-      default: return "text-gray-600 bg-gray-50";
+      case "paid": return "status-paid";
+      case "unpaid": return "status-unpaid";
+      case "expired": return "status-expired";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -72,25 +72,25 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-white max-h-[90vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[90vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <DrawerClose asChild>
                 <button 
                   onClick={() => view === "create" ? setView("list") : undefined}
-                  className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center"
+                  className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
                 >
-                  <ChevronLeft className="w-4 h-4 text-[#141414]" />
+                  <ChevronLeft className="w-4 h-4 text-foreground" />
                 </button>
               </DrawerClose>
-              <DrawerTitle className="text-[#141414]">
+              <DrawerTitle className="text-foreground">
                 {view === "create" ? "Create Payment Link" : "Payment Links"}
               </DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -102,7 +102,7 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
               {/* Create New Button */}
               <Button
                 onClick={() => setView("create")}
-                className="w-full mb-5 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-medium"
+                className="w-full mb-5 font-medium"
               >
                 <Link2 className="w-4 h-4 mr-2" />
                 Create New Payment Link
@@ -111,29 +111,29 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
               {/* Unpaid Links */}
               {unpaidLinks.length > 0 && (
                 <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-[#141414]/60 mb-3">
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3">
                     Unpaid ({unpaidLinks.length})
                   </h3>
                   <div className="space-y-3">
                     {unpaidLinks.map((link) => (
                       <div
                         key={link.id}
-                        className="bg-[#F5F5F5] rounded-2xl p-4"
+                        className="bg-muted rounded-2xl p-4"
                       >
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <p className="font-medium text-[#141414]">{link.customer}</p>
-                            <p className="text-xs text-[#141414]/60">{link.phone}</p>
+                            <p className="font-medium text-foreground">{link.customer}</p>
+                            <p className="text-xs text-muted-foreground">{link.phone}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-[#141414]">P{link.amount.toFixed(2)}</p>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize inline-flex items-center gap-1 ${getStatusColor(link.status)}`}>
+                            <p className="font-bold text-foreground">P{link.amount.toFixed(2)}</p>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize inline-flex items-center gap-1 ${getStatusClass(link.status)}`}>
                               {getStatusIcon(link.status)}
                               {link.status}
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-[#141414]/40 mb-3">{link.createdAt}</p>
+                        <p className="text-xs text-muted-foreground mb-3">{link.createdAt}</p>
                         <div className="flex gap-2">
                           <Button
                             variant="outline"
@@ -163,21 +163,21 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
               {/* Other Links */}
               {otherLinks.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-semibold text-[#141414]/60 mb-3">History</h3>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3">History</h3>
                   <div className="space-y-3">
                     {otherLinks.map((link) => (
                       <div
                         key={link.id}
-                        className="bg-[#F5F5F5] rounded-2xl p-4"
+                        className="bg-muted rounded-2xl p-4"
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium text-[#141414]">{link.customer}</p>
-                            <p className="text-xs text-[#141414]/60">{link.createdAt}</p>
+                            <p className="font-medium text-foreground">{link.customer}</p>
+                            <p className="text-xs text-muted-foreground">{link.createdAt}</p>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold text-[#141414]">P{link.amount.toFixed(2)}</p>
-                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize inline-flex items-center gap-1 ${getStatusColor(link.status)}`}>
+                            <p className="font-bold text-foreground">P{link.amount.toFixed(2)}</p>
+                            <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize inline-flex items-center gap-1 ${getStatusClass(link.status)}`}>
                               {getStatusIcon(link.status)}
                               {link.status}
                             </span>
@@ -193,47 +193,50 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
             /* Create Link Form */
             <div className="space-y-5">
               <div className="space-y-2">
-                <Label className="text-[#141414]">Amount (P) *</Label>
+                <Label className="text-foreground">Amount (P) *</Label>
                 <Input
                   type="number"
                   placeholder="0.00"
                   value={newLink.amount}
                   onChange={(e) => setNewLink({ ...newLink, amount: e.target.value })}
-                  className="text-xl font-bold h-12"
+                  className="text-xl font-bold h-12 bg-muted border-0"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[#141414]">Customer Name *</Label>
+                <Label className="text-foreground">Customer Name *</Label>
                 <Input
                   placeholder="Enter customer name"
                   value={newLink.customerName}
                   onChange={(e) => setNewLink({ ...newLink, customerName: e.target.value })}
+                  className="bg-muted border-0"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[#141414]">Customer Phone</Label>
+                <Label className="text-foreground">Customer Phone</Label>
                 <Input
                   type="tel"
                   placeholder="+267 71 234 5678"
                   value={newLink.customerPhone}
                   onChange={(e) => setNewLink({ ...newLink, customerPhone: e.target.value })}
+                  className="bg-muted border-0"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[#141414]">Description (optional)</Label>
+                <Label className="text-foreground">Description (optional)</Label>
                 <Input
                   placeholder="What is this payment for?"
                   value={newLink.description}
                   onChange={(e) => setNewLink({ ...newLink, description: e.target.value })}
+                  className="bg-muted border-0"
                 />
               </div>
 
               <Button
                 onClick={handleCreateLink}
-                className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+                className="w-full h-12 font-semibold"
               >
                 Create & Send Link
               </Button>

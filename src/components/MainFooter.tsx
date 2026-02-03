@@ -1,15 +1,14 @@
 import PataLogo from "./PataLogo";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MainFooterProps {
   theme?: "dark" | "light";
 }
 
-const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
-  const isDark = theme === "dark";
-  const bgClass = isDark ? "bg-[#141414]" : "bg-[#E8F4F8]";
-  const textClass = isDark ? "text-white" : "text-[#141414]";
-  const mutedClass = isDark ? "text-white/60" : "text-[#141414]/60";
+const MainFooter = ({ theme: propTheme }: MainFooterProps) => {
+  const { theme: contextTheme } = useTheme();
+  const isDark = propTheme ? propTheme === "dark" : contextTheme === "dark";
 
   const footerLinks = {
     Products: [
@@ -43,28 +42,28 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
   };
 
   return (
-    <footer className={`${bgClass} ${textClass} py-16 px-6 md:px-20`}>
+    <footer className="bg-background text-foreground py-16 px-6 md:px-20 border-t border-border">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
             <PataLogo className="h-5 mb-6" />
-            <p className={`text-sm ${mutedClass} mb-6`}>
+            <p className="text-sm text-muted-foreground mb-6">
               Market leader in card machines, online payments, point of sale solutions and flexible business funding.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className={`${mutedClass} hover:${textClass} transition-colors`}>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Facebook className="w-5 h-5" />
               </a>
-              <a href="#" className={`${mutedClass} hover:${textClass} transition-colors`}>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Instagram className="w-5 h-5" />
               </a>
-              <a href="#" className={`${mutedClass} hover:${textClass} transition-colors`}>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Twitter className="w-5 h-5" />
               </a>
-              <a href="#" className={`${mutedClass} hover:${textClass} transition-colors`}>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Linkedin className="w-5 h-5" />
               </a>
-              <a href="#" className={`${mutedClass} hover:${textClass} transition-colors`}>
+              <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
@@ -76,7 +75,7 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className={`text-sm ${mutedClass} hover:${textClass} transition-colors`}>
+                    <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
                       {link}
                     </a>
                   </li>
@@ -86,18 +85,18 @@ const MainFooter = ({ theme = "dark" }: MainFooterProps) => {
           ))}
         </div>
 
-        <div className={`border-t ${isDark ? 'border-white/10' : 'border-[#141414]/10'} pt-8 flex flex-col md:flex-row items-center justify-between gap-4`}>
-          <p className={`text-sm ${mutedClass}`}>
+        <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
             © 2024 Pata Technologies (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <a href="#" className={`text-sm ${mutedClass} hover:${textClass} transition-colors`}>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Privacy Policy
             </a>
-            <a href="#" className={`text-sm ${mutedClass} hover:${textClass} transition-colors`}>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Terms of Service
             </a>
-            <a href="#" className={`text-sm ${mutedClass} hover:${textClass} transition-colors`}>
+            <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Cookie Policy
             </a>
           </div>

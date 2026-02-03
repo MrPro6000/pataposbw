@@ -45,24 +45,24 @@ const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) =
       {/* Search */}
       <div className="px-5 py-3">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#141414]/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <Input 
             placeholder="Search customers..."
-            className="pl-10 bg-white border-0 rounded-xl"
+            className="pl-10 bg-card border-0 rounded-xl"
           />
         </div>
       </div>
 
       {/* Customer Summary */}
       <div className="px-5 mb-4">
-        <div className="bg-white rounded-2xl p-4">
+        <div className="bg-card rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-[#141414]/60">Total customers</p>
-              <p className="text-2xl font-bold text-[#141414]">{customers.length}</p>
+              <p className="text-sm text-muted-foreground">Total customers</p>
+              <p className="text-2xl font-bold text-foreground">{customers.length}</p>
             </div>
-            <div className="w-12 h-12 bg-[#0066FF]/10 rounded-xl flex items-center justify-center">
-              <Users className="w-6 h-6 text-[#0066FF]" />
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Users className="w-6 h-6 text-primary" />
             </div>
           </div>
         </div>
@@ -70,37 +70,37 @@ const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) =
 
       {/* Customers List */}
       <div className="px-5">
-        <h2 className="text-sm text-[#141414]/60 mb-3">All customers</h2>
+        <h2 className="text-sm text-muted-foreground mb-3">All customers</h2>
         <div className="space-y-3">
           {customers.map((customer) => (
-            <div key={customer.id} className="bg-white rounded-2xl p-4">
+            <div key={customer.id} className="bg-card rounded-2xl p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 bg-[#0066FF] rounded-xl flex items-center justify-center text-white font-bold">
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
                     {customer.name.slice(0, 2).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#141414]">{customer.name}</h3>
-                    <p className="text-sm text-[#141414]/60">{customer.visits} visits</p>
+                    <h3 className="font-semibold text-foreground">{customer.name}</h3>
+                    <p className="text-sm text-muted-foreground">{customer.visits} visits</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold text-[#141414]">P{customer.totalSpent.toLocaleString()}</p>
-                  <p className="text-xs text-[#141414]/50">total spent</p>
+                  <p className="font-bold text-foreground">P{customer.totalSpent.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">total spent</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4 pt-3 border-t border-[#E8E8E8]">
+              <div className="flex items-center gap-4 pt-3 border-t border-border">
                 <a 
                   href={`mailto:${customer.email}`} 
-                  className="flex items-center gap-1.5 text-sm text-[#141414]/60"
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground"
                 >
                   <Mail className="w-4 h-4" />
                   <span className="truncate max-w-[120px]">{customer.email}</span>
                 </a>
                 <a 
                   href={`tel:${customer.phone}`} 
-                  className="flex items-center gap-1.5 text-sm text-[#141414]/60"
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground"
                 >
                   <Phone className="w-4 h-4" />
                   <span>{customer.phone.split(' ').slice(-2).join(' ')}</span>
@@ -111,11 +111,11 @@ const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) =
         </div>
 
         {/* Add Customer Card */}
-        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#0066FF] active:bg-[#0066FF]/5 transition-colors">
-          <div className="w-12 h-12 bg-[#F0F0F0] rounded-full flex items-center justify-center">
-            <Plus className="w-6 h-6 text-[#141414]/40" />
+        <button className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors">
+          <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+            <Plus className="w-6 h-6 text-muted-foreground" />
           </div>
-          <span className="text-[#141414]/60 font-medium">Add Customer</span>
+          <span className="text-muted-foreground font-medium">Add Customer</span>
         </button>
       </div>
 

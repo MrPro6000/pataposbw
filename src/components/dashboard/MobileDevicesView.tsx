@@ -37,9 +37,9 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
   ]);
 
   const getBatteryColor = (level: number) => {
-    if (level > 50) return "text-green-600";
-    if (level > 20) return "text-yellow-500";
-    return "text-red-500";
+    if (level > 50) return "text-green-600 dark:text-green-400";
+    if (level > 20) return "text-yellow-500 dark:text-yellow-400";
+    return "text-red-500 dark:text-red-400";
   };
 
   return (
@@ -59,16 +59,16 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
 
       {/* Device Summary */}
       <div className="px-5 py-4">
-        <div className="bg-white rounded-2xl p-4">
+        <div className="bg-card rounded-2xl p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-[#141414]/60">Active devices</p>
-              <p className="text-2xl font-bold text-[#141414]">
+              <p className="text-sm text-muted-foreground">Active devices</p>
+              <p className="text-2xl font-bold text-foreground">
                 {devices.filter(d => d.status === "online").length}
               </p>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-              <Wifi className="w-6 h-6 text-green-600" />
+            <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+              <Wifi className="w-6 h-6 text-green-600 dark:text-green-400" />
             </div>
           </div>
         </div>
@@ -76,13 +76,13 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
 
       {/* Devices List */}
       <div className="px-5">
-        <h2 className="text-sm text-[#141414]/60 mb-3">Your devices</h2>
+        <h2 className="text-sm text-muted-foreground mb-3">Your devices</h2>
         <div className="space-y-3">
           {devices.map((device) => (
-            <div key={device.id} className="bg-white rounded-2xl p-4">
+            <div key={device.id} className="bg-card rounded-2xl p-4">
               <div className="flex items-start justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
                     <img 
                       src={getDeviceImage(device.model)} 
                       alt={device.model}
@@ -90,24 +90,24 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#141414]">{device.name}</h3>
-                    <p className="text-sm text-[#141414]/60">{device.model}</p>
+                    <h3 className="font-semibold text-foreground">{device.name}</h3>
+                    <p className="text-sm text-muted-foreground">{device.model}</p>
                   </div>
                 </div>
                 <button className="p-2">
-                  <MoreVertical className="w-5 h-5 text-[#141414]/40" />
+                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
                 </button>
               </div>
 
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1.5">
                   {device.status === "online" ? (
-                    <Wifi className="w-4 h-4 text-green-600" />
+                    <Wifi className="w-4 h-4 text-green-600 dark:text-green-400" />
                   ) : (
-                    <WifiOff className="w-4 h-4 text-gray-400" />
+                    <WifiOff className="w-4 h-4 text-muted-foreground" />
                   )}
                   <span className={`text-sm font-medium capitalize ${
-                    device.status === "online" ? "text-green-600" : "text-gray-400"
+                    device.status === "online" ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
                   }`}>
                     {device.status}
                   </span>
@@ -120,18 +120,18 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
                     </span>
                   </div>
                 )}
-                <span className="text-sm text-[#141414]/40 ml-auto">{device.lastSeen}</span>
+                <span className="text-sm text-muted-foreground ml-auto">{device.lastSeen}</span>
               </div>
             </div>
           ))}
         </div>
 
         {/* Add Device Card */}
-        <button className="w-full mt-4 border-2 border-dashed border-[#E0E0E0] rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-[#0066FF] active:bg-[#0066FF]/5 transition-colors">
-          <div className="w-12 h-12 bg-[#F0F0F0] rounded-full flex items-center justify-center">
-            <Plus className="w-6 h-6 text-[#141414]/40" />
+        <button className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors">
+          <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+            <Plus className="w-6 h-6 text-muted-foreground" />
           </div>
-          <span className="text-[#141414]/60 font-medium">Add New Device</span>
+          <span className="text-muted-foreground font-medium">Add New Device</span>
         </button>
       </div>
 

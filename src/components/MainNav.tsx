@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import PataLogo from "./PataLogo";
 import ThemeToggle from "./ThemeToggle";
+import { useTheme } from "@/contexts/ThemeContext";
 
 interface MainNavProps {
   theme?: "dark" | "light";
 }
 
-const MainNav = ({ theme = "dark" }: MainNavProps) => {
-  const isDark = theme === "dark";
+const MainNav = ({ theme: propTheme }: MainNavProps) => {
+  const { theme: contextTheme } = useTheme();
+  const isDark = propTheme ? propTheme === "dark" : contextTheme === "dark";
   
   return (
-    <header className={`flex items-center justify-between px-6 md:px-20 py-5 ${isDark ? 'text-white' : 'text-[#141414]'}`}>
+    <header className="flex items-center justify-between px-6 md:px-20 py-5 text-foreground">
       <div className="flex items-center gap-10">
         <Link to="/">
           <PataLogo className="h-5" />
@@ -33,11 +35,11 @@ const MainNav = ({ theme = "dark" }: MainNavProps) => {
       </div>
       
       <div className="flex items-center gap-4">
-        <ThemeToggle className={isDark ? 'text-white' : 'text-[#141414]'} />
-        <Link to="/support" className={`hidden md:block text-sm font-medium ${isDark ? 'text-white/80 hover:text-white' : 'text-[#141414]/80 hover:text-[#141414]'} transition-colors`}>
+        <ThemeToggle className="text-foreground" />
+        <Link to="/support" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
           Support
         </Link>
-        <Link to="/login" className={`hidden md:block text-sm font-medium ${isDark ? 'text-white/80 hover:text-white' : 'text-[#141414]/80 hover:text-[#141414]'} transition-colors`}>
+        <Link to="/login" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
           Login
         </Link>
         <Link to="/signup" className={isDark ? 'pata-btn-outline-dark' : 'pata-btn-outline-light'}>

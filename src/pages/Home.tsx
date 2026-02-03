@@ -2,6 +2,7 @@ import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useTheme } from "@/contexts/ThemeContext";
 
 // Device images
 import pataPro from "@/assets/devices/pata-pro.jpeg";
@@ -10,9 +11,12 @@ import pataPlatinum from "@/assets/devices/pata-platinum.jpeg";
 import goPata from "@/assets/devices/go-pata.jpeg";
 
 const Home = () => {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   return (
-    <div className="pata-dark-page">
-      <MainNav theme="dark" />
+    <div className="bg-background text-foreground min-h-screen">
+      <MainNav />
       
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-12 md:py-20">
@@ -21,19 +25,19 @@ const Home = () => {
             {/* Left Content */}
             <div>
               <div className="flex items-center gap-2 mb-6">
-                <Star className="w-4 h-4 text-[#0066FF]" />
-                <span className="text-[#0066FF] font-medium">202,107</span>
-                <span className="text-white/80">businesses trust Pata</span>
+                <Star className="w-4 h-4 text-primary" />
+                <span className="text-primary font-medium">202,107</span>
+                <span className="text-muted-foreground">businesses trust Pata</span>
               </div>
               
-              <h1 className="pata-hero-title text-white mb-2">
+              <h1 className="pata-hero-title text-foreground mb-2">
                 YOUR BUSINESS,
               </h1>
-              <h1 className="pata-hero-title text-[#D4B896] mb-6">
+              <h1 className="pata-hero-title text-amber-500 dark:text-amber-400 mb-6">
                 YOUR POCKET
               </h1>
               
-              <p className="text-lg text-white/70 mb-8 max-w-lg">
+              <p className="text-lg text-muted-foreground mb-8 max-w-lg">
                 Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money worldwide, and manage your entire business—all from your pocket.
               </p>
               
@@ -42,7 +46,7 @@ const Home = () => {
                   Start accepting payments
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link to="/products" className="text-white font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                <Link to="/products" className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
                   Explore products
                 </Link>
               </div>
@@ -51,14 +55,14 @@ const Home = () => {
             {/* Right Content - Image Grid */}
             <div className="relative grid grid-cols-2 gap-3">
               <div className="space-y-3">
-                <div className="bg-[#2a2a2a] rounded-2xl aspect-video overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
                   <img 
                     src={pataPro} 
                     alt="Pata Pro POS Display" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="bg-[#2a2a2a] rounded-2xl aspect-square overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-square overflow-hidden">
                   <img 
                     src={pataDiamond} 
                     alt="Pata Diamond Card Machine" 
@@ -67,14 +71,14 @@ const Home = () => {
                 </div>
               </div>
               <div className="space-y-3 pt-8">
-                <div className="bg-[#2a2a2a] rounded-2xl aspect-square overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-square overflow-hidden">
                   <img 
                     src={pataPlatinum} 
                     alt="Pata Platinum Card Machine" 
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="bg-[#2a2a2a] rounded-2xl aspect-video overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
                   <img 
                     src={goPata} 
                     alt="Go Pata Mobile Device" 
@@ -88,12 +92,12 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="px-6 md:px-20 py-20 bg-[#1a1a1a]">
+      <section className="px-6 md:px-20 py-20 bg-secondary">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4 text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
             One app. Endless possibilities.
           </h2>
-          <p className="text-white/60 text-center mb-12 max-w-2xl mx-auto">
+          <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
             Accept payments, sell products, transfer money globally, and grow your business—all from one powerful platform.
           </p>
           
@@ -127,15 +131,15 @@ const Home = () => {
               <Link
                 key={feature.title}
                 to={feature.link}
-                className="bg-[#2a2a2a] rounded-2xl p-6 hover:bg-[#333] transition-colors group"
+                className="bg-card rounded-2xl p-6 hover:bg-card/80 transition-colors group border border-border"
               >
-                <div className="w-12 h-12 bg-[#0066FF]/20 rounded-xl mb-4 flex items-center justify-center">
-                  <div className="w-6 h-6 bg-[#0066FF] rounded-lg"></div>
+                <div className="w-12 h-12 bg-primary/20 rounded-xl mb-4 flex items-center justify-center">
+                  <div className="w-6 h-6 bg-primary rounded-lg"></div>
                 </div>
-                <p className="text-[#00C8E6] text-xs font-medium uppercase tracking-wide mb-2">{feature.tagline}</p>
-                <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-white/60 text-sm mb-4">{feature.description}</p>
-                <span className="text-[#0066FF] font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
+                <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">{feature.tagline}</p>
+                <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
+                <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                   Learn more
                   <ArrowRight className="w-4 h-4" />
                 </span>
@@ -149,21 +153,21 @@ const Home = () => {
       <section className="px-6 md:px-20 py-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6">
-            <Link to="/capital" className="bg-gradient-to-br from-[#D4B896]/20 to-[#D4B896]/5 rounded-2xl p-8 hover:from-[#D4B896]/30 transition-colors group">
-              <p className="text-[#D4B896] text-xs font-medium uppercase tracking-wide mb-2">Grow faster</p>
-              <h3 className="text-2xl font-bold text-white mb-3">Pata Capital</h3>
-              <p className="text-white/60 mb-4">Get funding in 24 hours. No paperwork, no credit checks. Pay back as you earn.</p>
-              <span className="text-[#D4B896] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+            <Link to="/capital" className="bg-gradient-to-br from-amber-500/20 to-amber-500/5 rounded-2xl p-8 hover:from-amber-500/30 transition-colors group border border-amber-500/20">
+              <p className="text-amber-500 dark:text-amber-400 text-xs font-medium uppercase tracking-wide mb-2">Grow faster</p>
+              <h3 className="text-2xl font-bold text-foreground mb-3">Pata Capital</h3>
+              <p className="text-muted-foreground mb-4">Get funding in 24 hours. No paperwork, no credit checks. Pay back as you earn.</p>
+              <span className="text-amber-500 dark:text-amber-400 font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
                 Check your offer
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
             
-            <Link to="/products" className="bg-gradient-to-br from-[#00C8E6]/20 to-[#00C8E6]/5 rounded-2xl p-8 hover:from-[#00C8E6]/30 transition-colors group">
-              <p className="text-[#00C8E6] text-xs font-medium uppercase tracking-wide mb-2">Complete solution</p>
-              <h3 className="text-2xl font-bold text-white mb-3">Business Hub</h3>
-              <p className="text-white/60 mb-4">Track sales, manage customers, view reports, and control your entire business from one dashboard.</p>
-              <span className="text-[#00C8E6] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+            <Link to="/products" className="bg-gradient-to-br from-info/20 to-info/5 rounded-2xl p-8 hover:from-info/30 transition-colors group border border-info/20">
+              <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">Complete solution</p>
+              <h3 className="text-2xl font-bold text-foreground mb-3">Business Hub</h3>
+              <p className="text-muted-foreground mb-4">Track sales, manage customers, view reports, and control your entire business from one dashboard.</p>
+              <span className="text-info font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
                 Explore Hub
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -172,7 +176,7 @@ const Home = () => {
         </div>
       </section>
 
-      <MainFooter theme="dark" />
+      <MainFooter />
     </div>
   );
 };

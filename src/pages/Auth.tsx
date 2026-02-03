@@ -30,12 +30,9 @@ const Auth = ({ mode }: AuthProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme } = useTheme();
-  
-  const isDark = theme === "dark";
 
   useEffect(() => {
     const checkAdminAndRedirect = async (userId: string) => {
-      // Check if user is an admin
       const { data: roles } = await supabase
         .from("user_roles")
         .select("role")
@@ -43,7 +40,6 @@ const Auth = ({ mode }: AuthProps) => {
         .eq("role", "admin");
 
       if (roles && roles.length > 0) {
-        // User is admin, redirect to admin dashboard
         navigate("/admin");
         return true;
       }
@@ -53,11 +49,9 @@ const Auth = ({ mode }: AuthProps) => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (session?.user) {
-          // Check if user is admin first
           const isAdmin = await checkAdminAndRedirect(session.user.id);
           if (isAdmin) return;
 
-          // Check if user has completed KYC
           if (event === "SIGNED_IN") {
             const { data: kyc } = await supabase
               .from("kyc_submissions")
@@ -66,7 +60,6 @@ const Auth = ({ mode }: AuthProps) => {
               .maybeSingle();
 
             if (!kyc) {
-              // No KYC submission, redirect to KYC page
               navigate("/kyc");
             } else {
               navigate("/dashboard");
@@ -80,11 +73,9 @@ const Auth = ({ mode }: AuthProps) => {
 
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
-        // Check if user is admin first
         const isAdmin = await checkAdminAndRedirect(session.user.id);
         if (isAdmin) return;
 
-        // Check if user has completed KYC
         const { data: kyc } = await supabase
           .from("kyc_submissions")
           .select("status")
@@ -171,7 +162,6 @@ const Auth = ({ mode }: AuthProps) => {
       return;
     }
 
-    // OTP verified, proceed with signup
     setLoading(true);
     try {
       const { error } = await supabase.auth.signUp({
@@ -293,15 +283,15 @@ const Auth = ({ mode }: AuthProps) => {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} flex flex-col transition-colors duration-300`}>
+    <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
       <header className="flex items-center justify-between px-10 md:px-20 py-6">
         <Link to="/">
-          <PataLogo className={`h-6 ${isDark ? 'text-white' : 'text-[#141414]'}`} />
+          <PataLogo className="h-6 text-foreground" />
         </Link>
         <div className="flex items-center gap-4">
-          <ThemeToggle className={isDark ? 'text-white' : 'text-[#141414]'} />
-          <Link to={mode === "login" ? "/signup" : "/login"} className={isDark ? 'pata-btn-outline-dark' : 'pata-btn-outline-light'}>
+          <ThemeToggle className="text-foreground" />
+          <Link to={mode === "login" ? "/signup" : "/login"} className="pata-btn-outline-dark">
             {mode === "login" ? "Sign up" : "Log in"}
           </Link>
         </div>
@@ -323,14 +313,14 @@ const Auth = ({ mode }: AuthProps) => {
 
           {/* Right side - Auth Form */}
           <div className="w-full lg:w-[400px] order-1 lg:order-2">
-            <div className={`${isDark ? 'bg-[#1a1a1a] border border-white/10' : 'bg-white'} rounded-2xl p-8 transition-colors duration-300`}>
+            <div className="bg-card border border-border rounded-2xl p-8 transition-colors duration-300">
               
               {step === "credentials" && (
                 <>
-                  <h2 className={`text-2xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+                  <h2 className="text-2xl font-semibold text-foreground mb-2">
                     {mode === "login" ? "Welcome back" : "Create your account"}
                   </h2>
-                  <p className={`${isDark ? 'text-white/60' : 'text-[#141414]/60'} mb-6`}>
+                  <p className="text-muted-foreground mb-6">
                     {mode === "login" 
                       ? "Log in to access your business dashboard." 
                       : "Sign up to start accepting payments."}
@@ -338,20 +328,20 @@ const Auth = ({ mode }: AuthProps) => {
 
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                      <label className={`block text-sm font-medium ${isDark ? 'text-white' : 'text-[#141414]'} mb-1.5`}>
+                      <label className="block text-sm font-medium text-foreground mb-1.5">
                         Email
                       </label>
                       <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-transparent transition-colors`}
+                        className="w-full px-4 py-3 border border-input bg-muted text-foreground placeholder:text-muted-foreground rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
                         placeholder="you@example.com"
                       />
                     </div>
 
                     <div>
-                      <label className={`block text-sm font-medium ${isDark ? 'text-white' : 'text-[#141414]'} mb-1.5`}>
+                      <label className="block text-sm font-medium text-foreground mb-1.5">
                         Password
                       </label>
                       <div className="relative">
@@ -359,13 +349,13 @@ const Auth = ({ mode }: AuthProps) => {
                           type={showPassword ? "text" : "password"}
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className={`w-full px-4 py-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white placeholder:text-white/40' : 'border-[#e0e0e0] bg-white text-[#141414]'} rounded-xl focus:outline-none focus:ring-2 focus:ring-[#0066FF] focus:border-transparent pr-12 transition-colors`}
+                          className="w-full px-4 py-3 border border-input bg-muted text-foreground placeholder:text-muted-foreground rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent pr-12 transition-colors"
                           placeholder="••••••••"
                         />
                         <button
                           type="button"
                           onClick={() => setShowPassword(!showPassword)}
-                          className={`absolute right-4 top-1/2 -translate-y-1/2 ${isDark ? 'text-white/40 hover:text-white' : 'text-[#141414]/40 hover:text-[#141414]'}`}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                         >
                           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                         </button>
@@ -374,7 +364,7 @@ const Auth = ({ mode }: AuthProps) => {
 
                     {mode === "login" && (
                       <div className="text-right">
-                        <a href="#" className="text-sm text-[#0066FF] hover:underline">
+                        <a href="#" className="text-sm text-primary hover:underline">
                           Forgot password?
                         </a>
                       </div>
@@ -383,17 +373,17 @@ const Auth = ({ mode }: AuthProps) => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
                     >
                       {loading ? "Please wait..." : mode === "login" ? "Log in" : "Continue"}
                     </button>
 
                     <div className="relative my-6">
-                      <div className={`absolute inset-0 flex items-center`}>
-                        <div className={`w-full border-t ${isDark ? 'border-white/20' : 'border-[#e0e0e0]'}`}></div>
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-border"></div>
                       </div>
                       <div className="relative flex justify-center text-sm">
-                        <span className={`px-4 ${isDark ? 'bg-[#1a1a1a] text-white/60' : 'bg-white text-[#141414]/60'}`}>
+                        <span className="px-4 bg-card text-muted-foreground">
                           or continue with
                         </span>
                       </div>
@@ -403,7 +393,7 @@ const Auth = ({ mode }: AuthProps) => {
                       type="button"
                       onClick={handleGoogleSignIn}
                       disabled={loading}
-                      className={`w-full py-4 flex items-center justify-center gap-3 border ${isDark ? 'border-white/20 bg-[#2a2a2a] text-white hover:bg-[#3a3a3a]' : 'border-[#e0e0e0] bg-white text-[#141414] hover:bg-[#f5f5f5]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                      className="w-full py-4 flex items-center justify-center gap-3 border border-input bg-muted text-foreground hover:bg-muted/70 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
                     >
                       <svg className="w-5 h-5" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -421,30 +411,30 @@ const Auth = ({ mode }: AuthProps) => {
                 <>
                   <button
                     onClick={() => setStep("credentials")}
-                    className={`flex items-center gap-2 text-sm mb-6 ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}
+                    className="flex items-center gap-2 text-sm mb-6 text-muted-foreground hover:text-foreground"
                   >
                     ← Back
                   </button>
 
-                    <div className="text-center mb-6">
-                      <div className={`w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center ${isDark ? 'bg-[#0066FF]/20' : 'bg-[#0066FF]/10'}`}>
-                        <Phone className="w-7 h-7 text-[#0066FF]" />
+                  <div className="text-center mb-6">
+                    <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-primary/20">
+                      <Phone className="w-7 h-7 text-primary" />
                     </div>
-                    <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+                    <h2 className="text-xl font-semibold text-foreground mb-2">
                       Verify your phone
                     </h2>
-                    <p className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
+                    <p className="text-sm text-muted-foreground">
                       Enter your Botswana mobile number to receive a verification code
                     </p>
                   </div>
 
                   <div className="space-y-4">
                     <div>
-                      <label className={`block text-sm font-medium ${isDark ? 'text-white' : 'text-[#141414]'} mb-1.5`}>
+                      <label className="block text-sm font-medium text-foreground mb-1.5">
                         Phone Number
                       </label>
                       <div className="relative">
-                        <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                           +267
                         </span>
                         <Input
@@ -452,10 +442,10 @@ const Auth = ({ mode }: AuthProps) => {
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value.replace(/\D/g, "").slice(0, 8))}
                           placeholder="71234567"
-                          className={`pl-14 ${isDark ? 'bg-[#2a2a2a] border-white/20 text-white placeholder:text-white/40' : 'bg-white border-[#e0e0e0]'} rounded-xl py-3`}
+                          className="pl-14 bg-muted border-input rounded-xl py-3"
                         />
                       </div>
-                      <p className={`mt-2 text-xs ${isDark ? 'text-white/40' : 'text-[#141414]/40'}`}>
+                      <p className="mt-2 text-xs text-muted-foreground">
                         We'll send you a 6-digit verification code
                       </p>
                     </div>
@@ -463,7 +453,7 @@ const Auth = ({ mode }: AuthProps) => {
                     <button
                       onClick={handleSendOTP}
                       disabled={loading || phoneNumber.length < 8}
-                      className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
+                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
                     >
                       {loading ? "Sending..." : "Send verification code"}
                     </button>
@@ -475,108 +465,106 @@ const Auth = ({ mode }: AuthProps) => {
                 <>
                   <button
                     onClick={() => setStep("phone")}
-                    className={`flex items-center gap-2 text-sm mb-6 ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}
+                    className="flex items-center gap-2 text-sm mb-6 text-muted-foreground hover:text-foreground"
                   >
                     ← Back
                   </button>
 
                   <div className="text-center mb-6">
-                    <h2 className={`text-xl font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-2`}>
+                    <div className="w-14 h-14 mx-auto mb-4 rounded-2xl flex items-center justify-center bg-success/20">
+                      <Phone className="w-7 h-7 text-success" />
+                    </div>
+                    <h2 className="text-xl font-semibold text-foreground mb-2">
                       Enter verification code
                     </h2>
-                    <p className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'}`}>
-                      We sent a code to +267{phoneNumber}
+                    <p className="text-sm text-muted-foreground">
+                      We sent a 6-digit code to +267 {phoneNumber}
                     </p>
                   </div>
 
-                  <div className="flex justify-center mb-6">
-                    <InputOTP
-                      maxLength={6}
-                      value={otp}
-                      onChange={setOtp}
+                  <div className="space-y-6">
+                    <div className="flex justify-center">
+                      <InputOTP
+                        maxLength={6}
+                        value={otp}
+                        onChange={(value) => setOtp(value)}
+                      >
+                        <InputOTPGroup>
+                          <InputOTPSlot index={0} className="bg-muted border-input" />
+                          <InputOTPSlot index={1} className="bg-muted border-input" />
+                          <InputOTPSlot index={2} className="bg-muted border-input" />
+                          <InputOTPSlot index={3} className="bg-muted border-input" />
+                          <InputOTPSlot index={4} className="bg-muted border-input" />
+                          <InputOTPSlot index={5} className="bg-muted border-input" />
+                        </InputOTPGroup>
+                      </InputOTP>
+                    </div>
+
+                    <button
+                      onClick={handleVerifyOTP}
+                      disabled={loading || otp.length !== 6}
+                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
                     >
-                      <InputOTPGroup className="gap-2">
-                        {[0, 1, 2, 3, 4, 5].map((index) => (
-                          <InputOTPSlot
-                            key={index}
-                            index={index}
-                            className={`w-11 h-14 text-xl rounded-xl ${isDark ? 'bg-[#2a2a2a] border-white/20 text-white' : 'bg-white border-[#e0e0e0]'}`}
-                          />
-                        ))}
-                      </InputOTPGroup>
-                    </InputOTP>
+                      {loading ? "Verifying..." : "Verify & Create Account"}
+                    </button>
+
+                    <p className="text-center text-sm text-muted-foreground">
+                      Didn't receive code?{" "}
+                      <button onClick={handleSendOTP} className="text-primary hover:underline">
+                        Resend
+                      </button>
+                    </p>
                   </div>
-
-                  <button
-                    onClick={handleVerifyOTP}
-                    disabled={loading || otp.length !== 6}
-                    className={`w-full py-4 ${isDark ? 'bg-[#0066FF] text-white hover:bg-[#0052CC]' : 'bg-[#141414] text-white hover:bg-[#2a2a2a]'} rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50`}
-                  >
-                    {loading ? "Verifying..." : "Create account"}
-                  </button>
-
-                  <button
-                    onClick={handleSendOTP}
-                    disabled={loading}
-                    className={`w-full mt-4 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}
-                  >
-                    Didn't receive the code? <span className="text-[#0066FF]">Resend</span>
-                  </button>
                 </>
               )}
 
-              {step === "credentials" && (
-                <p className={`text-center text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'} mt-6`}>
-                  {mode === "login" ? "Don't have an account? " : "Already have an account? "}
-                  <Link 
-                    to={mode === "login" ? "/signup" : "/login"} 
-                    className="text-[#0066FF] hover:underline font-medium"
-                  >
-                    {mode === "login" ? "Sign up" : "Log in"}
-                  </Link>
-                </p>
-              )}
+              <div className="mt-6 text-center text-sm text-muted-foreground">
+                {mode === "login" ? (
+                  <>
+                    Don't have an account?{" "}
+                    <Link to="/signup" className="text-primary font-medium hover:underline">
+                      Sign up
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-primary font-medium hover:underline">
+                      Log in
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </main>
 
-      {/* Cookie Banner - Hidden on mobile */}
+      {/* Cookie Banner */}
       {showCookieBanner && (
-        <div className="fixed bottom-16 left-1/2 -translate-x-1/2 w-full max-w-lg mx-auto px-4 z-50 hidden md:block">
-          <div className={`${isDark ? 'bg-[#1a1a1a] border border-white/10' : 'bg-white border border-[#e0e0e0]'} rounded-2xl p-6 shadow-lg transition-colors duration-300`}>
-            <h3 className={`font-semibold ${isDark ? 'text-white' : 'text-[#141414]'} mb-3`}>Cookie notice</h3>
-            <p className={`text-sm ${isDark ? 'text-white/60' : 'text-[#141414]/60'} mb-4 leading-relaxed`}>
-              We use cookies to recognise visitors and remember their preferences. We also use them to measure ad campaign effectiveness, analyze site traffic and improve your experience.
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 md:p-6">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground text-center md:text-left">
+              We use cookies to improve your experience. By continuing, you agree to our{" "}
+              <a href="#" className="text-primary hover:underline">Cookie Policy</a>.
             </p>
-            <div className="flex items-center justify-between">
-              <button className={`flex items-center text-sm ${isDark ? 'text-white' : 'text-[#141414]'} font-medium hover:opacity-70 transition-opacity`}>
-                Cookie policy
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </button>
-              <button 
+            <div className="flex gap-3">
+              <button
                 onClick={() => setShowCookieBanner(false)}
-                className={`${isDark ? 'bg-[#0066FF] text-white' : 'bg-[#141414] text-white'} px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-colors`}
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
               >
-                I understand
+                Decline
+              </button>
+              <button
+                onClick={() => setShowCookieBanner(false)}
+                className="px-4 py-2 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+              >
+                Accept
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Footer */}
-      <footer className={`fixed bottom-0 left-0 right-0 ${isDark ? 'bg-[#141414]' : 'bg-[#F6F6F6]'} px-10 md:px-20 py-4 hidden md:flex items-center justify-between transition-colors duration-300`}>
-        <a href="#" className={`flex items-center gap-1.5 text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>
-          System status
-          <ExternalLink className="w-3.5 h-3.5" />
-        </a>
-        <div className="flex items-center gap-6">
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Help</a>
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Privacy</a>
-          <a href="#" className={`text-sm ${isDark ? 'text-white/60 hover:text-white' : 'text-[#141414]/60 hover:text-[#141414]'}`}>Terms</a>
-        </div>
-      </footer>
     </div>
   );
 };
