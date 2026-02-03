@@ -26,8 +26,7 @@ const Home = () => {
             <div>
               <div className="flex items-center gap-2 mb-6">
                 <Star className="w-4 h-4 text-primary" />
-                <span className="text-primary font-medium">202,107</span>
-                <span className="text-muted-foreground">businesses trust Pata</span>
+                <span className="text-muted-foreground">Payments made simple for businesses across Africa</span>
               </div>
               
               <h1 className="pata-hero-title text-foreground mb-2">

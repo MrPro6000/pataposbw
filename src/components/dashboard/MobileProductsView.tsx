@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { ChevronLeft, Plus, Package, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import MobileBottomNav from "./MobileBottomNav";
+import MobileAddProductSheet from "./MobileAddProductSheet";
 import PataLogo from "@/components/PataLogo";
 
 interface MobileProductsViewProps {
@@ -19,6 +21,21 @@ interface Product {
 }
 
 const MobileProductsView = ({ profile, userEmail }: MobileProductsViewProps) => {
+  const [addProductOpen, setAddProductOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // Determine where to navigate back based on referrer
+  const handleBack = () => {
+    // Check if we came from a specific page via state
+    const fromPage = location.state?.from;
+    if (fromPage === "sales") {
+      navigate("/dashboard/sales");
+    } else {
+      navigate("/dashboard");
+    }
+  };
+
   const products: Product[] = [
     { id: "1", name: "Cappuccino", price: 35, category: "Beverages", stock: 50, stockStatus: "in_stock" },
     { id: "2", name: "Espresso", price: 28, category: "Beverages", stock: 45, stockStatus: "in_stock" },
@@ -58,11 +75,14 @@ const MobileProductsView = ({ profile, userEmail }: MobileProductsViewProps) => 
       {/* Header */}
       <header className="bg-background px-5 pt-4 pb-4 sticky top-0 z-40">
         <div className="flex items-center justify-between">
-          <Link to="/dashboard" className="w-10 h-10 flex items-center justify-center">
+          <button onClick={handleBack} className="w-10 h-10 flex items-center justify-center">
             <ChevronLeft className="w-6 h-6 text-foreground" />
-          </Link>
+          </button>
           <PataLogo className="h-5" />
-          <button className="w-10 h-10 flex items-center justify-center">
+          <button 
+            onClick={() => setAddProductOpen(true)}
+            className="w-10 h-10 flex items-center justify-center"
+          >
             <Plus className="w-6 h-6 text-primary" />
           </button>
         </div>
@@ -143,13 +163,22 @@ const MobileProductsView = ({ profile, userEmail }: MobileProductsViewProps) => 
         </div>
 
         {/* Add Product Card */}
-        <button className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors">
+        <button 
+          onClick={() => setAddProductOpen(true)}
+          className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors"
+        >
           <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
             <Plus className="w-6 h-6 text-muted-foreground" />
           </div>
           <span className="text-muted-foreground font-medium">Add Product</span>
         </button>
       </div>
+
+      {/* Add Product Sheet */}
+      <MobileAddProductSheet
+        open={addProductOpen}
+        onClose={() => setAddProductOpen(false)}
+      />
 
       {/* Bottom Navigation */}
       <MobileBottomNav />

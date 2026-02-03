@@ -176,6 +176,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <div className="px-5 py-2">
         <Link 
           to="/dashboard/products"
+          state={{ from: "sales" }}
           className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform block"
         >
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
