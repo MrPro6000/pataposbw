@@ -147,14 +147,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
-      <DrawerContent className="bg-white max-h-[95vh]">
-        <DrawerHeader className="border-b border-[#E8E8E8] pb-4">
+      <DrawerContent className="bg-background max-h-[95vh]">
+        <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-[#00C8E6] rounded-xl flex items-center justify-center">
-                <ShoppingCart className="w-5 h-5 text-white" />
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5 text-primary-foreground" />
               </div>
-              <DrawerTitle className="text-[#141414]">
+              <DrawerTitle className="text-foreground">
                 {step === "products" && "Select Products"}
                 {step === "cart" && "Your Cart"}
                 {step === "payment" && "Payment Method"}
@@ -163,8 +163,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </DrawerTitle>
             </div>
             <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center">
-                <X className="w-4 h-4 text-[#141414]" />
+              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <X className="w-4 h-4 text-foreground" />
               </button>
             </DrawerClose>
           </div>
@@ -176,12 +176,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
             <div className="p-4 space-y-4">
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#141414]/40" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input 
                   placeholder="Search products..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 bg-[#F5F5F5] border-0 rounded-xl"
+                  className="pl-10 bg-muted border-0 rounded-xl"
                 />
               </div>
 
@@ -193,8 +193,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     onClick={() => setSelectedCategory(cat)}
                     className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                       selectedCategory === cat
-                        ? "bg-[#141414] text-white"
-                        : "bg-[#F5F5F5] text-[#141414]"
+                        ? "bg-foreground text-background"
+                        : "bg-muted text-foreground"
                     }`}
                   >
                     {cat}
@@ -211,18 +211,18 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       key={product.id}
                       onClick={() => addToCart(product)}
                       className={`p-4 rounded-2xl text-left transition-all active:scale-95 ${
-                        qty > 0 ? "bg-[#00C8E6]/10 border-2 border-[#00C8E6]" : "bg-white border border-[#E8E8E8]"
+                        qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"
                       }`}
                     >
-                      <div className="w-10 h-10 bg-[#F5F5F5] rounded-xl flex items-center justify-center mb-2">
-                        <Package className="w-5 h-5 text-[#141414]/40" />
+                      <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center mb-2">
+                        <Package className="w-5 h-5 text-muted-foreground" />
                       </div>
-                      <p className="font-medium text-[#141414] text-sm">{product.name}</p>
-                      <p className="text-xs text-[#141414]/60">{product.category}</p>
+                      <p className="font-medium text-foreground text-sm">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.category}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <p className="font-bold text-[#141414]">P{product.price}</p>
+                        <p className="font-bold text-foreground">P{product.price}</p>
                         {qty > 0 && (
-                          <span className="w-6 h-6 bg-[#00C8E6] rounded-full flex items-center justify-center text-xs font-bold text-white">
+                          <span className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground">
                             {qty}
                           </span>
                         )}
@@ -239,36 +239,36 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
             <div className="p-4 space-y-4">
               {cart.length === 0 ? (
                 <div className="text-center py-10">
-                  <ShoppingCart className="w-12 h-12 text-[#141414]/20 mx-auto mb-3" />
-                  <p className="text-[#141414]/60">Your cart is empty</p>
+                  <ShoppingCart className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-muted-foreground">Your cart is empty</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {cart.map((item) => (
-                    <div key={item.id} className="bg-[#F5F5F5] rounded-2xl p-4">
+                    <div key={item.id} className="bg-muted rounded-2xl p-4">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <p className="font-semibold text-[#141414]">{item.name}</p>
-                          <p className="text-sm text-[#141414]/60">P{item.price} each</p>
+                          <p className="font-semibold text-foreground">{item.name}</p>
+                          <p className="text-sm text-muted-foreground">P{item.price} each</p>
                         </div>
                         <div className="flex items-center gap-3">
                           <button
                             onClick={() => updateQuantity(item.id, -1)}
-                            className="w-8 h-8 bg-white rounded-full flex items-center justify-center"
+                            className="w-8 h-8 bg-background rounded-full flex items-center justify-center"
                           >
                             <Minus className="w-4 h-4" />
                           </button>
-                          <span className="font-bold text-[#141414] w-6 text-center">{item.quantity}</span>
+                          <span className="font-bold text-foreground w-6 text-center">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.id, 1)}
-                            className="w-8 h-8 bg-[#00C8E6] rounded-full flex items-center justify-center"
+                            className="w-8 h-8 bg-primary rounded-full flex items-center justify-center"
                           >
-                            <Plus className="w-4 h-4 text-white" />
+                            <Plus className="w-4 h-4 text-primary-foreground" />
                           </button>
                         </div>
                       </div>
-                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#E0E0E0]">
-                        <span className="font-bold text-[#141414]">P{(item.price * item.quantity).toFixed(2)}</span>
+                      <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                        <span className="font-bold text-foreground">P{(item.price * item.quantity).toFixed(2)}</span>
                         <button
                           onClick={() => removeFromCart(item.id)}
                           className="text-red-500 text-sm font-medium"
@@ -286,51 +286,51 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
           {/* PAYMENT STEP */}
           {step === "payment" && (
             <div className="p-4 space-y-4">
-              <div className="bg-[#F5F5F5] rounded-2xl p-4 text-center">
-                <p className="text-sm text-[#141414]/60">Total Amount</p>
-                <p className="text-3xl font-bold text-[#141414]">P{cartTotal.toFixed(2)}</p>
-                <p className="text-sm text-[#141414]/60">{cartItemCount} items</p>
+              <div className="bg-muted rounded-2xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Total Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{cartTotal.toFixed(2)}</p>
+                <p className="text-sm text-muted-foreground">{cartItemCount} items</p>
               </div>
 
-              <p className="font-semibold text-[#141414]">Select Payment Method</p>
+              <p className="font-semibold text-foreground">Select Payment Method</p>
 
               <div className="space-y-3">
                 <button
                   onClick={() => handlePaymentSelect("card")}
-                  className="w-full flex items-center gap-4 p-4 bg-white border border-[#E8E8E8] rounded-2xl active:scale-98 transition-transform"
+                  className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl active:scale-98 transition-transform"
                 >
-                  <div className="w-12 h-12 bg-[#00C8E6] rounded-xl flex items-center justify-center">
-                    <CreditCard className="w-6 h-6 text-white" />
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+                    <CreditCard className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-[#141414]">Card Payment</p>
-                    <p className="text-sm text-[#141414]/60">Tap card on device</p>
+                    <p className="font-semibold text-foreground">Card Payment</p>
+                    <p className="text-sm text-muted-foreground">Tap card on device</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => handlePaymentSelect("cash")}
-                  className="w-full flex items-center gap-4 p-4 bg-white border border-[#E8E8E8] rounded-2xl active:scale-98 transition-transform"
+                  className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl active:scale-98 transition-transform"
                 >
                   <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
                     <Banknote className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-[#141414]">Cash</p>
-                    <p className="text-sm text-[#141414]/60">Record cash payment</p>
+                    <p className="font-semibold text-foreground">Cash</p>
+                    <p className="text-sm text-muted-foreground">Record cash payment</p>
                   </div>
                 </button>
 
                 <button
                   onClick={() => handlePaymentSelect("mobile-money")}
-                  className="w-full flex items-center gap-4 p-4 bg-white border border-[#E8E8E8] rounded-2xl active:scale-98 transition-transform"
+                  className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl active:scale-98 transition-transform"
                 >
                   <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
                     <Smartphone className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <p className="font-semibold text-[#141414]">Mobile Money</p>
-                    <p className="text-sm text-[#141414]/60">Orange, Smega, MyZaka</p>
+                    <p className="font-semibold text-foreground">Mobile Money</p>
+                    <p className="text-sm text-muted-foreground">Orange, Smega, MyZaka</p>
                   </div>
                 </button>
               </div>
@@ -340,12 +340,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
           {/* MOBILE MONEY PROVIDER STEP */}
           {step === "mobile-provider" && (
             <div className="p-4 space-y-4">
-              <div className="bg-[#F5F5F5] rounded-2xl p-4 text-center">
-                <p className="text-sm text-[#141414]/60">Amount to Pay</p>
-                <p className="text-3xl font-bold text-[#141414]">P{cartTotal.toFixed(2)}</p>
+              <div className="bg-muted rounded-2xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Amount to Pay</p>
+                <p className="text-3xl font-bold text-foreground">P{cartTotal.toFixed(2)}</p>
               </div>
 
-              <p className="font-semibold text-[#141414]">Select Provider</p>
+              <p className="font-semibold text-foreground">Select Provider</p>
               <div className="grid grid-cols-3 gap-3">
                 {mobileMoneyProviders.map((provider) => (
                   <button
@@ -368,7 +368,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </div>
 
               <div className="space-y-2">
-                <p className="font-semibold text-[#141414]">Customer Phone</p>
+                <p className="font-semibold text-foreground">Customer Phone</p>
                 <Input
                   type="tel"
                   placeholder="+267 71 234 5678"
@@ -381,11 +381,11 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <Button
                 onClick={() => processPayment("mobile-money")}
                 disabled={isProcessing || !selectedProvider || !customerPhone}
-                className="w-full h-14 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold text-lg"
+                className="w-full h-14 font-semibold text-lg"
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
-                    <div className="animate-spin w-5 h-5 border-2 border-[#141414] border-t-transparent rounded-full" />
+                    <div className="animate-spin w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />
                     Processing...
                   </div>
                 ) : (
@@ -398,16 +398,16 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
           {/* SUCCESS STEP */}
           {step === "success" && (
             <div className="p-4 flex flex-col items-center justify-center py-10">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle className="w-10 h-10 text-green-500" />
               </div>
-              <p className="text-xl font-bold text-[#141414] mb-2">Payment Successful!</p>
-              <p className="text-[#141414]/60 mb-1">P{cartTotal.toFixed(2)}</p>
-              <p className="text-sm text-[#141414]/40">{cartItemCount} items sold</p>
+              <p className="text-xl font-bold text-foreground mb-2">Payment Successful!</p>
+              <p className="text-muted-foreground mb-1">P{cartTotal.toFixed(2)}</p>
+              <p className="text-sm text-muted-foreground">{cartItemCount} items sold</p>
 
               <Button
                 onClick={resetAndClose}
-                className="mt-6 w-full h-12 bg-[#141414] text-white"
+                className="mt-6 w-full h-12"
               >
                 Done
               </Button>
@@ -417,10 +417,10 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
 
         {/* Footer with Cart/Proceed Button */}
         {step === "products" && cart.length > 0 && (
-          <div className="p-4 border-t border-[#E8E8E8] bg-white">
+          <div className="p-4 border-t border-border bg-background">
             <Button
               onClick={() => setStep("cart")}
-              className="w-full h-14 bg-[#141414] text-white font-semibold"
+              className="w-full h-14 font-semibold text-lg"
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
               View Cart ({cartItemCount}) • P{cartTotal.toFixed(2)}
@@ -429,24 +429,20 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
         )}
 
         {step === "cart" && cart.length > 0 && (
-          <div className="p-4 border-t border-[#E8E8E8] bg-white space-y-3">
-            <div className="flex items-center justify-between">
-              <span className="text-[#141414]/60">Total</span>
-              <span className="text-xl font-bold text-[#141414]">P{cartTotal.toFixed(2)}</span>
-            </div>
+          <div className="p-4 border-t border-border bg-background">
             <div className="flex gap-3">
               <Button
-                onClick={() => setStep("products")}
                 variant="outline"
+                onClick={() => setStep("products")}
                 className="flex-1 h-12"
               >
                 Add More
               </Button>
               <Button
                 onClick={() => setStep("payment")}
-                className="flex-1 h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
+                className="flex-1 h-12 font-semibold"
               >
-                Checkout
+                Checkout P{cartTotal.toFixed(2)}
               </Button>
             </div>
           </div>
