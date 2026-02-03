@@ -1,75 +1,93 @@
 import { useState, useEffect, createContext, useContext, ReactNode } from "react";
-import { User } from "firebase/auth";
-import { onAuthChange, signIn, signUp, signOut, resetPassword } from "@/integrations/firebase/auth";
-import { getUserProfile, getBusinessProfile, UserProfile, BusinessProfile } from "@/integrations/firebase/firestore";
+import { User, Session } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
+import { signIn, signUp, signOut, resetPassword } from "@/integrations/supabase/auth";
+import { getUserProfile, checkUserRole, Profile } from "@/integrations/supabase/profile";
 
 interface AuthContextType {
   user: User | null;
-  userProfile: UserProfile | null;
-  businessProfile: BusinessProfile | null;
+  session: Session | null;
+  userProfile: Profile | null;
+  isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ user: User | null; error: string | null }>;
   signUp: (email: string, password: string) => Promise<{ user: User | null; error: string | null }>;
   signOut: () => Promise<{ error: string | null }>;
   resetPassword: (email: string) => Promise<{ error: string | null }>;
-  refreshProfiles: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [businessProfile, setBusinessProfile] = useState<BusinessProfile | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const fetchProfiles = async (userId: string) => {
-    const [userProfileResult, businessProfileResult] = await Promise.all([
-      getUserProfile(userId),
-      getBusinessProfile(userId),
-    ]);
+  const fetchProfile = async (userId: string) => {
+    const { data } = await getUserProfile(userId);
+    if (data) {
+      setUserProfile(data);
+    }
 
-    if (userProfileResult.data) {
-      setUserProfile(userProfileResult.data);
-    }
-    if (businessProfileResult.data) {
-      setBusinessProfile(businessProfileResult.data);
-    }
+    // Check admin role
+    const { hasRole } = await checkUserRole(userId, "admin");
+    setIsAdmin(hasRole);
   };
 
-  const refreshProfiles = async () => {
+  const refreshProfile = async () => {
     if (user) {
-      await fetchProfiles(user.uid);
+      await fetchProfile(user.id);
     }
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthChange(async (firebaseUser) => {
-      setUser(firebaseUser);
-      
-      if (firebaseUser) {
-        await fetchProfiles(firebaseUser.uid);
-      } else {
-        setUserProfile(null);
-        setBusinessProfile(null);
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+
+        // Defer profile fetch to avoid deadlock
+        if (newSession?.user) {
+          setTimeout(() => fetchProfile(newSession.user.id), 0);
+        } else {
+          setUserProfile(null);
+          setIsAdmin(false);
+        }
+
+        setLoading(false);
       }
-      
+    );
+
+    // THEN check for existing session
+    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
+      setSession(existingSession);
+      setUser(existingSession?.user ?? null);
+
+      if (existingSession?.user) {
+        fetchProfile(existingSession.user.id);
+      }
+
       setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => subscription.unsubscribe();
   }, []);
 
   const value: AuthContextType = {
     user,
+    session,
     userProfile,
-    businessProfile,
+    isAdmin,
     loading,
     signIn,
     signUp,
     signOut,
     resetPassword,
-    refreshProfiles,
+    refreshProfile,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
