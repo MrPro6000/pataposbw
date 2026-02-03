@@ -48,7 +48,7 @@ const MainFooter = ({ theme: propTheme }: MainFooterProps) => {
           <div className="col-span-2 md:col-span-1">
             <PataLogo className="h-5 mb-6" />
             <p className="text-sm text-muted-foreground mb-6">
-              Market leader in card machines, online payments, point of sale solutions and flexible business funding.
+              Empowering African businesses with seamless payments, smart terminals, and growth capital. Built in Botswana, serving the continent.
             </p>
             <div className="flex items-center gap-4">
               <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -87,7 +87,7 @@ const MainFooter = ({ theme: propTheme }: MainFooterProps) => {
 
         <div className="border-t border-border pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2024 Pata Technologies (Pty) Ltd. All rights reserved.
+            © 2025 Pata Technologies (Pty) Ltd. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">

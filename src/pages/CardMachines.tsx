@@ -17,7 +17,7 @@ const CardMachines = () => {
       name: "Go Pata",
       price: "P780",
       image: goPataImg,
-      description: "Compact handheld terminal. Perfect for quick transactions.",
+      description: "Compact, portable terminal perfect for on-the-go transactions.",
       features: ["Physical keypad", "Built-in printer", "All-day battery"],
       badge: "Best Seller",
     },
@@ -25,7 +25,7 @@ const CardMachines = () => {
       name: "Pata Silver",
       price: "P4,880",
       image: pataSilverImg,
-      description: "Sleek touchscreen tablet. Modern and portable.",
+      description: "Sleek touchscreen tablet for modern retail environments.",
       features: ["Touchscreen display", "Compact design", "Fast processing"],
       badge: null,
     },
@@ -33,15 +33,15 @@ const CardMachines = () => {
       name: "Pata Pro",
       price: "P3,880",
       image: pataProImg,
-      description: "Powerful handheld with built-in thermal printer.",
-      features: ["Built-in printer", "NFC tap to pay", "Touchscreen"],
+      description: "Professional-grade terminal with integrated thermal printer.",
+      features: ["Built-in printer", "NFC contactless", "Touchscreen"],
       badge: "Most Popular",
     },
     {
       name: "Pata Diamond",
       price: "P680",
       image: pataDiamondImg,
-      description: "Premium handheld with large touchscreen.",
+      description: "Entry-level terminal with essential features for small businesses.",
       features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
       badge: null,
     },
@@ -49,23 +49,23 @@ const CardMachines = () => {
       name: "Pata Platinum",
       price: "P999",
       image: pataPlatinumImg,
-      description: "Classic keypad terminal with reliable performance.",
-      features: ["Durable design", "Physical keypad", "Card chip reader"],
+      description: "Durable keypad terminal built for high-volume retail.",
+      features: ["Rugged design", "Physical keypad", "Card chip reader"],
       badge: null,
     },
     {
       name: "Pata Spaza",
       price: "P3,800",
       image: pataSpazaImg,
-      description: "Full POS system with customer-facing display.",
+      description: "Complete POS system with dual displays for retail stores.",
       features: ["Customer display", "Receipt printer", "Full POS system"],
       badge: "Enterprise",
     },
   ];
 
   return (
-    <div className="pata-dark-page">
-      <MainNav theme="dark" />
+    <div className="bg-background text-foreground min-h-screen">
+      <MainNav />
 
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-12 md:py-20">
@@ -73,40 +73,40 @@ const CardMachines = () => {
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
               <div className="pata-badge mb-6">
-                <Star className="w-4 h-4 text-[#00C8E6]" />
-                <span>Limited-time <span className="text-[#00C8E6]">sale</span> – don't miss out</span>
+                <Star className="w-4 h-4 text-primary" />
+                <span>Limited-time <span className="text-primary">offers</span> – while stocks last</span>
               </div>
 
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
                 Accept every<br />
                 payment,<br />
-                <span className="text-[#00C8E6]">anywhere</span>
+                <span className="pata-hero-gradient">anywhere</span>
               </h1>
 
-              <p className="text-lg text-white/70 mb-8 max-w-lg">
-                Tap, swipe, scan, or insert. Our smart terminals accept all cards, mobile wallets, and QR payments—so you never miss a sale.
+              <p className="text-lg text-muted-foreground mb-8 max-w-lg">
+                Tap, swipe, scan, or insert. Our smart terminals accept all cards, mobile wallets, and QR payments—empowering you to never miss a sale.
               </p>
 
               <div className="flex items-center gap-4">
                 <Link to="/shop" className="pata-btn-cyan">
-                  Shop deals
+                  View all devices
                   <ArrowDown className="w-4 h-4" />
                 </Link>
-                <button className="text-white font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-                  Contact Sales
+                <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                  Talk to Sales
                 </button>
               </div>
             </div>
 
             {/* Device Preview */}
             <div className="relative">
-              <div className="bg-[#00C8E6] rounded-3xl p-6 aspect-[4/3] flex items-center justify-center">
+              <div className="bg-primary rounded-3xl p-6 aspect-[4/3] flex items-center justify-center">
                 <div className="text-center">
-                  <div className="text-[#141414] font-bold text-lg mb-2">PATA</div>
-                  <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <div className="text-[#141414] font-medium">Lekker Cafe</div>
-                    <div className="text-[#141414]/60 text-sm">Payment approved</div>
-                    <div className="text-[#00C8E6] text-2xl font-bold mt-2">P100.00</div>
+                  <div className="text-primary-foreground font-bold text-lg mb-2">PATA</div>
+                  <div className="bg-card rounded-xl p-4 shadow-lg">
+                    <div className="text-foreground font-medium">Lekker Cafe</div>
+                    <div className="text-muted-foreground text-sm">Payment approved</div>
+                    <div className="text-primary text-2xl font-bold mt-2">P100.00</div>
                   </div>
                 </div>
               </div>
@@ -118,9 +118,9 @@ const CardMachines = () => {
       {/* Sale Banner */}
       <section className="px-6 md:px-20 py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-white rounded-2xl p-8 text-center">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#141414]">Sale now on</h2>
-            <p className="text-[#141414]/60 mt-2">While stocks last.</p>
+          <div className="bg-card rounded-2xl p-8 text-center border border-border">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground">Sale now on</h2>
+            <p className="text-muted-foreground mt-2">While stocks last.</p>
           </div>
         </div>
       </section>
@@ -128,46 +128,46 @@ const CardMachines = () => {
       {/* Products Grid */}
       <section className="px-6 md:px-20 py-16">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl font-bold text-white mb-8 text-center">Choose your card machine</h2>
+          <h2 className="text-3xl font-bold text-foreground mb-8 text-center">Choose your payment terminal</h2>
           
           <div className="grid md:grid-cols-3 gap-6">
             {machines.map((machine) => (
-              <div key={machine.name} className="bg-[#1a1a1a] rounded-2xl p-6 relative">
+              <div key={machine.name} className="bg-card rounded-2xl p-6 relative border border-border hover:shadow-lg transition-shadow">
                 {machine.badge && (
-                  <div className="absolute top-4 right-4 bg-[#00C8E6] text-[#141414] px-3 py-1 rounded-full text-xs font-semibold">
+                  <div className="absolute top-4 right-4 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold">
                     {machine.badge}
                   </div>
                 )}
                 
-                <div className="aspect-square bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] rounded-xl mb-6 flex items-center justify-center p-4">
+                <div className="aspect-square bg-gradient-to-br from-muted to-secondary rounded-xl mb-6 flex items-center justify-center p-4">
                   <img src={machine.image} alt={machine.name} className="w-full h-full object-contain" />
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-2">{machine.name}</h3>
+                <h3 className="text-xl font-bold text-foreground mb-2">{machine.name}</h3>
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="text-2xl font-bold text-white">{machine.price}</span>
+                  <span className="text-2xl font-bold text-foreground">{machine.price}</span>
                 </div>
-                <p className="text-white/60 text-sm mb-4">{machine.description}</p>
+                <p className="text-muted-foreground text-sm mb-4">{machine.description}</p>
                 
                 <ul className="space-y-2 mb-6">
                   {machine.features.map((feature) => (
-                    <li key={feature} className="flex items-center gap-2 text-white/80 text-sm">
-                      <Check className="w-4 h-4 text-[#00C8E6]" />
+                    <li key={feature} className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Check className="w-4 h-4 text-primary" />
                       {feature}
                     </li>
                   ))}
                 </ul>
                 
-                <button className="w-full pata-btn-cyan justify-center">
+                <Link to="/shop" className="w-full pata-btn-cyan justify-center">
                   Buy now
-                </button>
+                </Link>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <MainFooter theme="dark" />
+      <MainFooter />
     </div>
   );
 };

@@ -32,7 +32,7 @@ const Home = () => {
               <h1 className="pata-hero-title text-foreground mb-2">
                 YOUR BUSINESS,
               </h1>
-              <h1 className="pata-hero-title text-amber-500 dark:text-amber-400 mb-6">
+              <h1 className="pata-hero-title pata-hero-gradient mb-6">
                 YOUR POCKET
               </h1>
               
@@ -94,37 +94,37 @@ const Home = () => {
       <section className="px-6 md:px-20 py-20 bg-secondary">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
-            One app. Endless possibilities.
+            One platform. <span className="pata-hero-gradient">Infinite possibilities.</span>
           </h2>
           <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
-            Accept payments, sell products, transfer money globally, and grow your business—all from one powerful platform.
+            From card payments to mobile money, invoicing to business insights—Pata is the all-in-one solution built for African entrepreneurs.
           </p>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
               {
                 title: "Mobile POS",
-                description: "Turn your phone into a complete point of sale. Sell products, manage inventory, and accept payments anywhere.",
+                description: "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
                 link: "/products",
                 tagline: "Your store in your pocket"
               },
               {
                 title: "Card Payments",
-                description: "Tap, swipe, or scan. Accept all major cards and mobile wallets with instant confirmation.",
+                description: "Accept tap, chip, and swipe payments from all major cards and mobile wallets with real-time confirmation.",
                 link: "/card-machines",
                 tagline: "Every card, everywhere"
               },
               {
                 title: "Payment Gateway",
-                description: "Connect your online store and accept payments on your website, app, or via payment links.",
+                description: "Integrate with your website or app. Create payment links and accept online payments in minutes.",
                 link: "/online-payments",
-                tagline: "Sell online in minutes"
+                tagline: "Sell online seamlessly"
               },
               {
                 title: "Money Transfer",
-                description: "Send money internationally like Western Union, Mukuru, and WorldRemit. Fast, secure, affordable.",
+                description: "Send and receive money across borders. Fast, secure international transfers at competitive rates.",
                 link: "/products",
-                tagline: "Send money worldwide"
+                tagline: "Connect globally"
               }
             ].map((feature) => (
               <Link
@@ -152,20 +152,20 @@ const Home = () => {
       <section className="px-6 md:px-20 py-16">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-6">
-            <Link to="/capital" className="bg-gradient-to-br from-amber-500/20 to-amber-500/5 rounded-2xl p-8 hover:from-amber-500/30 transition-colors group border border-amber-500/20">
-              <p className="text-amber-500 dark:text-amber-400 text-xs font-medium uppercase tracking-wide mb-2">Grow faster</p>
+            <Link to="/capital" className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-colors group border border-primary/20">
+              <p className="text-primary text-xs font-medium uppercase tracking-wide mb-2">Funding that flows with you</p>
               <h3 className="text-2xl font-bold text-foreground mb-3">Pata Capital</h3>
-              <p className="text-muted-foreground mb-4">Get funding in 24 hours. No paperwork, no credit checks. Pay back as you earn.</p>
-              <span className="text-amber-500 dark:text-amber-400 font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+              <p className="text-muted-foreground mb-4">Access business funding in 24 hours. No paperwork, flexible repayment that adjusts with your sales.</p>
+              <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
                 Check your offer
                 <ArrowRight className="w-4 h-4" />
               </span>
             </Link>
             
-            <Link to="/products" className="bg-gradient-to-br from-info/20 to-info/5 rounded-2xl p-8 hover:from-info/30 transition-colors group border border-info/20">
-              <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">Complete solution</p>
+            <Link to="/products" className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-colors group border border-info/20">
+              <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">Complete business solution</p>
               <h3 className="text-2xl font-bold text-foreground mb-3">Business Hub</h3>
-              <p className="text-muted-foreground mb-4">Track sales, manage customers, view reports, and control your entire business from one dashboard.</p>
+              <p className="text-muted-foreground mb-4">Track sales, manage customers, view reports, and control your entire business from one intelligent dashboard.</p>
               <span className="text-info font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
                 Explore Hub
                 <ArrowRight className="w-4 h-4" />
