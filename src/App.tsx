@@ -15,6 +15,7 @@ import Shop from "./pages/Shop";
 import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
+import BusinessSetup from "./pages/BusinessSetup";
 
 // Dashboard pages
 import DashboardHome from "./pages/dashboard/DashboardHome";
@@ -60,6 +61,7 @@ const App = () => (
           <Route path="/login" element={<Auth mode="login" />} />
           <Route path="/signup" element={<Auth mode="signup" />} />
           <Route path="/kyc" element={<KYC />} />
+          <Route path="/business-setup" element={<BusinessSetup />} />
           
           {/* Dashboard routes */}
           <Route path="/dashboard" element={<DashboardHome />} />

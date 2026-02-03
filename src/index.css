@@ -6,8 +6,8 @@
 
 @layer base {
   :root {
-    /* Light theme - Professional blue-tinted palette */
-    --background: 210 40% 96%;
+    /* Light theme - Vibrant professional blue-tinted palette */
+    --background: 210 35% 95%;
     --foreground: 222 47% 11%;
 
     --card: 0 0% 100%;
@@ -19,11 +19,11 @@
     --primary: 217 91% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 30% 93%;
+    --secondary: 210 30% 90%;
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 25% 93%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 210 25% 92%;
+    --muted-foreground: 215 16% 40%;
 
     --accent: 217 91% 50%;
     --accent-foreground: 0 0% 100%;
@@ -31,18 +31,20 @@
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
+    --border: 214 20% 85%;
+    --input: 214 20% 85%;
     --ring: 217 91% 50%;
 
     --radius: 0.75rem;
 
-    /* Pata brand colors */
+    /* PATA brand colors */
     --pata-blue: 217 91% 50%;
+    --pata-blue-gradient-start: 217 91% 55%;
+    --pata-blue-gradient-end: 230 80% 45%;
     --pata-dark: 222 47% 11%;
-    --pata-gray: 210 25% 93%;
+    --pata-gray: 210 25% 92%;
     --pata-white: 0 0% 100%;
-    --pata-cream: 200 30% 94%;
+    --pata-cream: 200 30% 93%;
     
     /* Extended palette for dashboard */
     --success: 152 82% 39%;
@@ -124,6 +126,11 @@
     @apply bg-background text-foreground min-h-screen;
   }
 
+  /* PATA Brand Gradient Text */
+  .pata-gradient-text {
+    @apply bg-gradient-to-r from-primary via-blue-500 to-blue-600 bg-clip-text text-transparent;
+  }
+
   /* Primary button - theme aware */
   .pata-btn-cyan {
     @apply inline-flex items-center gap-2 px-6 py-3.5 bg-primary text-primary-foreground rounded-full text-sm font-semibold transition-all duration-200 hover:bg-primary/90;
@@ -157,9 +164,13 @@
     @apply bg-card text-card-foreground rounded-2xl p-8 shadow-none;
   }
 
-  /* Hero text gradient */
+  /* Hero text gradient - PATA brand */
   .pata-hero-title {
     @apply text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight;
+  }
+
+  .pata-hero-gradient {
+    @apply bg-gradient-to-r from-primary via-blue-500 to-blue-600 bg-clip-text text-transparent;
   }
 
   /* Badge/pill - theme aware */

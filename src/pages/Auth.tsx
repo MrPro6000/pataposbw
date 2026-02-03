@@ -5,11 +5,13 @@ import { lovable } from "@/integrations/lovable";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ExternalLink, ChevronRight, Eye, EyeOff, Phone } from "lucide-react";
+import { ExternalLink, ChevronRight, Eye, EyeOff, Phone, Smartphone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import pataMacbook from "@/assets/pata-macbook.jpg";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { useIsMobile } from "@/hooks/use-mobile";
+import OnboardingCarousel from "@/components/onboarding/OnboardingCarousel";
 
 interface AuthProps {
   mode: "login" | "signup";
@@ -27,9 +29,26 @@ const Auth = ({ mode }: AuthProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme } = useTheme();
+  const isMobile = useIsMobile();
+
+  // Check if user has seen onboarding
+  useEffect(() => {
+    if (isMobile && mode === "login") {
+      const hasSeenOnboarding = localStorage.getItem("pata_onboarding_seen");
+      if (!hasSeenOnboarding) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [isMobile, mode]);
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem("pata_onboarding_seen", "true");
+    setShowOnboarding(false);
+  };
 
   useEffect(() => {
     const checkAdminAndRedirect = async (userId: string) => {
@@ -282,16 +301,21 @@ const Auth = ({ mode }: AuthProps) => {
     }
   };
 
+  // Show onboarding carousel for mobile first-time users
+  if (showOnboarding) {
+    return <OnboardingCarousel onComplete={handleOnboardingComplete} />;
+  }
+
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className="flex items-center justify-between px-10 md:px-20 py-6">
+      <header className="flex items-center justify-between px-6 md:px-20 py-6">
         <Link to="/">
           <PataLogo className="h-6 text-foreground" />
         </Link>
         <div className="flex items-center gap-4">
           <ThemeToggle className="text-foreground" />
-          <Link to={mode === "login" ? "/signup" : "/login"} className="pata-btn-outline-dark">
+          <Link to={mode === "login" ? "/signup" : "/login"} className="pata-btn-outline-dark hidden sm:inline-flex">
             {mode === "login" ? "Sign up" : "Log in"}
           </Link>
         </div>
@@ -313,6 +337,19 @@ const Auth = ({ mode }: AuthProps) => {
 
           {/* Right side - Auth Form */}
           <div className="w-full lg:w-[400px] order-1 lg:order-2">
+            {/* Mobile only: Brief PATA explanation */}
+            {isMobile && mode === "login" && (
+              <div className="mb-6 text-center">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full mb-3">
+                  <Smartphone className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium text-primary">PATA POS</span>
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  The all-in-one payment platform for African businesses. Accept cards, mobile money, and manage your business from anywhere.
+                </p>
+              </div>
+            )}
+
             <div className="bg-card border border-border rounded-2xl p-8 transition-colors duration-300">
               
               {step === "credentials" && (
@@ -323,7 +360,7 @@ const Auth = ({ mode }: AuthProps) => {
                   <p className="text-muted-foreground mb-6">
                     {mode === "login" 
                       ? "Log in to access your business dashboard." 
-                      : "Sign up to start accepting payments."}
+                      : "Join thousands of African businesses accepting payments with Pata."}
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">

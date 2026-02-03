@@ -5,53 +5,53 @@ import { Link } from "react-router-dom";
 
 const Capital = () => {
   const benefits = [
-    "No paperwork or credit checks",
-    "Funds in your account within 24 hours",
-    "Pay back as you earn – automatically",
-    "No fixed monthly repayments",
-    "No interest charges",
-    "No hidden fees",
+    "No paperwork or credit assessments",
+    "Funds deposited within 24 hours",
+    "Flexible repayment tied to your sales",
+    "No fixed monthly obligations",
+    "Zero interest charges",
+    "Completely transparent terms",
   ];
 
   return (
-    <div className="pata-dark-page">
-      <MainNav theme="dark" />
+    <div className="bg-background text-foreground min-h-screen">
+      <MainNav />
 
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-12 md:py-20">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <p className="text-[#00C8E6] text-sm font-medium uppercase tracking-wide mb-4">Funding that flows with you</p>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+              <p className="text-primary text-sm font-medium uppercase tracking-wide mb-4">Funding that flows with you</p>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
                 Get funded.<br />
-                <span className="text-[#D4B896]">Grow faster.</span>
+                <span className="pata-hero-gradient">Scale faster.</span>
               </h1>
 
-              <p className="text-lg text-white/70 mb-8 max-w-lg">
-                No banks. No paperwork. No waiting. Get a cash advance in 24 hours and pay back automatically as you earn. Over P3B disbursed to Pata merchants.
+              <p className="text-lg text-muted-foreground mb-8 max-w-lg">
+                Skip the banks and bureaucracy. Access business funding in 24 hours with repayments that automatically adjust to your revenue. Powering thousands of African entrepreneurs.
               </p>
 
               <div className="flex items-center gap-4">
                 <Link to="/signup" className="pata-btn-cyan">
-                  Check for offer
+                  Check eligibility
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <button className="text-white font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-                  Contact Us
+                <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                  Learn More
                 </button>
               </div>
             </div>
 
-            {/* Right Content - Image placeholder */}
+            {/* Right Content */}
             <div className="relative">
-              <div className="bg-[#f5e6d3] rounded-3xl aspect-[4/3] overflow-hidden">
+              <div className="bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl aspect-[4/3] overflow-hidden border border-primary/20">
                 <div className="w-full h-full flex items-center justify-center">
                   <div className="text-center">
-                    <div className="w-32 h-32 bg-[#00C8E6]/30 rounded-full mx-auto mb-4 flex items-center justify-center">
-                      <Shield className="w-16 h-16 text-[#00C8E6]" />
+                    <div className="w-32 h-32 bg-primary/20 rounded-full mx-auto mb-4 flex items-center justify-center">
+                      <Shield className="w-16 h-16 text-primary" />
                     </div>
-                    <span className="text-[#141414]/60 text-sm">Business Growth</span>
+                    <span className="text-muted-foreground text-sm">Empowering Business Growth</span>
                   </div>
                 </div>
               </div>
@@ -61,19 +61,19 @@ const Capital = () => {
       </section>
 
       {/* Benefits Section */}
-      <section className="px-6 md:px-20 py-16 bg-[#1a1a1a]">
+      <section className="px-6 md:px-20 py-16 bg-secondary">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
-                Why Pata Capital?
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
+                Why choose Pata Capital?
               </h2>
               
               <ul className="space-y-4">
                 {benefits.map((benefit) => (
-                  <li key={benefit} className="flex items-center gap-3 text-white/80">
-                    <div className="w-6 h-6 bg-[#00C8E6] rounded-full flex items-center justify-center flex-shrink-0">
-                      <Check className="w-4 h-4 text-[#141414]" />
+                  <li key={benefit} className="flex items-center gap-3 text-muted-foreground">
+                    <div className="w-6 h-6 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                      <Check className="w-4 h-4 text-primary-foreground" />
                     </div>
                     {benefit}
                   </li>
@@ -81,23 +81,23 @@ const Capital = () => {
               </ul>
             </div>
 
-            <div className="bg-[#2a2a2a] rounded-2xl p-8">
-              <h3 className="text-xl font-semibold text-white mb-4">How it works</h3>
+            <div className="bg-card rounded-2xl p-8 border border-border">
+              <h3 className="text-xl font-semibold text-foreground mb-4">How it works</h3>
               
               <div className="space-y-6">
                 {[
-                  { step: "1", title: "Check your offer", description: "See if you're eligible for a cash advance in the Pata app." },
-                  { step: "2", title: "Accept the offer", description: "Choose how much you need and accept the offer." },
-                  { step: "3", title: "Get funded", description: "Funds are deposited into your bank account within 24 hours." },
-                  { step: "4", title: "Pay as you earn", description: "A small percentage of your daily sales goes towards repayment." },
+                  { step: "1", title: "Check your offer", description: "See your eligibility and available funding amount in the Pata app." },
+                  { step: "2", title: "Accept your terms", description: "Choose how much you need and review the transparent terms." },
+                  { step: "3", title: "Receive funds", description: "Money is deposited directly to your account within 24 hours." },
+                  { step: "4", title: "Repay automatically", description: "A small percentage of daily sales goes toward repayment—no manual payments." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4">
-                    <div className="w-8 h-8 bg-[#00C8E6] rounded-full flex items-center justify-center flex-shrink-0 text-[#141414] font-bold text-sm">
+                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0 text-primary-foreground font-bold text-sm">
                       {item.step}
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white">{item.title}</h4>
-                      <p className="text-white/60 text-sm">{item.description}</p>
+                      <h4 className="font-semibold text-foreground">{item.title}</h4>
+                      <p className="text-muted-foreground text-sm">{item.description}</p>
                     </div>
                   </div>
                 ))}
@@ -107,7 +107,7 @@ const Capital = () => {
         </div>
       </section>
 
-      <MainFooter theme="dark" />
+      <MainFooter />
     </div>
   );
 };

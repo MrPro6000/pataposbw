@@ -36,7 +36,7 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
       
       <div className="flex items-center gap-4">
         <ThemeToggle className="text-foreground" />
-        <Link to="/support" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+        <Link to="/dashboard/support" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
           Support
         </Link>
         <Link to="/login" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">

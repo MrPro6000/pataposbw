@@ -7,53 +7,53 @@ const Products = () => {
   const products = [
     {
       icon: CreditCard,
-      title: "Card Machines",
-      description: "Accept card payments anywhere with our smart, portable card machines. Built for small businesses.",
-      features: ["Accepts all cards", "Portable & wireless", "Next-day payouts"],
+      title: "Payment Terminals",
+      description: "Professional card machines designed for African businesses. Accept every payment method, anywhere you operate.",
+      features: ["All card types", "Portable & wireless", "Fast settlements"],
       link: "/card-machines",
-      color: "from-[#00C8E6]/20 to-[#00C8E6]/5"
+      color: "from-primary/20 to-primary/5"
     },
     {
       icon: Smartphone,
-      title: "Online Payments",
-      description: "Start selling online in minutes. Create payment links, invoices, and integrate with your website.",
-      features: ["Payment links", "Invoicing", "E-commerce integration"],
+      title: "Digital Payments",
+      description: "Launch your online presence instantly. Create payment links, send invoices, and integrate with your website.",
+      features: ["Payment links", "Digital invoicing", "E-commerce ready"],
       link: "/online-payments",
-      color: "from-[#D4B896]/20 to-[#D4B896]/5"
+      color: "from-emerald-500/20 to-emerald-500/5"
     },
     {
       icon: Banknote,
-      title: "Pata Capital",
-      description: "Get the funding you need to grow. Fast approval, flexible repayment from your sales.",
-      features: ["Quick approval", "Flexible repayment", "No fixed fees"],
+      title: "Business Funding",
+      description: "Access capital when you need it most. Fast approval with flexible repayment tied to your sales.",
+      features: ["Quick approval", "Revenue-based repayment", "No hidden fees"],
       link: "/capital",
-      color: "from-[#4CAF50]/20 to-[#4CAF50]/5"
+      color: "from-amber-500/20 to-amber-500/5"
     },
     {
       icon: TrendingUp,
       title: "Business Hub",
-      description: "Track sales, manage inventory, and understand your customers—all from one dashboard.",
-      features: ["Sales analytics", "Inventory tracking", "Customer insights"],
+      description: "Your complete business command center. Track sales, manage inventory, and unlock customer insights.",
+      features: ["Real-time analytics", "Inventory control", "Customer data"],
       link: "/dashboard",
-      color: "from-[#9C27B0]/20 to-[#9C27B0]/5"
+      color: "from-purple-500/20 to-purple-500/5"
     },
   ];
 
   return (
-    <div className="pata-dark-page">
-      <MainNav theme="dark" />
+    <div className="bg-background text-foreground min-h-screen">
+      <MainNav />
       
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-16 md:py-24">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16">
-            <p className="text-[#00C8E6] text-sm font-medium uppercase tracking-wide mb-4">Payments made simple</p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+            <p className="text-primary text-sm font-medium uppercase tracking-wide mb-4">Complete payment solutions</p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
               One platform,<br />
-              <span className="text-[#D4B896]">infinite ways to get paid</span>
+              <span className="pata-hero-gradient">infinite possibilities</span>
             </h1>
-            <p className="text-lg text-white/70">
-              From mobile POS to card machines, payment links to international transfers—Pata puts the power of payments in your pocket.
+            <p className="text-lg text-muted-foreground">
+              From mobile POS to card terminals, digital invoicing to business funding—Pata equips African entrepreneurs with everything they need to succeed.
             </p>
           </div>
 
@@ -63,28 +63,28 @@ const Products = () => {
               <Link
                 key={product.title}
                 to={product.link}
-                className="group bg-[#1a1a1a] rounded-2xl p-8 hover:bg-[#222] transition-all"
+                className="group bg-card border border-border rounded-2xl p-8 hover:shadow-lg hover:border-primary/20 transition-all"
               >
                 <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${product.color} flex items-center justify-center mb-6`}>
-                  <product.icon className="w-8 h-8 text-white" />
+                  <product.icon className="w-8 h-8 text-foreground" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-white mb-3">{product.title}</h3>
-                <p className="text-white/60 mb-6">{product.description}</p>
+                <h3 className="text-2xl font-bold text-foreground mb-3">{product.title}</h3>
+                <p className="text-muted-foreground mb-6">{product.description}</p>
                 
                 <div className="flex flex-wrap gap-2 mb-6">
                   {product.features.map((feature) => (
                     <span 
                       key={feature} 
-                      className="px-3 py-1 bg-white/10 rounded-full text-sm text-white/80"
+                      className="px-3 py-1 bg-muted rounded-full text-sm text-muted-foreground"
                     >
                       {feature}
                     </span>
                   ))}
                 </div>
                 
-                <span className="text-[#00C8E6] font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
-                  Learn more
+                <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                  Explore
                   <ArrowRight className="w-4 h-4" />
                 </span>
               </Link>
@@ -94,22 +94,22 @@ const Products = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="px-6 md:px-20 py-16 bg-[#1a1a1a]">
+      <section className="px-6 md:px-20 py-16 bg-secondary">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Ready to grow your business?
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+            Ready to transform your business?
           </h2>
-          <p className="text-white/60 mb-8 max-w-xl mx-auto">
-            Join thousands of businesses already using Pata to accept payments and manage their business.
+          <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+            Join thousands of African entrepreneurs who trust Pata for payments, funding, and business management.
           </p>
           <Link to="/signup" className="pata-btn-cyan inline-flex">
-            Get started free
+            Start your journey
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
 
-      <MainFooter theme="dark" />
+      <MainFooter />
     </div>
   );
 };

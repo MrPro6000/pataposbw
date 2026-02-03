@@ -128,10 +128,11 @@ const KYC = () => {
 
       toast({
         title: "KYC Submitted",
-        description: "Your verification is pending approval. You'll be notified once approved.",
+        description: "Your verification is pending approval. Setting up your business...",
       });
       
-      setCurrentStep("pending");
+      // Redirect to business setup instead of pending
+      navigate("/business-setup");
     } catch (error: any) {
       toast({
         title: "Error",

@@ -138,10 +138,12 @@ const DashboardHome = () => {
   ];
 
   const quickAccessItems = [
-    { title: "POS", subtitle: "Point of Sale", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", link: "/dashboard", action: undefined },
+    { title: "Mobile POS", subtitle: "Sell from your phone", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", link: "/dashboard", action: undefined },
     { title: "Card Machine", subtitle: "4 devices", icon: Smartphone, iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400", link: "/dashboard/devices", action: undefined },
-    { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-green-100 dark:bg-green-900/30", iconColor: "text-green-600 dark:text-green-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
-    { title: "Pata Capital", subtitle: "Business funding", icon: Wallet, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
+    { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-emerald-100 dark:bg-emerald-900/30", iconColor: "text-emerald-600 dark:text-emerald-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
+    { title: "Send Money", subtitle: "International transfers", icon: Banknote, iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400", link: "/dashboard/payouts", action: undefined },
+    { title: "Business Loan", subtitle: "Apply for funding", icon: TrendingUp, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
+    { title: "Wallet", subtitle: "P0.00 balance", icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: "/dashboard/payouts", action: undefined },
   ];
 
   return (
