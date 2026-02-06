@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Zap, Percent, Send, Banknote } from "lucide-react";
+import { ChevronRight, Zap, Percent, Send, Smartphone } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
@@ -125,7 +125,7 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </button>
       </div>
 
-      {/* Business Loan Section */}
+      {/* Mobile Money Section */}
       <div className="px-5 py-2">
         <button 
           onClick={() => setLoanApplicationOpen(true)}
@@ -133,11 +133,11 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Banknote className="w-6 h-6 text-white" />
+              <Smartphone className="w-6 h-6 text-amber-100" />
             </div>
             <div>
-              <p className="font-semibold text-foreground">Business Loan</p>
-              <p className="text-sm text-muted-foreground">Apply for funding</p>
+              <p className="font-semibold text-foreground">Mobile Money</p>
+              <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
             </div>
           </div>
         </button>
