@@ -106,6 +106,7 @@ const Home = () => {
               {
                 title: "PataPOS",
                 description: "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
+                extra: "Download the Pata App and turn your smartphone into a business.",
                 link: "/products",
                 tagline: "Your store in your pocket"
               },
@@ -145,6 +146,9 @@ const Home = () => {
                 <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">{feature.tagline}</p>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
+                {feature.extra && (
+                  <p className="text-primary text-xs font-semibold mb-4">{feature.extra}</p>
+                )}
                 <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                   Learn more
                   <ArrowRight className="w-4 h-4" />
