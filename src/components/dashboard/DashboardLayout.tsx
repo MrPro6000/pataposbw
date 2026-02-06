@@ -16,7 +16,8 @@ import {
   BarChart3,
   Smartphone,
   UserCog,
-  HelpCircle
+  HelpCircle,
+  Bus
 } from "lucide-react";
 
 interface DashboardLayoutProps {
@@ -52,6 +53,13 @@ const navSections: NavSection[] = [
     items: [
       { label: "Payouts", path: "/dashboard/payouts" },
       { label: "Reports", path: "/dashboard/reports" },
+    ]
+  },
+  {
+    label: "Transport",
+    icon: Bus,
+    items: [
+      { label: "Routes & Fares", path: "/dashboard/transport" },
     ]
   },
   {

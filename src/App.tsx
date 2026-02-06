@@ -28,6 +28,7 @@ import Reports from "./pages/dashboard/Reports";
 import Devices from "./pages/dashboard/Devices";
 import Staff from "./pages/dashboard/Staff";
 import Settings from "./pages/dashboard/Settings";
+import Transport from "./pages/dashboard/Transport";
 import Support from "./pages/dashboard/Support";
 
 // Admin pages
@@ -75,6 +76,7 @@ const App = () => (
             <Route path="/dashboard/devices" element={<Devices />} />
             <Route path="/dashboard/staff" element={<Staff />} />
             <Route path="/dashboard/settings" element={<Settings />} />
+            <Route path="/dashboard/transport" element={<Transport />} />
             <Route path="/dashboard/support" element={<Support />} />
             
             {/* Admin routes */}
