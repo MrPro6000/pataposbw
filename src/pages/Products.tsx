@@ -34,7 +34,7 @@ const Products = () => {
       title: "Mobile Money",
       description: "Accept mobile money payments from all major Botswana providers. Orange Money, Smega, and MyZaka integrated seamlessly.",
       features: ["Orange Money", "Smega", "MyZaka"],
-      link: "/products",
+      link: "/online-payments",
       color: "from-orange-500/20 to-orange-500/5"
     },
     {

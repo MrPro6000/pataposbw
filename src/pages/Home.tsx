@@ -131,7 +131,7 @@ const Home = () => {
               {
                 title: "Mobile Money",
                 description: "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
-                link: "/products",
+                link: "/online-payments",
                 tagline: "Pay with mobile"
               }
             ].map((feature) => (
