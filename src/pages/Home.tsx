@@ -9,6 +9,7 @@ import pataPro from "@/assets/devices/pata-pro.jpeg";
 import pataDiamond from "@/assets/devices/pata-diamond.jpeg";
 import pataPlatinum from "@/assets/devices/pata-platinum.jpeg";
 import goPata from "@/assets/devices/go-pata.jpeg";
+import pata3dLogo from "@/assets/pata-3d-logo.jpg";
 
 const Home = () => {
   const { theme } = useTheme();
@@ -79,8 +80,8 @@ const Home = () => {
                 </div>
                 <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
                   <img 
-                    src={goPata} 
-                    alt="Go Pata Mobile Device" 
+                    src={pata3dLogo} 
+                    alt="Pata - POS, Payment Gateway, Wallet" 
                     className="w-full h-full object-cover"
                   />
                 </div>
