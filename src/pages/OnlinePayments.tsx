@@ -17,6 +17,10 @@ const OnlinePayments = () => {
       title: "E-Commerce Integration",
       description: "Seamless checkout integration for your website with minimal setup.",
     },
+    {
+      title: "Mobile Money",
+      description: "Accept payments from Orange Money, Smega, and MyZaka—Botswana's leading mobile money providers.",
+    },
   ];
 
   return (
@@ -110,7 +114,7 @@ const OnlinePayments = () => {
             Multiple channels, one platform
           </h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {features.map((feature) => (
               <div key={feature.title} className="text-center">
                 <div className="w-16 h-16 bg-primary/20 rounded-2xl mx-auto mb-6 flex items-center justify-center">
