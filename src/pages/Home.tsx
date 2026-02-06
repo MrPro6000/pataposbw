@@ -147,7 +147,7 @@ const Home = () => {
                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
                 {feature.extra && (
-                  <p className="text-primary text-xs font-semibold mb-4">{feature.extra}</p>
+                  <p className="text-primary text-sm mb-4">{feature.extra}</p>
                 )}
                 <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
                   Learn more
