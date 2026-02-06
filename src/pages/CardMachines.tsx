@@ -15,15 +15,15 @@ const CardMachines = () => {
   const machines = [
     {
       name: "Go Pata",
-      price: "P780",
-      image: goPataImg,
+      price: "P880",
+      image: pataPlatinumImg,
       description: "Compact, portable terminal perfect for on-the-go transactions.",
       features: ["Physical keypad", "Built-in printer", "All-day battery"],
       badge: "Best Seller",
     },
     {
       name: "Pata Silver",
-      price: "P4,880",
+      price: "P3,480",
       image: pataSilverImg,
       description: "Sleek touchscreen tablet for modern retail environments.",
       features: ["Touchscreen display", "Compact design", "Fast processing"],
@@ -39,7 +39,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Diamond",
-      price: "P680",
+      price: "P1,980",
       image: pataDiamondImg,
       description: "Entry-level terminal with essential features for small businesses.",
       features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
@@ -47,15 +47,15 @@ const CardMachines = () => {
     },
     {
       name: "Pata Platinum",
-      price: "P999",
-      image: pataPlatinumImg,
+      price: "P998",
+      image: goPataImg,
       description: "Durable keypad terminal built for high-volume retail.",
       features: ["Rugged design", "Physical keypad", "Card chip reader"],
       badge: null,
     },
     {
       name: "Pata Spaza",
-      price: "P3,800",
+      price: "P9,980",
       image: pataSpazaImg,
       description: "Complete POS system with dual displays for retail stores.",
       features: ["Customer display", "Receipt printer", "Full POS system"],

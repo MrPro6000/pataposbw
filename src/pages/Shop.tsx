@@ -10,20 +10,21 @@ import goPataImg from "@/assets/devices/go-pata.jpeg";
 import pataDiamondImg from "@/assets/devices/pata-diamond.jpeg";
 import pataProImg from "@/assets/devices/pata-pro.jpeg";
 import pataPlatinumImg from "@/assets/devices/pata-platinum.jpeg";
+import chargingDockImg from "@/assets/accessories/charging-dock.jpg";
 
 const Shop = () => {
   const devices = [
     {
       name: "Go Pata",
-      price: "P780",
-      image: goPataImg,
+      price: "P880",
+      image: pataPlatinumImg,
       description: "Compact handheld terminal with physical keypad. Perfect for quick transactions.",
       features: ["Physical keypad", "Built-in printer", "All-day battery"],
       badge: "Best Seller",
     },
     {
       name: "Pata Silver",
-      price: "P4,880",
+      price: "P3,480",
       image: pataSilverImg,
       description: "Sleek touchscreen tablet. Modern and portable for any business.",
       features: ["Touchscreen display", "Compact design", "Fast processing"],
@@ -38,21 +39,21 @@ const Shop = () => {
     },
     {
       name: "Pata Diamond",
-      price: "P680",
+      price: "P1,980",
       image: pataDiamondImg,
       description: "Premium handheld with large touchscreen and thermal printer.",
       features: ["Large touchscreen", "Thermal printer", "4G connectivity"],
     },
     {
       name: "Pata Platinum",
-      price: "P999",
-      image: pataPlatinumImg,
+      price: "P998",
+      image: goPataImg,
       description: "Classic keypad terminal with reliable performance and durability.",
       features: ["Durable design", "Physical keypad", "Card chip reader"],
     },
     {
       name: "Pata Spaza",
-      price: "P3,800",
+      price: "P9,980",
       image: pataSpazaImg,
       description: "Full POS system with large display and customer-facing screen. Ideal for retail stores.",
       features: ["Customer display", "Receipt printer", "Full POS system"],
@@ -61,7 +62,7 @@ const Shop = () => {
   ];
 
   const accessories = [
-    { name: "Charging Dock", price: "P149", image: "/placeholder.svg" },
+    { name: "Charging Dock", price: "P149", image: chargingDockImg },
     { name: "Carry Case", price: "P99", image: "/placeholder.svg" },
     { name: "Receipt Paper (10 rolls)", price: "P79", image: "/placeholder.svg" },
     { name: "Screen Protector", price: "P49", image: "/placeholder.svg" },
