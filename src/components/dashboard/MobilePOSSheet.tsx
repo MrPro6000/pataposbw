@@ -58,7 +58,7 @@ const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
           <DrawerHeader className="border-b border-border px-5 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <DrawerTitle className="text-xl font-bold text-foreground">Mobile POS</DrawerTitle>
+                <DrawerTitle className="text-xl font-bold text-foreground">PataPOS</DrawerTitle>
                 <DrawerDescription className="text-xs text-muted-foreground mt-0.5">Your store in your pocket</DrawerDescription>
               </div>
               <button onClick={onClose} className="p-2 -mr-2">
@@ -76,7 +76,7 @@ const MobilePOSSheet = ({ open, onClose }: MobilePOSSheetProps) => {
                     <Smartphone className="w-6 h-6 text-primary-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold text-foreground">Mobile POS Ready</p>
+                    <p className="font-semibold text-foreground">PataPOS Ready</p>
                     <p className="text-sm text-muted-foreground">Sell products, scan & pay</p>
                   </div>
                 </div>

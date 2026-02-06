@@ -1,6 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, CreditCard, Smartphone, Banknote, TrendingUp } from "lucide-react";
+import { ArrowRight, CreditCard, Smartphone, Banknote, TrendingUp, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Products = () => {
@@ -30,6 +30,14 @@ const Products = () => {
       color: "from-amber-500/20 to-amber-500/5"
     },
     {
+      icon: Wallet,
+      title: "Mobile Money",
+      description: "Accept mobile money payments from all major Botswana providers. Orange Money, Smega, and MyZaka integrated seamlessly.",
+      features: ["Orange Money", "Smega", "MyZaka"],
+      link: "/products",
+      color: "from-orange-500/20 to-orange-500/5"
+    },
+    {
       icon: TrendingUp,
       title: "Business Hub",
       description: "Your complete business command center. Track sales, manage inventory, and unlock customer insights.",
@@ -53,7 +61,7 @@ const Products = () => {
               <span className="pata-hero-gradient">infinite possibilities</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              From mobile POS to card terminals, digital invoicing to business funding—Pata equips African entrepreneurs with everything they need to succeed.
+              From PataPOS to card terminals, mobile money to business funding—Pata equips African entrepreneurs with everything they need to succeed.
             </p>
           </div>
 

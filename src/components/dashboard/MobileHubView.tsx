@@ -192,7 +192,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
               <CreditCard className="w-5 h-5 text-primary-foreground" />
             </div>
             <div>
-              <p className="font-semibold text-foreground text-sm">Mobile POS</p>
+              <p className="font-semibold text-foreground text-sm">PataPOS</p>
               <p className="text-xs text-muted-foreground">Sell from your phone</p>
             </div>
           </button>
@@ -241,11 +241,11 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
           >
             <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Banknote className="w-5 h-5 text-white" />
+              <Smartphone className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="font-semibold text-foreground text-sm">Business Loan</p>
-              <p className="text-xs text-muted-foreground">Apply for funding</p>
+              <p className="font-semibold text-foreground text-sm">Mobile Money</p>
+              <p className="text-xs text-muted-foreground">Orange, Smega, MyZaka</p>
             </div>
           </button>
           

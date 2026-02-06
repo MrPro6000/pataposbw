@@ -100,10 +100,10 @@ const Home = () => {
             From card payments to mobile money, invoicing to business insights—Pata is the all-in-one solution built for African entrepreneurs.
           </p>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {[
               {
-                title: "Mobile POS",
+                title: "PataPOS",
                 description: "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
                 link: "/products",
                 tagline: "Your store in your pocket"
@@ -125,6 +125,12 @@ const Home = () => {
                 description: "Send and receive money across borders. Fast, secure international transfers at competitive rates.",
                 link: "/products",
                 tagline: "Connect globally"
+              },
+              {
+                title: "Mobile Money",
+                description: "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
+                link: "/products",
+                tagline: "Pay with mobile"
               }
             ].map((feature) => (
               <Link
