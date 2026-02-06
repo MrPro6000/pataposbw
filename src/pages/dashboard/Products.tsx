@@ -50,6 +50,13 @@ const initialProducts: Product[] = [
   { id: "PRD004", name: "Avocado Toast", price: 65.00, category: "Food", stock: 15, status: "active" },
   { id: "PRD005", name: "Fresh Juice", price: 45.00, category: "Beverages", stock: 50, status: "active" },
   { id: "PRD006", name: "Muffin", price: 22.00, category: "Bakery", stock: 0, status: "inactive" },
+  { id: "PRD007", name: "Meat", price: 85.00, category: "Food", stock: 30, status: "active" },
+  { id: "PRD008", name: "Sweets", price: 12.00, category: "Snacks", stock: 100, status: "active" },
+  { id: "PRD009", name: "Coke", price: 15.00, category: "Beverages", stock: 200, status: "active" },
+  { id: "PRD010", name: "Cigarette", price: 35.00, category: "Other", stock: 150, status: "active" },
+  { id: "PRD011", name: "Cabbage", price: 18.00, category: "Food", stock: 40, status: "active" },
+  { id: "PRD012", name: "Milk", price: 22.00, category: "Beverages", stock: 60, status: "active" },
+  { id: "PRD013", name: "Bread", price: 14.00, category: "Bakery", stock: 45, status: "active" },
 ];
 
 const categories = ["Beverages", "Bakery", "Food", "Snacks", "Other"];
