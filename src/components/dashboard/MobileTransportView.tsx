@@ -1,6 +1,6 @@
 import { useState } from "react";
 import MobileBottomNav from "./MobileBottomNav";
-import { Bus, MapPin, ArrowRight, Plus, ChevronLeft } from "lucide-react";
+import { Bus, MapPin, ArrowRight, Plus, ChevronLeft, User, CreditCard, Banknote, Smartphone, QrCode, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,14 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import PataLogo from "@/components/PataLogo";
 
 interface Route {
   id: string;
@@ -32,21 +40,53 @@ const defaultRoutes: Route[] = [
   { id: "RT010", from: "Gaborone", to: "Molepolole", fare: 25.00, distance: "50 km" },
 ];
 
-const MobileTransportView = () => {
-  const [routes, setRoutes] = useState<Route[]>(defaultRoutes);
-  const [isAddOpen, setIsAddOpen] = useState(false);
-  const [formData, setFormData] = useState({ from: "", to: "", fare: "", distance: "" });
+const paymentMethods = [
+  { id: "card", label: "Card", icon: CreditCard },
+  { id: "cash", label: "Cash", icon: Banknote },
+  { id: "mobile_money", label: "Mobile Money", icon: Smartphone },
+  { id: "qr", label: "QR Payment", icon: QrCode },
+];
 
-  const handleAdd = () => {
-    if (!formData.from || !formData.to || !formData.fare) return;
-    setRoutes([...routes, {
-      id: `RT${String(routes.length + 1).padStart(3, "0")}`,
-      from: formData.from,
-      to: formData.to,
-      fare: parseFloat(formData.fare),
-      distance: formData.distance || "—",
+const MobileTransportView = () => {
+  const [routes] = useState<Route[]>(defaultRoutes);
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [selectedRoute, setSelectedRoute] = useState<Route | null>(null);
+  const [checkoutData, setCheckoutData] = useState({
+    customerName: "",
+    passengers: "1",
+    paymentMethod: "",
+  });
+  const [addForm, setAddForm] = useState({ from: "", to: "", fare: "", distance: "" });
+  const [allRoutes, setAllRoutes] = useState<Route[]>(defaultRoutes);
+
+  const handleSelectRoute = (route: Route) => {
+    setSelectedRoute(route);
+    setIsCheckoutOpen(true);
+    setIsConfirmed(false);
+    setCheckoutData({ customerName: "", passengers: "1", paymentMethod: "" });
+  };
+
+  const totalAmount = selectedRoute
+    ? selectedRoute.fare * parseInt(checkoutData.passengers || "1")
+    : 0;
+
+  const handleCheckout = () => {
+    if (!checkoutData.customerName || !checkoutData.paymentMethod) return;
+    setIsConfirmed(true);
+  };
+
+  const handleAddRoute = () => {
+    if (!addForm.from || !addForm.to || !addForm.fare) return;
+    setAllRoutes([...allRoutes, {
+      id: `RT${String(allRoutes.length + 1).padStart(3, "0")}`,
+      from: addForm.from,
+      to: addForm.to,
+      fare: parseFloat(addForm.fare),
+      distance: addForm.distance || "—",
     }]);
-    setFormData({ from: "", to: "", fare: "", distance: "" });
+    setAddForm({ from: "", to: "", fare: "", distance: "" });
     setIsAddOpen(false);
   };
 
@@ -57,19 +97,26 @@ const MobileTransportView = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-lg font-bold text-foreground">Transport</h1>
-            <p className="text-xs text-muted-foreground">Routes & Fares</p>
+            <p className="text-xs text-muted-foreground">Select a route to checkout</p>
           </div>
-          <Button size="sm" onClick={() => setIsAddOpen(true)} className="bg-primary text-primary-foreground">
-            <Plus className="w-4 h-4 mr-1" /> Add
-          </Button>
+          <div className="flex items-center gap-2">
+            <PataLogo className="h-5" />
+            <Button size="sm" onClick={() => setIsAddOpen(true)} className="bg-primary text-primary-foreground">
+              <Plus className="w-4 h-4 mr-1" /> Route
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Routes list */}
       <div className="p-4 space-y-3">
-        {routes.map((route) => (
-          <div key={route.id} className="bg-card border border-border rounded-xl p-4">
-            <div className="flex items-center gap-3 mb-2">
+        {allRoutes.map((route) => (
+          <button
+            key={route.id}
+            onClick={() => handleSelectRoute(route)}
+            className="w-full bg-card border border-border rounded-xl p-4 text-left active:scale-[0.98] transition-transform"
+          >
+            <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center">
                 <Bus className="w-5 h-5 text-primary" />
               </div>
@@ -84,9 +131,115 @@ const MobileTransportView = () => {
               </div>
               <span className="text-lg font-bold text-foreground">P{route.fare.toFixed(2)}</span>
             </div>
-          </div>
+          </button>
         ))}
       </div>
+
+      {/* Checkout Sheet */}
+      <Sheet open={isCheckoutOpen} onOpenChange={(open) => { setIsCheckoutOpen(open); if (!open) setIsConfirmed(false); }}>
+        <SheetContent side="bottom" className="rounded-t-2xl max-h-[85vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>{isConfirmed ? "Booking Confirmed" : "Checkout"}</SheetTitle>
+          </SheetHeader>
+
+          {isConfirmed ? (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto">
+                <Check className="w-8 h-8 text-emerald-600" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Payment Successful</h3>
+              <div className="bg-muted rounded-xl p-4 text-left space-y-2">
+                <p className="text-sm text-muted-foreground">Customer: <span className="text-foreground font-medium">{checkoutData.customerName}</span></p>
+                <p className="text-sm text-muted-foreground">Route: <span className="text-foreground font-medium">{selectedRoute?.from} → {selectedRoute?.to}</span></p>
+                <p className="text-sm text-muted-foreground">Passengers: <span className="text-foreground font-medium">{checkoutData.passengers}</span></p>
+                <p className="text-sm text-muted-foreground">Payment: <span className="text-foreground font-medium capitalize">{checkoutData.paymentMethod.replace("_", " ")}</span></p>
+                <p className="text-base font-bold text-foreground mt-2">Total: P{totalAmount.toFixed(2)}</p>
+              </div>
+              <Button onClick={() => { setIsCheckoutOpen(false); setIsConfirmed(false); }} className="w-full bg-primary text-primary-foreground">
+                Done
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4 py-4">
+              {/* Route summary */}
+              {selectedRoute && (
+                <div className="bg-muted rounded-xl p-4 flex items-center gap-3">
+                  <Bus className="w-5 h-5 text-primary" />
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-foreground">{selectedRoute.from} → {selectedRoute.to}</p>
+                    <p className="text-xs text-muted-foreground">{selectedRoute.distance}</p>
+                  </div>
+                  <span className="font-bold text-foreground">P{selectedRoute.fare.toFixed(2)}</span>
+                </div>
+              )}
+
+              {/* Customer name */}
+              <div className="space-y-2">
+                <Label>Customer Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={checkoutData.customerName}
+                    onChange={(e) => setCheckoutData({ ...checkoutData, customerName: e.target.value })}
+                    placeholder="Enter passenger name"
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+
+              {/* Passengers */}
+              <div className="space-y-2">
+                <Label>Number of Passengers</Label>
+                <Select value={checkoutData.passengers} onValueChange={(val) => setCheckoutData({ ...checkoutData, passengers: val })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                      <SelectItem key={n} value={String(n)}>{n} passenger{n > 1 ? "s" : ""}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Total */}
+              <div className="bg-primary/10 rounded-xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Total Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{totalAmount.toFixed(2)}</p>
+              </div>
+
+              {/* Payment method */}
+              <div className="space-y-2">
+                <Label>Payment Method</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {paymentMethods.map((pm) => (
+                    <button
+                      key={pm.id}
+                      onClick={() => setCheckoutData({ ...checkoutData, paymentMethod: pm.id })}
+                      className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
+                        checkoutData.paymentMethod === pm.id
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-card text-foreground"
+                      }`}
+                    >
+                      <pm.icon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{pm.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                onClick={handleCheckout}
+                disabled={!checkoutData.customerName || !checkoutData.paymentMethod}
+                className="w-full bg-primary text-primary-foreground"
+              >
+                Pay P{totalAmount.toFixed(2)}
+              </Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
 
       {/* Add Route Sheet */}
       <Sheet open={isAddOpen} onOpenChange={setIsAddOpen}>
@@ -97,21 +250,21 @@ const MobileTransportView = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label>From</Label>
-              <Input value={formData.from} onChange={(e) => setFormData({ ...formData, from: e.target.value })} placeholder="e.g. Gaborone" />
+              <Input value={addForm.from} onChange={(e) => setAddForm({ ...addForm, from: e.target.value })} placeholder="e.g. Gaborone" />
             </div>
             <div className="space-y-2">
               <Label>To</Label>
-              <Input value={formData.to} onChange={(e) => setFormData({ ...formData, to: e.target.value })} placeholder="e.g. Francistown" />
+              <Input value={addForm.to} onChange={(e) => setAddForm({ ...addForm, to: e.target.value })} placeholder="e.g. Francistown" />
             </div>
             <div className="space-y-2">
               <Label>Fare (P)</Label>
-              <Input type="number" value={formData.fare} onChange={(e) => setFormData({ ...formData, fare: e.target.value })} placeholder="0.00" />
+              <Input type="number" inputMode="numeric" value={addForm.fare} onChange={(e) => setAddForm({ ...addForm, fare: e.target.value })} placeholder="0.00" />
             </div>
             <div className="space-y-2">
               <Label>Distance</Label>
-              <Input value={formData.distance} onChange={(e) => setFormData({ ...formData, distance: e.target.value })} placeholder="e.g. 430 km" />
+              <Input value={addForm.distance} onChange={(e) => setAddForm({ ...addForm, distance: e.target.value })} placeholder="e.g. 430 km" />
             </div>
-            <Button onClick={handleAdd} className="w-full bg-primary text-primary-foreground">
+            <Button onClick={handleAddRoute} className="w-full bg-primary text-primary-foreground">
               Add Route
             </Button>
           </div>
