@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, CreditCard, Banknote, Smartphone, CheckCircle, Search, Bus, Monitor, FileText } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,11 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useToast } from "@/hooks/use-toast";
-
-import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
-import smegaLogo from "@/assets/mobile-money/smega.png";
-import myzakaLogo from "@/assets/mobile-money/myzaka.png";
+import PaymentFlow from "./PaymentFlow";
 
 interface Product {
   id: string;
@@ -57,28 +53,15 @@ const deviceProducts: Product[] = [
 ];
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
-
 const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services"];
 
-const mobileMoneyProviders = [
-  { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
-  { id: "smega", name: "Smega", logo: smegaLogo },
-  { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
-];
-
-type PaymentMethod = "card" | "cash" | "mobile-money";
-type Step = "products" | "transport-form" | "service-form" | "cart" | "payment" | "mobile-provider" | "success";
+type Step = "products" | "transport-form" | "service-form" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedProvider, setSelectedProvider] = useState("");
-  const [customerPhone, setCustomerPhone] = useState("");
-  const [isProcessing, setIsProcessing] = useState(false);
-  const { toast } = useToast();
-
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
 
@@ -122,12 +105,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     if (!transportForm.customerName || !transportForm.to || !transportForm.fare) return;
     const id = `transport-${Date.now()}`;
     const label = `${transportForm.from || "Pickup"} → ${transportForm.to}`;
-    addToCart({
-      id,
-      name: `${label} (${transportForm.vehicle || "Vehicle"}) — ${transportForm.customerName}`,
-      price: parseFloat(transportForm.fare),
-      category: "Transport",
-    });
+    addToCart({ id, name: `${label} (${transportForm.vehicle || "Vehicle"}) — ${transportForm.customerName}`, price: parseFloat(transportForm.fare), category: "Transport" });
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
     setStep("products");
   };
@@ -135,41 +113,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const handleAddService = () => {
     if (!serviceForm.serviceName || !serviceForm.amount) return;
     const id = `service-${Date.now()}`;
-    addToCart({
-      id,
-      name: `${serviceForm.serviceName}${serviceForm.customerName ? ` — ${serviceForm.customerName}` : ""}`,
-      price: parseFloat(serviceForm.amount),
-      category: "Services",
-    });
+    addToCart({ id, name: `${serviceForm.serviceName}${serviceForm.customerName ? ` — ${serviceForm.customerName}` : ""}`, price: parseFloat(serviceForm.amount), category: "Services" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
     setStep("products");
-  };
-
-  const handlePaymentSelect = (method: PaymentMethod) => {
-    if (method === "mobile-money") {
-      setStep("mobile-provider");
-    } else {
-      processPayment(method);
-    }
-  };
-
-  const processPayment = async (method: PaymentMethod) => {
-    if (method === "mobile-money" && (!selectedProvider || !customerPhone)) {
-      toast({ title: "Error", description: "Please complete all fields", variant: "destructive" });
-      return;
-    }
-    setIsProcessing(true);
-    await new Promise(r => setTimeout(r, 1500));
-    setIsProcessing(false);
-    setStep("success");
-    toast({ title: "Payment Successful", description: `P${cartTotal.toFixed(2)} received` });
   };
 
   const resetAndClose = () => {
     setStep("products");
     setCart([]);
-    setSelectedProvider("");
-    setCustomerPhone("");
     setSearchQuery("");
     setSelectedCategory("All");
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
@@ -178,6 +129,16 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   };
 
   const getCartQty = (id: string) => cart.find(i => i.id === id)?.quantity || 0;
+
+  const getStepTitle = () => {
+    switch (step) {
+      case "products": return "Select Products";
+      case "transport-form": return "Add Transport";
+      case "service-form": return "Add Service";
+      case "cart": return "Your Cart";
+      case "payment": return "Payment";
+    }
+  };
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
@@ -188,15 +149,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
                 <ShoppingCart className="w-5 h-5 text-primary-foreground" />
               </div>
-              <DrawerTitle className="text-foreground">
-                {step === "products" && "Select Products"}
-                {step === "transport-form" && "Add Transport"}
-                {step === "service-form" && "Add Service"}
-                {step === "cart" && "Your Cart"}
-                {step === "payment" && "Payment Method"}
-                {step === "mobile-provider" && "Mobile Money"}
-                {step === "success" && "Success"}
-              </DrawerTitle>
+              <DrawerTitle className="text-foreground">{getStepTitle()}</DrawerTitle>
             </div>
             <DrawerClose asChild>
               <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
@@ -223,31 +176,22 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 ))}
               </div>
               <div className="grid grid-cols-2 gap-3">
-                {/* Transport tile */}
                 {showTransportTile && (
-                  <button onClick={() => setStep("transport-form")}
-                    className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
-                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2">
-                      <Bus className="w-5 h-5 text-primary" />
-                    </div>
+                  <button onClick={() => setStep("transport-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><Bus className="w-5 h-5 text-primary" /></div>
                     <p className="font-medium text-foreground text-sm">Transport</p>
                     <p className="text-xs text-muted-foreground">Enter fare details</p>
                     <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
                   </button>
                 )}
-                {/* Service tile */}
                 {showServiceTile && (
-                  <button onClick={() => setStep("service-form")}
-                    className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
-                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2">
-                      <FileText className="w-5 h-5 text-primary" />
-                    </div>
+                  <button onClick={() => setStep("service-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
                     <p className="font-medium text-foreground text-sm">Custom Service</p>
                     <p className="text-xs text-muted-foreground">Licence, levy, etc.</p>
                     <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
                   </button>
                 )}
-                {/* Regular products */}
                 {filteredProducts.map(product => {
                   const qty = getCartQty(product.id);
                   return (
@@ -272,36 +216,20 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
           {/* TRANSPORT FORM */}
           {step === "transport-form" && (
             <div className="p-4 space-y-4">
-              <div className="space-y-2">
-                <Label>Customer Name</Label>
-                <Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" />
-              </div>
-              <div className="space-y-2">
-                <Label>From</Label>
-                <Input value={transportForm.from} onChange={e => setTransportForm({ ...transportForm, from: e.target.value })} placeholder="e.g. Gaborone" />
-              </div>
-              <div className="space-y-2">
-                <Label>To (Destination)</Label>
-                <Input value={transportForm.to} onChange={e => setTransportForm({ ...transportForm, to: e.target.value })} placeholder="e.g. Francistown" />
-              </div>
+              <div className="space-y-2"><Label>Customer Name</Label><Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" /></div>
+              <div className="space-y-2"><Label>From</Label><Input value={transportForm.from} onChange={e => setTransportForm({ ...transportForm, from: e.target.value })} placeholder="e.g. Gaborone" /></div>
+              <div className="space-y-2"><Label>To (Destination)</Label><Input value={transportForm.to} onChange={e => setTransportForm({ ...transportForm, to: e.target.value })} placeholder="e.g. Francistown" /></div>
               <div className="space-y-2">
                 <Label>Vehicle Type</Label>
                 <Select value={transportForm.vehicle} onValueChange={val => setTransportForm({ ...transportForm, vehicle: val })}>
                   <SelectTrigger><SelectValue placeholder="Select vehicle" /></SelectTrigger>
-                  <SelectContent>
-                    {vehicleTypes.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
-                  </SelectContent>
+                  <SelectContent>{vehicleTypes.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Fare Amount (P)</Label>
-                <Input type="number" inputMode="numeric" value={transportForm.fare} onChange={e => setTransportForm({ ...transportForm, fare: e.target.value })} placeholder="0.00" />
-              </div>
+              <div className="space-y-2"><Label>Fare Amount (P)</Label><Input type="number" inputMode="numeric" value={transportForm.fare} onChange={e => setTransportForm({ ...transportForm, fare: e.target.value })} placeholder="0.00" /></div>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddTransport} disabled={!transportForm.customerName || !transportForm.to || !transportForm.fare} className="flex-1 h-12">
-                  Add to Cart
-                </Button>
+                <Button onClick={handleAddTransport} disabled={!transportForm.customerName || !transportForm.to || !transportForm.fare} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}
@@ -309,23 +237,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
           {/* SERVICE FORM */}
           {step === "service-form" && (
             <div className="p-4 space-y-4">
-              <div className="space-y-2">
-                <Label>Service Name</Label>
-                <Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee, Levy Payment" />
-              </div>
-              <div className="space-y-2">
-                <Label>Customer Name (optional)</Label>
-                <Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Gaborone City Council" />
-              </div>
-              <div className="space-y-2">
-                <Label>Amount (P)</Label>
-                <Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" />
-              </div>
+              <div className="space-y-2"><Label>Service Name</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee, Levy Payment" /></div>
+              <div className="space-y-2"><Label>Customer Name (optional)</Label><Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Gaborone City Council" /></div>
+              <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">
-                  Add to Cart
-                </Button>
+                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}
@@ -355,7 +272,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       </div>
                       <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
                         <span className="font-bold text-foreground">P{(item.price * item.quantity).toFixed(2)}</span>
-                        <button onClick={() => removeFromCart(item.id)} className="text-red-500 text-sm font-medium">Remove</button>
+                        <button onClick={() => removeFromCart(item.id)} className="text-destructive text-sm font-medium">Remove</button>
                       </div>
                     </div>
                   ))}
@@ -364,71 +281,15 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
             </div>
           )}
 
-          {/* PAYMENT */}
+          {/* PAYMENT FLOW */}
           {step === "payment" && (
-            <div className="p-4 space-y-4">
-              <div className="bg-muted rounded-2xl p-4 text-center">
-                <p className="text-sm text-muted-foreground">Total Amount</p>
-                <p className="text-3xl font-bold text-foreground">P{cartTotal.toFixed(2)}</p>
-                <p className="text-sm text-muted-foreground">{cartItemCount} items</p>
-              </div>
-              <p className="font-semibold text-foreground">Select Payment Method</p>
-              <div className="space-y-3">
-                {[
-                  { method: "card" as const, icon: CreditCard, label: "Card Payment", desc: "Tap card on device", color: "bg-primary" },
-                  { method: "cash" as const, icon: Banknote, label: "Cash", desc: "Record cash payment", color: "bg-green-500" },
-                  { method: "mobile-money" as const, icon: Smartphone, label: "Mobile Money", desc: "Orange, Smega, MyZaka", color: "bg-orange-500" },
-                ].map(({ method, icon: Icon, label, desc, color }) => (
-                  <button key={method} onClick={() => handlePaymentSelect(method)}
-                    className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl active:scale-98 transition-transform">
-                    <div className={`w-12 h-12 ${color} rounded-xl flex items-center justify-center`}><Icon className="w-6 h-6 text-white" /></div>
-                    <div className="text-left">
-                      <p className="font-semibold text-foreground">{label}</p>
-                      <p className="text-sm text-muted-foreground">{desc}</p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* MOBILE MONEY */}
-          {step === "mobile-provider" && (
-            <div className="p-4 space-y-4">
-              <div className="bg-muted rounded-2xl p-4 text-center">
-                <p className="text-sm text-muted-foreground">Amount to Pay</p>
-                <p className="text-3xl font-bold text-foreground">P{cartTotal.toFixed(2)}</p>
-              </div>
-              <p className="font-semibold text-foreground">Select Provider</p>
-              <div className="grid grid-cols-3 gap-3">
-                {mobileMoneyProviders.map(p => (
-                  <button key={p.id} onClick={() => setSelectedProvider(p.id)}
-                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${selectedProvider === p.id ? "border-primary bg-primary/10" : "border-border bg-card"}`}>
-                    <img src={p.logo} alt={p.name} className="w-12 h-12 object-contain mb-2 rounded-lg" />
-                    <p className="text-xs font-medium text-foreground text-center">{p.name}</p>
-                  </button>
-                ))}
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold text-foreground">Customer Phone</p>
-                <Input type="tel" placeholder="+267 71 234 5678" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} className="h-12 text-lg" />
-              </div>
-              <Button onClick={() => processPayment("mobile-money")} disabled={isProcessing || !selectedProvider || !customerPhone} className="w-full h-14 font-semibold text-lg">
-                {isProcessing ? "Processing..." : "Send Payment Request"}
-              </Button>
-            </div>
-          )}
-
-          {/* SUCCESS */}
-          {step === "success" && (
-            <div className="p-4 flex flex-col items-center justify-center py-10">
-              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-                <CheckCircle className="w-10 h-10 text-green-500" />
-              </div>
-              <p className="text-xl font-bold text-foreground mb-2">Payment Successful!</p>
-              <p className="text-muted-foreground mb-1">P{cartTotal.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">{cartItemCount} items sold</p>
-              <Button onClick={resetAndClose} className="mt-6 w-full h-12">Done</Button>
+            <div className="p-4">
+              <PaymentFlow
+                total={cartTotal}
+                itemCount={cartItemCount}
+                onComplete={resetAndClose}
+                onBack={() => setStep("cart")}
+              />
             </div>
           )}
         </div>
