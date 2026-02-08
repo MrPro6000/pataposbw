@@ -22,7 +22,7 @@ export const deviceModels: Record<string, DeviceModel> = {
     model: "Pata Spaza",
     image: pataSpazaImg,
     description: "Full POS system with customer display",
-    price: "P9,980",
+    price: "P6,600",
   },
   "Patapos Silver": {
     id: "silver",

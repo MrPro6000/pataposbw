@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,12 +18,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import PaymentFlow from "./PaymentFlow";
+import { deviceModels } from "@/data/devices";
 
 interface Product {
   id: string;
   name: string;
   price: number;
   category: string;
+  image?: string;
 }
 
 interface CartItem extends Product {
@@ -46,16 +48,18 @@ const retailProducts: Product[] = [
   { id: "8", name: "Cappuccino", price: 35, category: "Beverages" },
 ];
 
-const deviceProducts: Product[] = [
-  { id: "d1", name: "Go Pata Terminal", price: 880, category: "Devices" },
-  { id: "d2", name: "Pata Pro Terminal", price: 3880, category: "Devices" },
-  { id: "d3", name: "Pata Spaza POS", price: 9980, category: "Devices" },
-];
+const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
+  id: d.id,
+  name: d.name,
+  price: parseFloat(d.price.replace(/[^0-9.]/g, "").replace(",", "")),
+  category: "Devices",
+  image: d.image,
+}));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
 const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services"];
 
-type Step = "products" | "transport-form" | "service-form" | "cart" | "payment";
+type Step = "products" | "transport-form" | "service-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -65,8 +69,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
 
-  const allProducts = [...retailProducts, ...deviceProducts];
-  const filteredProducts = allProducts.filter(p => {
+  const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
     const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
@@ -74,6 +77,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
 
   const showTransportTile = selectedCategory === "All" || selectedCategory === "Transport";
   const showServiceTile = selectedCategory === "All" || selectedCategory === "Services";
+  const showDevicesTile = selectedCategory === "All" || selectedCategory === "Devices";
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -135,6 +139,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "products": return "Select Products";
       case "transport-form": return "Add Transport";
       case "service-form": return "Add Service";
+      case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
       case "payment": return "Payment";
     }
@@ -192,6 +197,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
                   </button>
                 )}
+                {showDevicesTile && (
+                  <button onClick={() => setStep("devices-list")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><Monitor className="w-5 h-5 text-primary" /></div>
+                    <p className="font-medium text-foreground text-sm">Pata Devices</p>
+                    <p className="text-xs text-muted-foreground">All terminals & POS</p>
+                    <p className="text-xs text-primary font-semibold mt-1">View All</p>
+                  </button>
+                )}
                 {filteredProducts.map(product => {
                   const qty = getCartQty(product.id);
                   return (
@@ -243,6 +256,35 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
                 <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">Add to Cart</Button>
+              </div>
+            </div>
+          )}
+
+          {/* DEVICES LIST */}
+          {step === "devices-list" && (
+            <div className="p-4 space-y-3">
+              <Button variant="ghost" size="sm" onClick={() => setStep("products")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back to Products
+              </Button>
+              <div className="grid grid-cols-2 gap-3">
+                {allDeviceProducts.map(device => {
+                  const qty = getCartQty(device.id);
+                  return (
+                    <button key={device.id} onClick={() => addToCart(device)}
+                      className={`p-4 rounded-2xl text-left transition-all active:scale-95 ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
+                      {device.image && (
+                        <div className="w-full aspect-square bg-muted rounded-xl flex items-center justify-center mb-2 overflow-hidden">
+                          <img src={device.image} alt={device.name} className="w-full h-full object-contain" />
+                        </div>
+                      )}
+                      <p className="font-medium text-foreground text-sm">{device.name}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <p className="font-bold text-foreground">P{device.price.toLocaleString()}</p>
+                        {qty > 0 && <span className="w-6 h-6 bg-primary rounded-full flex items-center justify-center text-xs font-bold text-primary-foreground">{qty}</span>}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           )}
