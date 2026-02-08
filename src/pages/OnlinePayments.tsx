@@ -1,5 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
+import ContactSalesDialog from "@/components/ContactSalesDialog";
 import { ArrowDown, Star, Check } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -52,9 +53,11 @@ const OnlinePayments = () => {
                   Learn more
                   <ArrowDown className="w-4 h-4" />
                 </Link>
-                <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-                  Talk to Sales
-                </button>
+                <ContactSalesDialog>
+                  <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                    Talk to Sales
+                  </button>
+                </ContactSalesDialog>
               </div>
 
               <div className="flex items-center gap-4 mt-8">
