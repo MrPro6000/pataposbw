@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, CreditCard, Banknote, Smartphone, CheckCircle, Search } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, CreditCard, Banknote, Smartphone, CheckCircle, Search, Bus, Monitor } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -34,17 +34,30 @@ interface MobileProductSaleSheetProps {
 }
 
 const products: Product[] = [
-  { id: "1", name: "Cappuccino", price: 35, category: "Beverages", stock: 50 },
-  { id: "2", name: "Espresso", price: 28, category: "Beverages", stock: 45 },
-  { id: "3", name: "Avocado Toast", price: 65, category: "Food", stock: 8 },
-  { id: "4", name: "Croissant", price: 25, category: "Bakery", stock: 20 },
-  { id: "5", name: "Fresh Juice", price: 45, category: "Beverages", stock: 20 },
-  { id: "6", name: "Sandwich", price: 55, category: "Food", stock: 12 },
-  { id: "7", name: "Muffin", price: 30, category: "Bakery", stock: 15 },
-  { id: "8", name: "Latte", price: 38, category: "Beverages", stock: 40 },
+  // Retail
+  { id: "1", name: "Meat", price: 85, category: "Food", stock: 50 },
+  { id: "2", name: "Bread", price: 12, category: "Food", stock: 100 },
+  { id: "3", name: "Milk", price: 18, category: "Food", stock: 80 },
+  { id: "4", name: "Coke", price: 15, category: "Beverages", stock: 60 },
+  { id: "5", name: "Sweets", price: 5, category: "Food", stock: 200 },
+  { id: "6", name: "Cabbage", price: 10, category: "Food", stock: 30 },
+  { id: "7", name: "Cigarette", price: 35, category: "General", stock: 40 },
+  { id: "8", name: "Cappuccino", price: 35, category: "Beverages", stock: 50 },
+  // Transport routes
+  { id: "t1", name: "Gaborone → Tlokweng", price: 10, category: "Transport", stock: 999 },
+  { id: "t2", name: "Gaborone → Mogoditshane", price: 8, category: "Transport", stock: 999 },
+  { id: "t3", name: "Gaborone → Molepolole", price: 30, category: "Transport", stock: 999 },
+  { id: "t4", name: "Gaborone → Francistown", price: 150, category: "Transport", stock: 999 },
+  // Devices
+  { id: "d1", name: "Go Pata Terminal", price: 880, category: "Devices", stock: 10 },
+  { id: "d2", name: "Pata Pro Terminal", price: 3880, category: "Devices", stock: 5 },
+  { id: "d3", name: "Pata Spaza POS", price: 9980, category: "Devices", stock: 3 },
+  // Services
+  { id: "s1", name: "Licence Fee", price: 250, category: "Services", stock: 999 },
+  { id: "s2", name: "Levy Payment", price: 500, category: "Services", stock: 999 },
 ];
 
-const categories = ["All", "Beverages", "Food", "Bakery"];
+const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services"];
 
 const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
@@ -215,7 +228,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       }`}
                     >
                       <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center mb-2">
-                        <Package className="w-5 h-5 text-muted-foreground" />
+                        {product.category === "Transport" ? <Bus className="w-5 h-5 text-muted-foreground" /> :
+                         product.category === "Devices" ? <Monitor className="w-5 h-5 text-muted-foreground" /> :
+                         <Package className="w-5 h-5 text-muted-foreground" />}
                       </div>
                       <p className="font-medium text-foreground text-sm">{product.name}</p>
                       <p className="text-xs text-muted-foreground">{product.category}</p>

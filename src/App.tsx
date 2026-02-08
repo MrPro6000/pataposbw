@@ -5,7 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/hooks/useAuth";
+import { CartProvider } from "@/contexts/CartContext";
 import AIChatbot from "./components/AIChatbot";
+import CartDrawer from "./components/CartDrawer";
 import Home from "./pages/Home";
 import CardMachines from "./pages/CardMachines";
 import OnlinePayments from "./pages/OnlinePayments";
@@ -48,12 +50,14 @@ const queryClient = new QueryClient();
 const App = () => (
   <ThemeProvider>
     <AuthProvider>
+      <CartProvider>
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
           <BrowserRouter>
             <AIChatbot />
+            <CartDrawer />
             <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/card-machines" element={<CardMachines />} />
@@ -98,6 +102,7 @@ const App = () => (
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
+      </CartProvider>
     </AuthProvider>
   </ThemeProvider>
 );

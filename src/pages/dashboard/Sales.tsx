@@ -1,5 +1,6 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -131,8 +132,9 @@ const Sales = () => {
   const [paymentType, setPaymentType] = useState<PaymentType>("card");
   const [paymentLinkDialogOpen, setPaymentLinkDialogOpen] = useState(false);
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
-  const isMobile = useIsMobile();
+   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const [sellProductsOpen, setSellProductsOpen] = useState(false);
 
   // Payment form state
   const [amount, setAmount] = useState("");
@@ -368,6 +370,7 @@ const Sales = () => {
           <Button 
             variant="outline" 
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-[#F5F5F5]"
+            onClick={() => setSellProductsOpen(true)}
           >
             <ShoppingBag className="w-5 h-5" />
             <span className="text-xs">Sell Products</span>
@@ -920,6 +923,11 @@ const Sales = () => {
           </div>
         </DialogContent>
       </Dialog>
+      {/* Sell Products Dialog */}
+      <SellProductsDialog
+        open={sellProductsOpen}
+        onClose={() => setSellProductsOpen(false)}
+      />
     </DashboardLayout>
   );
 };
