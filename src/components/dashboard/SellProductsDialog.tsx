@@ -56,9 +56,9 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 }));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
-const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services"];
+const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services", "Custom"];
 
-type Step = "products" | "transport-form" | "service-form" | "devices-list" | "cart" | "payment";
+type Step = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "cart" | "payment";
 
 const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -67,6 +67,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
+  const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
 
   const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
@@ -77,6 +78,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const showTransportTile = selectedCategory === "All" || selectedCategory === "Transport";
   const showServiceTile = selectedCategory === "All" || selectedCategory === "Services";
   const showDevicesTile = selectedCategory === "All" || selectedCategory === "Devices";
+  const showProductTile = selectedCategory === "All" || selectedCategory === "Custom";
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -117,6 +119,16 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     setStep("products");
   };
 
+  const handleAddProduct = () => {
+    if (!productForm.productName || !productForm.price) return;
+    const id = `product-${Date.now()}`;
+    const qty = parseInt(productForm.quantity) || 1;
+    const product: Product = { id, name: productForm.productName, price: parseFloat(productForm.price), category: "Custom" };
+    setCart(prev => [...prev, { ...product, quantity: qty }]);
+    setProductForm({ productName: "", price: "", quantity: "1" });
+    setStep("products");
+  };
+
   const resetAndClose = () => {
     setStep("products");
     setCart([]);
@@ -124,6 +136,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     setSelectedCategory("All");
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
+    setProductForm({ productName: "", price: "", quantity: "1" });
     onClose();
   };
 
@@ -141,6 +154,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
       case "products": return "Sell Products";
       case "transport-form": return "Add Transport Fare";
       case "service-form": return "Add Custom Service";
+      case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return `Cart (${cartItemCount})`;
       case "payment": return "Payment";
@@ -200,6 +214,14 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                     <p className="text-xs text-primary font-semibold mt-1">View All</p>
                   </button>
                 )}
+                {showProductTile && (
+                  <button onClick={() => setStep("product-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Plus className="w-5 h-5 text-primary" /></div>
+                    <p className="font-medium text-foreground text-sm">Custom Product</p>
+                    <p className="text-xs text-muted-foreground">Add any item</p>
+                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                  </button>
+                )}
                 {filteredProducts.map(product => {
                   const qty = getCartQty(product.id);
                   return (
@@ -253,6 +275,21 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
               <div className="flex gap-2">
                 <Button variant="outline" onClick={() => setStep("products")} className="flex-1">Cancel</Button>
                 <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1">Add to Cart</Button>
+              </div>
+            </div>
+          )}
+
+          {/* CUSTOM PRODUCT FORM */}
+          {step === "product-form" && (
+            <div className="space-y-4">
+              <div className="space-y-2"><Label>Product Name</Label><Input value={productForm.productName} onChange={e => setProductForm({ ...productForm, productName: e.target.value })} placeholder="e.g. Phone Case, Charger" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2"><Label>Price (P)</Label><Input type="number" inputMode="numeric" value={productForm.price} onChange={e => setProductForm({ ...productForm, price: e.target.value })} placeholder="0.00" /></div>
+                <div className="space-y-2"><Label>Quantity</Label><Input type="number" inputMode="numeric" value={productForm.quantity} onChange={e => setProductForm({ ...productForm, quantity: e.target.value })} placeholder="1" /></div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep("products")} className="flex-1">Cancel</Button>
+                <Button onClick={handleAddProduct} disabled={!productForm.productName || !productForm.price} className="flex-1">Add to Cart</Button>
               </div>
             </div>
           )}
