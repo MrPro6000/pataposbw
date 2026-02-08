@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, NfcIcon, ArrowLeft } from "lucide-react";
+import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,8 @@ const mobileMoneyProviders = [
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
 ];
 
-export type PaymentMethod = "card" | "cash" | "mobile-money";
-export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "success";
+export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr";
+export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "success";
 
 interface PaymentFlowProps {
   total: number;
@@ -48,12 +48,17 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
       const timer = setTimeout(() => setStep("success"), 2500);
       return () => clearTimeout(timer);
     }
+    if (step === "qr-scan") {
+      const timer = setTimeout(() => setStep("success"), 3000);
+      return () => clearTimeout(timer);
+    }
   }, [step]);
 
   const handleSelectMethod = (method: PaymentMethod) => {
     setPaymentMethod(method);
     if (method === "card") setStep("card-tap");
     else if (method === "cash") setStep("cash-tendered");
+    else if (method === "qr") setStep("qr-scan");
     else setStep("mobile-provider");
   };
 
@@ -78,41 +83,31 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
             <p className="text-sm text-muted-foreground">{itemCount} item{itemCount !== 1 ? "s" : ""}</p>
           </div>
 
-          <p className="font-semibold text-foreground">Select Payment Method</p>
+          <p className="font-semibold text-foreground">Payment Method</p>
 
-          <div className="space-y-3">
-            <button onClick={() => handleSelectMethod("card")}
-              className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:bg-muted active:scale-[0.98] transition-all">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
-                <CreditCard className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-foreground">Card Payment</p>
-                <p className="text-sm text-muted-foreground">Tap, insert or swipe</p>
-              </div>
-            </button>
-
-            <button onClick={() => handleSelectMethod("cash")}
-              className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:bg-muted active:scale-[0.98] transition-all">
-              <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center">
-                <Banknote className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-foreground">Cash</p>
-                <p className="text-sm text-muted-foreground">Record cash payment</p>
-              </div>
-            </button>
-
-            <button onClick={() => handleSelectMethod("mobile-money")}
-              className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:bg-muted active:scale-[0.98] transition-all">
-              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
-                <Smartphone className="w-6 h-6 text-white" />
-              </div>
-              <div className="text-left">
-                <p className="font-semibold text-foreground">Mobile Money</p>
-                <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
-              </div>
-            </button>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { method: "card" as PaymentMethod, label: "Card", sub: "Tap, insert or swipe", icon: CreditCard, iconBg: "bg-primary" },
+              { method: "cash" as PaymentMethod, label: "Cash", sub: "Record cash payment", icon: Banknote, iconBg: "bg-emerald-500" },
+              { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka", icon: Smartphone, iconBg: "bg-orange-500" },
+              { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
+            ].map(({ method, label, sub, icon: Icon, iconBg }) => (
+              <button
+                key={method}
+                onClick={() => handleSelectMethod(method)}
+                className={`flex items-center gap-3 p-4 bg-card border-2 rounded-2xl hover:bg-muted active:scale-[0.97] transition-all ${
+                  paymentMethod === method ? "border-primary" : "border-border"
+                }`}
+              >
+                <div className={`w-10 h-10 ${iconBg} rounded-xl flex items-center justify-center shrink-0`}>
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+                <div className="text-left">
+                  <p className="font-semibold text-foreground text-sm">{label}</p>
+                  <p className="text-xs text-muted-foreground">{sub}</p>
+                </div>
+              </button>
+            ))}
           </div>
 
           <Button variant="outline" onClick={onBack} className="w-full">
@@ -311,6 +306,37 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
         </div>
       )}
 
+      {/* QR SCAN */}
+      {step === "qr-scan" && (
+        <div className="flex flex-col items-center justify-center py-8 space-y-6">
+          <div className="bg-muted rounded-2xl p-4 text-center w-full">
+            <p className="text-sm text-muted-foreground">Scan to Pay</p>
+            <p className="text-4xl font-bold text-foreground">P{total.toFixed(2)}</p>
+          </div>
+
+          <div className="relative w-40 h-40 border-4 border-primary rounded-2xl flex items-center justify-center">
+            <QrCode className="w-20 h-20 text-primary animate-pulse" />
+            <div className="absolute -inset-2 border-2 border-primary/30 rounded-3xl animate-ping" />
+          </div>
+
+          <div className="text-center space-y-1">
+            <p className="text-lg font-semibold text-foreground">Waiting for QR Scan</p>
+            <p className="text-sm text-muted-foreground">Customer scans to complete payment</p>
+          </div>
+
+          <div className="flex items-center gap-3 bg-muted rounded-xl px-4 py-3">
+            <div className="flex gap-1">
+              <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "0ms" }} />
+              <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "150ms" }} />
+              <div className="w-2 h-2 rounded-full bg-primary animate-bounce" style={{ animationDelay: "300ms" }} />
+            </div>
+            <p className="text-sm text-muted-foreground">Waiting for scan...</p>
+          </div>
+
+          <Button variant="outline" onClick={() => setStep("select")} className="w-full">Cancel</Button>
+        </div>
+      )}
+
       {/* SUCCESS */}
       {step === "success" && (
         <div className="flex flex-col items-center justify-center py-8 space-y-4">
@@ -353,6 +379,12 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Card</span>
                 <span className="font-mono font-medium text-foreground">•••• 4829</span>
+              </div>
+            )}
+            {paymentMethod === "qr" && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Method</span>
+                <span className="font-medium text-foreground">QR Scan</span>
               </div>
             )}
             <div className="flex justify-between pt-2 border-t border-border">
