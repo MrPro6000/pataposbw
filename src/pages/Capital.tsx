@@ -1,5 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
+import ContactSalesDialog from "@/components/ContactSalesDialog";
 import { ArrowRight, Check, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -37,9 +38,11 @@ const Capital = () => {
                   Check eligibility
                   <ArrowRight className="w-4 h-4" />
                 </Link>
-                <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-                  Learn More
-                </button>
+                <ContactSalesDialog>
+                  <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                    Learn More
+                  </button>
+                </ContactSalesDialog>
               </div>
             </div>
 
