@@ -1,8 +1,10 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import ContactSalesDialog from "@/components/ContactSalesDialog";
-import { ArrowDown, Star, Check } from "lucide-react";
+import { ArrowDown, Star, Check, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "@/contexts/CartContext";
+import CartButton from "@/components/CartButton";
 
 // Import device images
 import pataSpazaImg from "@/assets/devices/pata-spaza.jpeg";
@@ -13,6 +15,7 @@ import pataProImg from "@/assets/devices/pata-pro.jpeg";
 import pataPlatinumImg from "@/assets/devices/pata-platinum.jpeg";
 
 const CardMachines = () => {
+  const { addItem } = useCart();
   const machines = [
     {
       name: "Go Pata",
@@ -161,9 +164,19 @@ const CardMachines = () => {
                   ))}
                 </ul>
                 
-                <Link to="/shop" className="w-full pata-btn-cyan justify-center">
-                  Buy now
-                </Link>
+                <button
+                  onClick={() => addItem({
+                    id: machine.name.toLowerCase().replace(/\s+/g, '-'),
+                    name: machine.name,
+                    price: parseInt(machine.price.replace(/[^0-9]/g, '')),
+                    image: machine.image,
+                    category: "device"
+                  })}
+                  className="w-full pata-btn-cyan justify-center"
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  Add to cart
+                </button>
               </div>
             ))}
           </div>
