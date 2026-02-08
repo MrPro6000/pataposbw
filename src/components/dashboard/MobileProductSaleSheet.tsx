@@ -57,9 +57,9 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 }));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
-const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services"];
+const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services", "Custom"];
 
-type Step = "products" | "transport-form" | "service-form" | "devices-list" | "cart" | "payment";
+type Step = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -68,6 +68,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [searchQuery, setSearchQuery] = useState("");
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
+  const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
 
   const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
@@ -78,6 +79,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const showTransportTile = selectedCategory === "All" || selectedCategory === "Transport";
   const showServiceTile = selectedCategory === "All" || selectedCategory === "Services";
   const showDevicesTile = selectedCategory === "All" || selectedCategory === "Devices";
+  const showProductTile = selectedCategory === "All" || selectedCategory === "Custom";
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -122,6 +124,16 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const handleAddProduct = () => {
+    if (!productForm.productName || !productForm.price) return;
+    const id = `product-${Date.now()}`;
+    const qty = parseInt(productForm.quantity) || 1;
+    const product: Product = { id, name: productForm.productName, price: parseFloat(productForm.price), category: "Custom" };
+    setCart(prev => [...prev, { ...product, quantity: qty }]);
+    setProductForm({ productName: "", price: "", quantity: "1" });
+    setStep("products");
+  };
+
   const resetAndClose = () => {
     setStep("products");
     setCart([]);
@@ -129,6 +141,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setSelectedCategory("All");
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
+    setProductForm({ productName: "", price: "", quantity: "1" });
     onClose();
   };
 
@@ -139,6 +152,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "products": return "Select Products";
       case "transport-form": return "Add Transport";
       case "service-form": return "Add Service";
+      case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
       case "payment": return "Payment";
@@ -205,6 +219,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     <p className="text-xs text-primary font-semibold mt-1">View All</p>
                   </button>
                 )}
+                {showProductTile && (
+                  <button onClick={() => setStep("product-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><Plus className="w-5 h-5 text-primary" /></div>
+                    <p className="font-medium text-foreground text-sm">Custom Product</p>
+                    <p className="text-xs text-muted-foreground">Add any item</p>
+                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                  </button>
+                )}
                 {filteredProducts.map(product => {
                   const qty = getCartQty(product.id);
                   return (
@@ -256,6 +278,21 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
                 <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">Add to Cart</Button>
+              </div>
+            </div>
+          )}
+
+          {/* CUSTOM PRODUCT FORM */}
+          {step === "product-form" && (
+            <div className="p-4 space-y-4">
+              <div className="space-y-2"><Label>Product Name</Label><Input value={productForm.productName} onChange={e => setProductForm({ ...productForm, productName: e.target.value })} placeholder="e.g. Phone Case, Charger" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2"><Label>Price (P)</Label><Input type="number" inputMode="numeric" value={productForm.price} onChange={e => setProductForm({ ...productForm, price: e.target.value })} placeholder="0.00" /></div>
+                <div className="space-y-2"><Label>Quantity</Label><Input type="number" inputMode="numeric" value={productForm.quantity} onChange={e => setProductForm({ ...productForm, quantity: e.target.value })} placeholder="1" /></div>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
+                <Button onClick={handleAddProduct} disabled={!productForm.productName || !productForm.price} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}
