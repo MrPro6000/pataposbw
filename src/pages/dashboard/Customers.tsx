@@ -33,11 +33,20 @@ interface Customer {
 }
 
 const initialCustomers: Customer[] = [
-  { id: "CUS001", name: "John Smith", email: "john@email.com", phone: "+267 72 123 4567", totalSpent: 2450.00, transactions: 12, lastVisit: "2025-01-28" },
-  { id: "CUS002", name: "Sarah Johnson", email: "sarah@email.com", phone: "+267 73 234 5678", totalSpent: 1890.00, transactions: 8, lastVisit: "2025-01-27" },
-  { id: "CUS003", name: "Michael Brown", email: "michael@email.com", totalSpent: 3200.00, transactions: 15, lastVisit: "2025-01-26" },
-  { id: "CUS004", name: "Emily Davis", email: "emily@email.com", phone: "+267 74 345 6789", totalSpent: 950.00, transactions: 5, lastVisit: "2025-01-25" },
-  { id: "CUS005", name: "David Wilson", email: "david@email.com", totalSpent: 4100.00, transactions: 20, lastVisit: "2025-01-24" },
+  // Individual customers
+  { id: "CUS001", name: "Keabetswe Moeng", email: "keabetswe@email.com", phone: "+267 72 123 4567", totalSpent: 2450.00, transactions: 12, lastVisit: "2025-01-28" },
+  { id: "CUS002", name: "Onalenna Kgosi", email: "onalenna@email.com", phone: "+267 73 234 5678", totalSpent: 1890.00, transactions: 8, lastVisit: "2025-01-27" },
+  { id: "CUS003", name: "Tebogo Molefe", email: "tebogo@email.com", totalSpent: 3200.00, transactions: 15, lastVisit: "2025-01-26" },
+  { id: "CUS004", name: "Lesego Motswagole", email: "lesego@email.com", phone: "+267 74 345 6789", totalSpent: 950.00, transactions: 5, lastVisit: "2025-01-25" },
+  { id: "CUS005", name: "Kagiso Seretse", email: "kagiso@email.com", totalSpent: 4100.00, transactions: 20, lastVisit: "2025-01-24" },
+  // Companies & Government entities
+  { id: "CUS006", name: "Tsabong Sub-District Council", email: "accounts@tsabongcouncil.gov.bw", phone: "+267 65 440 123", totalSpent: 28500.00, transactions: 45, lastVisit: "2025-01-28" },
+  { id: "CUS007", name: "Tlokweng Land Board", email: "payments@tlokwenglandboard.gov.bw", phone: "+267 39 281 00", totalSpent: 15200.00, transactions: 32, lastVisit: "2025-01-27" },
+  { id: "CUS008", name: "Gaborone City Council", email: "revenue@gaboronecity.gov.bw", phone: "+267 36 588 00", totalSpent: 72000.00, transactions: 120, lastVisit: "2025-01-28" },
+  { id: "CUS009", name: "Extension 14 Clinic", email: "admin@ext14clinic.gov.bw", phone: "+267 39 531 22", totalSpent: 8900.00, transactions: 18, lastVisit: "2025-01-26" },
+  { id: "CUS010", name: "Mogoditshane Primary Hospital", email: "finance@mogoditshanehospital.gov.bw", phone: "+267 39 189 00", totalSpent: 34500.00, transactions: 55, lastVisit: "2025-01-25" },
+  { id: "CUS011", name: "Broadhurst Magistrate Court", email: "accounts@broadhurstcourt.gov.bw", phone: "+267 39 544 11", totalSpent: 19800.00, transactions: 40, lastVisit: "2025-01-24" },
+  { id: "CUS012", name: "Francistown Municipal Council", email: "revenue@francistowncouncil.gov.bw", phone: "+267 24 113 00", totalSpent: 56000.00, transactions: 90, lastVisit: "2025-01-27" },
 ];
 
 const Customers = () => {

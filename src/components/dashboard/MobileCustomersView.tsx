@@ -20,11 +20,12 @@ interface Customer {
 
 const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) => {
   const customers: Customer[] = [
-    { id: "1", name: "John Doe", email: "john@example.com", phone: "+267 72 234 5678", totalSpent: 2450, visits: 12 },
-    { id: "2", name: "Sarah Smith", email: "sarah@example.com", phone: "+267 73 345 6789", totalSpent: 1890, visits: 8 },
-    { id: "3", name: "Mike Johnson", email: "mike@example.com", phone: "+267 74 456 7890", totalSpent: 3200, visits: 15 },
-    { id: "4", name: "Emily Brown", email: "emily@example.com", phone: "+267 75 567 8901", totalSpent: 980, visits: 4 },
-    { id: "5", name: "David Lee", email: "david@example.com", phone: "+267 76 678 9012", totalSpent: 4500, visits: 22 },
+    { id: "1", name: "Keabetswe Moeng", email: "keabetswe@email.com", phone: "+267 72 234 5678", totalSpent: 2450, visits: 12 },
+    { id: "2", name: "Onalenna Kgosi", email: "onalenna@email.com", phone: "+267 73 345 6789", totalSpent: 1890, visits: 8 },
+    { id: "3", name: "Tebogo Molefe", email: "tebogo@email.com", phone: "+267 74 456 7890", totalSpent: 3200, visits: 15 },
+    { id: "4", name: "Gaborone City Council", email: "revenue@gaboronecity.gov.bw", phone: "+267 36 588 00", totalSpent: 72000, visits: 120 },
+    { id: "5", name: "Tsabong Sub-District Council", email: "accounts@tsabongcouncil.gov.bw", phone: "+267 65 440 123", totalSpent: 28500, visits: 45 },
+    { id: "6", name: "Extension 14 Clinic", email: "admin@ext14clinic.gov.bw", phone: "+267 39 531 22", totalSpent: 8900, visits: 18 },
   ];
 
   return (

@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const Capital = () => {
   const benefits = [
     "No paperwork or credit assessments",
-    "Funds deposited within 24 hours",
+    "Funds deposited within 48 hours",
     "Flexible repayment tied to your sales",
     "No fixed monthly obligations",
     "Zero interest charges",
@@ -30,7 +30,7 @@ const Capital = () => {
               </h1>
 
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-                Skip the banks and bureaucracy. Access business funding in 24 hours with repayments that automatically adjust to your revenue. Powering thousands of African entrepreneurs.
+                Skip the banks and bureaucracy. Access business funding in 48 hours with repayments that automatically adjust to your revenue. Powering thousands of African entrepreneurs.
               </p>
 
               <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ const Capital = () => {
                 {[
                   { step: "1", title: "Check your offer", description: "See your eligibility and available funding amount in the Pata app." },
                   { step: "2", title: "Accept your terms", description: "Choose how much you need and review the transparent terms." },
-                  { step: "3", title: "Receive funds", description: "Money is deposited directly to your account within 24 hours." },
+                  { step: "3", title: "Receive funds", description: "Money is deposited directly to your account within 48 hours." },
                   { step: "4", title: "Repay automatically", description: "A small percentage of daily sales goes toward repayment—no manual payments." },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-4">
