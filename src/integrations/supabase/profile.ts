@@ -68,6 +68,7 @@ export const submitKYC = async (
     phoneNumber?: string;
     idFrontUrl?: string;
     idBackUrl?: string;
+    selfieUrl?: string;
   }
 ) => {
   try {
@@ -77,6 +78,7 @@ export const submitKYC = async (
       phone_number: data.phoneNumber,
       id_front_url: data.idFrontUrl,
       id_back_url: data.idBackUrl,
+      selfie_url: data.selfieUrl,
       status: "pending",
     });
 
