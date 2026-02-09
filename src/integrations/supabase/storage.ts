@@ -28,14 +28,27 @@ export const uploadFile = async (
   }
 };
 
-// Upload KYC document
+// Upload KYC document — returns the storage path (not public URL) for private bucket
 export const uploadKYCDocument = async (
   userId: string,
   documentType: "id_front" | "id_back",
   file: File
 ) => {
-  const path = `${userId}/${documentType}_${Date.now()}`;
-  return uploadFile("kyc-documents", path, file);
+  const path = `${userId}/${documentType}_${Date.now()}.${file.name.split(".").pop()}`;
+  try {
+    const { error: uploadError } = await supabase.storage
+      .from("kyc-documents")
+      .upload(path, file, { cacheControl: "3600", upsert: true });
+
+    if (uploadError) {
+      return { url: null, error: uploadError.message };
+    }
+
+    // Return the path so it can be stored in the DB and signed later
+    return { url: path, error: null };
+  } catch (error: any) {
+    return { url: null, error: error.message };
+  }
 };
 
 // Upload business logo

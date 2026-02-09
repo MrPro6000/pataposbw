@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { submitKYC, getKYCSubmission } from "@/integrations/supabase/profile";
-import { uploadKYCDocument } from "@/integrations/supabase/storage";
+import { supabase } from "@/integrations/supabase/client";
 import PataLogo from "@/components/PataLogo";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -10,21 +10,24 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Shield, CheckCircle, ArrowRight, ArrowLeft, Camera, Upload, X } from "lucide-react";
+import { Shield, CheckCircle, ArrowRight, ArrowLeft, Upload, X, User } from "lucide-react";
 
-type KYCStep = "omang" | "photos" | "pending" | "rejected";
+type KYCStep = "omang" | "photos" | "selfie" | "pending" | "rejected";
 
 const KYC = () => {
   const [omangNumber, setOmangNumber] = useState("");
   const [idFrontUrl, setIdFrontUrl] = useState("");
   const [idBackUrl, setIdBackUrl] = useState("");
+  const [selfieUrl, setSelfieUrl] = useState("");
   const [idFrontPreview, setIdFrontPreview] = useState("");
   const [idBackPreview, setIdBackPreview] = useState("");
+  const [selfiePreview, setSelfiePreview] = useState("");
   const [loading, setLoading] = useState(false);
   const [checkingKyc, setCheckingKyc] = useState(true);
   const [currentStep, setCurrentStep] = useState<KYCStep>("omang");
   const [uploadingFront, setUploadingFront] = useState(false);
   const [uploadingBack, setUploadingBack] = useState(false);
+  const [uploadingSelfie, setUploadingSelfie] = useState(false);
   
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -67,75 +70,54 @@ const KYC = () => {
     e.preventDefault();
     
     if (!omangNumber.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter your Omang Number",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Please enter your Omang Number", variant: "destructive" });
       return;
     }
 
     if (!/^\d{9}$/.test(omangNumber.trim())) {
-      toast({
-        title: "Invalid Omang Number",
-        description: "Omang Number must be 9 digits",
-        variant: "destructive",
-      });
+      toast({ title: "Invalid Omang Number", description: "Omang Number must be 9 digits", variant: "destructive" });
       return;
     }
 
     setCurrentStep("photos");
   };
 
-  const handleFileUpload = async (file: File, type: "front" | "back") => {
+  const handleFileUpload = async (file: File, type: "front" | "back" | "selfie") => {
     if (!user) return;
 
     if (!file.type.startsWith("image/")) {
-      toast({
-        title: "Invalid file type",
-        description: "Please upload an image file",
-        variant: "destructive",
-      });
+      toast({ title: "Invalid file type", description: "Please upload an image file", variant: "destructive" });
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: "File too large",
-        description: "Please upload an image smaller than 5MB",
-        variant: "destructive",
-      });
+      toast({ title: "File too large", description: "Please upload an image smaller than 5MB", variant: "destructive" });
       return;
     }
 
-    const setUploading = type === "front" ? setUploadingFront : setUploadingBack;
-    const setPreview = type === "front" ? setIdFrontPreview : setIdBackPreview;
-    const setUrl = type === "front" ? setIdFrontUrl : setIdBackUrl;
+    const setUploading = type === "front" ? setUploadingFront : type === "back" ? setUploadingBack : setUploadingSelfie;
+    const setPreview = type === "front" ? setIdFrontPreview : type === "back" ? setIdBackPreview : setSelfiePreview;
+    const setUrl = type === "front" ? setIdFrontUrl : type === "back" ? setIdBackUrl : setSelfieUrl;
 
     setUploading(true);
     try {
-      // Create preview
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(file);
 
-      // Upload to Supabase Storage
-      const { url, error } = await uploadKYCDocument(user.id, type === "front" ? "id_front" : "id_back", file);
+      // Upload to private kyc-documents bucket — returns the storage path
+      const storagePath = `${user.id}/${type}_${Date.now()}.${file.name.split(".").pop()}`;
+      const { error } = await supabase.storage
+        .from("kyc-documents")
+        .upload(storagePath, file, { cacheControl: "3600", upsert: true });
 
-      if (error) throw new Error(error);
+      if (error) throw error;
 
-      setUrl(url || "");
-      toast({
-        title: "Photo uploaded",
-        description: `ID ${type} photo uploaded successfully`,
-      });
+      setUrl(storagePath);
+      toast({ title: "Photo uploaded", description: `${type === "selfie" ? "Selfie" : `ID ${type}`} uploaded successfully` });
     } catch (error: any) {
       console.error("Upload error:", error);
-      toast({
-        title: "Upload failed",
-        description: error.message || "Failed to upload photo",
-        variant: "destructive",
-      });
+      toast({ title: "Upload failed", description: error.message || "Failed to upload photo", variant: "destructive" });
       setPreview("");
     } finally {
       setUploading(false);
@@ -143,12 +125,8 @@ const KYC = () => {
   };
 
   const handleFinalSubmit = async () => {
-    if (!idFrontUrl || !idBackUrl) {
-      toast({
-        title: "Missing photos",
-        description: "Please upload both front and back photos of your ID",
-        variant: "destructive",
-      });
+    if (!selfieUrl) {
+      toast({ title: "Missing selfie", description: "Please upload a selfie photo", variant: "destructive" });
       return;
     }
 
@@ -164,6 +142,7 @@ const KYC = () => {
         phoneNumber: user.email || "",
         idFrontUrl,
         idBackUrl,
+        selfieUrl,
       });
 
       if (error) throw new Error(error);
@@ -173,14 +152,9 @@ const KYC = () => {
         description: "Your verification is pending approval. Setting up your business...",
       });
       
-      // Redirect to business setup
       navigate("/business-setup");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to submit KYC",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: error.message || "Failed to submit KYC", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -194,52 +168,56 @@ const KYC = () => {
     );
   }
 
-  const renderPhotoUpload = (type: "front" | "back") => {
-    const preview = type === "front" ? idFrontPreview : idBackPreview;
-    const url = type === "front" ? idFrontUrl : idBackUrl;
-    const uploading = type === "front" ? uploadingFront : uploadingBack;
-    const setPreview = type === "front" ? setIdFrontPreview : setIdBackPreview;
-    const setUrl = type === "front" ? setIdFrontUrl : setIdBackUrl;
+  const renderPhotoUpload = (type: "front" | "back" | "selfie") => {
+    const preview = type === "front" ? idFrontPreview : type === "back" ? idBackPreview : selfiePreview;
+    const url = type === "front" ? idFrontUrl : type === "back" ? idBackUrl : selfieUrl;
+    const uploading = type === "front" ? uploadingFront : type === "back" ? uploadingBack : uploadingSelfie;
+    const setPreview = type === "front" ? setIdFrontPreview : type === "back" ? setIdBackPreview : setSelfiePreview;
+    const setUrl = type === "front" ? setIdFrontUrl : type === "back" ? setIdBackUrl : setSelfieUrl;
+    const label = type === "selfie" ? "Selfie Photo" : `ID ${type === "front" ? "Front" : "Back"}`;
+    const isRound = type === "selfie";
 
     return (
       <div className={`rounded-2xl p-4 ${isDark ? "bg-[#2a2a2a] border border-white/10" : "bg-white border border-[#e0e0e0]"}`}>
         <div className="flex items-center justify-between mb-3">
-          <h3 className={`font-medium ${isDark ? "text-white" : "text-[#141414]"}`}>
-            ID {type === "front" ? "Front" : "Back"}
-          </h3>
+          <h3 className={`font-medium ${isDark ? "text-white" : "text-[#141414]"}`}>{label}</h3>
           {url && <CheckCircle className="w-5 h-5 text-green-500" />}
         </div>
 
-        {preview || url ? (
-          <div className="relative">
+        {preview ? (
+          <div className="relative flex justify-center">
             <img
-              src={preview || url}
-              alt={`ID ${type}`}
-              className="w-full rounded-xl aspect-[16/10] object-cover"
+              src={preview}
+              alt={label}
+              className={`object-cover ${isRound ? "w-32 h-32 rounded-full" : "w-full rounded-xl aspect-[16/10]"}`}
             />
             <button
-              onClick={() => {
-                setPreview("");
-                setUrl("");
-              }}
+              onClick={() => { setPreview(""); setUrl(""); }}
               className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         ) : (
-          <label className={`aspect-[16/10] rounded-xl border-2 border-dashed flex flex-col items-center justify-center gap-3 cursor-pointer ${
+          <label className={`${isRound ? "w-32 h-32 rounded-full mx-auto" : "aspect-[16/10] rounded-xl"} border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer ${
             isDark ? "border-white/20 hover:border-white/40" : "border-[#e0e0e0] hover:border-[#c0c0c0]"
           }`}>
             <div className={`p-3 rounded-full ${isDark ? "bg-white/10" : "bg-[#f5f5f5]"}`}>
-              <Upload className={`w-6 h-6 ${isDark ? "text-white/60" : "text-[#141414]/60"}`} />
+              {isRound ? (
+                <User className={`w-6 h-6 ${isDark ? "text-white/60" : "text-[#141414]/60"}`} />
+              ) : (
+                <Upload className={`w-6 h-6 ${isDark ? "text-white/60" : "text-[#141414]/60"}`} />
+              )}
             </div>
-            <p className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
-              {uploading ? "Uploading..." : `Upload ID ${type}`}
-            </p>
+            {!isRound && (
+              <p className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
+                {uploading ? "Uploading..." : `Upload ${label}`}
+              </p>
+            )}
             <input
               type="file"
               accept="image/*"
+              capture={type === "selfie" ? "user" : "environment"}
               className="hidden"
               disabled={uploading}
               onChange={(e) => {
@@ -251,16 +229,17 @@ const KYC = () => {
         )}
 
         {uploading && (
-          <div className="mt-3 flex items-center gap-2">
+          <div className="mt-3 flex items-center justify-center gap-2">
             <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-            <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
-              Uploading...
-            </span>
+            <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>Uploading...</span>
           </div>
         )}
       </div>
     );
   };
+
+  const totalSteps = 3;
+  const currentStepNum = currentStep === "omang" ? 1 : currentStep === "photos" ? 2 : 3;
 
   const renderStepContent = () => {
     switch (currentStep) {
@@ -270,16 +249,9 @@ const KYC = () => {
             <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Verification Pending
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Your KYC submission is being reviewed. You'll be notified once approved.
-            </p>
-            <Button
-              onClick={() => navigate("/dashboard")}
-              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-            >
+            <h2 className="text-xl font-semibold text-foreground mb-2">Verification Pending</h2>
+            <p className="text-muted-foreground mb-6">Your KYC submission is being reviewed. You'll be notified once approved.</p>
+            <Button onClick={() => navigate("/dashboard")} className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
               Continue to Dashboard
             </Button>
           </div>
@@ -291,17 +263,34 @@ const KYC = () => {
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-red-500 text-2xl">✕</span>
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">
-              Verification Rejected
-            </h2>
-            <p className="text-muted-foreground mb-6">
-              Please contact support for assistance.
-            </p>
-            <Button
-              onClick={() => navigate("/dashboard/support")}
-              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-            >
+            <h2 className="text-xl font-semibold text-foreground mb-2">Verification Rejected</h2>
+            <p className="text-muted-foreground mb-6">Please contact support for assistance.</p>
+            <Button onClick={() => navigate("/dashboard/support")} className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
               Contact Support
+            </Button>
+          </div>
+        );
+
+      case "selfie":
+        return (
+          <div className="space-y-6">
+            <button onClick={() => setCurrentStep("photos")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+            <div className="text-center">
+              <h2 className="text-xl font-semibold text-foreground mb-2">Take a Selfie</h2>
+              <p className="text-sm text-muted-foreground">Upload a clear photo of your face for identity verification</p>
+            </div>
+            {renderPhotoUpload("selfie")}
+            <Button
+              onClick={handleFinalSubmit}
+              disabled={loading || !selfieUrl}
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
+            >
+              {loading ? "Submitting..." : "Submit for Verification"}
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
+              Skip for now
             </Button>
           </div>
         );
@@ -309,28 +298,17 @@ const KYC = () => {
       case "photos":
         return (
           <div className="space-y-6">
-            <button
-              onClick={() => setCurrentStep("omang")}
-              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back
+            <button onClick={() => setCurrentStep("omang")} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="w-4 h-4" /> Back
             </button>
-
             <div className="text-center">
-              <h2 className="text-xl font-semibold text-foreground mb-2">
-                Upload ID Photos
-              </h2>
-              <p className="text-sm text-muted-foreground">
-                Take a clear photo or scan both sides of your Omang ID
-              </p>
+              <h2 className="text-xl font-semibold text-foreground mb-2">Upload ID Photos</h2>
+              <p className="text-sm text-muted-foreground">Take a clear photo or scan both sides of your Omang ID</p>
             </div>
-
             <div className="space-y-4">
               {renderPhotoUpload("front")}
               {renderPhotoUpload("back")}
             </div>
-
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className={`w-4 h-4 ${idFrontUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
               <span className="text-sm text-muted-foreground">ID Front uploaded</span>
@@ -339,21 +317,14 @@ const KYC = () => {
               <CheckCircle className={`w-4 h-4 ${idBackUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
               <span className="text-sm text-muted-foreground">ID Back uploaded</span>
             </div>
-
             <Button
-              onClick={handleFinalSubmit}
-              disabled={loading || !idFrontUrl || !idBackUrl}
-              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
+              onClick={() => setCurrentStep("selfie")}
+              disabled={!idFrontUrl || !idBackUrl}
+              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {loading ? "Submitting..." : "Submit for Verification"}
+              Continue to Selfie <ArrowRight className="w-4 h-4" />
             </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => navigate("/dashboard")}
-              className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl"
-            >
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
               Skip for now
             </Button>
           </div>
@@ -363,9 +334,7 @@ const KYC = () => {
         return (
           <form onSubmit={handleOmangSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="omang" className="text-foreground">
-                Omang Number (National ID)
-              </Label>
+              <Label htmlFor="omang" className="text-foreground">Omang Number (National ID)</Label>
               <Input
                 id="omang"
                 type="text"
@@ -375,25 +344,12 @@ const KYC = () => {
                 className="mt-2 bg-muted border-input rounded-xl py-4"
                 maxLength={9}
               />
-              <p className="mt-2 text-sm text-muted-foreground">
-                Your Omang Number will be verified by our team
-              </p>
+              <p className="mt-2 text-sm text-muted-foreground">Your Omang Number will be verified by our team</p>
             </div>
-
-            <Button
-              type="submit"
-              className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2"
-            >
-              Continue
-              <ArrowRight className="w-4 h-4" />
+            <Button type="submit" className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2">
+              Continue <ArrowRight className="w-4 h-4" />
             </Button>
-
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={() => navigate("/dashboard")}
-              className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl"
-            >
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
               Skip for now
             </Button>
           </form>
@@ -403,42 +359,30 @@ const KYC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
-      {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <PataLogo className="h-5 text-foreground" />
         <ThemeToggle />
       </header>
-
-      {/* Main Content */}
       <main className="flex-1 flex items-center justify-center p-6">
         <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8 shadow-lg">
-          {currentStep === "omang" && (
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-primary" />
+          {(currentStep === "omang" || currentStep === "photos" || currentStep === "selfie") && (
+            <>
+              {currentStep === "omang" && (
+                <div className="text-center mb-8">
+                  <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <Shield className="w-8 h-8 text-primary" />
+                  </div>
+                  <h1 className="text-2xl font-bold text-foreground mb-2">Verify Your Identity</h1>
+                  <p className="text-muted-foreground">Complete KYC verification to access all features</p>
+                </div>
+              )}
+              <div className="flex items-center justify-center gap-2 mb-6">
+                {[1, 2, 3].map((step) => (
+                  <div key={step} className={`w-8 h-1 rounded-full ${step <= currentStepNum ? "bg-primary" : "bg-muted"}`} />
+                ))}
               </div>
-              <h1 className="text-2xl font-bold text-foreground mb-2">
-                Verify Your Identity
-              </h1>
-              <p className="text-muted-foreground">
-                Complete KYC verification to access all features
-              </p>
-
-              {/* Progress indicator */}
-              <div className="flex items-center justify-center gap-2 mt-6">
-                <div className="w-8 h-1 rounded-full bg-primary"></div>
-                <div className="w-8 h-1 rounded-full bg-muted"></div>
-              </div>
-            </div>
+            </>
           )}
-
-          {currentStep === "photos" && (
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <div className="w-8 h-1 rounded-full bg-primary"></div>
-              <div className="w-8 h-1 rounded-full bg-primary"></div>
-            </div>
-          )}
-
           {renderStepContent()}
         </div>
       </main>
