@@ -136,7 +136,6 @@ const Sales = () => {
   const { toast } = useToast();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
 
-  // Payment form state
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -145,18 +144,15 @@ const Sales = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Payment Link form state
   const [linkTitle, setLinkTitle] = useState("");
   const [linkAmount, setLinkAmount] = useState("");
   const [linkCustomer, setLinkCustomer] = useState("");
 
-  // Invoice form state
   const [invoiceCustomer, setInvoiceCustomer] = useState("");
   const [invoiceAmount, setInvoiceAmount] = useState("");
   const [invoiceDueDate, setInvoiceDueDate] = useState("");
   const [invoiceItems, setInvoiceItems] = useState("");
 
-  // Show mobile view on mobile devices
   if (isMobile) {
     return <MobileDashboardHome />;
   }
@@ -177,26 +173,26 @@ const Sales = () => {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "card": return "bg-blue-100 text-blue-600";
-      case "cash": return "bg-green-100 text-green-600";
-      case "mobile_money": return "bg-orange-100 text-orange-600";
-      case "wallet": return "bg-purple-100 text-purple-600";
-      case "tap": return "bg-cyan-100 text-cyan-600";
-      case "online": return "bg-indigo-100 text-indigo-600";
-      case "qr": return "bg-pink-100 text-pink-600";
-      case "payment_link": return "bg-teal-100 text-teal-600";
-      default: return "bg-gray-100 text-gray-600";
+      case "card": return "bg-blue-500/20 text-blue-400";
+      case "cash": return "bg-green-500/20 text-green-400";
+      case "mobile_money": return "bg-orange-500/20 text-orange-400";
+      case "wallet": return "bg-purple-500/20 text-purple-400";
+      case "tap": return "bg-cyan-500/20 text-cyan-400";
+      case "online": return "bg-indigo-500/20 text-indigo-400";
+      case "qr": return "bg-pink-500/20 text-pink-400";
+      case "payment_link": return "bg-teal-500/20 text-teal-400";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "success": case "paid": return "bg-green-100 text-green-700";
-      case "pending": case "sent": return "bg-yellow-100 text-yellow-700";
-      case "failed": case "overdue": case "expired": return "bg-red-100 text-red-700";
-      case "unpaid": return "bg-orange-100 text-orange-700";
-      case "draft": return "bg-gray-100 text-gray-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "success": case "paid": return "bg-green-500/20 text-green-400";
+      case "pending": case "sent": return "bg-yellow-500/20 text-yellow-400";
+      case "failed": case "overdue": case "expired": return "bg-red-500/20 text-red-400";
+      case "unpaid": return "bg-orange-500/20 text-orange-400";
+      case "draft": return "bg-muted text-muted-foreground";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
@@ -225,26 +221,16 @@ const Sales = () => {
       toast({ title: "Error", description: "Please enter a valid amount", variant: "destructive" });
       return;
     }
-
     if (paymentType === "mobile-money" && !selectedProvider) {
       toast({ title: "Error", description: "Please select a provider", variant: "destructive" });
       return;
     }
-
     setIsProcessing(true);
     await new Promise(resolve => setTimeout(resolve, 1500));
     setIsProcessing(false);
     setIsSuccess(true);
-    
-    toast({
-      title: "Payment Successful",
-      description: `P${parseFloat(amount).toFixed(2)} payment completed`,
-    });
-
-    setTimeout(() => {
-      setPaymentDialogOpen(false);
-      setIsSuccess(false);
-    }, 1500);
+    toast({ title: "Payment Successful", description: `P${parseFloat(amount).toFixed(2)} payment completed` });
+    setTimeout(() => { setPaymentDialogOpen(false); setIsSuccess(false); }, 1500);
   };
 
   const handleCreatePaymentLink = () => {
@@ -252,16 +238,9 @@ const Sales = () => {
       toast({ title: "Error", description: "Please fill in all required fields", variant: "destructive" });
       return;
     }
-
-    toast({
-      title: "Payment Link Created",
-      description: "Your payment link has been generated and copied to clipboard",
-    });
-    
+    toast({ title: "Payment Link Created", description: "Your payment link has been generated and copied to clipboard" });
     setPaymentLinkDialogOpen(false);
-    setLinkTitle("");
-    setLinkAmount("");
-    setLinkCustomer("");
+    setLinkTitle(""); setLinkAmount(""); setLinkCustomer("");
   };
 
   const handleCreateInvoice = () => {
@@ -269,17 +248,9 @@ const Sales = () => {
       toast({ title: "Error", description: "Please fill in all required fields", variant: "destructive" });
       return;
     }
-
-    toast({
-      title: "Invoice Created",
-      description: "Your invoice has been created successfully",
-    });
-    
+    toast({ title: "Invoice Created", description: "Your invoice has been created successfully" });
     setInvoiceDialogOpen(false);
-    setInvoiceCustomer("");
-    setInvoiceAmount("");
-    setInvoiceDueDate("");
-    setInvoiceItems("");
+    setInvoiceCustomer(""); setInvoiceAmount(""); setInvoiceDueDate(""); setInvoiceItems("");
   };
 
   const copyLink = (url: string) => {
@@ -289,7 +260,7 @@ const Sales = () => {
 
   const getPaymentTypeConfig = (type: PaymentType) => {
     switch (type) {
-      case "card": return { title: "Card Sale", icon: CreditCard, color: "bg-[#0066FF]" };
+      case "card": return { title: "Card Sale", icon: CreditCard, color: "bg-primary" };
       case "payment-link": return { title: "Payment Link", icon: Link2, color: "bg-purple-500" };
       case "invoice": return { title: "New Invoice", icon: FileText, color: "bg-blue-500" };
       case "cash": return { title: "Cash Payment", icon: Banknote, color: "bg-green-500" };
@@ -306,22 +277,22 @@ const Sales = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#141414]">Sales & Transactions</h1>
-          <p className="text-[#141414]/60">Manage payments, invoices, and payment links</p>
+          <h1 className="text-2xl font-bold text-foreground">Sales & Transactions</h1>
+          <p className="text-muted-foreground">Manage payments, invoices, and payment links</p>
         </div>
-        <Button className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
+        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Download className="w-4 h-4 mr-2" />
           Export
         </Button>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white rounded-2xl p-5 mb-6">
-        <h2 className="text-sm font-medium text-[#141414]/60 mb-4">Quick Actions</h2>
+      <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
+        <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-[#141414] text-white border-0 hover:bg-[#2a2a2a] hover:text-white"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
             onClick={() => openPaymentDialog("card")}
           >
             <CreditCard className="w-5 h-5" />
@@ -329,7 +300,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-[#141414] text-white border-0 hover:bg-[#2a2a2a] hover:text-white"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
@@ -337,7 +308,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-[#141414] text-white border-0 hover:bg-[#2a2a2a] hover:text-white"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
             onClick={() => setInvoiceDialogOpen(true)}
           >
             <FileText className="w-5 h-5" />
@@ -345,7 +316,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-[#F5F5F5]"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("cash")}
           >
             <Banknote className="w-5 h-5" />
@@ -353,7 +324,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-[#F5F5F5]"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("mobile-money")}
           >
             <Smartphone className="w-5 h-5" />
@@ -361,7 +332,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-[#F5F5F5]"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("wallet")}
           >
             <Wallet className="w-5 h-5" />
@@ -369,7 +340,7 @@ const Sales = () => {
           </Button>
           <Button 
             variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-[#F5F5F5]"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setSellProductsOpen(true)}
           >
             <ShoppingBag className="w-5 h-5" />
@@ -380,14 +351,14 @@ const Sales = () => {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-white p-1 h-auto">
-          <TabsTrigger value="transactions" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
+        <TabsList className="bg-card border border-border p-1 h-auto">
+          <TabsTrigger value="transactions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
             Transactions
           </TabsTrigger>
-          <TabsTrigger value="payment-links" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
+          <TabsTrigger value="payment-links" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
             Payment Links
           </TabsTrigger>
-          <TabsTrigger value="invoices" className="data-[state=active]:bg-[#0066FF] data-[state=active]:text-white px-6 py-2">
+          <TabsTrigger value="invoices" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
             Invoices
           </TabsTrigger>
         </TabsList>
@@ -395,10 +366,10 @@ const Sales = () => {
         {/* Transactions Tab */}
         <TabsContent value="transactions">
           {/* Filters */}
-          <div className="bg-white rounded-2xl p-4 mb-6">
+          <div className="bg-card rounded-2xl p-4 mb-6 border border-border">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#141414]/40" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input 
                   placeholder="Search by reference, card, customer, or provider..."
                   value={searchQuery}
@@ -410,7 +381,7 @@ const Sales = () => {
                 <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Date range" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="bg-popover border border-border">
                   <SelectItem value="all">All time</SelectItem>
                   <SelectItem value="today">Today</SelectItem>
                   <SelectItem value="week">This week</SelectItem>
@@ -421,7 +392,7 @@ const Sales = () => {
                 <SelectTrigger className="w-full md:w-[180px]">
                   <SelectValue placeholder="Payment type" />
                 </SelectTrigger>
-                <SelectContent className="bg-white">
+                <SelectContent className="bg-popover border border-border">
                   <SelectItem value="all">All types</SelectItem>
                   <SelectItem value="card">Card</SelectItem>
                   <SelectItem value="cash">Cash</SelectItem>
@@ -437,26 +408,26 @@ const Sales = () => {
           </div>
 
           {/* Transactions Table */}
-          <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="bg-card rounded-2xl overflow-hidden border border-border">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[#F6F6F6]">
+                <thead className="bg-muted">
                   <tr>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Reference</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Date</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Type</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Amount</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Status</th>
-                    <th className="text-right p-4 text-sm font-medium text-[#141414]/60">Actions</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Reference</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Type</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredTransactions.map((tx) => (
-                    <tr key={tx.id} className="border-t border-[#f0f0f0] hover:bg-[#fafafa]">
+                    <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-[#141414]">{tx.reference}</span>
+                        <span className="font-medium text-foreground">{tx.reference}</span>
                       </td>
-                      <td className="p-4 text-[#141414]/70">
+                      <td className="p-4 text-muted-foreground">
                         {tx.date} at {tx.time}
                       </td>
                       <td className="p-4">
@@ -465,7 +436,7 @@ const Sales = () => {
                           {paymentTypeLabels[tx.type]}
                         </span>
                       </td>
-                      <td className="p-4 font-semibold text-[#141414]">
+                      <td className="p-4 font-semibold text-foreground">
                         P{tx.amount.toFixed(2)}
                       </td>
                       <td className="p-4">
@@ -477,13 +448,13 @@ const Sales = () => {
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => setSelectedTransaction(tx)}
-                            className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors"
+                            className="p-2 hover:bg-muted rounded-lg transition-colors"
                           >
-                            <Eye className="w-4 h-4 text-[#141414]/60" />
+                            <Eye className="w-4 h-4 text-muted-foreground" />
                           </button>
                           {tx.status === "success" && tx.type !== "cash" && (
-                            <button className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors">
-                              <RotateCcw className="w-4 h-4 text-[#141414]/60" />
+                            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                              <RotateCcw className="w-4 h-4 text-muted-foreground" />
                             </button>
                           )}
                         </div>
@@ -499,9 +470,9 @@ const Sales = () => {
         {/* Payment Links Tab */}
         <TabsContent value="payment-links">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-[#141414]/60">Manage and track your payment links</p>
+            <p className="text-muted-foreground">Manage and track your payment links</p>
             <Button 
-              className="bg-[#0066FF] hover:bg-[#0052CC] text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => setPaymentLinkDialogOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -509,29 +480,29 @@ const Sales = () => {
             </Button>
           </div>
 
-          <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="bg-card rounded-2xl overflow-hidden border border-border">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[#F6F6F6]">
+                <thead className="bg-muted">
                   <tr>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Title</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Amount</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Customer</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Status</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Created</th>
-                    <th className="text-right p-4 text-sm font-medium text-[#141414]/60">Actions</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Title</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Customer</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Created</th>
+                    <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {paymentLinks.map((link) => (
-                    <tr key={link.id} className="border-t border-[#f0f0f0] hover:bg-[#fafafa]">
+                    <tr key={link.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-[#141414]">{link.title}</span>
+                        <span className="font-medium text-foreground">{link.title}</span>
                       </td>
-                      <td className="p-4 font-semibold text-[#141414]">
+                      <td className="p-4 font-semibold text-foreground">
                         P{link.amount.toFixed(2)}
                       </td>
-                      <td className="p-4 text-[#141414]/70">
+                      <td className="p-4 text-muted-foreground">
                         {link.customer || "-"}
                       </td>
                       <td className="p-4">
@@ -539,24 +510,24 @@ const Sales = () => {
                           {link.status}
                         </span>
                       </td>
-                      <td className="p-4 text-[#141414]/70">
+                      <td className="p-4 text-muted-foreground">
                         {link.createdAt}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <button 
                             onClick={() => copyLink(link.url)}
-                            className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors"
+                            className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Copy link"
                           >
-                            <Copy className="w-4 h-4 text-[#141414]/60" />
+                            <Copy className="w-4 h-4 text-muted-foreground" />
                           </button>
                           <button 
                             onClick={() => window.open(link.url, '_blank')}
-                            className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors"
+                            className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Open link"
                           >
-                            <ExternalLink className="w-4 h-4 text-[#141414]/60" />
+                            <ExternalLink className="w-4 h-4 text-muted-foreground" />
                           </button>
                         </div>
                       </td>
@@ -571,9 +542,9 @@ const Sales = () => {
         {/* Invoices Tab */}
         <TabsContent value="invoices">
           <div className="flex justify-between items-center mb-4">
-            <p className="text-[#141414]/60">Create and manage invoices for your customers</p>
+            <p className="text-muted-foreground">Create and manage invoices for your customers</p>
             <Button 
-              className="bg-[#0066FF] hover:bg-[#0052CC] text-white"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => setInvoiceDialogOpen(true)}
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -581,29 +552,29 @@ const Sales = () => {
             </Button>
           </div>
 
-          <div className="bg-white rounded-2xl overflow-hidden">
+          <div className="bg-card rounded-2xl overflow-hidden border border-border">
             <div className="overflow-x-auto">
               <table className="w-full">
-                <thead className="bg-[#F6F6F6]">
+                <thead className="bg-muted">
                   <tr>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Invoice #</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Customer</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Amount</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Status</th>
-                    <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Due Date</th>
-                    <th className="text-right p-4 text-sm font-medium text-[#141414]/60">Actions</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Invoice #</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Customer</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                    <th className="text-left p-4 text-sm font-medium text-muted-foreground">Due Date</th>
+                    <th className="text-right p-4 text-sm font-medium text-muted-foreground">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {invoices.map((invoice) => (
-                    <tr key={invoice.id} className="border-t border-[#f0f0f0] hover:bg-[#fafafa]">
+                    <tr key={invoice.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-[#141414]">{invoice.invoiceNumber}</span>
+                        <span className="font-medium text-foreground">{invoice.invoiceNumber}</span>
                       </td>
-                      <td className="p-4 text-[#141414]">
+                      <td className="p-4 text-foreground">
                         {invoice.customer}
                       </td>
-                      <td className="p-4 font-semibold text-[#141414]">
+                      <td className="p-4 font-semibold text-foreground">
                         P{invoice.amount.toFixed(2)}
                       </td>
                       <td className="p-4">
@@ -611,16 +582,16 @@ const Sales = () => {
                           {invoice.status}
                         </span>
                       </td>
-                      <td className="p-4 text-[#141414]/70">
+                      <td className="p-4 text-muted-foreground">
                         {invoice.dueDate}
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors">
-                            <Eye className="w-4 h-4 text-[#141414]/60" />
+                          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                            <Eye className="w-4 h-4 text-muted-foreground" />
                           </button>
-                          <button className="p-2 hover:bg-[#f0f0f0] rounded-lg transition-colors">
-                            <Download className="w-4 h-4 text-[#141414]/60" />
+                          <button className="p-2 hover:bg-muted rounded-lg transition-colors">
+                            <Download className="w-4 h-4 text-muted-foreground" />
                           </button>
                         </div>
                       </td>
@@ -645,51 +616,51 @@ const Sales = () => {
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 ${getTypeColor(selectedTransaction.type)}`}>
                   {getTypeIcon(selectedTransaction.type)}
                 </div>
-                <p className="text-3xl font-bold text-[#141414]">P{selectedTransaction.amount.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-foreground">P{selectedTransaction.amount.toFixed(2)}</p>
                 <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTransaction.status)}`}>
                   {selectedTransaction.status}
                 </span>
               </div>
               
-              <div className="space-y-3 bg-[#F6F6F6] rounded-xl p-4">
+              <div className="space-y-3 bg-muted rounded-xl p-4">
                 <div className="flex justify-between">
-                  <span className="text-[#141414]/60">Reference</span>
-                  <span className="font-medium">{selectedTransaction.reference}</span>
+                  <span className="text-muted-foreground">Reference</span>
+                  <span className="font-medium text-foreground">{selectedTransaction.reference}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#141414]/60">Date</span>
-                  <span className="font-medium">{selectedTransaction.date}</span>
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium text-foreground">{selectedTransaction.date}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#141414]/60">Time</span>
-                  <span className="font-medium">{selectedTransaction.time}</span>
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="font-medium text-foreground">{selectedTransaction.time}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-[#141414]/60">Payment Method</span>
-                  <span className="font-medium">{paymentTypeLabels[selectedTransaction.type]}</span>
+                  <span className="text-muted-foreground">Payment Method</span>
+                  <span className="font-medium text-foreground">{paymentTypeLabels[selectedTransaction.type]}</span>
                 </div>
                 {selectedTransaction.provider && (
                   <div className="flex justify-between">
-                    <span className="text-[#141414]/60">Provider</span>
-                    <span className="font-medium">{selectedTransaction.provider}</span>
+                    <span className="text-muted-foreground">Provider</span>
+                    <span className="font-medium text-foreground">{selectedTransaction.provider}</span>
                   </div>
                 )}
                 {selectedTransaction.cardLast4 && (
                   <div className="flex justify-between">
-                    <span className="text-[#141414]/60">Card</span>
-                    <span className="font-medium">•••• {selectedTransaction.cardLast4}</span>
+                    <span className="text-muted-foreground">Card</span>
+                    <span className="font-medium text-foreground">•••• {selectedTransaction.cardLast4}</span>
                   </div>
                 )}
                 {selectedTransaction.customer && (
                   <div className="flex justify-between">
-                    <span className="text-[#141414]/60">Customer</span>
-                    <span className="font-medium">{selectedTransaction.customer}</span>
+                    <span className="text-muted-foreground">Customer</span>
+                    <span className="font-medium text-foreground">{selectedTransaction.customer}</span>
                   </div>
                 )}
               </div>
 
               {selectedTransaction.status === "success" && selectedTransaction.type !== "cash" && (
-                <Button variant="outline" className="w-full text-orange-500 border-orange-500 hover:bg-orange-50">
+                <Button variant="outline" className="w-full text-orange-500 border-orange-500 hover:bg-orange-500/10">
                   <RotateCcw className="w-4 h-4 mr-2" />
                   Issue Refund
                 </Button>
@@ -714,11 +685,11 @@ const Sales = () => {
           <div className="space-y-5">
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-10">
-                <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                   <CheckCircle className="w-10 h-10 text-green-500" />
                 </div>
-                <p className="text-xl font-bold text-[#141414]">Payment Successful!</p>
-                <p className="text-[#141414]/60">P{parseFloat(amount || "0").toFixed(2)}</p>
+                <p className="text-xl font-bold text-foreground">Payment Successful!</p>
+                <p className="text-muted-foreground">P{parseFloat(amount || "0").toFixed(2)}</p>
               </div>
             ) : (
               <>
@@ -752,12 +723,12 @@ const Sales = () => {
                           onClick={() => setSelectedProvider(provider.id)}
                           className={`p-4 rounded-xl border-2 transition-all ${
                             selectedProvider === provider.id
-                              ? "border-[#0066FF] bg-[#0066FF]/10"
-                              : "border-[#E8E8E8] bg-white"
+                              ? "border-primary bg-primary/10"
+                              : "border-border bg-card"
                           }`}
                         >
                           <div className={`w-8 h-8 ${provider.color} rounded-lg mb-2`} />
-                          <p className="text-sm font-medium text-[#141414]">{provider.name}</p>
+                          <p className="text-sm font-medium text-foreground">{provider.name}</p>
                         </button>
                       ))}
                     </div>
@@ -777,16 +748,16 @@ const Sales = () => {
                 )}
 
                 {paymentType === "card" && (
-                  <div className="bg-[#F5F5F5] rounded-xl p-4">
-                    <p className="text-sm text-[#141414]/60">
+                  <div className="bg-muted rounded-xl p-4">
+                    <p className="text-sm text-muted-foreground">
                       Enter the amount and tap your card machine to complete the transaction.
                     </p>
                   </div>
                 )}
 
                 {paymentType === "cash" && (
-                  <div className="bg-[#F5F5F5] rounded-xl p-4">
-                    <p className="text-sm text-[#141414]/60">
+                  <div className="bg-muted rounded-xl p-4">
+                    <p className="text-sm text-muted-foreground">
                       Record cash received from the customer.
                     </p>
                   </div>
@@ -795,7 +766,7 @@ const Sales = () => {
                 <Button
                   onClick={handlePaymentSubmit}
                   disabled={isProcessing}
-                  className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
+                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
                 >
                   {isProcessing ? (
                     <div className="flex items-center gap-2">
@@ -827,37 +798,17 @@ const Sales = () => {
           <div className="space-y-5">
             <div className="space-y-2">
               <Label>Title *</Label>
-              <Input
-                placeholder="e.g., Website Design Payment"
-                value={linkTitle}
-                onChange={(e) => setLinkTitle(e.target.value)}
-              />
+              <Input placeholder="e.g., Website Design Payment" value={linkTitle} onChange={(e) => setLinkTitle(e.target.value)} />
             </div>
-
             <div className="space-y-2">
               <Label>Amount (P) *</Label>
-              <Input
-                type="number"
-                placeholder="0.00"
-                value={linkAmount}
-                onChange={(e) => setLinkAmount(e.target.value)}
-              />
+              <Input type="number" placeholder="0.00" value={linkAmount} onChange={(e) => setLinkAmount(e.target.value)} />
             </div>
-
             <div className="space-y-2">
               <Label>Customer Email (optional)</Label>
-              <Input
-                type="email"
-                placeholder="customer@example.com"
-                value={linkCustomer}
-                onChange={(e) => setLinkCustomer(e.target.value)}
-              />
+              <Input type="email" placeholder="customer@example.com" value={linkCustomer} onChange={(e) => setLinkCustomer(e.target.value)} />
             </div>
-
-            <Button
-              onClick={handleCreatePaymentLink}
-              className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
-            >
+            <Button onClick={handleCreatePaymentLink} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
               Create & Copy Link
             </Button>
           </div>
@@ -879,55 +830,28 @@ const Sales = () => {
           <div className="space-y-5">
             <div className="space-y-2">
               <Label>Customer Name *</Label>
-              <Input
-                placeholder="John Doe"
-                value={invoiceCustomer}
-                onChange={(e) => setInvoiceCustomer(e.target.value)}
-              />
+              <Input placeholder="John Doe" value={invoiceCustomer} onChange={(e) => setInvoiceCustomer(e.target.value)} />
             </div>
-
             <div className="space-y-2">
               <Label>Amount (P) *</Label>
-              <Input
-                type="number"
-                placeholder="0.00"
-                value={invoiceAmount}
-                onChange={(e) => setInvoiceAmount(e.target.value)}
-              />
+              <Input type="number" placeholder="0.00" value={invoiceAmount} onChange={(e) => setInvoiceAmount(e.target.value)} />
             </div>
-
             <div className="space-y-2">
               <Label>Due Date</Label>
-              <Input
-                type="date"
-                value={invoiceDueDate}
-                onChange={(e) => setInvoiceDueDate(e.target.value)}
-              />
+              <Input type="date" value={invoiceDueDate} onChange={(e) => setInvoiceDueDate(e.target.value)} />
             </div>
-
             <div className="space-y-2">
               <Label>Items / Description</Label>
-              <Input
-                placeholder="List items or services"
-                value={invoiceItems}
-                onChange={(e) => setInvoiceItems(e.target.value)}
-              />
+              <Input placeholder="List items or services" value={invoiceItems} onChange={(e) => setInvoiceItems(e.target.value)} />
             </div>
-
-            <Button
-              onClick={handleCreateInvoice}
-              className="w-full h-12 bg-[#0066FF] hover:bg-[#0052CC] text-white font-semibold"
-            >
+            <Button onClick={handleCreateInvoice} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
               Create Invoice
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-      {/* Sell Products Dialog */}
-      <SellProductsDialog
-        open={sellProductsOpen}
-        onClose={() => setSellProductsOpen(false)}
-      />
+
+      <SellProductsDialog open={sellProductsOpen} onClose={() => setSellProductsOpen(false)} />
     </DashboardLayout>
   );
 };

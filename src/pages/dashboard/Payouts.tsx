@@ -54,14 +54,13 @@ const Payouts = () => {
   });
   const isMobile = useIsMobile();
 
-  // Show mobile view on mobile devices
   if (isMobile) {
     return <MobileDashboardHome />;
   }
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4 text-green-600" />;
+      case "completed": return <CheckCircle className="w-4 h-4 text-green-500" />;
       case "processing": return <Clock className="w-4 h-4 text-orange-500" />;
       case "pending": return <Clock className="w-4 h-4 text-yellow-500" />;
       default: return null;
@@ -70,136 +69,131 @@ const Payouts = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed": return "bg-green-100 text-green-700";
-      case "processing": return "bg-orange-100 text-orange-700";
-      case "pending": return "bg-yellow-100 text-yellow-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "completed": return "bg-green-500/20 text-green-400";
+      case "processing": return "bg-orange-500/20 text-orange-400";
+      case "pending": return "bg-yellow-500/20 text-yellow-400";
+      default: return "bg-muted text-muted-foreground";
     }
   };
 
   return (
     <DashboardLayout>
-      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#141414]">Payouts</h1>
-        <p className="text-[#141414]/60">Track your earnings and bank transfers</p>
+        <h1 className="text-2xl font-bold text-foreground">Payouts</h1>
+        <p className="text-muted-foreground">Track your earnings and bank transfers</p>
       </div>
 
-      {/* Balance Cards */}
       <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-[#141414] text-white rounded-2xl p-6">
+        <div className="bg-foreground text-background rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-[#0066FF] rounded-full flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-white" />
+            <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
+              <Wallet className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-white/70">Available Balance</span>
+            <span className="text-background/70">Available Balance</span>
           </div>
           <p className="text-3xl font-bold">P12,450.00</p>
-          <p className="text-sm text-white/60 mt-2">Next payout: Monday</p>
+          <p className="text-sm text-background/60 mt-2">Next payout: Monday</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+            <div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center">
               <Clock className="w-5 h-5 text-orange-500" />
             </div>
-            <span className="text-[#141414]/70">Processing</span>
+            <span className="text-muted-foreground">Processing</span>
           </div>
-          <p className="text-3xl font-bold text-[#141414]">P5,420.00</p>
-          <p className="text-sm text-[#141414]/60 mt-2">Expected in 1-2 days</p>
+          <p className="text-3xl font-bold text-foreground">P5,420.00</p>
+          <p className="text-sm text-muted-foreground mt-2">Expected in 1-2 days</p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-              <ArrowUpRight className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+              <ArrowUpRight className="w-5 h-5 text-green-500" />
             </div>
-            <span className="text-[#141414]/70">Paid Out (This Month)</span>
+            <span className="text-muted-foreground">Paid Out (This Month)</span>
           </div>
-          <p className="text-3xl font-bold text-[#141414]">P67,890.00</p>
-          <p className="text-sm text-[#141414]/60 mt-2">4 payouts completed</p>
+          <p className="text-3xl font-bold text-foreground">P67,890.00</p>
+          <p className="text-sm text-muted-foreground mt-2">4 payouts completed</p>
         </div>
       </div>
 
-      {/* Bank Details */}
-      <div className="bg-white rounded-2xl p-6 mb-6">
+      <div className="bg-card border border-border rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-[#141414]">Bank Account</h2>
+          <h2 className="text-lg font-semibold text-foreground">Bank Account</h2>
           <Button variant="outline" size="sm" onClick={() => setIsBankModalOpen(true)}>
             <Edit className="w-4 h-4 mr-2" />
             Edit
           </Button>
         </div>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 bg-[#F6F6F6] rounded-xl flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-[#141414]/60" />
+          <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+            <Building2 className="w-6 h-6 text-muted-foreground" />
           </div>
           <div>
-            <p className="font-medium text-[#141414]">{bankDetails.bankName}</p>
-            <p className="text-sm text-[#141414]/60">{bankDetails.accountNumber} • {bankDetails.accountHolder}</p>
+            <p className="font-medium text-foreground">{bankDetails.bankName}</p>
+            <p className="text-sm text-muted-foreground">{bankDetails.accountNumber} • {bankDetails.accountHolder}</p>
           </div>
         </div>
       </div>
 
-      {/* Pata Capital & Fees Section */}
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <button
           onClick={() => setCapitalOpen(true)}
-          className="bg-white rounded-2xl p-6 text-left hover:shadow-md transition-shadow"
+          className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-              <Wallet className="w-6 h-6 text-amber-600" />
+            <div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center">
+              <Wallet className="w-6 h-6 text-amber-500" />
             </div>
             <div>
-              <p className="font-semibold text-[#141414]">Pata Capital</p>
-              <p className="text-sm text-[#141414]/60">Get business funding with flexible repayment</p>
+              <p className="font-semibold text-foreground">Pata Capital</p>
+              <p className="text-sm text-muted-foreground">Get business funding with flexible repayment</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#141414]/30 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" />
           </div>
         </button>
 
         <button
           onClick={() => setFeesOpen(true)}
-          className="bg-white rounded-2xl p-6 text-left hover:shadow-md transition-shadow"
+          className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-[#F5F5F5] rounded-xl flex items-center justify-center">
-              <Percent className="w-6 h-6 text-[#141414]/60" />
+            <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
+              <Percent className="w-6 h-6 text-muted-foreground" />
             </div>
             <div>
-              <p className="font-semibold text-[#141414]">Fees</p>
-              <p className="text-sm text-[#141414]/60">All the fees related to your business</p>
+              <p className="font-semibold text-foreground">Fees</p>
+              <p className="text-sm text-muted-foreground">All the fees related to your business</p>
             </div>
-            <ChevronRight className="w-5 h-5 text-[#141414]/30 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" />
           </div>
         </button>
       </div>
 
-      {/* Payout History */}
-      <div className="bg-white rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-[#f0f0f0]">
-          <h2 className="text-lg font-semibold text-[#141414]">Payout History</h2>
+      <div className="bg-card border border-border rounded-2xl overflow-hidden">
+        <div className="p-6 border-b border-border">
+          <h2 className="text-lg font-semibold text-foreground">Payout History</h2>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#F6F6F6]">
+            <thead className="bg-muted">
               <tr>
-                <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Reference</th>
-                <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Date</th>
-                <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Amount</th>
-                <th className="text-left p-4 text-sm font-medium text-[#141414]/60">Status</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Reference</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
+                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
               </tr>
             </thead>
             <tbody>
               {payouts.map((payout) => (
-                <tr key={payout.id} className="border-t border-[#f0f0f0] hover:bg-[#fafafa]">
+                <tr key={payout.id} className="border-t border-border hover:bg-muted/50">
                   <td className="p-4">
-                    <span className="font-medium text-[#141414]">{payout.reference}</span>
+                    <span className="font-medium text-foreground">{payout.reference}</span>
                   </td>
-                  <td className="p-4 text-[#141414]/70">{payout.date}</td>
-                  <td className="p-4 font-semibold text-[#141414]">P{payout.amount.toFixed(2)}</td>
+                  <td className="p-4 text-muted-foreground">{payout.date}</td>
+                  <td className="p-4 font-semibold text-foreground">P{payout.amount.toFixed(2)}</td>
                   <td className="p-4">
                     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(payout.status)}`}>
                       {getStatusIcon(payout.status)}
@@ -213,70 +207,38 @@ const Payouts = () => {
         </div>
       </div>
 
-      {/* Bank Details Modal */}
       <Dialog open={isBankModalOpen} onOpenChange={setIsBankModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Bank Details</DialogTitle>
           </DialogHeader>
-          
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="bankName">Bank Name</Label>
-              <Input 
-                id="bankName"
-                value={bankDetails.bankName}
-                onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
-              />
+              <Input id="bankName" value={bankDetails.bankName} onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })} />
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="accountNumber">Account Number</Label>
-              <Input 
-                id="accountNumber"
-                placeholder="Enter full account number"
-              />
+              <Input id="accountNumber" placeholder="Enter full account number" />
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="branchCode">Branch Code</Label>
-              <Input 
-                id="branchCode"
-                value={bankDetails.branchCode}
-                onChange={(e) => setBankDetails({ ...bankDetails, branchCode: e.target.value })}
-              />
+              <Input id="branchCode" value={bankDetails.branchCode} onChange={(e) => setBankDetails({ ...bankDetails, branchCode: e.target.value })} />
             </div>
-            
             <div className="space-y-2">
               <Label htmlFor="accountHolder">Account Holder Name</Label>
-              <Input 
-                id="accountHolder"
-                value={bankDetails.accountHolder}
-                onChange={(e) => setBankDetails({ ...bankDetails, accountHolder: e.target.value })}
-              />
+              <Input id="accountHolder" value={bankDetails.accountHolder} onChange={(e) => setBankDetails({ ...bankDetails, accountHolder: e.target.value })} />
             </div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsBankModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => setIsBankModalOpen(false)} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
-              Save Changes
-            </Button>
+            <Button onClick={() => setIsBankModalOpen(false)} className="bg-primary hover:bg-primary/90 text-primary-foreground">Save Changes</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Capital Dialog */}
-      <CapitalDialog
-        open={capitalOpen}
-        onClose={() => setCapitalOpen(false)}
-      />
-
-      {/* Fees Dialog */}
-      <FeesDialog
-        open={feesOpen}
-        onClose={() => setFeesOpen(false)}
-      />
+      <CapitalDialog open={capitalOpen} onClose={() => setCapitalOpen(false)} />
+      <FeesDialog open={feesOpen} onClose={() => setFeesOpen(false)} />
     </DashboardLayout>
   );
 };

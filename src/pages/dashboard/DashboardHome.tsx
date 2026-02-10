@@ -111,7 +111,7 @@ const DashboardHome = () => {
       value: "P 1,245",
       subtitle: "28% of sales",
       icon: Smartphone,
-      iconColor: "text-orange-500 bg-orange-100",
+      iconColor: "text-orange-500 bg-orange-500/20",
       link: "/dashboard/sales"
     },
     { 
@@ -119,7 +119,7 @@ const DashboardHome = () => {
       value: "P 890",
       subtitle: "18% of sales",
       icon: Banknote,
-      iconColor: "text-green-500 bg-green-100",
+      iconColor: "text-green-500 bg-green-500/20",
       link: "/dashboard/sales"
     },
     { 
@@ -127,7 +127,7 @@ const DashboardHome = () => {
       value: "P 1,210",
       subtitle: "45% of sales",
       icon: Wallet,
-      iconColor: "text-purple-500 bg-purple-100",
+      iconColor: "text-purple-500 bg-purple-500/20",
       link: "/dashboard/sales"
     },
   ];

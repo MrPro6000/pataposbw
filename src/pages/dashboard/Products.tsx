@@ -66,15 +66,9 @@ const Products = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    price: "",
-    category: "",
-    stock: "",
-  });
+  const [formData, setFormData] = useState({ name: "", price: "", category: "", stock: "" });
   const isMobile = useIsMobile();
 
-  // Show mobile view on mobile devices
   if (isMobile) {
     return <MobileDashboardHome />;
   }
@@ -84,117 +78,67 @@ const Products = () => {
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenAddModal = () => {
-    setFormData({ name: "", price: "", category: "", stock: "" });
-    setEditingProduct(null);
-    setIsAddModalOpen(true);
-  };
-
-  const handleOpenEditModal = (product: Product) => {
-    setFormData({
-      name: product.name,
-      price: product.price.toString(),
-      category: product.category,
-      stock: product.stock.toString(),
-    });
-    setEditingProduct(product);
-    setIsAddModalOpen(true);
-  };
-
+  const handleOpenAddModal = () => { setFormData({ name: "", price: "", category: "", stock: "" }); setEditingProduct(null); setIsAddModalOpen(true); };
+  const handleOpenEditModal = (product: Product) => { setFormData({ name: product.name, price: product.price.toString(), category: product.category, stock: product.stock.toString() }); setEditingProduct(product); setIsAddModalOpen(true); };
   const handleSaveProduct = () => {
     if (!formData.name || !formData.price || !formData.category) return;
-
     if (editingProduct) {
-      setProducts(products.map(p => 
-        p.id === editingProduct.id 
-          ? { ...p, name: formData.name, price: parseFloat(formData.price), category: formData.category, stock: parseInt(formData.stock) || 0 }
-          : p
-      ));
+      setProducts(products.map(p => p.id === editingProduct.id ? { ...p, name: formData.name, price: parseFloat(formData.price), category: formData.category, stock: parseInt(formData.stock) || 0 } : p));
     } else {
-      const newProduct: Product = {
-        id: `PRD${String(products.length + 1).padStart(3, '0')}`,
-        name: formData.name,
-        price: parseFloat(formData.price),
-        category: formData.category,
-        stock: parseInt(formData.stock) || 0,
-        status: "active",
-      };
-      setProducts([...products, newProduct]);
+      setProducts([...products, { id: `PRD${String(products.length + 1).padStart(3, '0')}`, name: formData.name, price: parseFloat(formData.price), category: formData.category, stock: parseInt(formData.stock) || 0, status: "active" }]);
     }
     setIsAddModalOpen(false);
   };
-
-  const handleDeleteProduct = (id: string) => {
-    setProducts(products.filter(p => p.id !== id));
-  };
+  const handleDeleteProduct = (id: string) => { setProducts(products.filter(p => p.id !== id)); };
 
   return (
     <DashboardLayout>
-      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[#141414]">Products</h1>
-          <p className="text-[#141414]/60">Manage your product catalog</p>
+          <h1 className="text-2xl font-bold text-foreground">Products</h1>
+          <p className="text-muted-foreground">Manage your product catalog</p>
         </div>
-        <Button onClick={handleOpenAddModal} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
+        <Button onClick={handleOpenAddModal} className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Plus className="w-4 h-4 mr-2" />
           Add Product
         </Button>
       </div>
 
-      {/* Search */}
-      <div className="bg-white rounded-2xl p-4 mb-6">
+      <div className="bg-card border border-border rounded-2xl p-4 mb-6">
         <div className="relative max-w-md">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#141414]/40" />
-          <Input 
-            placeholder="Search products..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
-          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input placeholder="Search products..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10" />
         </div>
       </div>
 
-      {/* Products Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredProducts.map((product) => (
-          <div key={product.id} className="bg-white rounded-2xl p-5">
+          <div key={product.id} className="bg-card border border-border rounded-2xl p-5">
             <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-[#00C8E6]/20 rounded-xl flex items-center justify-center">
-                <Package className="w-6 h-6 text-[#00C8E6]" />
+              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+                <Package className="w-6 h-6 text-primary" />
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="p-1.5 hover:bg-[#f0f0f0] rounded-lg">
-                    <MoreVertical className="w-4 h-4 text-[#141414]/60" />
+                  <button className="p-1.5 hover:bg-muted rounded-lg">
+                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-white">
+                <DropdownMenuContent align="end" className="bg-popover border border-border">
                   <DropdownMenuItem onClick={() => handleOpenEditModal(product)}>
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit
+                    <Edit className="w-4 h-4 mr-2" /> Edit
                   </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => handleDeleteProduct(product.id)}
-                    className="text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete
+                  <DropdownMenuItem onClick={() => handleDeleteProduct(product.id)} className="text-destructive">
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>
-
-            <h3 className="font-semibold text-[#141414] mb-1">{product.name}</h3>
-            <p className="text-sm text-[#141414]/60 mb-3">{product.category}</p>
-            
+            <h3 className="font-semibold text-foreground mb-1">{product.name}</h3>
+            <p className="text-sm text-muted-foreground mb-3">{product.category}</p>
             <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-[#141414]">P{product.price.toFixed(2)}</span>
-              <span className={`text-xs px-2 py-1 rounded-full ${
-                product.stock > 0 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-red-100 text-red-700'
-              }`}>
+              <span className="text-xl font-bold text-foreground">P{product.price.toFixed(2)}</span>
+              <span className={`text-xs px-2 py-1 rounded-full ${product.stock > 0 ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
                 {product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}
               </span>
             </div>
@@ -202,66 +146,28 @@ const Products = () => {
         ))}
       </div>
 
-      {/* Add/Edit Product Modal */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>{editingProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
           </DialogHeader>
-          
           <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Product Name</Label>
-              <Input 
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder="e.g. Cappuccino"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="price">Price (P)</Label>
-              <Input 
-                id="price"
-                type="number"
-                value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
-            
+            <div className="space-y-2"><Label htmlFor="name">Product Name</Label><Input id="name" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Cappuccino" /></div>
+            <div className="space-y-2"><Label htmlFor="price">Price (P)</Label><Input id="price" type="number" value={formData.price} onChange={(e) => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" /></div>
             <div className="space-y-2">
               <Label htmlFor="category">Category</Label>
               <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category" />
-                </SelectTrigger>
-                <SelectContent className="bg-white">
-                  {categories.map((cat) => (
-                    <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                  ))}
+                <SelectTrigger><SelectValue placeholder="Select category" /></SelectTrigger>
+                <SelectContent className="bg-popover border border-border">
+                  {categories.map((cat) => (<SelectItem key={cat} value={cat}>{cat}</SelectItem>))}
                 </SelectContent>
               </Select>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="stock">Stock Quantity</Label>
-              <Input 
-                id="stock"
-                type="number"
-                value={formData.stock}
-                onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                placeholder="0"
-              />
-            </div>
+            <div className="space-y-2"><Label htmlFor="stock">Stock Quantity</Label><Input id="stock" type="number" value={formData.stock} onChange={(e) => setFormData({ ...formData, stock: e.target.value })} placeholder="0" /></div>
           </div>
-
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-            <Button onClick={handleSaveProduct} className="bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]">
-              {editingProduct ? 'Save Changes' : 'Add Product'}
-            </Button>
+            <Button onClick={handleSaveProduct} className="bg-primary hover:bg-primary/90 text-primary-foreground">{editingProduct ? 'Save Changes' : 'Add Product'}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
