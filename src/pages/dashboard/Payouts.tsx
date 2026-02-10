@@ -4,25 +4,9 @@ import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import FeesDialog from "@/components/dashboard/FeesDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  Wallet, 
-  Building2,
-  ArrowUpRight,
-  Clock,
-  CheckCircle,
-  Edit,
-  ChevronRight,
-  Percent,
-  Zap
-} from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
@@ -35,11 +19,11 @@ interface Payout {
 }
 
 const payouts: Payout[] = [
-  { id: "PAY001", date: "2025-01-28", amount: 5420.00, status: "processing", reference: "PAYOUT-2025-001" },
-  { id: "PAY002", date: "2025-01-21", amount: 8930.00, status: "completed", reference: "PAYOUT-2025-002" },
-  { id: "PAY003", date: "2025-01-14", amount: 6780.00, status: "completed", reference: "PAYOUT-2025-003" },
-  { id: "PAY004", date: "2025-01-07", amount: 4560.00, status: "completed", reference: "PAYOUT-2025-004" },
-  { id: "PAY005", date: "2024-12-31", amount: 12340.00, status: "completed", reference: "PAYOUT-2024-052" },
+  { id: "PAY001", date: "2025-01-28", amount: 5420.0, status: "processing", reference: "PAYOUT-2025-001" },
+  { id: "PAY002", date: "2025-01-21", amount: 8930.0, status: "completed", reference: "PAYOUT-2025-002" },
+  { id: "PAY003", date: "2025-01-14", amount: 6780.0, status: "completed", reference: "PAYOUT-2025-003" },
+  { id: "PAY004", date: "2025-01-07", amount: 4560.0, status: "completed", reference: "PAYOUT-2025-004" },
+  { id: "PAY005", date: "2024-12-31", amount: 12340.0, status: "completed", reference: "PAYOUT-2024-052" },
 ];
 
 const Payouts = () => {
@@ -60,19 +44,27 @@ const Payouts = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "processing": return <Clock className="w-4 h-4 text-orange-500" />;
-      case "pending": return <Clock className="w-4 h-4 text-yellow-500" />;
-      default: return null;
+      case "completed":
+        return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "processing":
+        return <Clock className="w-4 h-4 text-orange-500" />;
+      case "pending":
+        return <Clock className="w-4 h-4 text-yellow-500" />;
+      default:
+        return null;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "completed": return "bg-green-500/20 text-green-400";
-      case "processing": return "bg-orange-500/20 text-orange-400";
-      case "pending": return "bg-yellow-500/20 text-yellow-400";
-      default: return "bg-muted text-muted-foreground";
+      case "completed":
+        return "bg-green-500/20 text-green-400";
+      case "processing":
+        return "bg-orange-500/20 text-orange-400";
+      case "pending":
+        return "bg-yellow-500/20 text-yellow-400";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
@@ -89,7 +81,7 @@ const Payouts = () => {
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
               <Wallet className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-background/70">Available Balance</span>
+            <span className="text-muted-foreground">Available Balance</span>
           </div>
           <p className="text-3xl font-bold">P12,450.00</p>
           <p className="text-sm text-background/60 mt-2">Next payout: Monday</p>
@@ -132,7 +124,9 @@ const Payouts = () => {
           </div>
           <div>
             <p className="font-medium text-foreground">{bankDetails.bankName}</p>
-            <p className="text-sm text-muted-foreground">{bankDetails.accountNumber} • {bankDetails.accountHolder}</p>
+            <p className="text-sm text-muted-foreground">
+              {bankDetails.accountNumber} • {bankDetails.accountHolder}
+            </p>
           </div>
         </div>
       </div>
@@ -175,7 +169,7 @@ const Payouts = () => {
         <div className="p-6 border-b border-border">
           <h2 className="text-lg font-semibold text-foreground">Payout History</h2>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-muted">
@@ -195,7 +189,9 @@ const Payouts = () => {
                   <td className="p-4 text-muted-foreground">{payout.date}</td>
                   <td className="p-4 font-semibold text-foreground">P{payout.amount.toFixed(2)}</td>
                   <td className="p-4">
-                    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(payout.status)}`}>
+                    <span
+                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(payout.status)}`}
+                    >
                       {getStatusIcon(payout.status)}
                       {payout.status}
                     </span>
@@ -215,7 +211,11 @@ const Payouts = () => {
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="bankName">Bank Name</Label>
-              <Input id="bankName" value={bankDetails.bankName} onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })} />
+              <Input
+                id="bankName"
+                value={bankDetails.bankName}
+                onChange={(e) => setBankDetails({ ...bankDetails, bankName: e.target.value })}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="accountNumber">Account Number</Label>
@@ -223,16 +223,31 @@ const Payouts = () => {
             </div>
             <div className="space-y-2">
               <Label htmlFor="branchCode">Branch Code</Label>
-              <Input id="branchCode" value={bankDetails.branchCode} onChange={(e) => setBankDetails({ ...bankDetails, branchCode: e.target.value })} />
+              <Input
+                id="branchCode"
+                value={bankDetails.branchCode}
+                onChange={(e) => setBankDetails({ ...bankDetails, branchCode: e.target.value })}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="accountHolder">Account Holder Name</Label>
-              <Input id="accountHolder" value={bankDetails.accountHolder} onChange={(e) => setBankDetails({ ...bankDetails, accountHolder: e.target.value })} />
+              <Input
+                id="accountHolder"
+                value={bankDetails.accountHolder}
+                onChange={(e) => setBankDetails({ ...bankDetails, accountHolder: e.target.value })}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsBankModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => setIsBankModalOpen(false)} className="bg-primary hover:bg-primary/90 text-primary-foreground">Save Changes</Button>
+            <Button variant="outline" onClick={() => setIsBankModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button
+              onClick={() => setIsBankModalOpen(false)}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground"
+            >
+              Save Changes
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
