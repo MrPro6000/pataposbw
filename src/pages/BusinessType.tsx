@@ -1,6 +1,7 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, Store, Truck, Scissors, Coffee, ShoppingBag, Stethoscope } from "lucide-react";
+import ContactSalesDialog from "@/components/ContactSalesDialog";
+import { ArrowRight, Store, Truck, Scissors, Coffee, ShoppingBag, Stethoscope, Landmark, Layers, Building2, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BusinessType = () => {
@@ -40,6 +41,30 @@ const BusinessType = () => {
       title: "Healthcare",
       description: "Secure payment solutions for clinics, pharmacies, and healthcare providers.",
       benefits: ["Secure transactions", "Insurance processing", "Patient billing"],
+    },
+    {
+      icon: Landmark,
+      title: "Government",
+      description: "Payment collection and processing solutions for government agencies and councils.",
+      benefits: ["Bulk processing", "Compliance ready", "Audit trails"],
+    },
+    {
+      icon: Layers,
+      title: "Aggregated Payments",
+      description: "Consolidate multiple payment streams into one unified platform for large-scale operations.",
+      benefits: ["Multi-source collection", "Unified reporting", "Real-time reconciliation"],
+    },
+    {
+      icon: Building2,
+      title: "Banking",
+      description: "White-label payment infrastructure and integration solutions for financial institutions.",
+      benefits: ["API integration", "White-label ready", "Regulatory compliance"],
+    },
+    {
+      icon: BarChart3,
+      title: "Pata Data & Consultancy",
+      description: "Data-driven insights and consulting services to optimize your payment operations and business strategy.",
+      benefits: ["Business analytics", "Payment optimization", "Growth strategy"],
     },
   ];
 
@@ -111,9 +136,11 @@ const BusinessType = () => {
               Get started
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
-              Contact Sales
-            </button>
+            <ContactSalesDialog>
+              <button className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide">
+                Contact Sales
+              </button>
+            </ContactSalesDialog>
           </div>
         </div>
       </section>

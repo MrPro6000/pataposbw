@@ -22,7 +22,7 @@ const Shop = () => {
     { id: "pata-pro", name: "Pata Pro", price: 3880, image: pataProImg, description: "Powerful handheld with built-in thermal printer and NFC tap.", features: ["Built-in printer", "NFC tap to pay", "Touchscreen"], badge: "Most Popular" },
     { id: "pata-diamond", name: "Pata Diamond", price: 1980, image: pataDiamondImg, description: "Premium handheld with large touchscreen and thermal printer.", features: ["Large touchscreen", "Thermal printer", "4G connectivity"] },
     { id: "pata-platinum", name: "Pata Platinum", price: 998, image: goPataImg, description: "Classic keypad terminal with reliable performance and durability.", features: ["Durable design", "Physical keypad", "Card chip reader"] },
-    { id: "pata-spaza", name: "Pata Spaza", price: 9980, image: pataSpazaImg, description: "Full POS system with large display and customer-facing screen. Ideal for retail stores.", features: ["Customer display", "Receipt printer", "Full POS system"], badge: "Enterprise" },
+    { id: "pata-spaza", name: "Pata Spaza", price: 6600, image: pataSpazaImg, description: "Full POS system with large display and customer-facing screen. Ideal for retail stores.", features: ["Customer display", "Receipt printer", "Full POS system"], badge: "Enterprise" },
   ];
 
   const accessories = [

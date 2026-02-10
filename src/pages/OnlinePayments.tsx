@@ -45,7 +45,7 @@ const OnlinePayments = () => {
               </h1>
 
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-                Accept payments on your website, share payment links via messaging apps, or integrate with popular e-commerce platforms. Reach customers anywhere in the world.
+                Connect to your website or WhatsApp. Share payment links via messaging apps, or integrate with popular e-commerce platforms. Reach customers anywhere in the world.
               </p>
 
               <div className="flex items-center gap-4">

@@ -1,6 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, CreditCard, Smartphone, Banknote, TrendingUp, Wallet } from "lucide-react";
+import { ArrowRight, CreditCard, Smartphone, Banknote, Wallet, Globe } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Products = () => {
@@ -22,11 +22,11 @@ const Products = () => {
       color: "from-emerald-500/20 to-emerald-500/5"
     },
     {
-      icon: Banknote,
-      title: "Business Funding",
-      description: "Access capital when you need it most. Fast approval with flexible repayment tied to your sales.",
-      features: ["Quick approval", "Revenue-based repayment", "No hidden fees"],
-      link: "/capital",
+      icon: Globe,
+      title: "Mukuru Money Transfer",
+      description: "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
+      features: ["Multi-currency", "Cross-border", "Competitive rates"],
+      link: "/products",
       color: "from-amber-500/20 to-amber-500/5"
     },
     {
@@ -36,14 +36,6 @@ const Products = () => {
       features: ["Orange Money", "Smega", "MyZaka"],
       link: "/online-payments",
       color: "from-orange-500/20 to-orange-500/5"
-    },
-    {
-      icon: TrendingUp,
-      title: "Business Hub",
-      description: "Your complete business command center. Track sales, manage inventory, and unlock customer insights.",
-      features: ["Real-time analytics", "Inventory control", "Customer data"],
-      link: "/dashboard",
-      color: "from-purple-500/20 to-purple-500/5"
     },
   ];
 
@@ -61,7 +53,7 @@ const Products = () => {
               <span className="pata-hero-gradient">infinite possibilities</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              From PataPOS to card terminals, mobile money to business funding—Pata equips African entrepreneurs with everything they need to succeed.
+              Payments made easier across Botswana — from Pata POS to card terminals.
             </p>
           </div>
 
