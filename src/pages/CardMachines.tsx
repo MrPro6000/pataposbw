@@ -59,7 +59,7 @@ const CardMachines = () => {
     },
     {
       name: "Pata Spaza",
-      price: "P9,980",
+      price: "P6,600",
       image: pataSpazaImg,
       description: "Complete POS system with dual displays for retail stores.",
       features: ["Customer display", "Receipt printer", "Full POS system"],
@@ -110,7 +110,7 @@ const CardMachines = () => {
                 <div className="text-center">
                   <div className="text-primary-foreground font-bold text-lg mb-2">PATA</div>
                   <div className="bg-card rounded-xl p-4 shadow-lg">
-                    <div className="text-foreground font-medium">Lekker Cafe</div>
+                    <div className="text-foreground font-medium">The Nails Café</div>
                     <div className="text-muted-foreground text-sm">Payment approved</div>
                     <div className="text-primary text-2xl font-bold mt-2">P100.00</div>
                   </div>
