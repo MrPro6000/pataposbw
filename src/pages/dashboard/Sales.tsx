@@ -496,7 +496,7 @@ const Sales = () => {
 
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("card")}
           >
             <CreditCard className="w-5 h-5" />
@@ -505,7 +505,7 @@ const Sales = () => {
 
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
@@ -523,7 +523,7 @@ const Sales = () => {
 
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setInvoiceDialogOpen(true)}
           >
             <FileText className="w-5 h-5" />
