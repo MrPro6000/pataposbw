@@ -76,7 +76,7 @@ const Payouts = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-foreground text-background rounded-2xl p-6">
+        <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center">
               <Wallet className="w-5 h-5 text-primary-foreground" />
