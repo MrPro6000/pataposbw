@@ -1,7 +1,19 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import ContactSalesDialog from "@/components/ContactSalesDialog";
-import { ArrowRight, Store, Truck, Scissors, Coffee, ShoppingBag, Stethoscope, Landmark, Layers, Building2, BarChart3 } from "lucide-react";
+import {
+  ArrowRight,
+  Store,
+  Truck,
+  Scissors,
+  Coffee,
+  ShoppingBag,
+  Stethoscope,
+  Landmark,
+  Layers,
+  Building2,
+  BarChart3,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const BusinessType = () => {
@@ -50,7 +62,7 @@ const BusinessType = () => {
     },
     {
       icon: Layers,
-      title: "Aggregated Payments",
+      title: "Agri Payments",
       description: "Consolidate multiple payment streams into one unified platform for large-scale operations.",
       benefits: ["Multi-source collection", "Unified reporting", "Real-time reconciliation"],
     },
@@ -63,7 +75,8 @@ const BusinessType = () => {
     {
       icon: BarChart3,
       title: "Pata Data & Consultancy",
-      description: "Data-driven insights and consulting services to optimize your payment operations and business strategy.",
+      description:
+        "Data-driven insights and consulting services to optimize your payment operations and business strategy.",
       benefits: ["Business analytics", "Payment optimization", "Growth strategy"],
     },
   ];
@@ -71,7 +84,7 @@ const BusinessType = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <MainNav />
-      
+
       {/* Hero Section */}
       <section className="px-6 md:px-20 py-16 md:py-24">
         <div className="max-w-7xl mx-auto">
@@ -82,7 +95,8 @@ const BusinessType = () => {
               <span className="pata-hero-gradient">type of business</span>
             </h1>
             <p className="text-lg text-muted-foreground">
-              Whether you run a retail store, restaurant, or mobile service—we have tailored solutions to help you accept payments and grow.
+              Whether you run a retail store, restaurant, or mobile service—we have tailored solutions to help you
+              accept payments and grow.
             </p>
           </div>
 
@@ -96,10 +110,10 @@ const BusinessType = () => {
                 <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <business.icon className="w-7 h-7 text-primary" />
                 </div>
-                
+
                 <h3 className="text-xl font-bold text-foreground mb-2">{business.title}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{business.description}</p>
-                
+
                 <ul className="space-y-2 mb-5">
                   {business.benefits.map((benefit) => (
                     <li key={benefit} className="text-muted-foreground text-sm flex items-center gap-2">
@@ -108,9 +122,9 @@ const BusinessType = () => {
                     </li>
                   ))}
                 </ul>
-                
-                <Link 
-                  to="/signup" 
+
+                <Link
+                  to="/signup"
                   className="text-primary font-medium text-sm flex items-center gap-2 group-hover:gap-3 transition-all"
                 >
                   Get started
@@ -125,9 +139,7 @@ const BusinessType = () => {
       {/* CTA Section */}
       <section className="px-6 md:px-20 py-16 bg-muted">
         <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Don't see your industry?
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Don't see your industry?</h2>
           <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
             Our solutions work for businesses of all types. Contact us to learn how Pata can help your specific needs.
           </p>
