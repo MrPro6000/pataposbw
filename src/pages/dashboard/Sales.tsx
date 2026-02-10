@@ -474,44 +474,33 @@ const Sales = () => {
       {/* Quick Actions */}
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
-
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => setSellProductsOpen(true)}
-          >
-            <ShoppingBag className="w-5 h-5" />
-            <span className="text-xs">Sell Products</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("mobile-money")}
-          >
-            <Smartphone className="w-5 h-5" />
-            <span className="text-xs">Mobile Money</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted
+"
             onClick={() => openPaymentDialog("card")}
           >
             <CreditCard className="w-5 h-5" />
             <span className="text-xs">Card Sale</span>
           </Button>
-
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted
+"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
             <span className="text-xs">Payment Link</span>
           </Button>
-
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setInvoiceDialogOpen(true)}
+          >
+            <FileText className="w-5 h-5" />
+            <span className="text-xs">New Invoice</span>
+          </Button>
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -520,16 +509,14 @@ const Sales = () => {
             <Banknote className="w-5 h-5" />
             <span className="text-xs">Cash</span>
           </Button>
-
           <Button
             variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
-            onClick={() => setInvoiceDialogOpen(true)}
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentDialog("mobile-money")}
           >
-            <FileText className="w-5 h-5" />
-            <span className="text-xs">New Invoice</span>
+            <Smartphone className="w-5 h-5" />
+            <span className="text-xs">Mobile Money</span>
           </Button>
-
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -537,6 +524,14 @@ const Sales = () => {
           >
             <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setSellProductsOpen(true)}
+          >
+            <ShoppingBag className="w-5 h-5" />
+            <span className="text-xs">Sell Products</span>
           </Button>
         </div>
       </div>
