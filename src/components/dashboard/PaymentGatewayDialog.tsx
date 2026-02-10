@@ -3,18 +3,10 @@ import { Globe, Code, Copy, CheckCircle, MessageSquare, ChevronLeft } from "luci
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
-interface PaymentGatewayDialogProps {
-  open: boolean;
-  onClose: () => void;
-}
+interface PaymentGatewayDialogProps { open: boolean; onClose: () => void; }
 
 const PaymentGatewayDialog = ({ open, onClose }: PaymentGatewayDialogProps) => {
   const { toast } = useToast();
@@ -22,25 +14,17 @@ const PaymentGatewayDialog = ({ open, onClose }: PaymentGatewayDialogProps) => {
   const [contactForm, setContactForm] = useState({ name: "", email: "", website: "", message: "" });
 
   const handleCopyCode = () => {
-    navigator.clipboard.writeText(`<script src="https://pay.pata.co.bw/widget.js"></script>
-<div id="pata-checkout" data-merchant="your-merchant-id"></div>`);
+    navigator.clipboard.writeText(`<script src="https://pay.pata.co.bw/widget.js"></script>\n<div id="pata-checkout" data-merchant="your-merchant-id"></div>`);
     toast({ title: "Copied", description: "Integration code copied to clipboard" });
   };
 
   const handleSubmitContact = () => {
-    if (!contactForm.name || !contactForm.email) {
-      toast({ title: "Error", description: "Please fill in required fields", variant: "destructive" });
-      return;
-    }
+    if (!contactForm.name || !contactForm.email) { toast({ title: "Error", description: "Please fill in required fields", variant: "destructive" }); return; }
     toast({ title: "Request Submitted", description: "Our team will contact you within 24 hours" });
-    setContactForm({ name: "", email: "", website: "", message: "" });
-    setView("info");
+    setContactForm({ name: "", email: "", website: "", message: "" }); setView("info");
   };
 
-  const handleClose = () => {
-    setView("info");
-    onClose();
-  };
+  const handleClose = () => { setView("info"); onClose(); };
 
   const features = [
     { title: "Accept All Cards", description: "Visa, Mastercard, and local cards" },
@@ -57,162 +41,67 @@ const PaymentGatewayDialog = ({ open, onClose }: PaymentGatewayDialogProps) => {
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-3">
             {view !== "info" && (
-              <button 
-                onClick={() => setView("info")}
-                className="w-8 h-8 rounded-full bg-[#F5F5F5] flex items-center justify-center"
-              >
-                <ChevronLeft className="w-4 h-4 text-[#141414]" />
+              <button onClick={() => setView("info")} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                <ChevronLeft className="w-4 h-4 text-foreground" />
               </button>
             )}
-            <DialogTitle className="text-[#141414]">
+            <DialogTitle className="text-foreground">
               {view === "setup" ? "Integration Guide" : view === "contact" ? "Contact Sales" : "Payment Gateway"}
             </DialogTitle>
           </div>
         </DialogHeader>
-
         <div className="space-y-5">
           {view === "info" && (
             <>
-              {/* Hero */}
-              <div className="bg-gradient-to-br from-[#00C8E6] to-[#00b8d4] rounded-2xl p-6 text-center">
-                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <Globe className="w-8 h-8 text-white" />
-                </div>
+              <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl p-6 text-center">
+                <div className="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4"><Globe className="w-8 h-8 text-white" /></div>
                 <h2 className="text-xl font-bold text-white mb-2">Pata Payment Gateway</h2>
                 <p className="text-white/80">Accept payments on your website or online store</p>
               </div>
-
-              {/* Features */}
               <div>
-                <h3 className="font-semibold text-[#141414] mb-3">Features</h3>
+                <h3 className="font-semibold text-foreground mb-3">Features</h3>
                 <div className="grid grid-cols-2 gap-3">
                   {features.map((feature) => (
-                    <div key={feature.title} className="bg-[#F5F5F5] rounded-xl p-3">
-                      <div className="flex items-center gap-2 mb-1">
-                        <CheckCircle className="w-4 h-4 text-[#00C8E6]" />
-                        <p className="font-medium text-[#141414] text-sm">{feature.title}</p>
-                      </div>
-                      <p className="text-xs text-[#141414]/60 ml-6">{feature.description}</p>
+                    <div key={feature.title} className="bg-muted rounded-xl p-3">
+                      <div className="flex items-center gap-2 mb-1"><CheckCircle className="w-4 h-4 text-emerald-500" /><p className="font-medium text-foreground text-sm">{feature.title}</p></div>
+                      <p className="text-xs text-muted-foreground ml-6">{feature.description}</p>
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* CTA Buttons */}
               <div className="space-y-3">
-                <Button
-                  onClick={() => setView("setup")}
-                  className="w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-medium"
-                >
-                  <Code className="w-4 h-4 mr-2" />
-                  View Integration Guide
-                </Button>
-                <Button
-                  onClick={() => setView("contact")}
-                  variant="outline"
-                  className="w-full"
-                >
-                  <MessageSquare className="w-4 h-4 mr-2" />
-                  Talk to Sales
-                </Button>
+                <Button onClick={() => setView("setup")} className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium"><Code className="w-4 h-4 mr-2" /> View Integration Guide</Button>
+                <Button onClick={() => setView("contact")} variant="outline" className="w-full"><MessageSquare className="w-4 h-4 mr-2" /> Talk to Sales</Button>
               </div>
             </>
           )}
-
           {view === "setup" && (
             <div className="space-y-5">
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
-                <h4 className="font-medium text-[#141414] mb-2">Step 1: Copy the code</h4>
-                <p className="text-sm text-[#141414]/60 mb-3">Add this code to your website's checkout page</p>
-                <div className="bg-[#141414] rounded-lg p-3 mb-3">
-                  <code className="text-xs text-green-400 break-all">
-                    {`<script src="https://pay.pata.co.bw/widget.js"></script>`}
-                    <br />
-                    {`<div id="pata-checkout" data-merchant="your-id"></div>`}
-                  </code>
+              <div className="bg-muted rounded-xl p-4">
+                <h4 className="font-medium text-foreground mb-2">Step 1: Copy the code</h4>
+                <p className="text-sm text-muted-foreground mb-3">Add this code to your website's checkout page</p>
+                <div className="bg-foreground rounded-lg p-3 mb-3">
+                  <code className="text-xs text-green-400 break-all">{`<script src="https://pay.pata.co.bw/widget.js"></script>`}<br />{`<div id="pata-checkout" data-merchant="your-id"></div>`}</code>
                 </div>
-                <Button onClick={handleCopyCode} variant="outline" size="sm" className="w-full">
-                  <Copy className="w-3 h-3 mr-2" />
-                  Copy Code
-                </Button>
+                <Button onClick={handleCopyCode} variant="outline" size="sm" className="w-full"><Copy className="w-3 h-3 mr-2" /> Copy Code</Button>
               </div>
-
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
-                <h4 className="font-medium text-[#141414] mb-2">Step 2: Configure settings</h4>
-                <p className="text-sm text-[#141414]/60">Replace "your-id" with your merchant ID from the dashboard settings</p>
-              </div>
-
-              <div className="bg-[#F5F5F5] rounded-xl p-4">
-                <h4 className="font-medium text-[#141414] mb-2">Step 3: Test & Go Live</h4>
-                <p className="text-sm text-[#141414]/60">Use test mode to verify everything works, then switch to live</p>
-              </div>
-
-              <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-                <p className="text-sm text-[#141414]">
-                  <strong>Need help?</strong> Our team can help you integrate the payment gateway with any platform.
-                </p>
-                <Button
-                  onClick={() => setView("contact")}
-                  className="mt-3 w-full bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414]"
-                >
-                  Contact Integration Team
-                </Button>
+              <div className="bg-muted rounded-xl p-4"><h4 className="font-medium text-foreground mb-2">Step 2: Configure settings</h4><p className="text-sm text-muted-foreground">Replace "your-id" with your merchant ID from the dashboard settings</p></div>
+              <div className="bg-muted rounded-xl p-4"><h4 className="font-medium text-foreground mb-2">Step 3: Test & Go Live</h4><p className="text-sm text-muted-foreground">Use test mode to verify everything works, then switch to live</p></div>
+              <div className="bg-emerald-500/10 rounded-xl p-4">
+                <p className="text-sm text-foreground"><strong>Need help?</strong> Our team can help you integrate the payment gateway with any platform.</p>
+                <Button onClick={() => setView("contact")} className="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-white">Contact Integration Team</Button>
               </div>
             </div>
           )}
-
           {view === "contact" && (
             <>
-              <div className="bg-[#00C8E6]/10 rounded-xl p-4">
-                <p className="text-sm text-[#141414]">
-                  Fill out the form below and our team will reach out to help you set up the payment gateway.
-                </p>
-              </div>
-
+              <div className="bg-emerald-500/10 rounded-xl p-4"><p className="text-sm text-foreground">Fill out the form below and our team will reach out to help you set up the payment gateway.</p></div>
               <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-[#141414]">Your Name *</Label>
-                  <Input
-                    placeholder="Enter your name"
-                    value={contactForm.name}
-                    onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[#141414]">Email *</Label>
-                  <Input
-                    type="email"
-                    placeholder="you@company.com"
-                    value={contactForm.email}
-                    onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[#141414]">Website URL</Label>
-                  <Input
-                    placeholder="https://yourstore.com"
-                    value={contactForm.website}
-                    onChange={(e) => setContactForm({ ...contactForm, website: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[#141414]">Message (optional)</Label>
-                  <Input
-                    placeholder="Tell us about your integration needs"
-                    value={contactForm.message}
-                    onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })}
-                  />
-                </div>
-
-                <Button
-                  onClick={handleSubmitContact}
-                  className="w-full h-12 bg-[#00C8E6] hover:bg-[#00b8d4] text-[#141414] font-semibold"
-                >
-                  Submit Request
-                </Button>
+                <div className="space-y-2"><Label className="text-foreground">Your Name *</Label><Input placeholder="Enter your name" value={contactForm.name} onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })} /></div>
+                <div className="space-y-2"><Label className="text-foreground">Email *</Label><Input type="email" placeholder="you@company.com" value={contactForm.email} onChange={(e) => setContactForm({ ...contactForm, email: e.target.value })} /></div>
+                <div className="space-y-2"><Label className="text-foreground">Website URL</Label><Input placeholder="https://yourstore.com" value={contactForm.website} onChange={(e) => setContactForm({ ...contactForm, website: e.target.value })} /></div>
+                <div className="space-y-2"><Label className="text-foreground">Message (optional)</Label><Input placeholder="Tell us about your integration needs" value={contactForm.message} onChange={(e) => setContactForm({ ...contactForm, message: e.target.value })} /></div>
+                <Button onClick={handleSubmitContact} className="w-full h-12 bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">Submit Request</Button>
               </div>
             </>
           )}

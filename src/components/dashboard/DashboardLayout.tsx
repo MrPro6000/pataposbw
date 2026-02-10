@@ -32,13 +32,6 @@ interface NavSection {
 
 const navSections: NavSection[] = [
   {
-    label: "Hub",
-    icon: LayoutGrid,
-    items: [
-      { label: "Dashboard", path: "/dashboard" },
-    ]
-  },
-  {
     label: "Sales",
     icon: CreditCard,
     items: [
@@ -53,6 +46,13 @@ const navSections: NavSection[] = [
     items: [
       { label: "Payouts", path: "/dashboard/payouts" },
       { label: "Reports", path: "/dashboard/reports" },
+    ]
+  },
+  {
+    label: "Hub",
+    icon: LayoutGrid,
+    items: [
+      { label: "Dashboard", path: "/dashboard" },
     ]
   },
   {
@@ -76,7 +76,7 @@ const navSections: NavSection[] = [
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [expandedSections, setExpandedSections] = useState<string[]>(["Hub", "Sales", "Money", "Manage"]);
+  const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
   const location = useLocation();
   const navigate = useNavigate();
 
