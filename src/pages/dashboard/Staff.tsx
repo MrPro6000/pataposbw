@@ -28,7 +28,7 @@ const initialStaff: StaffMember[] = [
   {
     id: "STF001",
     name: "Thato Duma",
-    email: "dumadiouf@gmail.com",
+    email: "thatoduma@gmail.com",
     role: "admin",
     status: "active",
     lastActive: "Now",
@@ -44,7 +44,7 @@ const initialStaff: StaffMember[] = [
   {
     id: "STF003",
     name: "Lloyd Gababonwe",
-    email: "louydgababonwe@gmail.com",
+    email: "loydgababonwe@gmail.com",
     role: "cashier",
     status: "active",
     lastActive: "1 day ago",
