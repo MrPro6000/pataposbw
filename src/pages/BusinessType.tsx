@@ -62,7 +62,7 @@ const BusinessType = () => {
     },
     {
       icon: Layers,
-      title: "Agri Payments",
+      title: "Aggregated Payments",
       description: "Consolidate multiple payment streams into one unified platform for large-scale operations.",
       benefits: ["Multi-source collection", "Unified reporting", "Real-time reconciliation"],
     },
@@ -71,13 +71,6 @@ const BusinessType = () => {
       title: "Banking",
       description: "White-label payment infrastructure and integration solutions for financial institutions.",
       benefits: ["API integration", "White-label ready", "Regulatory compliance"],
-    },
-    {
-      icon: BarChart3,
-      title: "Pata Data & Consultancy",
-      description:
-        "Data-driven insights and consulting services to optimize your payment operations and business strategy.",
-      benefits: ["Business analytics", "Payment optimization", "Growth strategy"],
     },
   ];
 
