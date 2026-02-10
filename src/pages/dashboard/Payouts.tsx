@@ -84,7 +84,7 @@ const Payouts = () => {
             <span className="text-muted-foreground">Available Balance</span>
           </div>
           <p className="text-3xl font-bold">P12,450.00</p>
-          <p className="text-sm text-background/60 mt-2">Next payout: Monday</p>
+          <p className="text-sm text-muted-foreground mt-2">Next payout: Monday</p>
         </div>
 
         <div className="bg-card border border-border rounded-2xl p-6">
