@@ -2,24 +2,9 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { 
-  UserPlus, 
-  Shield,
-  User,
-  MoreVertical,
-  Edit,
-  Trash2,
-  Clock,
-  CheckCircle
-} from "lucide-react";
+import { UserPlus, Shield, User, MoreVertical, Edit, Trash2, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,13 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface StaffMember {
   id: string;
@@ -46,15 +25,53 @@ interface StaffMember {
 }
 
 const initialStaff: StaffMember[] = [
-  { id: "STF001", name: "John Owner", email: "john@patabusiness.com", role: "admin", status: "active", lastActive: "Now" },
-  { id: "STF002", name: "Sarah Manager", email: "sarah@patabusiness.com", role: "manager", status: "active", lastActive: "2 hours ago" },
-  { id: "STF003", name: "Mike Cashier", email: "mike@patabusiness.com", role: "cashier", status: "active", lastActive: "1 day ago" },
-  { id: "STF004", name: "Lisa Cashier", email: "lisa@patabusiness.com", role: "cashier", status: "pending", lastActive: "Invited" },
+  {
+    id: "STF001",
+    name: "Thato Duma",
+    email: "john@patabusiness.com",
+    role: "admin",
+    status: "active",
+    lastActive: "Now",
+  },
+  {
+    id: "STF002",
+    name: "Shaun Motsumi",
+    email: "sarah@patabusiness.com",
+    role: "manager",
+    status: "active",
+    lastActive: "2 hours ago",
+  },
+  {
+    id: "STF003",
+    name: "Lloyd Gababonwe",
+    email: "mike@patabusiness.com",
+    role: "cashier",
+    status: "active",
+    lastActive: "1 day ago",
+  },
+  {
+    id: "STF004",
+    name: "Siyoka Simasiku",
+    email: "lisa@patabusiness.com",
+    role: "cashier",
+    status: "pending",
+    lastActive: "Invited",
+  },
 ];
 
 const rolePermissions = {
-  admin: ["Full access to all features", "Manage staff and permissions", "View and export reports", "Process payments and refunds"],
-  manager: ["View reports and analytics", "Manage products and inventory", "Process payments and refunds", "View customer data"],
+  admin: [
+    "Full access to all features",
+    "Manage staff and permissions",
+    "View and export reports",
+    "Process payments and refunds",
+  ],
+  manager: [
+    "View reports and analytics",
+    "Manage products and inventory",
+    "Process payments and refunds",
+    "View customer data",
+  ],
   cashier: ["Process payments", "View own transactions", "Access POS terminal"],
 };
 
@@ -76,10 +93,14 @@ const Staff = () => {
 
   const getRoleColor = (role: string) => {
     switch (role) {
-      case "admin": return "bg-purple-100 text-purple-700";
-      case "manager": return "bg-blue-100 text-blue-700";
-      case "cashier": return "bg-gray-100 text-gray-700";
-      default: return "bg-gray-100 text-gray-700";
+      case "admin":
+        return "bg-purple-100 text-purple-700";
+      case "manager":
+        return "bg-blue-100 text-blue-700";
+      case "cashier":
+        return "bg-gray-100 text-gray-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
@@ -103,14 +124,10 @@ const Staff = () => {
     if (!formData.name || !formData.email) return;
 
     if (editingMember) {
-      setStaff(staff.map(s => 
-        s.id === editingMember.id 
-          ? { ...s, ...formData }
-          : s
-      ));
+      setStaff(staff.map((s) => (s.id === editingMember.id ? { ...s, ...formData } : s)));
     } else {
       const newMember: StaffMember = {
-        id: `STF${String(staff.length + 1).padStart(3, '0')}`,
+        id: `STF${String(staff.length + 1).padStart(3, "0")}`,
         name: formData.name,
         email: formData.email,
         role: formData.role,
@@ -123,7 +140,7 @@ const Staff = () => {
   };
 
   const handleRemove = (id: string) => {
-    setStaff(staff.filter(s => s.id !== id));
+    setStaff(staff.filter((s) => s.id !== id));
   };
 
   return (
@@ -143,11 +160,9 @@ const Staff = () => {
       {/* Staff List */}
       <div className="bg-white rounded-2xl overflow-hidden mb-6">
         {staff.map((member, index) => (
-          <div 
+          <div
             key={member.id}
-            className={`flex items-center justify-between p-4 ${
-              index !== 0 ? 'border-t border-[#f0f0f0]' : ''
-            }`}
+            className={`flex items-center justify-between p-4 ${index !== 0 ? "border-t border-[#f0f0f0]" : ""}`}
           >
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-[#F6F6F6] rounded-full flex items-center justify-center">
@@ -185,10 +200,7 @@ const Staff = () => {
                     Edit Role
                   </DropdownMenuItem>
                   {member.role !== "admin" && (
-                    <DropdownMenuItem 
-                      onClick={() => handleRemove(member.id)}
-                      className="text-red-600"
-                    >
+                    <DropdownMenuItem onClick={() => handleRemove(member.id)} className="text-red-600">
                       <Trash2 className="w-4 h-4 mr-2" />
                       Remove
                     </DropdownMenuItem>
@@ -207,10 +219,11 @@ const Staff = () => {
           {Object.entries(rolePermissions).map(([role, permissions]) => (
             <div key={role} className="space-y-3">
               <div className="flex items-center gap-2">
-                <Shield className={`w-4 h-4 ${
-                  role === "admin" ? "text-purple-600" : 
-                  role === "manager" ? "text-blue-600" : "text-gray-600"
-                }`} />
+                <Shield
+                  className={`w-4 h-4 ${
+                    role === "admin" ? "text-purple-600" : role === "manager" ? "text-blue-600" : "text-gray-600"
+                  }`}
+                />
                 <span className="font-medium text-[#141414] capitalize">{role}</span>
               </div>
               <ul className="space-y-2">
@@ -230,23 +243,23 @@ const Staff = () => {
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingMember ? 'Edit Staff Member' : 'Invite Staff Member'}</DialogTitle>
+            <DialogTitle>{editingMember ? "Edit Staff Member" : "Invite Staff Member"}</DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-4 py-4">
             <div className="space-y-2">
               <Label htmlFor="name">Full Name</Label>
-              <Input 
+              <Input
                 id="name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="Enter name"
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="email">Email Address</Label>
-              <Input 
+              <Input
                 id="email"
                 type="email"
                 value={formData.email}
@@ -255,7 +268,7 @@ const Staff = () => {
                 disabled={!!editingMember}
               />
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="role">Role</Label>
               <Select value={formData.role} onValueChange={(v: any) => setFormData({ ...formData, role: v })}>
@@ -272,9 +285,11 @@ const Staff = () => {
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleSave} className="bg-[#0066FF] hover:bg-[#0052CC] text-white">
-              {editingMember ? 'Save Changes' : 'Send Invite'}
+              {editingMember ? "Save Changes" : "Send Invite"}
             </Button>
           </DialogFooter>
         </DialogContent>
