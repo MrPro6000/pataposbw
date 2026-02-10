@@ -3,20 +3,8 @@ import { X, Send, Globe, User, Phone, DollarSign, CheckCircle, ArrowRight, Chevr
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-} from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -34,6 +22,7 @@ const countries = [
   { code: "ZM", name: "Zambia", flag: "🇿🇲", currency: "ZMW" },
   { code: "MW", name: "Malawi", flag: "🇲🇼", currency: "MWK" },
   { code: "NA", name: "Namibia", flag: "🇳🇦", currency: "NAD" },
+  { code: "BW", name: "Botswana", flag: "🇿🇦", currency: "BWP" },
 ];
 
 // Mock exchange rates (BWP to other currencies)
@@ -56,7 +45,7 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
   const [transferReference, setTransferReference] = useState("");
   const { toast } = useToast();
 
-  const selectedCountryData = countries.find(c => c.code === selectedCountry);
+  const selectedCountryData = countries.find((c) => c.code === selectedCountry);
   const transferFee = 25; // Fixed fee in Pula
   const exchangeRate = selectedCountryData ? exchangeRates[selectedCountryData.currency] || 1 : 1;
   const amountNum = parseFloat(amount) || 0;
@@ -112,8 +101,10 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
     setIsSubmitting(true);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       if (!user) {
         toast({ title: "Error", description: "Please log in to send money", variant: "destructive" });
         setStep("details");
@@ -184,9 +175,11 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
               {/* Recipient Details */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-foreground">Recipient Details</h3>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="recipientName" className="text-foreground">Full Name</Label>
+                  <Label htmlFor="recipientName" className="text-foreground">
+                    Full Name
+                  </Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
@@ -200,7 +193,9 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="recipientPhone" className="text-foreground">Phone Number</Label>
+                  <Label htmlFor="recipientPhone" className="text-foreground">
+                    Phone Number
+                  </Label>
                   <div className="relative">
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <Input
@@ -240,11 +235,15 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
               {/* Amount */}
               <div className="space-y-4">
                 <h3 className="font-semibold text-foreground">Transfer Amount</h3>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="amount" className="text-foreground">You Send (BWP)</Label>
+                  <Label htmlFor="amount" className="text-foreground">
+                    You Send (BWP)
+                  </Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-semibold text-muted-foreground">P</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-lg font-semibold text-muted-foreground">
+                      P
+                    </span>
                     <Input
                       id="amount"
                       type="number"
@@ -264,7 +263,9 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-muted-foreground">Exchange rate</span>
-                      <span className="text-foreground">1 BWP = {exchangeRate.toFixed(4)} {selectedCountryData.currency}</span>
+                      <span className="text-foreground">
+                        1 BWP = {exchangeRate.toFixed(4)} {selectedCountryData.currency}
+                      </span>
                     </div>
                     <div className="border-t border-border pt-3 flex justify-between">
                       <span className="text-muted-foreground">They receive</span>
@@ -324,17 +325,10 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep("details")}
-                  className="flex-1 h-12"
-                >
+                <Button variant="outline" onClick={() => setStep("details")} className="flex-1 h-12">
                   Back
                 </Button>
-                <Button
-                  onClick={handleConfirmTransfer}
-                  className="flex-1 h-12 font-semibold"
-                >
+                <Button onClick={handleConfirmTransfer} className="flex-1 h-12 font-semibold">
                   Confirm & Send
                 </Button>
               </div>
@@ -360,7 +354,7 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
               <p className="text-muted-foreground text-center mb-4">
                 {recipientName} will receive {selectedCountryData.currency} {recipientAmount.toFixed(2)}
               </p>
-              
+
               <div className="w-full bg-muted rounded-xl p-4 mb-6">
                 <p className="text-sm text-muted-foreground text-center">Reference Number</p>
                 <p className="text-lg font-mono font-bold text-foreground text-center">{transferReference}</p>
