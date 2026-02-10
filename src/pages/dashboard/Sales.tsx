@@ -4,8 +4,8 @@ import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
-  Search, 
-  Download, 
+  Search,
+  Download,
   CreditCard,
   Smartphone,
   Globe,
@@ -21,24 +21,13 @@ import {
   Copy,
   ExternalLink,
   CheckCircle,
-  X
+  X,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
@@ -76,30 +65,180 @@ interface Invoice {
 }
 
 const transactions: Transaction[] = [
-  { id: "TXN001", date: "2025-01-28", time: "14:32", type: "card", amount: 150.00, status: "success", cardLast4: "4532", reference: "PAY-001234" },
-  { id: "TXN002", date: "2025-01-28", time: "13:45", type: "mobile_money", amount: 89.00, status: "success", provider: "Orange Money", reference: "PAY-001233" },
-  { id: "TXN003", date: "2025-01-28", time: "12:20", type: "online", amount: 450.00, status: "success", customer: "john@email.com", reference: "PAY-001232" },
-  { id: "TXN004", date: "2025-01-28", time: "11:15", type: "cash", amount: 75.00, status: "success", reference: "PAY-001231" },
-  { id: "TXN005", date: "2025-01-28", time: "10:30", type: "tap", amount: 320.00, status: "success", cardLast4: "5567", reference: "PAY-001230" },
-  { id: "TXN006", date: "2025-01-27", time: "16:45", type: "wallet", amount: 890.00, status: "success", provider: "MyZaka", reference: "PAY-001229" },
-  { id: "TXN007", date: "2025-01-27", time: "15:20", type: "qr", amount: 45.00, status: "success", reference: "PAY-001228" },
-  { id: "TXN008", date: "2025-01-27", time: "14:00", type: "payment_link", amount: 1250.00, status: "success", customer: "sarah@email.com", reference: "PAY-001227" },
-  { id: "TXN009", date: "2025-01-27", time: "12:30", type: "mobile_money", amount: 200.00, status: "pending", provider: "Smega", reference: "PAY-001226" },
-  { id: "TXN010", date: "2025-01-27", time: "10:15", type: "card", amount: 560.00, status: "failed", cardLast4: "3345", reference: "PAY-001225" },
+  {
+    id: "TXN001",
+    date: "2025-01-28",
+    time: "14:32",
+    type: "card",
+    amount: 150.0,
+    status: "success",
+    cardLast4: "4532",
+    reference: "PAY-001234",
+  },
+  {
+    id: "TXN002",
+    date: "2025-01-28",
+    time: "13:45",
+    type: "mobile_money",
+    amount: 89.0,
+    status: "success",
+    provider: "Orange Money",
+    reference: "PAY-001233",
+  },
+  {
+    id: "TXN003",
+    date: "2025-01-28",
+    time: "12:20",
+    type: "online",
+    amount: 450.0,
+    status: "success",
+    customer: "john@email.com",
+    reference: "PAY-001232",
+  },
+  {
+    id: "TXN004",
+    date: "2025-01-28",
+    time: "11:15",
+    type: "cash",
+    amount: 75.0,
+    status: "success",
+    reference: "PAY-001231",
+  },
+  {
+    id: "TXN005",
+    date: "2025-01-28",
+    time: "10:30",
+    type: "tap",
+    amount: 320.0,
+    status: "success",
+    cardLast4: "5567",
+    reference: "PAY-001230",
+  },
+  {
+    id: "TXN006",
+    date: "2025-01-27",
+    time: "16:45",
+    type: "wallet",
+    amount: 890.0,
+    status: "success",
+    provider: "MyZaka",
+    reference: "PAY-001229",
+  },
+  {
+    id: "TXN007",
+    date: "2025-01-27",
+    time: "15:20",
+    type: "qr",
+    amount: 45.0,
+    status: "success",
+    reference: "PAY-001228",
+  },
+  {
+    id: "TXN008",
+    date: "2025-01-27",
+    time: "14:00",
+    type: "payment_link",
+    amount: 1250.0,
+    status: "success",
+    customer: "sarah@email.com",
+    reference: "PAY-001227",
+  },
+  {
+    id: "TXN009",
+    date: "2025-01-27",
+    time: "12:30",
+    type: "mobile_money",
+    amount: 200.0,
+    status: "pending",
+    provider: "Smega",
+    reference: "PAY-001226",
+  },
+  {
+    id: "TXN010",
+    date: "2025-01-27",
+    time: "10:15",
+    type: "card",
+    amount: 560.0,
+    status: "failed",
+    cardLast4: "3345",
+    reference: "PAY-001225",
+  },
 ];
 
 const paymentLinks: PaymentLink[] = [
-  { id: "PL001", title: "Website Design Payment", amount: 2500, url: "https://pay.pata.bw/pl001", status: "unpaid", createdAt: "2025-01-28", customer: "john@email.com" },
-  { id: "PL002", title: "Monthly Subscription", amount: 199, url: "https://pay.pata.bw/pl002", status: "paid", createdAt: "2025-01-27" },
-  { id: "PL003", title: "Consulting Fee", amount: 850, url: "https://pay.pata.bw/pl003", status: "unpaid", createdAt: "2025-01-26", customer: "sarah@email.com" },
-  { id: "PL004", title: "Product Order #45", amount: 320, url: "https://pay.pata.bw/pl004", status: "expired", createdAt: "2025-01-20" },
+  {
+    id: "PL001",
+    title: "Website Design Payment",
+    amount: 2500,
+    url: "https://pay.pata.bw/pl001",
+    status: "unpaid",
+    createdAt: "2025-01-28",
+    customer: "john@email.com",
+  },
+  {
+    id: "PL002",
+    title: "Monthly Subscription",
+    amount: 199,
+    url: "https://pay.pata.bw/pl002",
+    status: "paid",
+    createdAt: "2025-01-27",
+  },
+  {
+    id: "PL003",
+    title: "Consulting Fee",
+    amount: 850,
+    url: "https://pay.pata.bw/pl003",
+    status: "unpaid",
+    createdAt: "2025-01-26",
+    customer: "sarah@email.com",
+  },
+  {
+    id: "PL004",
+    title: "Product Order #45",
+    amount: 320,
+    url: "https://pay.pata.bw/pl004",
+    status: "expired",
+    createdAt: "2025-01-20",
+  },
 ];
 
 const invoices: Invoice[] = [
-  { id: "INV001", invoiceNumber: "INV-2025-001", customer: "John Doe", amount: 1250, status: "sent", dueDate: "2025-02-15", createdAt: "2025-01-28" },
-  { id: "INV002", invoiceNumber: "INV-2025-002", customer: "Sarah Smith", amount: 890, status: "paid", dueDate: "2025-02-10", createdAt: "2025-01-27" },
-  { id: "INV003", invoiceNumber: "INV-2025-003", customer: "Mike Johnson", amount: 450, status: "draft", dueDate: "2025-02-20", createdAt: "2025-01-26" },
-  { id: "INV004", invoiceNumber: "INV-2025-004", customer: "Emily Brown", amount: 2100, status: "overdue", dueDate: "2025-01-25", createdAt: "2025-01-15" },
+  {
+    id: "INV001",
+    invoiceNumber: "INV-2025-001",
+    customer: "John Doe",
+    amount: 1250,
+    status: "sent",
+    dueDate: "2025-02-15",
+    createdAt: "2025-01-28",
+  },
+  {
+    id: "INV002",
+    invoiceNumber: "INV-2025-002",
+    customer: "Sarah Smith",
+    amount: 890,
+    status: "paid",
+    dueDate: "2025-02-10",
+    createdAt: "2025-01-27",
+  },
+  {
+    id: "INV003",
+    invoiceNumber: "INV-2025-003",
+    customer: "Mike Johnson",
+    amount: 450,
+    status: "draft",
+    dueDate: "2025-02-20",
+    createdAt: "2025-01-26",
+  },
+  {
+    id: "INV004",
+    invoiceNumber: "INV-2025-004",
+    customer: "Emily Brown",
+    amount: 2100,
+    status: "overdue",
+    dueDate: "2025-01-25",
+    createdAt: "2025-01-15",
+  },
 ];
 
 const paymentTypeLabels: Record<string, string> = {
@@ -132,7 +271,7 @@ const Sales = () => {
   const [paymentType, setPaymentType] = useState<PaymentType>("card");
   const [paymentLinkDialogOpen, setPaymentLinkDialogOpen] = useState(false);
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
-   const isMobile = useIsMobile();
+  const isMobile = useIsMobile();
   const { toast } = useToast();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
 
@@ -159,45 +298,74 @@ const Sales = () => {
 
   const getTypeIcon = (type: string) => {
     switch (type) {
-      case "card": return <CreditCard className="w-4 h-4" />;
-      case "cash": return <Banknote className="w-4 h-4" />;
-      case "mobile_money": return <Smartphone className="w-4 h-4" />;
-      case "wallet": return <Wallet className="w-4 h-4" />;
-      case "tap": return <Smartphone className="w-4 h-4" />;
-      case "online": return <Globe className="w-4 h-4" />;
-      case "qr": return <QrCode className="w-4 h-4" />;
-      case "payment_link": return <Link2 className="w-4 h-4" />;
-      default: return <CreditCard className="w-4 h-4" />;
+      case "card":
+        return <CreditCard className="w-4 h-4" />;
+      case "cash":
+        return <Banknote className="w-4 h-4" />;
+      case "mobile_money":
+        return <Smartphone className="w-4 h-4" />;
+      case "wallet":
+        return <Wallet className="w-4 h-4" />;
+      case "tap":
+        return <Smartphone className="w-4 h-4" />;
+      case "online":
+        return <Globe className="w-4 h-4" />;
+      case "qr":
+        return <QrCode className="w-4 h-4" />;
+      case "payment_link":
+        return <Link2 className="w-4 h-4" />;
+      default:
+        return <CreditCard className="w-4 h-4" />;
     }
   };
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case "card": return "bg-blue-500/20 text-blue-400";
-      case "cash": return "bg-green-500/20 text-green-400";
-      case "mobile_money": return "bg-orange-500/20 text-orange-400";
-      case "wallet": return "bg-purple-500/20 text-purple-400";
-      case "tap": return "bg-cyan-500/20 text-cyan-400";
-      case "online": return "bg-indigo-500/20 text-indigo-400";
-      case "qr": return "bg-pink-500/20 text-pink-400";
-      case "payment_link": return "bg-teal-500/20 text-teal-400";
-      default: return "bg-muted text-muted-foreground";
+      case "card":
+        return "bg-blue-500/20 text-blue-400";
+      case "cash":
+        return "bg-green-500/20 text-green-400";
+      case "mobile_money":
+        return "bg-orange-500/20 text-orange-400";
+      case "wallet":
+        return "bg-purple-500/20 text-purple-400";
+      case "tap":
+        return "bg-cyan-500/20 text-cyan-400";
+      case "online":
+        return "bg-indigo-500/20 text-indigo-400";
+      case "qr":
+        return "bg-pink-500/20 text-pink-400";
+      case "payment_link":
+        return "bg-teal-500/20 text-teal-400";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "success": case "paid": return "bg-green-500/20 text-green-400";
-      case "pending": case "sent": return "bg-yellow-500/20 text-yellow-400";
-      case "failed": case "overdue": case "expired": return "bg-red-500/20 text-red-400";
-      case "unpaid": return "bg-orange-500/20 text-orange-400";
-      case "draft": return "bg-muted text-muted-foreground";
-      default: return "bg-muted text-muted-foreground";
+      case "success":
+      case "paid":
+        return "bg-green-500/20 text-green-400";
+      case "pending":
+      case "sent":
+        return "bg-yellow-500/20 text-yellow-400";
+      case "failed":
+      case "overdue":
+      case "expired":
+        return "bg-red-500/20 text-red-400";
+      case "unpaid":
+        return "bg-orange-500/20 text-orange-400";
+      case "draft":
+        return "bg-muted text-muted-foreground";
+      default:
+        return "bg-muted text-muted-foreground";
     }
   };
 
-  const filteredTransactions = transactions.filter(tx => {
-    const matchesSearch = tx.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  const filteredTransactions = transactions.filter((tx) => {
+    const matchesSearch =
+      tx.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tx.cardLast4?.includes(searchQuery) ||
       tx.customer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tx.provider?.toLowerCase().includes(searchQuery.toLowerCase());
@@ -226,11 +394,14 @@ const Sales = () => {
       return;
     }
     setIsProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsProcessing(false);
     setIsSuccess(true);
     toast({ title: "Payment Successful", description: `P${parseFloat(amount).toFixed(2)} payment completed` });
-    setTimeout(() => { setPaymentDialogOpen(false); setIsSuccess(false); }, 1500);
+    setTimeout(() => {
+      setPaymentDialogOpen(false);
+      setIsSuccess(false);
+    }, 1500);
   };
 
   const handleCreatePaymentLink = () => {
@@ -238,9 +409,14 @@ const Sales = () => {
       toast({ title: "Error", description: "Please fill in all required fields", variant: "destructive" });
       return;
     }
-    toast({ title: "Payment Link Created", description: "Your payment link has been generated and copied to clipboard" });
+    toast({
+      title: "Payment Link Created",
+      description: "Your payment link has been generated and copied to clipboard",
+    });
     setPaymentLinkDialogOpen(false);
-    setLinkTitle(""); setLinkAmount(""); setLinkCustomer("");
+    setLinkTitle("");
+    setLinkAmount("");
+    setLinkCustomer("");
   };
 
   const handleCreateInvoice = () => {
@@ -250,7 +426,10 @@ const Sales = () => {
     }
     toast({ title: "Invoice Created", description: "Your invoice has been created successfully" });
     setInvoiceDialogOpen(false);
-    setInvoiceCustomer(""); setInvoiceAmount(""); setInvoiceDueDate(""); setInvoiceItems("");
+    setInvoiceCustomer("");
+    setInvoiceAmount("");
+    setInvoiceDueDate("");
+    setInvoiceItems("");
   };
 
   const copyLink = (url: string) => {
@@ -260,12 +439,18 @@ const Sales = () => {
 
   const getPaymentTypeConfig = (type: PaymentType) => {
     switch (type) {
-      case "card": return { title: "Card Sale", icon: CreditCard, color: "bg-primary" };
-      case "payment-link": return { title: "Payment Link", icon: Link2, color: "bg-purple-500" };
-      case "invoice": return { title: "New Invoice", icon: FileText, color: "bg-blue-500" };
-      case "cash": return { title: "Cash Payment", icon: Banknote, color: "bg-green-500" };
-      case "mobile-money": return { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" };
-      case "wallet": return { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" };
+      case "card":
+        return { title: "Card Sale", icon: CreditCard, color: "bg-primary" };
+      case "payment-link":
+        return { title: "Payment Link", icon: Link2, color: "bg-purple-500" };
+      case "invoice":
+        return { title: "New Invoice", icon: FileText, color: "bg-blue-500" };
+      case "cash":
+        return { title: "Cash Payment", icon: Banknote, color: "bg-green-500" };
+      case "mobile-money":
+        return { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" };
+      case "wallet":
+        return { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" };
     }
   };
 
@@ -289,62 +474,69 @@ const Sales = () => {
       {/* Quick Actions */}
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
+
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
-            onClick={() => openPaymentDialog("card")}
-          >
-            <CreditCard className="w-5 h-5" />
-            <span className="text-xs">Card Sale</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
-            onClick={() => setPaymentLinkDialogOpen(true)}
-          >
-            <Link2 className="w-5 h-5" />
-            <span className="text-xs">Payment Link</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
-            onClick={() => setInvoiceDialogOpen(true)}
-          >
-            <FileText className="w-5 h-5" />
-            <span className="text-xs">New Invoice</span>
-          </Button>
-          <Button 
-            variant="outline" 
+          <Button
+            variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("cash")}
+            onClick={() => setSellProductsOpen(true)}
           >
-            <Banknote className="w-5 h-5" />
-            <span className="text-xs">Cash</span>
+            <ShoppingBag className="w-5 h-5" />
+            <span className="text-xs">Sell Products</span>
           </Button>
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("mobile-money")}
           >
             <Smartphone className="w-5 h-5" />
             <span className="text-xs">Mobile Money</span>
           </Button>
-          <Button 
-            variant="outline" 
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            onClick={() => openPaymentDialog("card")}
+          >
+            <CreditCard className="w-5 h-5" />
+            <span className="text-xs">Card Sale</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            onClick={() => setPaymentLinkDialogOpen(true)}
+          >
+            <Link2 className="w-5 h-5" />
+            <span className="text-xs">Payment Link</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentDialog("cash")}
+          >
+            <Banknote className="w-5 h-5" />
+            <span className="text-xs">Cash</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 bg-foreground text-background border-0 hover:bg-foreground/80 hover:text-background"
+            onClick={() => setInvoiceDialogOpen(true)}
+          >
+            <FileText className="w-5 h-5" />
+            <span className="text-xs">New Invoice</span>
+          </Button>
+
+          <Button
+            variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentDialog("wallet")}
           >
             <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => setSellProductsOpen(true)}
-          >
-            <ShoppingBag className="w-5 h-5" />
-            <span className="text-xs">Sell Products</span>
           </Button>
         </div>
       </div>
@@ -352,13 +544,22 @@ const Sales = () => {
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="bg-card border border-border p-1 h-auto">
-          <TabsTrigger value="transactions" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
+          <TabsTrigger
+            value="transactions"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2"
+          >
             Transactions
           </TabsTrigger>
-          <TabsTrigger value="payment-links" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
+          <TabsTrigger
+            value="payment-links"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2"
+          >
             Payment Links
           </TabsTrigger>
-          <TabsTrigger value="invoices" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2">
+          <TabsTrigger
+            value="invoices"
+            className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground px-6 py-2"
+          >
             Invoices
           </TabsTrigger>
         </TabsList>
@@ -370,7 +571,7 @@ const Sales = () => {
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input 
+                <Input
                   placeholder="Search by reference, card, customer, or provider..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -431,22 +632,24 @@ const Sales = () => {
                         {tx.date} at {tx.time}
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getTypeColor(tx.type)}`}>
+                        <span
+                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${getTypeColor(tx.type)}`}
+                        >
                           {getTypeIcon(tx.type)}
                           {paymentTypeLabels[tx.type]}
                         </span>
                       </td>
-                      <td className="p-4 font-semibold text-foreground">
-                        P{tx.amount.toFixed(2)}
-                      </td>
+                      <td className="p-4 font-semibold text-foreground">P{tx.amount.toFixed(2)}</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(tx.status)}`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(tx.status)}`}
+                        >
                           {tx.status}
                         </span>
                       </td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button 
+                          <button
                             onClick={() => setSelectedTransaction(tx)}
                             className="p-2 hover:bg-muted rounded-lg transition-colors"
                           >
@@ -471,7 +674,7 @@ const Sales = () => {
         <TabsContent value="payment-links">
           <div className="flex justify-between items-center mb-4">
             <p className="text-muted-foreground">Manage and track your payment links</p>
-            <Button 
+            <Button
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => setPaymentLinkDialogOpen(true)}
             >
@@ -499,31 +702,27 @@ const Sales = () => {
                       <td className="p-4">
                         <span className="font-medium text-foreground">{link.title}</span>
                       </td>
-                      <td className="p-4 font-semibold text-foreground">
-                        P{link.amount.toFixed(2)}
-                      </td>
-                      <td className="p-4 text-muted-foreground">
-                        {link.customer || "-"}
-                      </td>
+                      <td className="p-4 font-semibold text-foreground">P{link.amount.toFixed(2)}</td>
+                      <td className="p-4 text-muted-foreground">{link.customer || "-"}</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(link.status)}`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(link.status)}`}
+                        >
                           {link.status}
                         </span>
                       </td>
-                      <td className="p-4 text-muted-foreground">
-                        {link.createdAt}
-                      </td>
+                      <td className="p-4 text-muted-foreground">{link.createdAt}</td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
-                          <button 
+                          <button
                             onClick={() => copyLink(link.url)}
                             className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Copy link"
                           >
                             <Copy className="w-4 h-4 text-muted-foreground" />
                           </button>
-                          <button 
-                            onClick={() => window.open(link.url, '_blank')}
+                          <button
+                            onClick={() => window.open(link.url, "_blank")}
                             className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Open link"
                           >
@@ -543,7 +742,7 @@ const Sales = () => {
         <TabsContent value="invoices">
           <div className="flex justify-between items-center mb-4">
             <p className="text-muted-foreground">Create and manage invoices for your customers</p>
-            <Button 
+            <Button
               className="bg-primary hover:bg-primary/90 text-primary-foreground"
               onClick={() => setInvoiceDialogOpen(true)}
             >
@@ -571,20 +770,16 @@ const Sales = () => {
                       <td className="p-4">
                         <span className="font-medium text-foreground">{invoice.invoiceNumber}</span>
                       </td>
-                      <td className="p-4 text-foreground">
-                        {invoice.customer}
-                      </td>
-                      <td className="p-4 font-semibold text-foreground">
-                        P{invoice.amount.toFixed(2)}
-                      </td>
+                      <td className="p-4 text-foreground">{invoice.customer}</td>
+                      <td className="p-4 font-semibold text-foreground">P{invoice.amount.toFixed(2)}</td>
                       <td className="p-4">
-                        <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(invoice.status)}`}>
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(invoice.status)}`}
+                        >
                           {invoice.status}
                         </span>
                       </td>
-                      <td className="p-4 text-muted-foreground">
-                        {invoice.dueDate}
-                      </td>
+                      <td className="p-4 text-muted-foreground">{invoice.dueDate}</td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
@@ -613,15 +808,19 @@ const Sales = () => {
           {selectedTransaction && (
             <div className="space-y-4">
               <div className="text-center py-4">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 ${getTypeColor(selectedTransaction.type)}`}>
+                <div
+                  className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 ${getTypeColor(selectedTransaction.type)}`}
+                >
                   {getTypeIcon(selectedTransaction.type)}
                 </div>
                 <p className="text-3xl font-bold text-foreground">P{selectedTransaction.amount.toFixed(2)}</p>
-                <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTransaction.status)}`}>
+                <span
+                  className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTransaction.status)}`}
+                >
                   {selectedTransaction.status}
                 </span>
               </div>
-              
+
               <div className="space-y-3 bg-muted rounded-xl p-4">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Reference</span>
@@ -681,7 +880,7 @@ const Sales = () => {
               {config.title}
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-5">
             {isSuccess ? (
               <div className="flex flex-col items-center justify-center py-10">
@@ -722,9 +921,7 @@ const Sales = () => {
                           key={provider.id}
                           onClick={() => setSelectedProvider(provider.id)}
                           className={`p-4 rounded-xl border-2 transition-all ${
-                            selectedProvider === provider.id
-                              ? "border-primary bg-primary/10"
-                              : "border-border bg-card"
+                            selectedProvider === provider.id ? "border-primary bg-primary/10" : "border-border bg-card"
                           }`}
                         >
                           <div className={`w-8 h-8 ${provider.color} rounded-lg mb-2`} />
@@ -735,7 +932,7 @@ const Sales = () => {
                   </div>
                 )}
 
-                {(paymentType === "mobile-money") && (
+                {paymentType === "mobile-money" && (
                   <div className="space-y-2">
                     <Label>Customer Phone</Label>
                     <Input
@@ -757,9 +954,7 @@ const Sales = () => {
 
                 {paymentType === "cash" && (
                   <div className="bg-muted rounded-xl p-4">
-                    <p className="text-sm text-muted-foreground">
-                      Record cash received from the customer.
-                    </p>
+                    <p className="text-sm text-muted-foreground">Record cash received from the customer.</p>
                   </div>
                 )}
 
@@ -794,21 +989,38 @@ const Sales = () => {
               Create Payment Link
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-5">
             <div className="space-y-2">
               <Label>Title *</Label>
-              <Input placeholder="e.g., Website Design Payment" value={linkTitle} onChange={(e) => setLinkTitle(e.target.value)} />
+              <Input
+                placeholder="e.g., Website Design Payment"
+                value={linkTitle}
+                onChange={(e) => setLinkTitle(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Amount (P) *</Label>
-              <Input type="number" placeholder="0.00" value={linkAmount} onChange={(e) => setLinkAmount(e.target.value)} />
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={linkAmount}
+                onChange={(e) => setLinkAmount(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Customer Email (optional)</Label>
-              <Input type="email" placeholder="customer@example.com" value={linkCustomer} onChange={(e) => setLinkCustomer(e.target.value)} />
+              <Input
+                type="email"
+                placeholder="customer@example.com"
+                value={linkCustomer}
+                onChange={(e) => setLinkCustomer(e.target.value)}
+              />
             </div>
-            <Button onClick={handleCreatePaymentLink} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+            <Button
+              onClick={handleCreatePaymentLink}
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            >
               Create & Copy Link
             </Button>
           </div>
@@ -826,15 +1038,24 @@ const Sales = () => {
               Create Invoice
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="space-y-5">
             <div className="space-y-2">
               <Label>Customer Name *</Label>
-              <Input placeholder="John Doe" value={invoiceCustomer} onChange={(e) => setInvoiceCustomer(e.target.value)} />
+              <Input
+                placeholder="John Doe"
+                value={invoiceCustomer}
+                onChange={(e) => setInvoiceCustomer(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Amount (P) *</Label>
-              <Input type="number" placeholder="0.00" value={invoiceAmount} onChange={(e) => setInvoiceAmount(e.target.value)} />
+              <Input
+                type="number"
+                placeholder="0.00"
+                value={invoiceAmount}
+                onChange={(e) => setInvoiceAmount(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label>Due Date</Label>
@@ -842,9 +1063,16 @@ const Sales = () => {
             </div>
             <div className="space-y-2">
               <Label>Items / Description</Label>
-              <Input placeholder="List items or services" value={invoiceItems} onChange={(e) => setInvoiceItems(e.target.value)} />
+              <Input
+                placeholder="List items or services"
+                value={invoiceItems}
+                onChange={(e) => setInvoiceItems(e.target.value)}
+              />
             </div>
-            <Button onClick={handleCreateInvoice} className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold">
+            <Button
+              onClick={handleCreateInvoice}
+              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+            >
               Create Invoice
             </Button>
           </div>
