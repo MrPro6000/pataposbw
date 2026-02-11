@@ -36,17 +36,20 @@ const DashboardHome = () => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    let initialCheckDone = false;
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
-        setLoading(false);
-        if (!session?.user) {
+        // Only redirect on sign-out after initial check is done
+        if (initialCheckDone && !session?.user) {
           navigate("/login");
         }
       }
     );
 
     supabase.auth.getSession().then(({ data: { session } }) => {
+      initialCheckDone = true;
       setUser(session?.user ?? null);
       setLoading(false);
       if (!session?.user) {
