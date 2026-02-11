@@ -364,9 +364,11 @@ const Sales = () => {
   };
 
   const filteredTransactions = transactions.filter((tx) => {
+    const typeLabel = paymentTypeLabels[tx.type]?.toLowerCase() || "";
     const matchesSearch =
+      typeLabel.includes(searchQuery.toLowerCase()) ||
+      tx.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tx.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.cardLast4?.includes(searchQuery) ||
       tx.customer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       tx.provider?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === "all" || tx.type === typeFilter;
@@ -465,7 +467,22 @@ const Sales = () => {
           <h1 className="text-2xl font-bold text-foreground">Sales & Transactions</h1>
           <p className="text-muted-foreground">Manage payments, invoices, and payment links</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          onClick={() => {
+            const csv = ["Reference,Date,Type,Amount,Status"]
+              .concat(transactions.map(tx => `${tx.reference},${tx.date} ${tx.time},${paymentTypeLabels[tx.type]},P${tx.amount.toFixed(2)},${tx.status}`))
+              .join("\n");
+            const blob = new Blob([csv], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `transactions-${new Date().toISOString().split("T")[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+            toast({ title: "Exported", description: "Transactions exported as CSV" });
+          }}
+        >
           <Download className="w-4 h-4 mr-2" />
           Export
         </Button>
@@ -572,7 +589,7 @@ const Sales = () => {
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Search by reference, card, customer, or provider..."
+                  placeholder="Search by type, customer, or provider..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"

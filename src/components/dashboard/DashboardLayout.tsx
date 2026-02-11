@@ -59,7 +59,7 @@ const navSections: NavSection[] = [
     label: "Transport",
     icon: Bus,
     items: [
-      { label: "Routes & Fares", path: "/dashboard/transport" },
+      { label: "Enter Fare", path: "/dashboard/transport" },
     ]
   },
   {

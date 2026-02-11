@@ -2,203 +2,223 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileTransportView from "@/components/dashboard/MobileTransportView";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Bus, MapPin, ArrowRight, Plus, Edit, Trash2, MoreVertical } from "lucide-react";
+import { Bus, MapPin, ArrowRight, User, CreditCard, Banknote, Smartphone, QrCode, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
 
-interface Route {
+interface TransportTransaction {
   id: string;
+  customerName: string;
   from: string;
   to: string;
+  modeOfTransport: string;
   fare: number;
-  distance: string;
-  status: "active" | "inactive";
+  paymentMethod: string;
+  date: string;
 }
 
-const initialRoutes: Route[] = [
-  { id: "RT001", from: "Gaborone", to: "Francistown", fare: 180.0, distance: "430 km", status: "active" },
-  { id: "RT002", from: "Gaborone", to: "Maun", fare: 250.0, distance: "950 km", status: "active" },
-  { id: "RT003", from: "Gaborone", to: "Kasane", fare: 320.0, distance: "960 km", status: "active" },
-  { id: "RT004", from: "Gaborone", to: "Palapye", fare: 100.0, distance: "270 km", status: "active" },
-  { id: "RT005", from: "Gaborone", to: "Serowe", fare: 120.0, distance: "330 km", status: "active" },
-  { id: "RT006", from: "Gaborone", to: "Kanye", fare: 30.0, distance: "75 km", status: "active" },
-  { id: "RT007", from: "Francistown", to: "Nata", fare: 80.0, distance: "190 km", status: "active" },
-  { id: "RT008", from: "Francistown", to: "Maun", fare: 180.0, distance: "520 km", status: "active" },
-  { id: "RT009", from: "Gaborone", to: "Lobatse", fare: 20.0, distance: "70 km", status: "active" },
-  { id: "RT010", from: "Gaborone", to: "Molepolole", fare: 25.0, distance: "50 km", status: "active" },
+const transportModes = ["Combi", "Taxi", "Bus", "Yango", "inDrive"];
+
+const paymentMethods = [
+  { id: "card", label: "Card", icon: CreditCard },
+  { id: "cash", label: "Cash", icon: Banknote },
+  { id: "mobile_money", label: "Mobile Money", icon: Smartphone },
+  { id: "qr", label: "QR Payment", icon: QrCode },
 ];
 
 const Transport = () => {
-  const [routes, setRoutes] = useState<Route[]>(initialRoutes);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingRoute, setEditingRoute] = useState<Route | null>(null);
-  const [formData, setFormData] = useState({ from: "", to: "", fare: "", distance: "" });
   const isMobile = useIsMobile();
+  const { toast } = useToast();
+
+  const [formData, setFormData] = useState({
+    customerName: "",
+    from: "",
+    to: "",
+    modeOfTransport: "",
+    fare: "",
+    paymentMethod: "",
+  });
+  const [transactions, setTransactions] = useState<TransportTransaction[]>([]);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   if (isMobile) {
     return <MobileTransportView />;
   }
 
-  const handleOpenAdd = () => {
-    setFormData({ from: "", to: "", fare: "", distance: "" });
-    setEditingRoute(null);
-    setIsModalOpen(true);
-  };
-
-  const handleOpenEdit = (route: Route) => {
-    setFormData({ from: route.from, to: route.to, fare: route.fare.toString(), distance: route.distance });
-    setEditingRoute(route);
-    setIsModalOpen(true);
-  };
-
-  const handleSave = () => {
-    if (!formData.from || !formData.to || !formData.fare) return;
-    if (editingRoute) {
-      setRoutes(
-        routes.map((r) =>
-          r.id === editingRoute.id
-            ? {
-                ...r,
-                from: formData.from,
-                to: formData.to,
-                fare: parseFloat(formData.fare),
-                distance: formData.distance,
-              }
-            : r,
-        ),
-      );
-    } else {
-      setRoutes([
-        ...routes,
-        {
-          id: `RT${String(routes.length + 1).padStart(3, "0")}`,
-          from: formData.from,
-          to: formData.to,
-          fare: parseFloat(formData.fare),
-          distance: formData.distance || "—",
-          status: "active",
-        },
-      ]);
+  const handleSubmit = () => {
+    if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport || !formData.paymentMethod) {
+      toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
+      return;
     }
-    setIsModalOpen(false);
-  };
-
-  const handleDelete = (id: string) => {
-    setRoutes(routes.filter((r) => r.id !== id));
+    const newTx: TransportTransaction = {
+      id: `TR${String(transactions.length + 1).padStart(3, "0")}`,
+      customerName: formData.customerName,
+      from: formData.from,
+      to: formData.to,
+      modeOfTransport: formData.modeOfTransport,
+      fare: parseFloat(formData.fare),
+      paymentMethod: formData.paymentMethod,
+      date: new Date().toISOString().split("T")[0],
+    };
+    setTransactions([newTx, ...transactions]);
+    setIsSuccess(true);
+    toast({ title: "Transport Fare Saved", description: `P${newTx.fare.toFixed(2)} — ${newTx.from} → ${newTx.to}` });
+    setTimeout(() => {
+      setIsSuccess(false);
+      setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "", paymentMethod: "" });
+    }, 1500);
   };
 
   return (
     <DashboardLayout>
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Transport</h1>
-          <p className="text-muted-foreground">Manage your routes and fares</p>
-        </div>
-        <Button onClick={handleOpenAdd} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-          <Plus className="w-4 h-4 mr-2" />
-          Add Route
-        </Button>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-foreground">Transport</h1>
+        <p className="text-muted-foreground">Enter fare details</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {routes.map((route) => (
-          <div key={route.id} className="bg-card border border-border rounded-2xl p-5">
-            <div className="flex items-start justify-between mb-4">
-              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
-                <Bus className="w-6 h-6 text-primary" />
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Fare Entry Form */}
+        <div className="bg-card border border-border rounded-2xl p-6">
+          {isSuccess ? (
+            <div className="flex flex-col items-center justify-center py-12">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
+                <Check className="w-8 h-8 text-green-500" />
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="p-1.5 hover:bg-muted rounded-lg">
-                    <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="bg-card">
-                  <DropdownMenuItem onClick={() => handleOpenEdit(route)}>
-                    <Edit className="w-4 h-4 mr-2" /> Edit
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => handleDelete(route.id)} className="text-destructive">
-                    <Trash2 className="w-4 h-4 mr-2" /> Delete
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <p className="text-xl font-bold text-foreground">Fare Saved!</p>
+              <p className="text-muted-foreground mt-1">Transaction recorded successfully</p>
             </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Customer Name</Label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    value={formData.customerName}
+                    onChange={(e) => setFormData({ ...formData, customerName: e.target.value })}
+                    placeholder="Enter passenger name"
+                    className="pl-10"
+                  />
+                </div>
+              </div>
 
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin className="w-4 h-4 text-muted-foreground" />
-              <span className="font-semibold text-foreground">{route.from}</span>
-              <ArrowRight className="w-4 h-4 text-muted-foreground" />
-              <span className="font-semibold text-foreground">{route.to}</span>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>From</Label>
+                  <Input
+                    value={formData.from}
+                    onChange={(e) => setFormData({ ...formData, from: e.target.value })}
+                    placeholder="e.g. Gaborone"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>To</Label>
+                  <Input
+                    value={formData.to}
+                    onChange={(e) => setFormData({ ...formData, to: e.target.value })}
+                    placeholder="e.g. Francistown"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Mode of Transport</Label>
+                <Select value={formData.modeOfTransport} onValueChange={(val) => setFormData({ ...formData, modeOfTransport: val })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select transport type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {transportModes.map((mode) => (
+                      <SelectItem key={mode} value={mode}>{mode}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Fare (P)</Label>
+                <Input
+                  type="number"
+                  value={formData.fare}
+                  onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
+                  placeholder="0.00"
+                  className="text-xl font-bold h-12 text-center"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Payment Method</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {paymentMethods.map((pm) => (
+                    <button
+                      key={pm.id}
+                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id })}
+                      className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
+                        formData.paymentMethod === pm.id
+                          ? "border-primary bg-primary/10 text-primary"
+                          : "border-border bg-card text-foreground"
+                      }`}
+                    >
+                      <pm.icon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{pm.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <Button
+                onClick={handleSubmit}
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              >
+                Save Fare — P{formData.fare ? parseFloat(formData.fare).toFixed(2) : "0.00"}
+              </Button>
             </div>
+          )}
+        </div>
 
-            <p className="text-xs text-muted-foreground mb-3">{route.distance}</p>
-
-            <div className="flex items-center justify-between">
-              <span className="text-xl font-bold text-foreground">P{route.fare.toFixed(2)}</span>
-              <span className="text-xs px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-600">Active</span>
+        {/* Recent Transport Transactions */}
+        <div className="bg-card border border-border rounded-2xl p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4">Recent Transactions</h2>
+          {transactions.length === 0 ? (
+            <div className="text-center py-12 text-muted-foreground">
+              <Bus className="w-10 h-10 mx-auto mb-3 opacity-50" />
+              <p>No transport transactions yet</p>
+              <p className="text-sm">Enter fare details to create a transaction</p>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div className="space-y-3">
+              {transactions.map((tx) => (
+                <div key={tx.id} className="bg-muted rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2">
+                      <Bus className="w-4 h-4 text-primary" />
+                      <span className="font-medium text-foreground text-sm">{tx.modeOfTransport}</span>
+                    </div>
+                    <span className="text-lg font-bold text-foreground">P{tx.fare.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
+                    <MapPin className="w-3.5 h-3.5" />
+                    {tx.from} <ArrowRight className="w-3 h-3" /> {tx.to}
+                  </div>
+                  <div className="flex justify-between text-xs text-muted-foreground">
+                    <span>{tx.customerName}</span>
+                    <span>{tx.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingRoute ? "Edit Route" : "Add New Route"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>From</Label>
-              <Input
-                value={formData.from}
-                onChange={(e) => setFormData({ ...formData, from: e.target.value })}
-                placeholder="e.g. Gaborone"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>To</Label>
-              <Input
-                value={formData.to}
-                onChange={(e) => setFormData({ ...formData, to: e.target.value })}
-                placeholder="e.g. Francistown"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Fare (P)</Label>
-              <Input
-                type="number"
-                value={formData.fare}
-                onChange={(e) => setFormData({ ...formData, fare: e.target.value })}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Distance</Label>
-              <Input
-                value={formData.distance}
-                onChange={(e) => setFormData({ ...formData, distance: e.target.value })}
-                placeholder="e.g. 430 km"
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {editingRoute ? "Save Changes" : "Add Route"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </DashboardLayout>
   );
 };
