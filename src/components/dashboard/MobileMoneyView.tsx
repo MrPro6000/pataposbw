@@ -136,7 +136,7 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
               <Smartphone className="w-6 h-6 text-amber-100" />
             </div>
             <div>
-              <p className="font-semibold text-foreground">Mobile Money</p>
+              <p className="font-semibold text-foreground">Mobile Money Loans</p>
               <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
             </div>
           </div>
