@@ -22,13 +22,15 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileManageViewProps {
-  profile: { full_name: string | null; business_name: string | null } | null;
+  profile: { full_name: string | null; business_name: string | null; avatar_url?: string | null; phone?: string | null } | null;
   userEmail?: string;
+  userId?: string;
+  onProfileUpdated?: () => void;
 }
 
 type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support" | "devices" | "customers";
 
-const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
+const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: MobileManageViewProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
@@ -238,6 +240,8 @@ const MobileManageView = ({ profile, userEmail }: MobileManageViewProps) => {
         onClose={() => setProfileOpen(false)}
         profile={profile}
         userEmail={userEmail}
+        userId={userId}
+        onProfileUpdated={onProfileUpdated}
       />
 
       {/* Bottom Navigation */}

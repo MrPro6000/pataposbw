@@ -17,7 +17,7 @@ import MobileSupportView from "./MobileSupportView";
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ full_name: string | null; business_name: string | null } | null>(null);
+  const [profile, setProfile] = useState<{ full_name: string | null; business_name: string | null; avatar_url: string | null; phone: string | null } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -50,7 +50,7 @@ const MobileDashboardHome = () => {
   const fetchProfile = async (userId: string) => {
     const { data } = await supabase
       .from("profiles")
-      .select("full_name, business_name")
+      .select("full_name, business_name, avatar_url, phone")
       .eq("user_id", userId)
       .maybeSingle();
     
@@ -65,7 +65,7 @@ const MobileDashboardHome = () => {
     );
   }
 
-  const profileProps = { profile, userEmail: user?.email };
+  const profileProps = { profile, userEmail: user?.email, userId: user?.id, onProfileUpdated: () => user && fetchProfile(user.id) };
   const pathname = location.pathname;
 
   // Route to appropriate mobile view based on current path
