@@ -142,7 +142,7 @@ const Home = () => {
                 <div className="w-12 h-12 bg-primary/20 rounded-xl mb-4 flex items-center justify-center">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
-                <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">{feature.tagline}</p>
+                <p className="text-muted-foreground text-sm mb-2">{feature.tagline}</p>
                 <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
                 {feature.extra && <p className="text-primary text-sm mb-4">{feature.extra}</p>}
@@ -180,7 +180,7 @@ const Home = () => {
               to="/capital"
               className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-colors group border border-primary/20"
             >
-              <p className="text-primary text-xs font-medium uppercase tracking-wide mb-2">
+              <p className="text-muted-foreground text-sm mb-2">
                 Funding that flows with you
               </p>
               <h3 className="text-2xl font-bold text-foreground mb-3">Pata Capital</h3>
@@ -197,7 +197,7 @@ const Home = () => {
               to="/products"
               className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-colors group border border-info/20"
             >
-              <p className="text-info text-xs font-medium uppercase tracking-wide mb-2">Send money across borders</p>
+              <p className="text-muted-foreground text-sm mb-2">Send money across borders</p>
               <h3 className="text-2xl font-bold text-foreground mb-3">Mukuru Transfer</h3>
               <p className="text-muted-foreground mb-4">
                 Fast, secure international money transfers via Mukuru. Send and receive across borders at competitive
