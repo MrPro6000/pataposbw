@@ -3,6 +3,15 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileTransportView from "@/components/dashboard/MobileTransportView";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Bus, MapPin, ArrowRight, User, CreditCard, Banknote, Smartphone, QrCode, Check } from "lucide-react";
+import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
+import smegaImg from "@/assets/mobile-money/smega.png";
+import myzakaImg from "@/assets/mobile-money/myzaka.png";
+
+const mobileMoneyProviders = [
+  { id: "orange", name: "Orange Money", img: orangeMoneyImg },
+  { id: "smega", name: "Smega", img: smegaImg },
+  { id: "myzaka", name: "MyZaka", img: myzakaImg },
+];
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -46,6 +55,7 @@ const Transport = () => {
     modeOfTransport: "",
     fare: "",
     paymentMethod: "",
+    mobileMoneyProvider: "",
   });
   const [transactions, setTransactions] = useState<TransportTransaction[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -57,6 +67,10 @@ const Transport = () => {
   const handleSubmit = () => {
     if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport || !formData.paymentMethod) {
       toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+    if (formData.paymentMethod === "mobile_money" && !formData.mobileMoneyProvider) {
+      toast({ title: "Error", description: "Please select a mobile money provider", variant: "destructive" });
       return;
     }
     const newTx: TransportTransaction = {
@@ -74,7 +88,7 @@ const Transport = () => {
     toast({ title: "Transport Fare Saved", description: `P${newTx.fare.toFixed(2)} — ${newTx.from} → ${newTx.to}` });
     setTimeout(() => {
       setIsSuccess(false);
-      setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "", paymentMethod: "" });
+      setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "", paymentMethod: "", mobileMoneyProvider: "" });
     }, 1500);
   };
 
@@ -161,7 +175,7 @@ const Transport = () => {
                   {paymentMethods.map((pm) => (
                     <button
                       key={pm.id}
-                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id })}
+                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id, mobileMoneyProvider: "" })}
                       className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
                         formData.paymentMethod === pm.id
                           ? "border-primary bg-primary/10 text-primary"
@@ -174,6 +188,29 @@ const Transport = () => {
                   ))}
                 </div>
               </div>
+
+              {/* Mobile Money Provider Selection */}
+              {formData.paymentMethod === "mobile_money" && (
+                <div className="space-y-2">
+                  <Label>Select Provider</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {mobileMoneyProviders.map((provider) => (
+                      <button
+                        key={provider.id}
+                        onClick={() => setFormData({ ...formData, mobileMoneyProvider: provider.id })}
+                        className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors ${
+                          formData.mobileMoneyProvider === provider.id
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card"
+                        }`}
+                      >
+                        <img src={provider.img} alt={provider.name} className="w-8 h-8 rounded-lg object-contain" />
+                        <span className="text-xs font-medium text-foreground">{provider.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <Button
                 onClick={handleSubmit}

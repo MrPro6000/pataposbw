@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
+import MobileWalletSheet from "@/components/dashboard/MobileWalletSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { 
   TrendingUp,
@@ -32,6 +33,7 @@ const DashboardHome = () => {
   const [loading, setLoading] = useState(true);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -146,7 +148,7 @@ const DashboardHome = () => {
     { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-emerald-100 dark:bg-emerald-900/30", iconColor: "text-emerald-600 dark:text-emerald-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
     { title: "Send Money", subtitle: "International transfers", icon: Banknote, iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400", link: "/dashboard/payouts", action: undefined },
     { title: "Business Loan", subtitle: "Apply for funding", icon: TrendingUp, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
-    { title: "Wallet", subtitle: "P0.00 balance", icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: "/dashboard/payouts", action: undefined },
+    { title: "Wallet", subtitle: "P0.00 balance", icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: undefined, action: () => setWalletOpen(true) },
   ];
 
   return (
@@ -335,6 +337,12 @@ const DashboardHome = () => {
       <CapitalDialog
         open={capitalOpen}
         onClose={() => setCapitalOpen(false)}
+      />
+
+      {/* Wallet Sheet */}
+      <MobileWalletSheet
+        open={walletOpen}
+        onClose={() => setWalletOpen(false)}
       />
     </DashboardLayout>
   );
