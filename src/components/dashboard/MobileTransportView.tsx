@@ -18,6 +18,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import PataLogo from "@/components/PataLogo";
+import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
+import smegaImg from "@/assets/mobile-money/smega.png";
+import myzakaImg from "@/assets/mobile-money/myzaka.png";
+
+const mobileMoneyProviders = [
+  { id: "orange", name: "Orange Money", img: orangeMoneyImg },
+  { id: "smega", name: "Smega", img: smegaImg },
+  { id: "myzaka", name: "MyZaka", img: myzakaImg },
+];
 
 interface Route {
   id: string;
@@ -57,7 +66,9 @@ const MobileTransportView = () => {
     customerName: "",
     passengers: "1",
     paymentMethod: "",
+    mobileMoneyProvider: "",
   });
+  const [showProviderSelect, setShowProviderSelect] = useState(false);
   const [addForm, setAddForm] = useState({ from: "", to: "", fare: "", distance: "" });
   const [allRoutes, setAllRoutes] = useState<Route[]>(defaultRoutes);
 
@@ -65,7 +76,8 @@ const MobileTransportView = () => {
     setSelectedRoute(route);
     setIsCheckoutOpen(true);
     setIsConfirmed(false);
-    setCheckoutData({ customerName: "", passengers: "1", paymentMethod: "" });
+    setCheckoutData({ customerName: "", passengers: "1", paymentMethod: "", mobileMoneyProvider: "" });
+    setShowProviderSelect(false);
   };
 
   const totalAmount = selectedRoute
@@ -74,7 +86,18 @@ const MobileTransportView = () => {
 
   const handleCheckout = () => {
     if (!checkoutData.customerName || !checkoutData.paymentMethod) return;
+    if (checkoutData.paymentMethod === "mobile_money" && !checkoutData.mobileMoneyProvider) return;
     setIsConfirmed(true);
+  };
+
+  const handlePaymentMethodSelect = (id: string) => {
+    if (id === "mobile_money") {
+      setCheckoutData({ ...checkoutData, paymentMethod: id, mobileMoneyProvider: "" });
+      setShowProviderSelect(true);
+    } else {
+      setCheckoutData({ ...checkoutData, paymentMethod: id, mobileMoneyProvider: "" });
+      setShowProviderSelect(false);
+    }
   };
 
   const handleAddRoute = () => {
@@ -215,7 +238,7 @@ const MobileTransportView = () => {
                   {paymentMethods.map((pm) => (
                     <button
                       key={pm.id}
-                      onClick={() => setCheckoutData({ ...checkoutData, paymentMethod: pm.id })}
+                      onClick={() => handlePaymentMethodSelect(pm.id)}
                       className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
                         checkoutData.paymentMethod === pm.id
                           ? "border-primary bg-primary/10 text-primary"
@@ -229,9 +252,32 @@ const MobileTransportView = () => {
                 </div>
               </div>
 
+              {/* Mobile Money Provider Selection */}
+              {showProviderSelect && (
+                <div className="space-y-2">
+                  <Label>Select Provider</Label>
+                  <div className="space-y-2">
+                    {mobileMoneyProviders.map((provider) => (
+                      <button
+                        key={provider.id}
+                        onClick={() => setCheckoutData({ ...checkoutData, mobileMoneyProvider: provider.id })}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-colors active:scale-[0.98] ${
+                          checkoutData.mobileMoneyProvider === provider.id
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card"
+                        }`}
+                      >
+                        <img src={provider.img} alt={provider.name} className="w-8 h-8 rounded-lg object-contain" />
+                        <span className="text-sm font-semibold text-foreground">{provider.name}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <Button
                 onClick={handleCheckout}
-                disabled={!checkoutData.customerName || !checkoutData.paymentMethod}
+                disabled={!checkoutData.customerName || !checkoutData.paymentMethod || (checkoutData.paymentMethod === "mobile_money" && !checkoutData.mobileMoneyProvider)}
                 className="w-full bg-primary text-primary-foreground"
               >
                 Pay P{totalAmount.toFixed(2)}

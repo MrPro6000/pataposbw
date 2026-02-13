@@ -14,6 +14,7 @@ import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobilePOSSheet from "./MobilePOSSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
 import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
+import MobileWalletSheet from "./MobileWalletSheet";
 import PataLogo from "@/components/PataLogo";
 
 interface MobileHubViewProps {
@@ -32,6 +33,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [posOpen, setPosOpen] = useState(false);
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
 
   // Chart data - show sample stats by default
   const weeklyChartData = [
@@ -250,7 +252,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           </button>
           
           <button 
-            onClick={() => setCapitalOpen(true)}
+            onClick={() => setWalletOpen(true)}
             className="bg-gradient-to-br from-cyan-50 to-cyan-100/50 dark:from-cyan-900/20 dark:to-cyan-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-cyan-200/50 dark:border-cyan-700/30"
           >
             <div className="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/20">
@@ -323,6 +325,12 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <MobileLoanApplicationSheet
         open={loanApplicationOpen}
         onClose={() => setLoanApplicationOpen(false)}
+      />
+
+      {/* Wallet Sheet */}
+      <MobileWalletSheet
+        open={walletOpen}
+        onClose={() => setWalletOpen(false)}
       />
 
       {/* Bottom Navigation */}
