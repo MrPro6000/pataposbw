@@ -58,10 +58,10 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
 const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services", "Custom"];
 
-type Step = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "cart" | "payment";
+type SubView = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "payment";
 
 const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
-  const [step, setStep] = useState<Step>("products");
+  const [subView, setSubView] = useState<SubView>("products");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -108,7 +108,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     const label = `${transportForm.from || "Pickup"} → ${transportForm.to}`;
     addToCart({ id, name: `${label} (${transportForm.vehicle || "Vehicle"}) — ${transportForm.customerName}`, price: parseFloat(transportForm.fare), category: "Transport" });
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
-    setStep("products");
+    setSubView("products");
   };
 
   const handleAddService = () => {
@@ -116,7 +116,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     const id = `service-${Date.now()}`;
     addToCart({ id, name: `${serviceForm.serviceName}${serviceForm.customerName ? ` — ${serviceForm.customerName}` : ""}`, price: parseFloat(serviceForm.amount), category: "Services" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
-    setStep("products");
+    setSubView("products");
   };
 
   const handleAddProduct = () => {
@@ -126,11 +126,11 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     const product: Product = { id, name: productForm.productName, price: parseFloat(productForm.price), category: "Custom" };
     setCart(prev => [...prev, { ...product, quantity: qty }]);
     setProductForm({ productName: "", price: "", quantity: "1" });
-    setStep("products");
+    setSubView("products");
   };
 
   const resetAndClose = () => {
-    setStep("products");
+    setSubView("products");
     setCart([]);
     setSearchQuery("");
     setSelectedCategory("All");
@@ -149,232 +149,232 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     }
   };
 
-  const getStepTitle = () => {
-    switch (step) {
-      case "products": return "Sell Products";
-      case "transport-form": return "Add Transport Fare";
-      case "service-form": return "Add Custom Service";
-      case "product-form": return "Add Custom Product";
-      case "devices-list": return "Pata Devices";
-      case "cart": return `Cart (${cartItemCount})`;
-      case "payment": return "Payment";
-    }
-  };
+  // Payment view - full screen
+  if (subView === "payment") {
+    return (
+      <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
+        <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <ShoppingCart className="w-5 h-5 text-primary-foreground" />
+              </div>
+              Payment
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto">
+            <PaymentFlow
+              total={cartTotal}
+              itemCount={cartItemCount}
+              onComplete={resetAndClose}
+              onBack={() => setSubView("products")}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
-      <DialogContent className="max-w-2xl max-h-[85vh] flex flex-col">
+      <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
               <ShoppingCart className="w-5 h-5 text-primary-foreground" />
             </div>
-            {getStepTitle()}
+            Sell Products
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
-          {/* PRODUCTS */}
-          {step === "products" && (
-            <div className="space-y-4">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input placeholder="Search products, devices..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
-              </div>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {categories.map(cat => (
-                  <button key={cat} onClick={() => setSelectedCategory(cat)}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat ? "bg-foreground text-background" : "bg-muted text-foreground"}`}>
-                    {cat}
-                  </button>
-                ))}
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                {showTransportTile && (
-                  <button onClick={() => setStep("transport-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Bus className="w-5 h-5 text-primary" /></div>
-                    <p className="font-medium text-foreground text-sm">Transport</p>
-                    <p className="text-xs text-muted-foreground">Enter fare details</p>
-                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
-                  </button>
-                )}
-                {showServiceTile && (
-                  <button onClick={() => setStep("service-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
-                    <p className="font-medium text-foreground text-sm">Custom Service</p>
-                    <p className="text-xs text-muted-foreground">Licence, levy, etc.</p>
-                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
-                  </button>
-                )}
-                {showDevicesTile && (
-                  <button onClick={() => setStep("devices-list")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Monitor className="w-5 h-5 text-primary" /></div>
-                    <p className="font-medium text-foreground text-sm">Pata Devices</p>
-                    <p className="text-xs text-muted-foreground">All terminals & POS</p>
-                    <p className="text-xs text-primary font-semibold mt-1">View All</p>
-                  </button>
-                )}
-                {showProductTile && (
-                  <button onClick={() => setStep("product-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
-                    <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Plus className="w-5 h-5 text-primary" /></div>
-                    <p className="font-medium text-foreground text-sm">Custom Product</p>
-                    <p className="text-xs text-muted-foreground">Add any item</p>
-                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
-                  </button>
-                )}
-                {filteredProducts.map(product => {
-                  const qty = getCartQty(product.id);
-                  return (
-                    <button key={product.id} onClick={() => addToCart(product)}
-                      className={`p-3 rounded-xl text-left transition-all ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
-                      <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center mb-2">
-                        {product.image ? <img src={product.image} alt="" className="w-6 h-6 object-contain" /> : getCategoryIcon(product.category)}
-                      </div>
-                      <p className="font-medium text-foreground text-sm truncate">{product.name}</p>
-                      <p className="text-xs text-muted-foreground">{product.category}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <p className="font-bold text-foreground text-sm">P{product.price.toLocaleString()}</p>
-                        {qty > 0 && <span className="w-5 h-5 bg-primary rounded-full text-xs font-bold text-primary-foreground flex items-center justify-center">{qty}</span>}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* TRANSPORT FORM */}
-          {step === "transport-form" && (
-            <div className="space-y-4">
-              <div className="space-y-2"><Label>Customer Name</Label><Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2"><Label>From</Label><Input value={transportForm.from} onChange={e => setTransportForm({ ...transportForm, from: e.target.value })} placeholder="e.g. Gaborone" /></div>
-                <div className="space-y-2"><Label>To (Destination)</Label><Input value={transportForm.to} onChange={e => setTransportForm({ ...transportForm, to: e.target.value })} placeholder="e.g. Francistown" /></div>
-              </div>
-              <div className="space-y-2">
-                <Label>Vehicle Type</Label>
-                <Select value={transportForm.vehicle} onValueChange={val => setTransportForm({ ...transportForm, vehicle: val })}>
-                  <SelectTrigger><SelectValue placeholder="Select vehicle" /></SelectTrigger>
-                  <SelectContent>{vehicleTypes.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2"><Label>Fare Amount (P)</Label><Input type="number" inputMode="numeric" value={transportForm.fare} onChange={e => setTransportForm({ ...transportForm, fare: e.target.value })} placeholder="0.00" /></div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep("products")} className="flex-1">Cancel</Button>
-                <Button onClick={handleAddTransport} disabled={!transportForm.customerName || !transportForm.to || !transportForm.fare} className="flex-1">Add to Cart</Button>
-              </div>
-            </div>
-          )}
-
-          {/* SERVICE FORM */}
-          {step === "service-form" && (
-            <div className="space-y-4">
-              <div className="space-y-2"><Label>Service Name</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee, Levy Payment" /></div>
-              <div className="space-y-2"><Label>Customer Name (optional)</Label><Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Gaborone City Council" /></div>
-              <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep("products")} className="flex-1">Cancel</Button>
-                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1">Add to Cart</Button>
-              </div>
-            </div>
-          )}
-
-          {/* CUSTOM PRODUCT FORM */}
-          {step === "product-form" && (
-            <div className="space-y-4">
-              <div className="space-y-2"><Label>Product Name</Label><Input value={productForm.productName} onChange={e => setProductForm({ ...productForm, productName: e.target.value })} placeholder="e.g. Phone Case, Charger" /></div>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-2"><Label>Price (P)</Label><Input type="number" inputMode="numeric" value={productForm.price} onChange={e => setProductForm({ ...productForm, price: e.target.value })} placeholder="0.00" /></div>
-                <div className="space-y-2"><Label>Quantity</Label><Input type="number" inputMode="numeric" value={productForm.quantity} onChange={e => setProductForm({ ...productForm, quantity: e.target.value })} placeholder="1" /></div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => setStep("products")} className="flex-1">Cancel</Button>
-                <Button onClick={handleAddProduct} disabled={!productForm.productName || !productForm.price} className="flex-1">Add to Cart</Button>
-              </div>
-            </div>
-          )}
-
-          {/* DEVICES LIST */}
-          {step === "devices-list" && (
-            <div className="space-y-3">
-              <Button variant="ghost" size="sm" onClick={() => setStep("products")} className="mb-1">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back to Products
-              </Button>
-              <div className="grid grid-cols-2 gap-3">
-                {allDeviceProducts.map(device => {
-                  const qty = getCartQty(device.id);
-                  return (
-                    <button key={device.id} onClick={() => addToCart(device)}
-                      className={`p-3 rounded-xl text-left transition-all ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
-                      {device.image && (
-                        <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center mb-2 overflow-hidden">
-                          <img src={device.image} alt={device.name} className="w-full h-full object-contain" />
-                        </div>
-                      )}
-                      <p className="font-medium text-foreground text-sm">{device.name}</p>
-                      <div className="flex items-center justify-between mt-1">
-                        <p className="font-bold text-foreground text-sm">P{device.price.toLocaleString()}</p>
-                        {qty > 0 && <span className="w-5 h-5 bg-primary rounded-full text-xs font-bold text-primary-foreground flex items-center justify-center">{qty}</span>}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* CART */}
-          {step === "cart" && (
-            <div className="space-y-3">
-              {cart.map(item => (
-                <div key={item.id} className="flex items-center justify-between bg-muted rounded-xl p-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-foreground text-sm truncate">{item.name}</p>
-                    <p className="text-sm text-muted-foreground">P{item.price} × {item.quantity}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => updateQuantity(item.id, -1)} className="w-7 h-7 rounded-full bg-background flex items-center justify-center"><Minus className="w-3 h-3" /></button>
-                    <span className="font-bold w-5 text-center">{item.quantity}</span>
-                    <button onClick={() => updateQuantity(item.id, 1)} className="w-7 h-7 rounded-full bg-primary flex items-center justify-center"><Plus className="w-3 h-3 text-primary-foreground" /></button>
-                  </div>
+        <div className="flex-1 flex gap-6 overflow-hidden min-h-0">
+          {/* LEFT: Product selection */}
+          <div className="flex-1 overflow-y-auto pr-2">
+            {subView === "products" && (
+              <div className="space-y-4">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input placeholder="Search products, devices..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} className="pl-10" />
                 </div>
-              ))}
-            </div>
-          )}
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {categories.map(cat => (
+                    <button key={cat} onClick={() => setSelectedCategory(cat)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${selectedCategory === cat ? "bg-foreground text-background" : "bg-muted text-foreground"}`}>
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {showTransportTile && (
+                    <button onClick={() => setSubView("transport-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Bus className="w-5 h-5 text-primary" /></div>
+                      <p className="font-medium text-foreground text-sm">Transport</p>
+                      <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                    </button>
+                  )}
+                  {showServiceTile && (
+                    <button onClick={() => setSubView("service-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
+                      <p className="font-medium text-foreground text-sm">Custom Service</p>
+                      <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                    </button>
+                  )}
+                  {showDevicesTile && (
+                    <button onClick={() => setSubView("devices-list")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Monitor className="w-5 h-5 text-primary" /></div>
+                      <p className="font-medium text-foreground text-sm">Pata Devices</p>
+                      <p className="text-xs text-primary font-semibold mt-1">View All</p>
+                    </button>
+                  )}
+                  {showProductTile && (
+                    <button onClick={() => setSubView("product-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                      <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Plus className="w-5 h-5 text-primary" /></div>
+                      <p className="font-medium text-foreground text-sm">Custom Product</p>
+                      <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                    </button>
+                  )}
+                  {filteredProducts.map(product => {
+                    const qty = getCartQty(product.id);
+                    return (
+                      <button key={product.id} onClick={() => addToCart(product)}
+                        className={`p-3 rounded-xl text-left transition-all ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
+                        <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center mb-2">
+                          {product.image ? <img src={product.image} alt="" className="w-6 h-6 object-contain" /> : getCategoryIcon(product.category)}
+                        </div>
+                        <p className="font-medium text-foreground text-sm truncate">{product.name}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="font-bold text-foreground text-sm">P{product.price.toLocaleString()}</p>
+                          {qty > 0 && <span className="w-5 h-5 bg-primary rounded-full text-xs font-bold text-primary-foreground flex items-center justify-center">{qty}</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
 
-          {/* PAYMENT FLOW */}
-          {step === "payment" && (
-            <PaymentFlow
-              total={cartTotal}
-              itemCount={cartItemCount}
-              onComplete={resetAndClose}
-              onBack={() => setStep("cart")}
-            />
-          )}
+            {subView === "transport-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <div className="space-y-2"><Label>Customer Name</Label><Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label>From</Label><Input value={transportForm.from} onChange={e => setTransportForm({ ...transportForm, from: e.target.value })} placeholder="e.g. Gaborone" /></div>
+                  <div className="space-y-2"><Label>To</Label><Input value={transportForm.to} onChange={e => setTransportForm({ ...transportForm, to: e.target.value })} placeholder="e.g. Francistown" /></div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Vehicle Type</Label>
+                  <Select value={transportForm.vehicle} onValueChange={val => setTransportForm({ ...transportForm, vehicle: val })}>
+                    <SelectTrigger><SelectValue placeholder="Select vehicle" /></SelectTrigger>
+                    <SelectContent>{vehicleTypes.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2"><Label>Fare (P)</Label><Input type="number" inputMode="numeric" value={transportForm.fare} onChange={e => setTransportForm({ ...transportForm, fare: e.target.value })} placeholder="0.00" /></div>
+                <Button onClick={handleAddTransport} disabled={!transportForm.customerName || !transportForm.to || !transportForm.fare} className="w-full">Add to Cart</Button>
+              </div>
+            )}
+
+            {subView === "service-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <div className="space-y-2"><Label>Service Name</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee" /></div>
+                <div className="space-y-2"><Label>Customer (optional)</Label><Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Council" /></div>
+                <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
+                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="w-full">Add to Cart</Button>
+              </div>
+            )}
+
+            {subView === "product-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <div className="space-y-2"><Label>Product Name</Label><Input value={productForm.productName} onChange={e => setProductForm({ ...productForm, productName: e.target.value })} placeholder="e.g. Phone Case" /></div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2"><Label>Price (P)</Label><Input type="number" inputMode="numeric" value={productForm.price} onChange={e => setProductForm({ ...productForm, price: e.target.value })} placeholder="0.00" /></div>
+                  <div className="space-y-2"><Label>Quantity</Label><Input type="number" inputMode="numeric" value={productForm.quantity} onChange={e => setProductForm({ ...productForm, quantity: e.target.value })} placeholder="1" /></div>
+                </div>
+                <Button onClick={handleAddProduct} disabled={!productForm.productName || !productForm.price} className="w-full">Add to Cart</Button>
+              </div>
+            )}
+
+            {subView === "devices-list" && (
+              <div className="space-y-3">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <div className="grid grid-cols-2 gap-3">
+                  {allDeviceProducts.map(device => {
+                    const qty = getCartQty(device.id);
+                    return (
+                      <button key={device.id} onClick={() => addToCart(device)}
+                        className={`p-3 rounded-xl text-left transition-all ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
+                        {device.image && (
+                          <div className="w-full aspect-square bg-muted rounded-lg flex items-center justify-center mb-2 overflow-hidden">
+                            <img src={device.image} alt={device.name} className="w-full h-full object-contain" />
+                          </div>
+                        )}
+                        <p className="font-medium text-foreground text-sm">{device.name}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="font-bold text-foreground text-sm">P{device.price.toLocaleString()}</p>
+                          {qty > 0 && <span className="w-5 h-5 bg-primary rounded-full text-xs font-bold text-primary-foreground flex items-center justify-center">{qty}</span>}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT: Cart & Total - always visible */}
+          <div className="w-80 flex-shrink-0 border-l border-border pl-6 flex flex-col overflow-hidden">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
+              <ShoppingCart className="w-4 h-4" />
+              Cart ({cartItemCount})
+            </h3>
+
+            {cart.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <div className="text-center">
+                  <ShoppingCart className="w-10 h-10 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Select products to add</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex-1 overflow-y-auto space-y-2 mb-4">
+                  {cart.map(item => (
+                    <div key={item.id} className="bg-muted rounded-xl p-3">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium text-foreground text-sm truncate flex-1 mr-2">{item.name}</p>
+                        <button onClick={() => updateQuantity(item.id, -1)} className="text-xs text-destructive hover:underline">×</button>
+                      </div>
+                      <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center gap-2">
+                          <button onClick={() => updateQuantity(item.id, -1)} className="w-6 h-6 rounded-full bg-background flex items-center justify-center"><Minus className="w-3 h-3" /></button>
+                          <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
+                          <button onClick={() => updateQuantity(item.id, 1)} className="w-6 h-6 rounded-full bg-primary flex items-center justify-center"><Plus className="w-3 h-3 text-primary-foreground" /></button>
+                        </div>
+                        <p className="font-bold text-foreground text-sm">P{(item.price * item.quantity).toFixed(2)}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Total & Checkout */}
+                <div className="border-t border-border pt-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span className="font-bold text-foreground">P{cartTotal.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-lg">
+                    <span className="font-semibold text-foreground">Total</span>
+                    <span className="font-bold text-foreground">P{cartTotal.toFixed(2)}</span>
+                  </div>
+                  <Button onClick={() => setSubView("payment")} className="w-full h-12 font-semibold">
+                    Checkout • P{cartTotal.toFixed(2)}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
-
-        {step === "products" && cart.length > 0 && (
-          <div className="border-t border-border pt-4 flex items-center justify-between">
-            <div>
-              <p className="font-bold text-foreground">P{cartTotal.toFixed(2)}</p>
-              <p className="text-sm text-muted-foreground">{cartItemCount} items</p>
-            </div>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("cart")}>View Cart</Button>
-              <Button onClick={() => setStep("payment")}>Checkout</Button>
-            </div>
-          </div>
-        )}
-
-        {step === "cart" && cart.length > 0 && (
-          <div className="border-t border-border pt-4 flex items-center justify-between">
-            <p className="font-bold text-lg text-foreground">P{cartTotal.toFixed(2)}</p>
-            <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setStep("products")}>Add More</Button>
-              <Button onClick={() => setStep("payment")}>Checkout</Button>
-            </div>
-          </div>
-        )}
       </DialogContent>
     </Dialog>
   );

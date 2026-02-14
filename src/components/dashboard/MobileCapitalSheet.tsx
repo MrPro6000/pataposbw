@@ -49,7 +49,7 @@ const MobileCapitalSheet = ({ open, onClose }: MobileCapitalSheetProps) => {
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
-      <DrawerContent className="bg-background max-h-[90vh]">
+      <DrawerContent className="bg-background h-[95vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
