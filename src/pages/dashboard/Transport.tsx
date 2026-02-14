@@ -1,17 +1,9 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileTransportView from "@/components/dashboard/MobileTransportView";
+import PaymentFlow from "@/components/dashboard/PaymentFlow";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Bus, MapPin, ArrowRight, User, CreditCard, Banknote, Smartphone, QrCode, Check } from "lucide-react";
-import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
-import smegaImg from "@/assets/mobile-money/smega.png";
-import myzakaImg from "@/assets/mobile-money/myzaka.png";
-
-const mobileMoneyProviders = [
-  { id: "orange", name: "Orange Money", img: orangeMoneyImg },
-  { id: "smega", name: "Smega", img: smegaImg },
-  { id: "myzaka", name: "MyZaka", img: myzakaImg },
-];
+import { Bus, MapPin, ArrowRight, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -37,13 +29,6 @@ interface TransportTransaction {
 
 const transportModes = ["Combi", "Taxi", "Bus", "Yango", "inDrive"];
 
-const paymentMethods = [
-  { id: "card", label: "Card", icon: CreditCard },
-  { id: "cash", label: "Cash", icon: Banknote },
-  { id: "mobile_money", label: "Mobile Money", icon: Smartphone },
-  { id: "qr", label: "QR Payment", icon: QrCode },
-];
-
 const Transport = () => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
@@ -54,25 +39,23 @@ const Transport = () => {
     to: "",
     modeOfTransport: "",
     fare: "",
-    paymentMethod: "",
-    mobileMoneyProvider: "",
   });
   const [transactions, setTransactions] = useState<TransportTransaction[]>([]);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [showPaymentFlow, setShowPaymentFlow] = useState(false);
 
   if (isMobile) {
     return <MobileTransportView />;
   }
 
-  const handleSubmit = () => {
-    if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport || !formData.paymentMethod) {
+  const handleProceedToPayment = () => {
+    if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport) {
       toast({ title: "Error", description: "Please fill in all fields", variant: "destructive" });
       return;
     }
-    if (formData.paymentMethod === "mobile_money" && !formData.mobileMoneyProvider) {
-      toast({ title: "Error", description: "Please select a mobile money provider", variant: "destructive" });
-      return;
-    }
+    setShowPaymentFlow(true);
+  };
+
+  const handlePaymentComplete = () => {
     const newTx: TransportTransaction = {
       id: `TR${String(transactions.length + 1).padStart(3, "0")}`,
       customerName: formData.customerName,
@@ -80,16 +63,13 @@ const Transport = () => {
       to: formData.to,
       modeOfTransport: formData.modeOfTransport,
       fare: parseFloat(formData.fare),
-      paymentMethod: formData.paymentMethod,
+      paymentMethod: "completed",
       date: new Date().toISOString().split("T")[0],
     };
     setTransactions([newTx, ...transactions]);
-    setIsSuccess(true);
+    setShowPaymentFlow(false);
+    setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "" });
     toast({ title: "Transport Fare Saved", description: `P${newTx.fare.toFixed(2)} — ${newTx.from} → ${newTx.to}` });
-    setTimeout(() => {
-      setIsSuccess(false);
-      setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "", paymentMethod: "", mobileMoneyProvider: "" });
-    }, 1500);
   };
 
   return (
@@ -102,14 +82,13 @@ const Transport = () => {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Fare Entry Form */}
         <div className="bg-card border border-border rounded-2xl p-6">
-          {isSuccess ? (
-            <div className="flex flex-col items-center justify-center py-12">
-              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-                <Check className="w-8 h-8 text-green-500" />
-              </div>
-              <p className="text-xl font-bold text-foreground">Fare Saved!</p>
-              <p className="text-muted-foreground mt-1">Transaction recorded successfully</p>
-            </div>
+          {showPaymentFlow ? (
+            <PaymentFlow
+              total={parseFloat(formData.fare) || 0}
+              itemCount={1}
+              onComplete={handlePaymentComplete}
+              onBack={() => setShowPaymentFlow(false)}
+            />
           ) : (
             <div className="space-y-4">
               <div className="space-y-2">
@@ -169,54 +148,11 @@ const Transport = () => {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label>Payment Method</Label>
-                <div className="grid grid-cols-2 gap-3">
-                  {paymentMethods.map((pm) => (
-                    <button
-                      key={pm.id}
-                      onClick={() => setFormData({ ...formData, paymentMethod: pm.id, mobileMoneyProvider: "" })}
-                      className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
-                        formData.paymentMethod === pm.id
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border bg-card text-foreground"
-                      }`}
-                    >
-                      <pm.icon className="w-5 h-5" />
-                      <span className="text-sm font-medium">{pm.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile Money Provider Selection */}
-              {formData.paymentMethod === "mobile_money" && (
-                <div className="space-y-2">
-                  <Label>Select Provider</Label>
-                  <div className="grid grid-cols-3 gap-3">
-                    {mobileMoneyProviders.map((provider) => (
-                      <button
-                        key={provider.id}
-                        onClick={() => setFormData({ ...formData, mobileMoneyProvider: provider.id })}
-                        className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-colors ${
-                          formData.mobileMoneyProvider === provider.id
-                            ? "border-primary bg-primary/10"
-                            : "border-border bg-card"
-                        }`}
-                      >
-                        <img src={provider.img} alt={provider.name} className="w-8 h-8 rounded-lg object-contain" />
-                        <span className="text-xs font-medium text-foreground">{provider.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               <Button
-                onClick={handleSubmit}
+                onClick={handleProceedToPayment}
                 className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
               >
-                Save Fare — P{formData.fare ? parseFloat(formData.fare).toFixed(2) : "0.00"}
+                Proceed to Payment — P{formData.fare ? parseFloat(formData.fare).toFixed(2) : "0.00"}
               </Button>
             </div>
           )}
