@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { 
   ChevronLeft, 
@@ -11,6 +12,7 @@ import {
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import PataLogo from "@/components/PataLogo";
+import SupportChatPanel from "./SupportChatPanel";
 
 interface MobileSupportViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -18,6 +20,8 @@ interface MobileSupportViewProps {
 }
 
 const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
+  const [showLiveChat, setShowLiveChat] = useState(false);
+
   const helpTopics = [
     { title: "Getting Started", description: "Setup guides and tutorials", icon: Video },
     { title: "Payments", description: "Card, mobile money, online payments", icon: FileText },
@@ -30,6 +34,20 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
     { label: "Call Us", description: "+267 300 1234", icon: Phone, action: "call" },
     { label: "Email", description: "support@pata.co.bw", icon: Mail, action: "email" },
   ];
+
+  const handleContact = (action: string) => {
+    if (action === "chat") setShowLiveChat(true);
+    else if (action === "call") window.location.href = "tel:+2673001234";
+    else if (action === "email") window.location.href = "mailto:support@pata.co.bw";
+  };
+
+  if (showLiveChat) {
+    return (
+      <div className="min-h-screen bg-muted flex flex-col">
+        <SupportChatPanel onClose={() => setShowLiveChat(false)} className="flex-1 rounded-none border-0" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-muted pb-24">
@@ -62,6 +80,7 @@ const MobileSupportView = ({ profile, userEmail }: MobileSupportViewProps) => {
           {contactOptions.map((option) => (
             <button 
               key={option.label}
+              onClick={() => handleContact(option.action)}
               className="bg-card rounded-2xl p-4 flex flex-col items-center gap-2 active:scale-98 transition-transform border border-border"
             >
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">

@@ -2,7 +2,7 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDevicesView from "@/components/dashboard/MobileDevicesView";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Plus, Wifi, WifiOff, Battery, MoreVertical, Trash2, RefreshCw } from "lucide-react";
+import { Plus, Wifi, WifiOff, Battery, MoreVertical, Trash2, RefreshCw, QrCode, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -32,13 +32,27 @@ const initialDevices: Device[] = [
 const Devices = () => {
   const [devices, setDevices] = useState<Device[]>(initialDevices);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [pairingCode, setPairingCode] = useState("");
+  const [pairingStep, setPairingStep] = useState<"name" | "scan">("name");
+  const [deviceName, setDeviceName] = useState("");
   const isMobile = useIsMobile();
 
   if (isMobile) { return <MobileDevicesView profile={null} userEmail="" />; }
 
   const handleRemoveDevice = (id: string) => { setDevices(devices.filter(d => d.id !== id)); };
   const getBatteryColor = (level: number) => { if (level > 50) return "text-green-500"; if (level > 20) return "text-yellow-500"; return "text-red-500"; };
+
+  const openAddModal = () => {
+    setPairingStep("name");
+    setDeviceName("");
+    setIsAddModalOpen(true);
+  };
+
+  const handleLinkDevice = () => {
+    // Simulate linking
+    setIsAddModalOpen(false);
+    setPairingStep("name");
+    setDeviceName("");
+  };
 
   return (
     <DashboardLayout>
@@ -47,7 +61,7 @@ const Devices = () => {
           <h1 className="text-2xl font-bold text-foreground">Devices</h1>
           <p className="text-muted-foreground">Manage your POS terminals and card machines</p>
         </div>
-        <Button onClick={() => setIsAddModalOpen(true)} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+        <Button onClick={openAddModal} className="bg-primary hover:bg-primary/90 text-primary-foreground">
           <Plus className="w-4 h-4 mr-2" /> Add Device
         </Button>
       </div>
@@ -100,30 +114,82 @@ const Devices = () => {
           </div>
         ))}
 
-        <button onClick={() => setIsAddModalOpen(true)} className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-colors">
+        <button onClick={openAddModal} className="border-2 border-dashed border-border rounded-2xl p-8 flex flex-col items-center justify-center gap-3 hover:border-primary hover:bg-primary/5 transition-colors">
           <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center"><Plus className="w-6 h-6 text-muted-foreground" /></div>
           <span className="text-muted-foreground font-medium">Add New Device</span>
         </button>
       </div>
 
+      {/* Add Device Dialog - Step Flow */}
       <Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Add New Device</DialogTitle></DialogHeader>
-          <div className="py-6">
-            <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <img src={getDeviceImage("Go Pata")} alt="Device" className="w-12 h-12 object-contain" />
+          <DialogHeader>
+            <DialogTitle>{pairingStep === "name" ? "Name Your Device" : "Link Your Device"}</DialogTitle>
+          </DialogHeader>
+
+          {pairingStep === "name" ? (
+            <div className="py-6">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                  <img src={getDeviceImage("Go Pata")} alt="Device" className="w-12 h-12 object-contain" />
+                </div>
+                <p className="text-muted-foreground">Give your device a friendly name so you can identify it easily.</p>
               </div>
-              <p className="text-muted-foreground">Enter the pairing code displayed on your Pata device</p>
+              <div className="space-y-2">
+                <Label htmlFor="deviceName">Device Name</Label>
+                <Input id="deviceName" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} placeholder='e.g. "Front Counter" or "Delivery Van"' />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="pairingCode">Pairing Code</Label>
-              <Input id="pairingCode" value={pairingCode} onChange={(e) => setPairingCode(e.target.value)} placeholder="Enter 6-digit code" className="text-center text-2xl tracking-widest" maxLength={6} />
+          ) : (
+            <div className="py-6">
+              <div className="text-center">
+                <div className="w-20 h-20 bg-muted rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <QrCode className="w-10 h-10 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-2">Scan QR Code</h3>
+                <p className="text-muted-foreground text-sm mb-6">
+                  Find the QR code on the back of your Pata terminal and scan it with your phone camera to link <span className="font-semibold text-foreground">"{deviceName}"</span>.
+                </p>
+                <div className="bg-muted rounded-xl p-4 text-left space-y-3">
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-primary">1</span>
+                    </div>
+                    <p className="text-sm text-foreground">Turn on your Pata terminal</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-primary">2</span>
+                    </div>
+                    <p className="text-sm text-foreground">Find the QR code sticker on the back of the device</p>
+                  </div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-xs font-bold text-primary">3</span>
+                    </div>
+                    <p className="text-sm text-foreground">Scan the QR code using your phone's camera</p>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
+          )}
+
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
-            <Button onClick={() => setIsAddModalOpen(false)} className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={pairingCode.length !== 6}>Pair Device</Button>
+            {pairingStep === "name" ? (
+              <>
+                <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+                <Button onClick={() => setPairingStep("scan")} className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!deviceName.trim()}>
+                  Next <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant="outline" onClick={() => setPairingStep("name")}>Back</Button>
+                <Button onClick={handleLinkDevice} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                  Done
+                </Button>
+              </>
+            )}
           </DialogFooter>
         </DialogContent>
       </Dialog>

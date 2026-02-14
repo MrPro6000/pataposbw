@@ -1,6 +1,6 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
-import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import MobileSupportView from "@/components/dashboard/MobileSupportView";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { HelpCircle, MessageCircle, Phone, Mail, ChevronDown, ChevronUp, Search, ExternalLink, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,12 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import SupportChatPanel from "@/components/dashboard/SupportChatPanel";
 
 interface FAQ { question: string; answer: string; }
 const faqs: FAQ[] = [
   { question: "How long do payouts take?", answer: "Payouts are processed every weekday and typically arrive in your bank account within 1-2 business days. Weekend transactions are included in Monday's payout." },
   { question: "What are the transaction fees?", answer: "Our standard rate is 2.95% per transaction with no monthly fees. Volume discounts are available for businesses processing over P50,000 per month." },
-  { question: "How do I connect a new device?", answer: "Go to Devices in your dashboard, click 'Add Device', and enter the 6-digit pairing code shown on your Pata terminal. The device will connect automatically." },
+  { question: "How do I connect a new device?", answer: "Go to Devices in your dashboard, click 'Add Device', name your device, then scan the QR code on the back of your Pata terminal to link it." },
   { question: "Can I issue refunds?", answer: "Yes, you can issue full or partial refunds from the Sales page. Click on any successful transaction to view details and use the 'Issue Refund' button. Refunds are processed within 5-10 business days." },
   { question: "How do I add staff members?", answer: "Navigate to Staff in your dashboard and click 'Invite Staff'. Enter their email and select their role. They'll receive an invitation email to set up their account." },
   { question: "What payment methods are supported?", answer: "We accept Visa, Mastercard, American Express, and Diners Club. Contactless payments including Apple Pay and Google Pay are also supported." },
@@ -23,9 +24,10 @@ const Support = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
   const [ticketForm, setTicketForm] = useState({ subject: "", category: "", message: "" });
+  const [showLiveChat, setShowLiveChat] = useState(false);
   const isMobile = useIsMobile();
 
-  if (isMobile) { return <MobileDashboardHome />; }
+  if (isMobile) { return <MobileSupportView profile={null} userEmail="" />; }
 
   const filteredFaqs = faqs.filter(faq => faq.question.toLowerCase().includes(searchQuery.toLowerCase()) || faq.answer.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -43,19 +45,26 @@ const Support = () => {
       </div>
 
       <div className="grid md:grid-cols-3 gap-4 mb-8">
-        <a href="tel:0800123456" className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors">
+        <a href="tel:+2673001234" className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors">
           <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center"><Phone className="w-6 h-6 text-primary" /></div>
-          <div><p className="font-semibold text-foreground">Call Us</p><p className="text-sm text-muted-foreground">0800 123 456</p></div>
+          <div><p className="font-semibold text-foreground">Call Us</p><p className="text-sm text-muted-foreground">+267 300 1234</p></div>
         </a>
-        <a href="mailto:support@pata.com" className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors">
+        <a href="mailto:support@pata.co.bw" className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors">
           <div className="w-12 h-12 bg-purple-500/20 rounded-xl flex items-center justify-center"><Mail className="w-6 h-6 text-purple-500" /></div>
-          <div><p className="font-semibold text-foreground">Email Support</p><p className="text-sm text-muted-foreground">support@pata.com</p></div>
+          <div><p className="font-semibold text-foreground">Email Support</p><p className="text-sm text-muted-foreground">support@pata.co.bw</p></div>
         </a>
-        <button className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors text-left">
+        <button onClick={() => setShowLiveChat(true)} className="bg-card border border-border rounded-2xl p-5 flex items-center gap-4 hover:bg-muted/50 transition-colors text-left">
           <div className="w-12 h-12 bg-green-500/20 rounded-xl flex items-center justify-center"><MessageCircle className="w-6 h-6 text-green-500" /></div>
-          <div><p className="font-semibold text-foreground">Live Chat</p><p className="text-sm text-muted-foreground">Available 24/7</p></div>
+          <div><p className="font-semibold text-foreground">Live Chat</p><p className="text-sm text-muted-foreground">AI-powered • 24/7</p></div>
         </button>
       </div>
+
+      {/* Live Chat Panel */}
+      {showLiveChat && (
+        <div className="mb-8">
+          <SupportChatPanel onClose={() => setShowLiveChat(false)} className="h-[450px]" />
+        </div>
+      )}
 
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="bg-card border border-border rounded-2xl p-6">
