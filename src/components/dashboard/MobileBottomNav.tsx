@@ -13,9 +13,9 @@ const MobileBottomNav = () => {
   const navItems = [
     { icon: CreditCard, label: "Sales", path: "/dashboard/sales" },
     { icon: Wallet, label: "Money", path: "/dashboard/payouts" },
-    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
     { icon: Bus, label: "Transport", path: "/dashboard/transport" },
     { icon: Settings, label: "Manage", path: "/dashboard/settings" },
+    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
   ];
 
   const isActive = (path: string) => {

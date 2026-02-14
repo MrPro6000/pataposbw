@@ -287,7 +287,7 @@ const Auth = ({ mode }: AuthProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-4 md:px-20 pb-24 pt-4 md:pt-0">
+      <main className="flex-1 px-4 md:px-20 pb-safe pt-4 md:pt-0" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-16 max-w-7xl mx-auto">
           {/* Left side - MacBook Image (hidden on mobile) */}
           <div className="hidden lg:flex flex-1 w-full lg:w-auto order-2 lg:order-1 items-center justify-center">
@@ -375,7 +375,7 @@ const Auth = ({ mode }: AuthProps) => {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50"
+                      className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium transition-all duration-200 disabled:opacity-50 mb-safe"
                     >
                       {loading ? "Please wait..." : mode === "login" ? "Log in" : "Continue"}
                     </button>
