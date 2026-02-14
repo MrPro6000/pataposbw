@@ -11,10 +11,10 @@ const MobileBottomNav = () => {
   const location = useLocation();
   
   const navItems = [
-    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
     { icon: CreditCard, label: "Sales", path: "/dashboard/sales" },
-    { icon: Bus, label: "Transport", path: "/dashboard/transport" },
     { icon: Wallet, label: "Money", path: "/dashboard/payouts" },
+    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
+    { icon: Bus, label: "Transport", path: "/dashboard/transport" },
     { icon: Settings, label: "Manage", path: "/dashboard/settings" },
   ];
 

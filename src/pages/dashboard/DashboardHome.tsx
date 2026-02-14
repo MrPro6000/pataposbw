@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
@@ -35,6 +35,7 @@ const DashboardHome = () => {
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -56,6 +57,8 @@ const DashboardHome = () => {
       setLoading(false);
       if (!session?.user) {
         navigate("/login");
+      } else if (location.pathname === "/dashboard") {
+        navigate("/dashboard/sales", { replace: true });
       }
     });
 
