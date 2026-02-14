@@ -294,6 +294,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          suspension_reason: string | null
           transaction_limit: number | null
           updated_at: string | null
           user_id: string
@@ -307,6 +308,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          suspension_reason?: string | null
           transaction_limit?: number | null
           updated_at?: string | null
           user_id: string
@@ -320,6 +322,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          suspension_reason?: string | null
           transaction_limit?: number | null
           updated_at?: string | null
           user_id?: string
