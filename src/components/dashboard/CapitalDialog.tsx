@@ -53,7 +53,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-lg md:max-w-2xl lg:max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <div className="flex items-center gap-3">
             {view === "apply" && (

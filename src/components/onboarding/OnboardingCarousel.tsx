@@ -92,7 +92,7 @@ const OnboardingCarousel = ({ onComplete }: OnboardingCarouselProps) => {
       </main>
 
       {/* Footer */}
-      <footer className="px-6 pb-8 pt-4">
+      <footer className="px-6 pb-safe pt-4" style={{ paddingBottom: "max(2rem, env(safe-area-inset-bottom))" }}>
         <button
           onClick={handleNext}
           className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-semibold transition-all flex items-center justify-center gap-2"

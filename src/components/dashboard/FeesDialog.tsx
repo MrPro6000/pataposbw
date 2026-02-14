@@ -13,7 +13,7 @@ const FeesDialog = ({ open, onClose }: FeesDialogProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+      <DialogContent className="max-w-lg md:max-w-2xl lg:max-w-3xl max-h-[85vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-foreground">Fees</DialogTitle>
         </DialogHeader>

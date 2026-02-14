@@ -49,13 +49,6 @@ const navSections: NavSection[] = [
     ]
   },
   {
-    label: "Hub",
-    icon: LayoutGrid,
-    items: [
-      { label: "Dashboard", path: "/dashboard" },
-    ]
-  },
-  {
     label: "Transport",
     icon: Bus,
     items: [
@@ -70,6 +63,13 @@ const navSections: NavSection[] = [
       { label: "Staff", path: "/dashboard/staff" },
       { label: "Settings", path: "/dashboard/settings" },
       { label: "Support", path: "/dashboard/support" },
+    ]
+  },
+  {
+    label: "Hub",
+    icon: LayoutGrid,
+    items: [
+      { label: "Dashboard", path: "/dashboard" },
     ]
   },
 ];
