@@ -42,6 +42,9 @@ const MobileDashboardHome = () => {
         navigate("/login");
       } else {
         fetchProfile(session.user.id);
+        if (location.pathname === "/dashboard") {
+          navigate("/dashboard/sales", { replace: true });
+        }
       }
     });
 

@@ -57,6 +57,8 @@ const DashboardHome = () => {
       setLoading(false);
       if (!session?.user) {
         navigate("/login");
+      } else if (location.pathname === "/dashboard") {
+        navigate("/dashboard/sales", { replace: true });
       }
     });
 
