@@ -1,5 +1,8 @@
 import { useState } from "react";
 import { Wallet, TrendingUp, Clock, CheckCircle, ArrowRight, ChevronLeft } from "lucide-react";
+import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
+import smegaImg from "@/assets/mobile-money/smega.png";
+import myzakaImg from "@/assets/mobile-money/myzaka.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,11 +22,18 @@ interface CapitalDialogProps {
 const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
   const { toast } = useToast();
   const [view, setView] = useState<"info" | "apply">("info");
+  const [mobileMoneyProvider, setMobileMoneyProvider] = useState("");
   const [applicationForm, setApplicationForm] = useState({
     amount: "",
     purpose: "",
     monthlyRevenue: "",
   });
+
+  const mobileMoneyProviders = [
+    { id: "orange", name: "Orange Money", img: orangeMoneyImg },
+    { id: "smega", name: "Smega", img: smegaImg },
+    { id: "myzaka", name: "MyZaka", img: myzakaImg },
+  ];
 
   const benefits = [
     { icon: TrendingUp, title: "Grow Your Business", description: "Access capital to expand inventory or operations" },
@@ -43,6 +53,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
       description: "We'll review your application and contact you within 24 hours" 
     });
     setApplicationForm({ amount: "", purpose: "", monthlyRevenue: "" });
+    setMobileMoneyProvider("");
     setView("info");
   };
 
@@ -179,6 +190,27 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
                   value={applicationForm.monthlyRevenue}
                   onChange={(e) => setApplicationForm({ ...applicationForm, monthlyRevenue: e.target.value })}
                 />
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-foreground">Preferred Mobile Money Provider</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {mobileMoneyProviders.map((provider) => (
+                    <button
+                      key={provider.id}
+                      type="button"
+                      onClick={() => setMobileMoneyProvider(provider.id)}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 transition-all ${
+                        mobileMoneyProvider === provider.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-card"
+                      }`}
+                    >
+                      <img src={provider.img} alt={provider.name} className="w-12 h-12 rounded-lg object-contain" />
+                      <span className="text-sm font-medium text-foreground">{provider.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="bg-muted rounded-xl p-4">

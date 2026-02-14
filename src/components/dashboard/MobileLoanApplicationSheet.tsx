@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { X, Wallet, Building2, DollarSign, FileText, CheckCircle, ArrowRight } from "lucide-react";
+import { X, Wallet, Building2, DollarSign, FileText, CheckCircle, ArrowRight, Smartphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
+import smegaImg from "@/assets/mobile-money/smega.png";
+import myzakaImg from "@/assets/mobile-money/myzaka.png";
 import {
   Drawer,
   DrawerClose,
@@ -24,6 +27,12 @@ interface MobileLoanApplicationSheetProps {
   open: boolean;
   onClose: () => void;
 }
+
+const mobileMoneyProviders = [
+  { id: "orange", name: "Orange Money", img: orangeMoneyImg },
+  { id: "smega", name: "Smega", img: smegaImg },
+  { id: "myzaka", name: "MyZaka", img: myzakaImg },
+];
 
 const loanPurposes = [
   "Working capital",
@@ -50,13 +59,13 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
   const [businessType, setBusinessType] = useState("");
   const [monthlyRevenue, setMonthlyRevenue] = useState("");
   const [yearsInBusiness, setYearsInBusiness] = useState("");
+  const [mobileMoneyProvider, setMobileMoneyProvider] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
 
   const loanAmountNum = parseFloat(loanAmount) || 0;
   const monthlyRevenueNum = parseFloat(monthlyRevenue) || 0;
-  
   const interestRate = 0.15;
   const termMonths = 12;
   const monthlyPayment = loanAmountNum > 0 
@@ -70,6 +79,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
     setBusinessType("");
     setMonthlyRevenue("");
     setYearsInBusiness("");
+    setMobileMoneyProvider("");
     setIsSuccess(false);
   };
 
@@ -78,7 +88,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
     onClose();
   };
 
-  const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 500000 && purpose && businessName.trim() && businessType && monthlyRevenue && monthlyRevenueNum > 0 && yearsInBusiness;
+  const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 500000 && purpose && businessName.trim() && businessType && monthlyRevenue && monthlyRevenueNum > 0 && yearsInBusiness && mobileMoneyProvider;
 
   const handleSubmitApplication = async () => {
     if (!isFormValid) {
@@ -274,6 +284,28 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     <SelectItem value="5">5+ years</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Mobile Money Provider */}
+              <div className="space-y-2">
+                <Label className="text-foreground font-semibold">Preferred Mobile Money Provider *</Label>
+                <div className="grid grid-cols-3 gap-3">
+                  {mobileMoneyProviders.map((provider) => (
+                    <button
+                      key={provider.id}
+                      type="button"
+                      onClick={() => setMobileMoneyProvider(provider.id)}
+                      className={`flex flex-col items-center gap-2 p-3 rounded-xl border-2 transition-all ${
+                        mobileMoneyProvider === provider.id
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-muted"
+                      }`}
+                    >
+                      <img src={provider.img} alt={provider.name} className="w-10 h-10 rounded-lg object-contain" />
+                      <span className="text-xs font-medium text-foreground">{provider.name}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Terms notice */}
