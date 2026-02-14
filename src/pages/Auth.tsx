@@ -67,7 +67,7 @@ const Auth = ({ mode }: AuthProps) => {
         if (!kyc || kyc.status === "pending") {
           navigate("/kyc");
         } else {
-          navigate("/dashboard");
+          navigate("/dashboard/sales");
         }
       }
     };

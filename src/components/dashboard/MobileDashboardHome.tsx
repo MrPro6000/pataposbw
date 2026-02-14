@@ -13,6 +13,7 @@ import MobileStaffView from "./MobileStaffView";
 import MobileProductsView from "./MobileProductsView";
 import MobileCustomersView from "./MobileCustomersView";
 import MobileSupportView from "./MobileSupportView";
+import MobileTransportView from "./MobileTransportView";
 
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -41,9 +42,6 @@ const MobileDashboardHome = () => {
         navigate("/login");
       } else {
         fetchProfile(session.user.id);
-        if (location.pathname === "/dashboard") {
-          navigate("/dashboard/sales", { replace: true });
-        }
       }
     });
 
@@ -115,6 +113,11 @@ const MobileDashboardHome = () => {
   // Support route
   if (pathname === "/dashboard/support") {
     return <MobileSupportView {...profileProps} />;
+  }
+
+  // Transport route
+  if (pathname === "/dashboard/transport") {
+    return <MobileTransportView />;
   }
 
   // Default: Hub view for /dashboard and other routes
