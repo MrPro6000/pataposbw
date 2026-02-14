@@ -2,10 +2,11 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { getKYCSubmission } from "@/integrations/supabase/profile";
+import { supabase } from "@/integrations/supabase/client";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/contexts/ThemeContext";
-import { ExternalLink, ChevronRight, Eye, EyeOff, Phone, Smartphone } from "lucide-react";
+import { ExternalLink, ChevronRight, Eye, EyeOff, Phone, Smartphone, Ban } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import pataMacbook from "@/assets/pata-macbook.jpg";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ const Auth = ({ mode }: AuthProps) => {
   const [otp, setOtp] = useState("");
   const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [accountBlocked, setAccountBlocked] = useState<{ status: string; reason: string } | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { theme } = useTheme();
@@ -224,7 +226,23 @@ const Auth = ({ mode }: AuthProps) => {
           throw new Error(error);
         }
       } else if (loggedInUser) {
-        // Redirect will happen via useEffect
+        // Check account status before proceeding
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("account_status, suspension_reason")
+          .eq("user_id", loggedInUser.id)
+          .maybeSingle();
+
+        if (profile && (profile.account_status === "suspended" || profile.account_status === "frozen")) {
+          // Sign them out and show the warning
+          await supabase.auth.signOut();
+          setAccountBlocked({
+            status: profile.account_status,
+            reason: (profile as any).suspension_reason || "No reason provided",
+          });
+          return;
+        }
+
         toast({
           title: "Welcome back!",
           description: "Logging you in...",
@@ -269,6 +287,45 @@ const Auth = ({ mode }: AuthProps) => {
   // Show onboarding carousel for mobile first-time users
   if (showOnboarding) {
     return <OnboardingCarousel onComplete={handleOnboardingComplete} />;
+  }
+
+  // Show account blocked screen
+  if (accountBlocked) {
+    return (
+      <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center px-6">
+        <div className="w-full max-w-md text-center">
+          <div className={`w-20 h-20 mx-auto mb-6 rounded-full flex items-center justify-center ${
+            accountBlocked.status === "frozen" ? "bg-red-500/20" : "bg-yellow-500/20"
+          }`}>
+            <Ban className={`w-10 h-10 ${accountBlocked.status === "frozen" ? "text-red-500" : "text-yellow-500"}`} />
+          </div>
+          <h1 className="text-2xl font-bold text-foreground mb-2">
+            Account {accountBlocked.status === "frozen" ? "Frozen" : "Suspended"}
+          </h1>
+          <p className="text-muted-foreground mb-6">
+            Your account has been {accountBlocked.status} by an administrator.
+          </p>
+          <div className="bg-muted rounded-xl p-4 mb-6 text-left">
+            <p className="text-sm font-medium text-foreground mb-1">Reason:</p>
+            <p className="text-sm text-muted-foreground">{accountBlocked.reason}</p>
+          </div>
+          <div className="space-y-3">
+            <a
+              href="mailto:support@pata.co.bw?subject=Account Appeal&body=I would like to appeal my account suspension."
+              className="block w-full py-3 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              Appeal This Decision
+            </a>
+            <button
+              onClick={() => setAccountBlocked(null)}
+              className="w-full py-3 bg-muted text-foreground rounded-xl text-sm font-medium hover:bg-muted/80 transition-colors"
+            >
+              Back to Login
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

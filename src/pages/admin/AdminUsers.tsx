@@ -4,17 +4,22 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { 
   Search, 
   Shield, 
   Ban, 
   DollarSign,
-  MoreVertical
+  MoreVertical,
+  Trash2,
+  AlertTriangle,
 } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
@@ -34,6 +39,7 @@ interface User {
   business_name: string | null;
   account_status: string;
   transaction_limit: number;
+  suspension_reason: string | null;
   created_at: string;
 }
 
@@ -44,7 +50,11 @@ const AdminUsers = () => {
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "suspended" | "frozen">("all");
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const [showSuspendDialog, setShowSuspendDialog] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [newLimit, setNewLimit] = useState("");
+  const [suspendReason, setSuspendReason] = useState("");
+  const [suspendAction, setSuspendAction] = useState<"suspended" | "frozen">("suspended");
   const [processing, setProcessing] = useState(false);
   const { toast } = useToast();
 
@@ -64,7 +74,6 @@ const AdminUsers = () => {
       }
 
       const { data, error } = await query;
-
       if (error) throw error;
       setUsers(data || []);
     } catch (error) {
@@ -74,28 +83,79 @@ const AdminUsers = () => {
     }
   };
 
-  const handleStatusChange = async (user: User, newStatus: "active" | "suspended" | "frozen") => {
+  const handleActivate = async (user: User) => {
     setProcessing(true);
     try {
       const { error } = await supabase
         .from("profiles")
-        .update({ account_status: newStatus })
+        .update({ account_status: "active", suspension_reason: null } as any)
         .eq("id", user.id);
 
       if (error) throw error;
-
-      toast({
-        title: "Status Updated",
-        description: `User account is now ${newStatus}`,
-      });
-
+      toast({ title: "Account Activated", description: `${user.email} is now active` });
       fetchUsers();
     } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleSuspendOrFreeze = async () => {
+    if (!selectedUser || !suspendReason.trim()) {
+      toast({ title: "Error", description: "Please provide a reason", variant: "destructive" });
+      return;
+    }
+    setProcessing(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ account_status: suspendAction, suspension_reason: suspendReason.trim() } as any)
+        .eq("id", selectedUser.id);
+
+      if (error) throw error;
       toast({
-        title: "Error",
-        description: error.message || "Failed to update status",
-        variant: "destructive",
+        title: suspendAction === "suspended" ? "Account Suspended" : "Account Frozen",
+        description: `${selectedUser.email} has been ${suspendAction}`,
       });
+      setShowSuspendDialog(false);
+      setSuspendReason("");
+      setSelectedUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  const handleDeleteUser = async () => {
+    if (!selectedUser) return;
+    setProcessing(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/delete-user`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ user_id: selectedUser.user_id }),
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Failed to delete user");
+
+      toast({ title: "Account Deleted", description: `${selectedUser.email} has been permanently removed` });
+      setShowDeleteDialog(false);
+      setSelectedUser(null);
+      fetchUsers();
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     } finally {
       setProcessing(false);
     }
@@ -103,7 +163,6 @@ const AdminUsers = () => {
 
   const handleUpdateLimit = async () => {
     if (!selectedUser || !newLimit) return;
-    
     setProcessing(true);
     try {
       const { error } = await supabase
@@ -112,22 +171,13 @@ const AdminUsers = () => {
         .eq("id", selectedUser.id);
 
       if (error) throw error;
-
-      toast({
-        title: "Limit Updated",
-        description: `Transaction limit set to P ${parseFloat(newLimit).toLocaleString()}`,
-      });
-
+      toast({ title: "Limit Updated", description: `Transaction limit set to P ${parseFloat(newLimit).toLocaleString()}` });
       setShowLimitDialog(false);
       setSelectedUser(null);
       setNewLimit("");
       fetchUsers();
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update limit",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: error.message, variant: "destructive" });
     } finally {
       setProcessing(false);
     }
@@ -204,15 +254,11 @@ const AdminUsers = () => {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-white/40">
-                    Loading...
-                  </td>
+                  <td colSpan={6} className="py-12 text-center text-white/40">Loading...</td>
                 </tr>
               ) : filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-white/40">
-                    No users found
-                  </td>
+                  <td colSpan={6} className="py-12 text-center text-white/40">No users found</td>
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
@@ -227,7 +273,16 @@ const AdminUsers = () => {
                     <td className="py-4 px-6 text-white font-mono">
                       P {user.transaction_limit?.toLocaleString() || "50,000"}
                     </td>
-                    <td className="py-4 px-6">{getStatusBadge(user.account_status)}</td>
+                    <td className="py-4 px-6">
+                      <div>
+                        {getStatusBadge(user.account_status)}
+                        {user.suspension_reason && user.account_status !== "active" && (
+                          <p className="text-white/30 text-xs mt-1 max-w-[200px] truncate" title={user.suspension_reason}>
+                            {user.suspension_reason}
+                          </p>
+                        )}
+                      </div>
+                    </td>
                     <td className="py-4 px-6 text-white/60 text-sm">
                       {new Date(user.created_at).toLocaleDateString()}
                     </td>
@@ -252,7 +307,7 @@ const AdminUsers = () => {
                           </DropdownMenuItem>
                           {user.account_status !== "active" && (
                             <DropdownMenuItem 
-                              onClick={() => handleStatusChange(user, "active")}
+                              onClick={() => handleActivate(user)}
                               className="text-green-500 hover:bg-white/10"
                             >
                               <Shield className="w-4 h-4 mr-2" />
@@ -261,7 +316,12 @@ const AdminUsers = () => {
                           )}
                           {user.account_status !== "suspended" && (
                             <DropdownMenuItem 
-                              onClick={() => handleStatusChange(user, "suspended")}
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setSuspendAction("suspended");
+                                setSuspendReason("");
+                                setShowSuspendDialog(true);
+                              }}
                               className="text-yellow-500 hover:bg-white/10"
                             >
                               <Ban className="w-4 h-4 mr-2" />
@@ -270,13 +330,29 @@ const AdminUsers = () => {
                           )}
                           {user.account_status !== "frozen" && (
                             <DropdownMenuItem 
-                              onClick={() => handleStatusChange(user, "frozen")}
+                              onClick={() => {
+                                setSelectedUser(user);
+                                setSuspendAction("frozen");
+                                setSuspendReason("");
+                                setShowSuspendDialog(true);
+                              }}
                               className="text-red-500 hover:bg-white/10"
                             >
                               <Ban className="w-4 h-4 mr-2" />
                               Freeze
                             </DropdownMenuItem>
                           )}
+                          <DropdownMenuSeparator className="bg-white/10" />
+                          <DropdownMenuItem 
+                            onClick={() => {
+                              setSelectedUser(user);
+                              setShowDeleteDialog(true);
+                            }}
+                            className="text-red-500 hover:bg-red-500/10"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            Delete Account
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -308,19 +384,82 @@ const AdminUsers = () => {
             />
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setShowLimitDialog(false)}
-              className="border-white/10 text-white hover:bg-white/10"
-            >
+            <Button variant="outline" onClick={() => setShowLimitDialog(false)} className="border-white/10 text-white hover:bg-white/10">
+              Cancel
+            </Button>
+            <Button onClick={handleUpdateLimit} disabled={processing || !newLimit} className="bg-red-500 hover:bg-red-600 text-white">
+              {processing ? "Updating..." : "Update Limit"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Suspend/Freeze Dialog */}
+      <Dialog open={showSuspendDialog} onOpenChange={setShowSuspendDialog}>
+        <DialogContent className="bg-[#1a1a1a] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <AlertTriangle className={`w-5 h-5 ${suspendAction === "frozen" ? "text-red-500" : "text-yellow-500"}`} />
+              {suspendAction === "frozen" ? "Freeze Account" : "Suspend Account"}
+            </DialogTitle>
+            <DialogDescription className="text-white/60">
+              {suspendAction === "frozen" 
+                ? `This will freeze ${selectedUser?.email}'s account. They will not be able to access the platform.`
+                : `This will suspend ${selectedUser?.email}'s account. They will see a warning when they try to log in.`
+              }
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Label className="text-white">Reason (shown to the user) *</Label>
+            <Textarea
+              placeholder="e.g., Suspicious activity detected, Pending document verification..."
+              value={suspendReason}
+              onChange={(e) => setSuspendReason(e.target.value)}
+              className="bg-[#0f0f0f] border-white/10 text-white placeholder:text-white/40 min-h-[100px]"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSuspendDialog(false)} className="border-white/10 text-white hover:bg-white/10">
               Cancel
             </Button>
             <Button
-              onClick={handleUpdateLimit}
-              disabled={processing || !newLimit}
-              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={handleSuspendOrFreeze}
+              disabled={processing || !suspendReason.trim()}
+              className={suspendAction === "frozen" ? "bg-red-500 hover:bg-red-600 text-white" : "bg-yellow-500 hover:bg-yellow-600 text-black"}
             >
-              {processing ? "Updating..." : "Update Limit"}
+              {processing ? "Processing..." : suspendAction === "frozen" ? "Freeze Account" : "Suspend Account"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="bg-[#1a1a1a] border-white/10 text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-red-500">
+              <Trash2 className="w-5 h-5" />
+              Delete Account Permanently
+            </DialogTitle>
+            <DialogDescription className="text-white/60">
+              This will permanently delete <strong className="text-white">{selectedUser?.email}</strong> and all their data. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-xl p-4">
+            <p className="text-red-400 text-sm">
+              ⚠️ All user data including transactions, KYC submissions, support tickets, and profile information will be permanently removed.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} className="border-white/10 text-white hover:bg-white/10">
+              Cancel
+            </Button>
+            <Button
+              onClick={handleDeleteUser}
+              disabled={processing}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              {processing ? "Deleting..." : "Delete Permanently"}
             </Button>
           </DialogFooter>
         </DialogContent>
