@@ -113,6 +113,7 @@ const Auth = ({ mode }: AuthProps) => {
       toast({
         title: "OTP Sent",
         description: `Your verification code is: ${newOtp}`,
+        duration: Infinity,
       });
       
       setStep("otp");
