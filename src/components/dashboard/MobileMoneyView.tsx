@@ -89,6 +89,24 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </Link>
       </div>
 
+      {/* Mobile Money Loans Section */}
+      <div className="px-5 py-2">
+        <button 
+          onClick={() => setLoanApplicationOpen(true)}
+          className="w-full bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-5 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
+              <Smartphone className="w-6 h-6 text-amber-100" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Mobile Money Loans</p>
+              <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
       {/* Send Money Section */}
       <div className="px-5 py-2">
         <button 
@@ -120,24 +138,6 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
             <div>
               <p className="font-semibold text-foreground">Pata Capital</p>
               <p className="text-sm text-muted-foreground">Find out more</p>
-            </div>
-          </div>
-        </button>
-      </div>
-
-      {/* Mobile Money Section */}
-      <div className="px-5 py-2">
-        <button 
-          onClick={() => setLoanApplicationOpen(true)}
-          className="w-full bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-5 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Smartphone className="w-6 h-6 text-amber-100" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground">Mobile Money Loans</p>
-              <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
             </div>
           </div>
         </button>
