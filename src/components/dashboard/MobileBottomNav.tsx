@@ -20,6 +20,7 @@ const MobileBottomNav = () => {
 
   const isActive = (path: string) => {
     if (path === "/dashboard/hub") return location.pathname === "/dashboard/hub";
+    if (path === "/dashboard/sales") return location.pathname === "/dashboard/sales" || location.pathname === "/dashboard";
     return location.pathname.startsWith(path);
   };
 
