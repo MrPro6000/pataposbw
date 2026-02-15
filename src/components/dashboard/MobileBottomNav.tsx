@@ -15,11 +15,11 @@ const MobileBottomNav = () => {
     { icon: Wallet, label: "Money", path: "/dashboard/payouts" },
     { icon: Bus, label: "Transport", path: "/dashboard/transport" },
     { icon: Settings, label: "Manage", path: "/dashboard/settings" },
-    { icon: LayoutGrid, label: "Hub", path: "/dashboard" },
+    { icon: LayoutGrid, label: "Hub", path: "/dashboard/hub" },
   ];
 
   const isActive = (path: string) => {
-    if (path === "/dashboard") return location.pathname === "/dashboard";
+    if (path === "/dashboard/hub") return location.pathname === "/dashboard/hub";
     return location.pathname.startsWith(path);
   };
 

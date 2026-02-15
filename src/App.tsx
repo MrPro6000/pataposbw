@@ -72,8 +72,9 @@ const App = () => (
             <Route path="/kyc" element={<KYC />} />
             <Route path="/business-setup" element={<BusinessSetup />} />
             
-            {/* Dashboard routes */}
-            <Route path="/dashboard" element={<DashboardHome />} />
+            {/* Dashboard routes - /dashboard redirects to /dashboard/sales */}
+            <Route path="/dashboard" element={<Sales />} />
+            <Route path="/dashboard/hub" element={<DashboardHome />} />
             <Route path="/dashboard/sales" element={<Sales />} />
             <Route path="/dashboard/products" element={<DashboardProducts />} />
             <Route path="/dashboard/customers" element={<Customers />} />

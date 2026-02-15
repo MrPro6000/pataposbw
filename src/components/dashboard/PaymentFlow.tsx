@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode } from "lucide-react";
+import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,8 +14,8 @@ const mobileMoneyProviders = [
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
 ];
 
-export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr";
-export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "success";
+export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link";
+export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "payment-link-form" | "payment-link-sending" | "success";
 
 interface PaymentFlowProps {
   total: number;
@@ -30,6 +30,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
   const [selectedProvider, setSelectedProvider] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [cashTendered, setCashTendered] = useState("");
+  const [linkPhone, setLinkPhone] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
 
   const cashChange = cashTendered ? parseFloat(cashTendered) - total : 0;
@@ -52,6 +53,10 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
       const timer = setTimeout(() => setStep("success"), 3000);
       return () => clearTimeout(timer);
     }
+    if (step === "payment-link-sending") {
+      const timer = setTimeout(() => setStep("success"), 2500);
+      return () => clearTimeout(timer);
+    }
   }, [step]);
 
   const handleSelectMethod = (method: PaymentMethod) => {
@@ -59,6 +64,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
     if (method === "card") setStep("card-tap");
     else if (method === "cash") setStep("cash-tendered");
     else if (method === "qr") setStep("qr-scan");
+    else if (method === "payment-link") setStep("payment-link-form");
     else setStep("mobile-provider");
   };
 
@@ -91,6 +97,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
               { method: "cash" as PaymentMethod, label: "Cash", sub: "Record cash payment", icon: Banknote, iconBg: "bg-emerald-500" },
               { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka", icon: Smartphone, iconBg: "bg-orange-500" },
               { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
+              { method: "payment-link" as PaymentMethod, label: "Payment Link", sub: "Send link to pay", icon: Link2, iconBg: "bg-purple-500" },
             ].map(({ method, label, sub, icon: Icon, iconBg }) => (
               <button
                 key={method}
@@ -337,6 +344,61 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
         </div>
       )}
 
+      {/* PAYMENT LINK FORM */}
+      {step === "payment-link-form" && (
+        <div className="space-y-4">
+          <div className="bg-muted rounded-2xl p-4 text-center">
+            <p className="text-sm text-muted-foreground">Payment Link Amount</p>
+            <p className="text-3xl font-bold text-foreground">P{total.toFixed(2)}</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Customer Phone Number</Label>
+            <Input
+              type="tel"
+              placeholder="+267 71 234 5678"
+              value={linkPhone}
+              onChange={e => setLinkPhone(e.target.value)}
+              className="h-12 text-lg"
+            />
+          </div>
+
+          <div className="bg-muted rounded-xl p-3">
+            <p className="text-sm text-muted-foreground">A payment link will be sent to the customer via SMS. They can pay using Card or Mobile Money.</p>
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={() => { setLinkPhone(""); setStep("select"); }} className="flex-1">Cancel</Button>
+            <Button onClick={() => { if (linkPhone) setStep("payment-link-sending"); }}
+              disabled={!linkPhone}
+              className="flex-1 bg-purple-500 hover:bg-purple-600 text-white">
+              Send Link
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* PAYMENT LINK SENDING */}
+      {step === "payment-link-sending" && (
+        <div className="flex flex-col items-center justify-center py-12 space-y-6">
+          <div className="w-20 h-20 rounded-full bg-purple-500/10 flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-lg font-semibold text-foreground">Sending Payment Link</p>
+            <p className="text-sm text-muted-foreground">Link will be sent to {linkPhone}</p>
+          </div>
+          <div className="bg-muted rounded-xl p-3 flex items-center gap-3 w-full max-w-xs">
+            <Link2 className="w-5 h-5 text-purple-500" />
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">Sent to</p>
+              <p className="text-sm font-mono font-semibold text-foreground">{linkPhone}</p>
+            </div>
+            <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse" />
+          </div>
+        </div>
+      )}
+
       {/* SUCCESS */}
       {step === "success" && (
         <div className="flex flex-col items-center justify-center py-8 space-y-4">
@@ -385,6 +447,12 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Method</span>
                 <span className="font-medium text-foreground">QR Scan</span>
+              </div>
+            )}
+            {paymentMethod === "payment-link" && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Sent to</span>
+                <span className="font-mono font-medium text-foreground">{linkPhone}</span>
               </div>
             )}
             <div className="flex justify-between pt-2 border-t border-border">
