@@ -25,8 +25,8 @@ const MobileBottomNav = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border md:hidden z-50 safe-area-pb">
-      <div className="flex items-center justify-around py-2 pb-safe">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border md:hidden z-50 safe-area-bottom">
+      <div className="flex items-center justify-around py-2" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         {navItems.map((item) => (
           <Link
             key={item.label}

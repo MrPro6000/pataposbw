@@ -20,7 +20,7 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-6 md:px-20 py-12 md:py-20">
+      <section className="px-5 md:px-20 py-8 md:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
@@ -53,7 +53,7 @@ const Home = () => {
             </div>
 
             {/* Right Content - Image Grid */}
-            <div className="relative grid grid-cols-2 gap-3">
+            <div className="relative grid grid-cols-2 gap-3 max-w-full overflow-hidden">
               <div className="space-y-3">
                 <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
                   <img src={pataPro} alt="Pata Pro POS Display" className="w-full h-full object-cover" />
@@ -80,7 +80,7 @@ const Home = () => {
       </section>
 
       {/* Features Section */}
-      <section className="px-6 md:px-20 py-20 bg-secondary">
+      <section className="px-5 md:px-20 py-12 md:py-20 bg-secondary overflow-hidden">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
             One platform. <span className="pata-hero-gradient">Infinite possibilities.</span>
@@ -89,7 +89,7 @@ const Home = () => {
             Payments made easier across Botswana — from Pata POS to card terminals.
           </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 md:gap-6">
             {[
               {
                 title: "PataPOS",
@@ -173,9 +173,9 @@ const Home = () => {
       </section>
 
       {/* Additional Services */}
-      <section className="px-6 md:px-20 py-16">
+      <section className="px-5 md:px-20 py-12 md:py-16 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <Link
               to="/capital"
               className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-colors group border border-primary/20"
