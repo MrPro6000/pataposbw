@@ -107,24 +107,6 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </button>
       </div>
 
-      {/* Send Money Section */}
-      <div className="px-5 py-2">
-        <button 
-          onClick={() => setMoneyTransferOpen(true)}
-          className="w-full bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 rounded-2xl p-5 active:scale-98 transition-transform text-left border border-orange-200/50 dark:border-orange-700/30"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
-              <Send className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground">Send Money</p>
-              <p className="text-sm text-muted-foreground">International transfers via Mukuru</p>
-            </div>
-          </div>
-        </button>
-      </div>
-
       {/* Pata Capital Section */}
       <div className="px-5 py-2">
         <button 
@@ -138,6 +120,24 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
             <div>
               <p className="font-semibold text-foreground">Pata Capital</p>
               <p className="text-sm text-muted-foreground">Find out more</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      {/* Send Money Section */}
+      <div className="px-5 py-2">
+        <button 
+          onClick={() => setMoneyTransferOpen(true)}
+          className="w-full bg-gradient-to-br from-orange-50 to-orange-100/50 dark:from-orange-900/20 dark:to-orange-800/10 rounded-2xl p-5 active:scale-98 transition-transform text-left border border-orange-200/50 dark:border-orange-700/30"
+        >
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/20">
+              <Send className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Send Money</p>
+              <p className="text-sm text-muted-foreground">International transfers via Mukuru</p>
             </div>
           </div>
         </button>
