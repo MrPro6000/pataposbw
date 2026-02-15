@@ -120,8 +120,8 @@ const MobileDashboardHome = () => {
     return <MobileTransportView />;
   }
 
-  // Default: Hub view for /dashboard and other routes
-  return <MobileHubView {...profileProps} />;
+  // Default: Sales view for /dashboard and other routes
+  return <MobileSalesView {...profileProps} />;
 };
 
 export default MobileDashboardHome;
