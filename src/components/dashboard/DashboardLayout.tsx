@@ -69,7 +69,7 @@ const navSections: NavSection[] = [
     label: "Hub",
     icon: LayoutGrid,
     items: [
-      { label: "Dashboard", path: "/dashboard" },
+      { label: "Dashboard", path: "/dashboard/hub" },
     ]
   },
 ];
@@ -86,8 +86,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   const isActive = (path: string) => {
-    if (path === "/dashboard") {
-      return location.pathname === "/dashboard";
+    if (path === "/dashboard/hub") {
+      return location.pathname === "/dashboard/hub";
     }
     return location.pathname === path;
   };
