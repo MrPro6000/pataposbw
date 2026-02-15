@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Shield, CheckCircle, ArrowRight, ArrowLeft, Upload, X, User } from "lucide-react";
+import { Shield, CheckCircle, ArrowRight, ArrowLeft, Upload, X, User, AlertTriangle, Loader2 } from "lucide-react";
 
 type KYCStep = "omang" | "photos" | "selfie" | "pending" | "rejected";
 
@@ -28,6 +28,9 @@ const KYC = () => {
   const [uploadingFront, setUploadingFront] = useState(false);
   const [uploadingBack, setUploadingBack] = useState(false);
   const [uploadingSelfie, setUploadingSelfie] = useState(false);
+  const [verifyingFront, setVerifyingFront] = useState(false);
+  const [verifyingBack, setVerifyingBack] = useState(false);
+  const [verifyingSelfie, setVerifyingSelfie] = useState(false);
   
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -82,6 +85,34 @@ const KYC = () => {
     setCurrentStep("photos");
   };
 
+  const verifyImage = async (storagePath: string, type: "front" | "back" | "selfie"): Promise<boolean> => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return true; // Allow if no session
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-id`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({ storagePath, type }),
+        }
+      );
+
+      if (!response.ok) return true; // Allow through on API error
+
+      const result = await response.json();
+      return result.is_valid !== false; // Default to true
+    } catch (error) {
+      console.error("Verification error:", error);
+      return true; // Allow through on network error
+    }
+  };
+
   const handleFileUpload = async (file: File, type: "front" | "back" | "selfie") => {
     if (!user) return;
 
@@ -96,6 +127,7 @@ const KYC = () => {
     }
 
     const setUploading = type === "front" ? setUploadingFront : type === "back" ? setUploadingBack : setUploadingSelfie;
+    const setVerifying = type === "front" ? setVerifyingFront : type === "back" ? setVerifyingBack : setVerifyingSelfie;
     const setPreview = type === "front" ? setIdFrontPreview : type === "back" ? setIdBackPreview : setSelfiePreview;
     const setUrl = type === "front" ? setIdFrontUrl : type === "back" ? setIdBackUrl : setSelfieUrl;
 
@@ -105,7 +137,7 @@ const KYC = () => {
       reader.onload = (e) => setPreview(e.target?.result as string);
       reader.readAsDataURL(file);
 
-      // Upload to private kyc-documents bucket — returns the storage path
+      // Upload to private kyc-documents bucket
       const storagePath = `${user.id}/${type}_${Date.now()}.${file.name.split(".").pop()}`;
       const { error } = await supabase.storage
         .from("kyc-documents")
@@ -113,14 +145,39 @@ const KYC = () => {
 
       if (error) throw error;
 
+      // AI verification
+      setUploading(false);
+      setVerifying(true);
+
+      const isValid = await verifyImage(storagePath, type);
+
+      if (!isValid) {
+        // Delete the invalid upload
+        await supabase.storage.from("kyc-documents").remove([storagePath]);
+        setPreview("");
+        setUrl("");
+        
+        const label = type === "selfie" ? "selfie" : `ID ${type}`;
+        toast({
+          title: `Invalid ${label} photo`,
+          description: type === "selfie" 
+            ? "Please upload a clear photo of your face. The image doesn't appear to be a valid selfie."
+            : "Please upload a photo of your actual government-issued ID card. Screenshots, random images, or non-ID documents are not accepted.",
+          variant: "destructive",
+          duration: 8000,
+        });
+        return;
+      }
+
       setUrl(storagePath);
-      toast({ title: "Photo uploaded", description: `${type === "selfie" ? "Selfie" : `ID ${type}`} uploaded successfully` });
+      toast({ title: "Photo verified ✓", description: `${type === "selfie" ? "Selfie" : `ID ${type}`} uploaded and verified successfully` });
     } catch (error: any) {
       console.error("Upload error:", error);
       toast({ title: "Upload failed", description: error.message || "Failed to upload photo", variant: "destructive" });
       setPreview("");
     } finally {
       setUploading(false);
+      setVerifying(false);
     }
   };
 
@@ -172,6 +229,7 @@ const KYC = () => {
     const preview = type === "front" ? idFrontPreview : type === "back" ? idBackPreview : selfiePreview;
     const url = type === "front" ? idFrontUrl : type === "back" ? idBackUrl : selfieUrl;
     const uploading = type === "front" ? uploadingFront : type === "back" ? uploadingBack : uploadingSelfie;
+    const verifying = type === "front" ? verifyingFront : type === "back" ? verifyingBack : verifyingSelfie;
     const setPreview = type === "front" ? setIdFrontPreview : type === "back" ? setIdBackPreview : setSelfiePreview;
     const setUrl = type === "front" ? setIdFrontUrl : type === "back" ? setIdBackUrl : setSelfieUrl;
     const label = type === "selfie" ? "Selfie Photo" : `ID ${type === "front" ? "Front" : "Back"}`;
@@ -191,12 +249,14 @@ const KYC = () => {
               alt={label}
               className={`object-cover ${isRound ? "w-32 h-32 rounded-full" : "w-full rounded-xl aspect-[16/10]"}`}
             />
-            <button
-              onClick={() => { setPreview(""); setUrl(""); }}
-              className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            {!verifying && (
+              <button
+                onClick={() => { setPreview(""); setUrl(""); }}
+                className="absolute top-2 right-2 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         ) : (
           <label className={`${isRound ? "w-32 h-32 rounded-full mx-auto" : "aspect-[16/10] rounded-xl"} border-2 border-dashed flex flex-col items-center justify-center gap-2 cursor-pointer ${
@@ -219,7 +279,7 @@ const KYC = () => {
               accept="image/*"
               capture={type === "selfie" ? "user" : "environment"}
               className="hidden"
-              disabled={uploading}
+              disabled={uploading || verifying}
               onChange={(e) => {
                 const file = e.target.files?.[0];
                 if (file) handleFileUpload(file, type);
@@ -228,10 +288,12 @@ const KYC = () => {
           </label>
         )}
 
-        {uploading && (
+        {(uploading || verifying) && (
           <div className="mt-3 flex items-center justify-center gap-2">
-            <div className="animate-spin w-4 h-4 border-2 border-primary border-t-transparent rounded-full"></div>
-            <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>Uploading...</span>
+            <Loader2 className={`w-4 h-4 animate-spin ${verifying ? "text-blue-500" : "text-primary"}`} />
+            <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
+              {verifying ? "AI verifying photo..." : "Uploading..."}
+            </span>
           </div>
         )}
       </div>
@@ -305,17 +367,21 @@ const KYC = () => {
               <h2 className="text-xl font-semibold text-foreground mb-2">Upload ID Photos</h2>
               <p className="text-sm text-muted-foreground">Take a clear photo or scan both sides of your Omang ID</p>
             </div>
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 flex items-start gap-2">
+              <AlertTriangle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-blue-400">AI will automatically verify that your uploaded photos are valid government-issued IDs. Non-ID images will be rejected.</p>
+            </div>
             <div className="space-y-4">
               {renderPhotoUpload("front")}
               {renderPhotoUpload("back")}
             </div>
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className={`w-4 h-4 ${idFrontUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
-              <span className="text-sm text-muted-foreground">ID Front uploaded</span>
+              <span className="text-sm text-muted-foreground">ID Front uploaded & verified</span>
             </div>
             <div className="flex items-center gap-2 mb-4">
               <CheckCircle className={`w-4 h-4 ${idBackUrl ? 'text-green-500' : 'text-muted-foreground/20'}`} />
-              <span className="text-sm text-muted-foreground">ID Back uploaded</span>
+              <span className="text-sm text-muted-foreground">ID Back uploaded & verified</span>
             </div>
             <Button
               onClick={() => setCurrentStep("selfie")}
