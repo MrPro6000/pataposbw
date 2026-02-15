@@ -475,7 +475,14 @@ export type Database = {
     }
     Enums: {
       account_status: "active" | "suspended" | "frozen"
-      app_role: "admin" | "moderator" | "user"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "cto"
+        | "developer"
+        | "support"
+        | "finance"
       kyc_status: "pending" | "approved" | "rejected"
       ticket_status: "open" | "in_progress" | "resolved" | "closed"
     }
@@ -606,7 +613,15 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["active", "suspended", "frozen"],
-      app_role: ["admin", "moderator", "user"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "cto",
+        "developer",
+        "support",
+        "finance",
+      ],
       kyc_status: ["pending", "approved", "rejected"],
       ticket_status: ["open", "in_progress", "resolved", "closed"],
     },
