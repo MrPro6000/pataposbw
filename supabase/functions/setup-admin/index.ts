@@ -23,8 +23,15 @@ serve(async (req) => {
       },
     });
 
-    const adminEmail = "pata@admin.com";
-    const adminPassword = "Pata@kirbyM";
+    const adminEmail = Deno.env.get("ADMIN_EMAIL");
+    const adminPassword = Deno.env.get("ADMIN_PASSWORD");
+
+    if (!adminEmail || !adminPassword) {
+      return new Response(
+        JSON.stringify({ error: "Admin credentials not configured in secrets" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     // Check if admin already exists
     const { data: existingUsers } = await supabase.auth.admin.listUsers();
