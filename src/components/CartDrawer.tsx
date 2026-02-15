@@ -1,5 +1,5 @@
 import { useCart } from "@/contexts/CartContext";
-import { X, Plus, Minus, ShoppingCart, CreditCard, Banknote, Smartphone, CheckCircle, Trash2 } from "lucide-react";
+import { X, Plus, Minus, ShoppingCart, CreditCard, Banknote, Smartphone, CheckCircle, Trash2, QrCode, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import {
@@ -16,7 +16,7 @@ import myzakaLogo from "@/assets/mobile-money/myzaka.png";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 
-type Step = "cart" | "payment" | "mobile-provider" | "success";
+type Step = "cart" | "payment" | "mobile-provider" | "qr-scan" | "payment-link-form" | "success";
 
 const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
@@ -38,15 +38,34 @@ const CartDrawer = () => {
   };
 
   const handlePayment = async (method: string) => {
-    if (method === "mobile-money") {
-      setStep("mobile-provider");
-      return;
-    }
+    if (method === "mobile-money") { setStep("mobile-provider"); return; }
+    if (method === "qr") { setStep("qr-scan"); return; }
+    if (method === "payment-link") { setStep("payment-link-form"); return; }
     setIsProcessing(true);
     await new Promise(r => setTimeout(r, 1500));
     setIsProcessing(false);
     setStep("success");
     toast({ title: "Order Placed!", description: `P${total.toFixed(2)} payment processed via ${method}` });
+  };
+
+  const handleQrPayment = async () => {
+    setIsProcessing(true);
+    await new Promise(r => setTimeout(r, 2000));
+    setIsProcessing(false);
+    setStep("success");
+    toast({ title: "Order Placed!", description: `P${total.toFixed(2)} via QR Payment` });
+  };
+
+  const handlePaymentLink = async () => {
+    if (!customerPhone) {
+      toast({ title: "Error", description: "Please enter customer phone", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+    await new Promise(r => setTimeout(r, 2000));
+    setIsProcessing(false);
+    setStep("success");
+    toast({ title: "Link Sent!", description: `Payment link sent to ${customerPhone}` });
   };
 
   const handleMobilePayment = async () => {
@@ -133,10 +152,12 @@ const CartDrawer = () => {
                 <p className="text-3xl font-bold text-foreground">P{total.toLocaleString()}</p>
               </div>
               <div className="space-y-3">
-                {[
+              {[
                   { method: "card", icon: CreditCard, label: "Card Payment", desc: "Visa, Mastercard", color: "bg-primary" },
                   { method: "cash", icon: Banknote, label: "Cash", desc: "Pay on delivery", color: "bg-green-500" },
                   { method: "mobile-money", icon: Smartphone, label: "Mobile Money", desc: "Orange, Smega, MyZaka", color: "bg-orange-500" },
+                  { method: "qr", icon: QrCode, label: "QR Payment", desc: "Scan to pay", color: "bg-violet-500" },
+                  { method: "payment-link", icon: Link2, label: "Payment Link", desc: "Send via SMS", color: "bg-purple-500" },
                 ].map(({ method, icon: Icon, label, desc, color }) => (
                   <button key={method} onClick={() => handlePayment(method)} disabled={isProcessing}
                     className="w-full flex items-center gap-4 p-4 bg-card border border-border rounded-2xl hover:bg-muted transition-colors">
@@ -179,6 +200,41 @@ const CartDrawer = () => {
             </div>
           )}
 
+          {step === "qr-scan" && (
+            <div className="space-y-4">
+              <div className="bg-muted rounded-2xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{total.toLocaleString()}</p>
+              </div>
+              <div className="flex flex-col items-center py-6">
+                <div className="w-40 h-40 bg-card border-2 border-border rounded-2xl flex items-center justify-center mb-4 animate-pulse">
+                  <QrCode className="w-20 h-20 text-muted-foreground" />
+                </div>
+                <p className="text-sm text-muted-foreground text-center">Ask customer to scan the QR code to complete payment</p>
+              </div>
+              <Button onClick={handleQrPayment} disabled={isProcessing} className="w-full h-12">
+                {isProcessing ? "Waiting for payment..." : "Confirm Payment Received"}
+              </Button>
+            </div>
+          )}
+
+          {step === "payment-link-form" && (
+            <div className="space-y-4">
+              <div className="bg-muted rounded-2xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{total.toLocaleString()}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground text-sm">Customer Phone Number</p>
+                <Input type="tel" placeholder="+267 71 234 5678" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} />
+              </div>
+              <p className="text-sm text-muted-foreground">A payment link will be sent via SMS to the customer's phone.</p>
+              <Button onClick={handlePaymentLink} disabled={isProcessing || !customerPhone} className="w-full h-12">
+                {isProcessing ? "Sending link..." : "Send Payment Link"}
+              </Button>
+            </div>
+          )}
+
           {step === "success" && (
             <div className="flex flex-col items-center justify-center py-10">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
@@ -212,7 +268,7 @@ const CartDrawer = () => {
           </div>
         )}
 
-        {step === "mobile-provider" && (
+        {(step === "mobile-provider" || step === "qr-scan" || step === "payment-link-form") && (
           <div className="border-t border-border pt-4">
             <Button variant="outline" onClick={() => setStep("payment")} className="w-full">Back</Button>
           </div>
