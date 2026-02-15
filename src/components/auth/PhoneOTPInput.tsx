@@ -1,9 +1,10 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Phone, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PhoneOTPInputProps {
   isDark: boolean;
@@ -16,64 +17,47 @@ const PhoneOTPInput = ({ isDark, onVerified, onBack }: PhoneOTPInputProps) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const formatPhoneNumber = (value: string) => {
-    // Remove non-digits except +
-    const cleaned = value.replace(/[^\d+]/g, "");
-    
-    // Ensure it starts with +267 for Botswana
-    if (cleaned.startsWith("267")) {
-      return "+" + cleaned;
-    }
-    if (cleaned.startsWith("+267")) {
-      return cleaned;
-    }
-    if (cleaned.startsWith("7")) {
-      return "+267" + cleaned;
-    }
-    return cleaned;
+  const getFormattedNumber = () => {
+    const cleaned = phoneNumber.replace(/\D/g, "");
+    return "+267" + cleaned;
   };
 
-  const validateBotswanaNumber = (phone: string) => {
-    // Botswana mobile numbers: +267 followed by 7 or 8 digits (total 8 digits after country code)
-    const regex = /^\+267[78]\d{7}$/;
-    return regex.test(phone);
-  };
+  const validateNumber = () => /^\+267[78]\d{7}$/.test(getFormattedNumber());
 
   const handleSendOTP = async () => {
-    const formattedNumber = formatPhoneNumber(phoneNumber);
-    
-    if (!validateBotswanaNumber(formattedNumber)) {
-      toast({
-        title: "Invalid phone number",
-        description: "Please enter a valid Botswana mobile number (e.g., 71234567)",
-        variant: "destructive",
-      });
+    if (!validateNumber()) {
+      toast({ title: "Invalid phone number", description: "Enter a valid Botswana mobile number (e.g., 71234567)", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     try {
-      // Generate a 6-digit OTP (in production, this would be sent via SMS)
-      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(newOtp);
-      
-      // In production, you'd call an edge function to send SMS
-      // For now, we'll show the OTP in a toast for testing
-      toast({
-        title: "OTP Sent",
-        description: `Your verification code is: ${newOtp}`,
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast({ title: "Not authenticated", description: "Please log in first", variant: "destructive" });
+        return;
+      }
+
+      const res = await supabase.functions.invoke("send-otp", {
+        body: { phone_number: getFormattedNumber() },
       });
-      
+
+      if (res.error || res.data?.error) {
+        throw new Error(res.data?.error || res.error?.message || "Failed to send OTP");
+      }
+
+      toast({ title: "OTP Sent", description: "Check your phone for the verification code" });
+
+      // For testing: show debug OTP if returned
+      if (res.data?.debug_otp) {
+        toast({ title: "Test OTP", description: `Your code: ${res.data.debug_otp}` });
+      }
+
       setStep("otp");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to send OTP",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: error.message || "Failed to send OTP", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -81,36 +65,24 @@ const PhoneOTPInput = ({ isDark, onVerified, onBack }: PhoneOTPInputProps) => {
 
   const handleVerifyOTP = async () => {
     if (otp.length !== 6) {
-      toast({
-        title: "Invalid OTP",
-        description: "Please enter the 6-digit code",
-        variant: "destructive",
-      });
+      toast({ title: "Invalid OTP", description: "Please enter the 6-digit code", variant: "destructive" });
       return;
     }
 
     setLoading(true);
     try {
-      // Verify OTP (in production, this would check against backend)
-      if (otp === generatedOtp) {
-        toast({
-          title: "Phone verified",
-          description: "Your phone number has been verified successfully",
-        });
-        onVerified(formatPhoneNumber(phoneNumber));
-      } else {
-        toast({
-          title: "Invalid OTP",
-          description: "The code you entered is incorrect",
-          variant: "destructive",
-        });
-      }
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Verification failed",
-        variant: "destructive",
+      const res = await supabase.functions.invoke("verify-otp", {
+        body: { phone_number: getFormattedNumber(), otp_code: otp },
       });
+
+      if (res.error || res.data?.error) {
+        throw new Error(res.data?.error || res.error?.message || "Verification failed");
+      }
+
+      toast({ title: "Phone verified", description: "Your phone number has been verified successfully" });
+      onVerified(getFormattedNumber());
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message || "Verification failed", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -186,11 +158,7 @@ const PhoneOTPInput = ({ isDark, onVerified, onBack }: PhoneOTPInputProps) => {
           </div>
 
           <div className="flex justify-center">
-            <InputOTP
-              maxLength={6}
-              value={otp}
-              onChange={setOtp}
-            >
+            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
               <InputOTPGroup className="gap-2">
                 {[0, 1, 2, 3, 4, 5].map((index) => (
                   <InputOTPSlot
