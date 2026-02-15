@@ -44,6 +44,8 @@ import AdminTickets from "./pages/admin/AdminTickets";
 import AdminFAQs from "./pages/admin/AdminFAQs";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminTeam from "./pages/admin/AdminTeam";
+import AdminLiveChat from "./pages/admin/AdminLiveChat";
 
 const queryClient = new QueryClient();
 
@@ -91,8 +93,10 @@ const App = () => (
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/kyc" element={<AdminKYC />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/team" element={<AdminTeam />} />
             <Route path="/admin/aml" element={<AdminAML />} />
             <Route path="/admin/tickets" element={<AdminTickets />} />
+            <Route path="/admin/live-chat" element={<AdminLiveChat />} />
             <Route path="/admin/faqs" element={<AdminFAQs />} />
             <Route path="/admin/notifications" element={<AdminNotifications />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />

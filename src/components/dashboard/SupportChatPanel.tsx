@@ -1,10 +1,11 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Send, Bot, User, X } from "lucide-react";
+import { Send, Bot, User, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from "react-markdown";
+import { supabase } from "@/integrations/supabase/client";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant" | "admin"; content: string; id?: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat`;
 
@@ -15,10 +16,12 @@ interface SupportChatPanelProps {
 
 const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) => {
   const [messages, setMessages] = useState<Msg[]>([
-    { role: "assistant", content: "Hi! 👋 I'm Pata Support. How can I help you today?" },
+    { role: "assistant", content: "Hi! 👋 I'm Pata Support. Chat with our AI or a live agent will join if available." },
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [chatId, setChatId] = useState<string | null>(null);
+  const [isLive, setIsLive] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -26,6 +29,85 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // Subscribe to live chat messages if we have a chat
+  useEffect(() => {
+    if (!chatId) return;
+
+    const channel = supabase
+      .channel(`user-chat-${chatId}`)
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "chat_messages",
+        filter: `chat_id=eq.${chatId}`,
+      }, (payload) => {
+        const msg = payload.new as any;
+        if (msg.is_admin) {
+          setIsLive(true);
+          setMessages((prev) => [...prev, { role: "admin", content: msg.message, id: msg.id }]);
+        }
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [chatId]);
+
+  const ensureLiveChat = async () => {
+    if (chatId) return chatId;
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+
+      // Check for existing active chat
+      const { data: existing } = await supabase
+        .from("live_chats")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        setChatId(existing[0].id);
+        return existing[0].id;
+      }
+
+      // Create new chat
+      const { data: newChat, error } = await supabase
+        .from("live_chats")
+        .insert({ user_id: user.id } as any)
+        .select("id")
+        .single();
+
+      if (error || !newChat) return null;
+
+      setChatId(newChat.id);
+      return newChat.id;
+    } catch {
+      return null;
+    }
+  };
+
+  const sendLiveMessage = async (text: string, currentChatId: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await supabase
+        .from("chat_messages")
+        .insert({
+          chat_id: currentChatId,
+          sender_id: user.id,
+          message: text,
+          is_admin: false,
+        } as any);
+    } catch (error) {
+      console.error("Error sending live message:", error);
+    }
+  };
 
   const sendMessage = useCallback(async () => {
     const text = input.trim();
@@ -35,8 +117,18 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
-    setIsLoading(true);
 
+    // Always try to create/find a live chat and persist the message
+    const currentChatId = await ensureLiveChat();
+    if (currentChatId) {
+      await sendLiveMessage(text, currentChatId);
+    }
+
+    // If a live agent is responding, don't use AI
+    if (isLive) return;
+
+    // Use AI for response
+    setIsLoading(true);
     let assistantSoFar = "";
 
     try {
@@ -46,7 +138,7 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
           "Content-Type": "application/json",
           Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-        body: JSON.stringify({ messages: newMessages }),
+        body: JSON.stringify({ messages: newMessages.filter(m => m.role !== "admin").map(m => ({ role: m.role === "admin" ? "assistant" : m.role, content: m.content })) }),
       });
 
       if (!resp.ok || !resp.body) throw new Error("Failed to connect");
@@ -99,7 +191,7 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
     } finally {
       setIsLoading(false);
     }
-  }, [input, isLoading, messages]);
+  }, [input, isLoading, messages, isLive, chatId]);
 
   return (
     <div className={`flex flex-col bg-card border border-border rounded-2xl overflow-hidden ${className}`}>
@@ -109,7 +201,9 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
           <Bot className="w-5 h-5" />
           <div>
             <p className="font-semibold text-sm">Pata Live Support</p>
-            <p className="text-xs opacity-80">AI-powered • Available 24/7</p>
+            <p className="text-xs opacity-80">
+              {isLive ? "🟢 Live agent connected" : "AI-powered • Available 24/7"}
+            </p>
           </div>
         </div>
         {onClose && (
@@ -123,15 +217,23 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
       <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.map((msg, i) => (
           <div key={i} className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-            {msg.role === "assistant" && (
-              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
-                <Bot className="w-4 h-4 text-primary" />
+            {(msg.role === "assistant" || msg.role === "admin") && (
+              <div className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                msg.role === "admin" ? "bg-green-500/20" : "bg-primary/10"
+              }`}>
+                {msg.role === "admin" ? (
+                  <User className="w-4 h-4 text-green-500" />
+                ) : (
+                  <Bot className="w-4 h-4 text-primary" />
+                )}
               </div>
             )}
             <div
               className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
                 msg.role === "user"
                   ? "bg-primary text-primary-foreground rounded-br-md"
+                  : msg.role === "admin"
+                  ? "bg-green-500/10 text-foreground rounded-bl-md border border-green-500/20"
                   : "bg-muted text-foreground rounded-bl-md"
               }`}
             >
@@ -140,7 +242,10 @@ const SupportChatPanel = ({ onClose, className = "" }: SupportChatPanelProps) =>
                   <ReactMarkdown>{msg.content}</ReactMarkdown>
                 </div>
               ) : (
-                msg.content
+                <>
+                  {msg.role === "admin" && <p className="text-green-500 text-xs font-medium mb-1">Live Agent</p>}
+                  {msg.content}
+                </>
               )}
             </div>
             {msg.role === "user" && (

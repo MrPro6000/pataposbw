@@ -50,6 +50,41 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_messages: {
+        Row: {
+          chat_id: string
+          created_at: string
+          id: string
+          is_admin: boolean
+          message: string
+          sender_id: string
+        }
+        Insert: {
+          chat_id: string
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          message: string
+          sender_id: string
+        }
+        Update: {
+          chat_id?: string
+          created_at?: string
+          id?: string
+          is_admin?: boolean
+          message?: string
+          sender_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_chat_id_fkey"
+            columns: ["chat_id"]
+            isOneToOne: false
+            referencedRelation: "live_chats"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       faqs: {
         Row: {
           answer: string
@@ -124,6 +159,33 @@ export type Database = {
           selfie_url?: string | null
           status?: Database["public"]["Enums"]["kyc_status"] | null
           submitted_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      live_chats: {
+        Row: {
+          assigned_to: string | null
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assigned_to?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

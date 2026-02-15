@@ -14,8 +14,9 @@ import {
   LogOut,
   Menu,
   X,
-  ChevronDown,
-  UserCheck
+  UserCheck,
+  UsersRound,
+  MessageSquare,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -26,31 +27,35 @@ interface NavItem {
   label: string;
   path: string;
   icon: React.ElementType;
+  roles: string[]; // which roles can see this nav item
 }
 
-const navItems: NavItem[] = [
-  { label: "Dashboard", path: "/admin", icon: LayoutGrid },
-  { label: "KYC Approvals", path: "/admin/kyc", icon: UserCheck },
-  { label: "Users", path: "/admin/users", icon: Users },
-  { label: "AML Monitoring", path: "/admin/aml", icon: AlertTriangle },
-  { label: "Analytics", path: "/admin/analytics", icon: BarChart3 },
-  { label: "Support Tickets", path: "/admin/tickets", icon: HelpCircle },
-  { label: "FAQs", path: "/admin/faqs", icon: FileText },
-  { label: "Notifications", path: "/admin/notifications", icon: Bell },
+const allNavItems: NavItem[] = [
+  { label: "Dashboard", path: "/admin", icon: LayoutGrid, roles: ["admin", "cto", "developer", "finance"] },
+  { label: "KYC Approvals", path: "/admin/kyc", icon: UserCheck, roles: ["admin", "support"] },
+  { label: "Users", path: "/admin/users", icon: Users, roles: ["admin", "cto", "support"] },
+  { label: "Team", path: "/admin/team", icon: UsersRound, roles: ["admin"] },
+  { label: "AML Monitoring", path: "/admin/aml", icon: AlertTriangle, roles: ["admin", "finance"] },
+  { label: "Analytics", path: "/admin/analytics", icon: BarChart3, roles: ["admin", "cto", "developer", "finance"] },
+  { label: "Live Chat", path: "/admin/live-chat", icon: MessageSquare, roles: ["admin", "support"] },
+  { label: "Support Tickets", path: "/admin/tickets", icon: HelpCircle, roles: ["admin", "support"] },
+  { label: "FAQs", path: "/admin/faqs", icon: FileText, roles: ["admin", "support"] },
+  { label: "Notifications", path: "/admin/notifications", icon: Bell, roles: ["admin", "cto"] },
 ];
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [userRoles, setUserRoles] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    checkAdminAccess();
+    checkAccess();
   }, []);
 
-  const checkAdminAccess = async () => {
+  const checkAccess = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
@@ -61,15 +66,24 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       const { data: roles } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", user.id)
-        .eq("role", "admin");
+        .eq("user_id", user.id);
 
       if (!roles || roles.length === 0) {
         navigate("/admin/login");
         return;
       }
 
-      setIsAdmin(true);
+      const roleValues = roles.map((r) => r.role);
+      const teamRoles = ["admin", "cto", "developer", "support", "finance"];
+      const hasTeamRole = roleValues.some((r) => teamRoles.includes(r));
+
+      if (!hasTeamRole) {
+        navigate("/admin/login");
+        return;
+      }
+
+      setUserRoles(roleValues);
+      setIsAuthorized(true);
     } catch (error) {
       navigate("/admin/login");
     } finally {
@@ -89,6 +103,21 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return location.pathname.startsWith(path);
   };
 
+  // Filter nav items based on user roles
+  const navItems = allNavItems.filter((item) =>
+    item.roles.some((role) => userRoles.includes(role))
+  );
+
+  // Determine badge label based on highest role
+  const getRoleBadge = () => {
+    if (userRoles.includes("admin")) return "ADMIN";
+    if (userRoles.includes("cto")) return "CTO";
+    if (userRoles.includes("finance")) return "FINANCE";
+    if (userRoles.includes("developer")) return "DEV";
+    if (userRoles.includes("support")) return "SUPPORT";
+    return "TEAM";
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-[#0f0f0f] flex items-center justify-center">
@@ -97,7 +126,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     );
   }
 
-  if (!isAdmin) {
+  if (!isAuthorized) {
     return null;
   }
 
@@ -123,7 +152,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
           <div className="flex items-center gap-3">
             <PataLogo className="h-5 text-white" />
-            <span className="text-red-500 text-xs font-bold px-2 py-0.5 bg-red-500/20 rounded">ADMIN</span>
+            <span className="text-red-500 text-xs font-bold px-2 py-0.5 bg-red-500/20 rounded">{getRoleBadge()}</span>
           </div>
           <button 
             className="md:hidden text-white/60 hover:text-white"
@@ -176,7 +205,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           </button>
           <div className="flex items-center gap-2">
             <PataLogo className="h-4 text-white" />
-            <span className="text-red-500 text-xs font-bold">ADMIN</span>
+            <span className="text-red-500 text-xs font-bold">{getRoleBadge()}</span>
           </div>
           <div className="w-10" />
         </header>
