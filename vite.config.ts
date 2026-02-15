@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => ({
     mode === "development" && componentTagger(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.png", "icon-192.png", "icon-512.png"],
+      includeAssets: ["favicon.png", "icon-192.png", "icon-512.png", "apple-touch-icon.png"],
       manifest: {
         name: "Pata - Smart Payment Solutions",
         short_name: "Pata",
@@ -27,7 +27,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#0a64f5",
         display: "standalone",
         orientation: "portrait",
-        start_url: "/",
+        start_url: "/login",
         scope: "/",
         icons: [
           {

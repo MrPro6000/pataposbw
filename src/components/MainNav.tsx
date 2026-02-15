@@ -16,7 +16,7 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
   const [posOpen, setPosOpen] = useState(false);
   
   return (
-    <header className="flex items-center justify-between px-6 md:px-20 py-5 text-foreground">
+    <header className="flex items-center justify-between px-5 md:px-20 py-4 text-foreground safe-area-top">
       <div className="flex items-center gap-10">
         <Link to="/">
           <PataLogo className="h-5" />

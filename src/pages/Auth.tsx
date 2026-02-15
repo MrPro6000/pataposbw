@@ -332,11 +332,11 @@ const Auth = ({ mode }: AuthProps) => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 md:px-20 py-6">
+      <header className="flex items-center justify-between px-5 md:px-20 py-4 safe-area-top">
         <Link to="/">
           <PataLogo className="h-6 text-foreground" />
         </Link>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <ThemeToggle className="text-foreground" />
           <Link to={mode === "login" ? "/signup" : "/login"} className="pata-btn-outline-dark hidden sm:inline-flex">
             {mode === "login" ? "Sign up" : "Log in"}
@@ -345,7 +345,7 @@ const Auth = ({ mode }: AuthProps) => {
       </header>
 
       {/* Main Content */}
-      <main className="flex-1 px-4 md:px-20 pb-safe pt-4 md:pt-0" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
+      <main className="flex-1 px-5 md:px-20 pb-6 pt-2 md:pt-0 safe-area-bottom">
         <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-16 max-w-7xl mx-auto">
           {/* Left side - MacBook Image (hidden on mobile) */}
           <div className="hidden lg:flex flex-1 w-full lg:w-auto order-2 lg:order-1 items-center justify-center">
@@ -373,7 +373,7 @@ const Auth = ({ mode }: AuthProps) => {
               </div>
             )}
 
-            <div className="bg-card border border-border rounded-2xl p-8 transition-colors duration-300">
+            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 transition-colors duration-300">
               
               {step === "credentials" && (
                 <>
