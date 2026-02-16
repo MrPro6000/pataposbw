@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { getKYCSubmission } from "@/integrations/supabase/profile";
 import PataLogo from "@/components/PataLogo";
 import { 
   LayoutGrid,
@@ -77,8 +79,28 @@ const navSections: NavSection[] = [
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
+  const [kycChecked, setKycChecked] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  // Enforce KYC gate
+  useEffect(() => {
+    const checkKyc = async () => {
+      if (authLoading) return;
+      if (!user) {
+        navigate("/login");
+        return;
+      }
+      const { data: kyc } = await getKYCSubmission(user.id);
+      if (!kyc || kyc.status !== "approved") {
+        navigate("/kyc");
+        return;
+      }
+      setKycChecked(true);
+    };
+    checkKyc();
+  }, [user, authLoading, navigate]);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -99,6 +121,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         : [...prev, label]
     );
   };
+
+  if (!kycChecked || authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-muted flex">
