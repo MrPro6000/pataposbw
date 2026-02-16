@@ -35,14 +35,94 @@ serve(async (req) => {
       });
     }
 
-    const { storagePath, type } = await req.json();
+    const { storagePath, type, omangNumber, idFrontPath, selfieAction } = await req.json();
+
+    // --- Action: Cross-verify selfie against ID front photo ---
+    if (selfieAction === "cross_verify") {
+      if (!storagePath || !idFrontPath) {
+        return new Response(JSON.stringify({ error: "storagePath and idFrontPath required for cross-verify" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const adminClient = createClient(supabaseUrl, serviceRoleKey);
+
+      // Download both images in parallel
+      const [selfieResult, idResult] = await Promise.all([
+        adminClient.storage.from("kyc-documents").download(storagePath),
+        adminClient.storage.from("kyc-documents").download(idFrontPath),
+      ]);
+
+      if (selfieResult.error || !selfieResult.data || idResult.error || !idResult.data) {
+        return new Response(JSON.stringify({ error: "Failed to download images" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const [selfieBuffer, idBuffer] = await Promise.all([
+        selfieResult.data.arrayBuffer(),
+        idResult.data.arrayBuffer(),
+      ]);
+
+      const selfieBase64 = btoa(String.fromCharCode(...new Uint8Array(selfieBuffer)));
+      const idBase64 = btoa(String.fromCharCode(...new Uint8Array(idBuffer)));
+      const selfieMime = selfieResult.data.type || "image/jpeg";
+      const idMime = idResult.data.type || "image/jpeg";
+
+      const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            {
+              role: "user",
+              content: [
+                {
+                  type: "text",
+                  text: `Compare these two images. The first is a selfie photo. The second is a government-issued ID card with a photo on it. Do these appear to be the SAME PERSON? Consider facial features, face shape, and overall appearance. Minor differences due to age, lighting, or angle are acceptable. Reply with JSON only: {"is_match": true/false, "confidence": "high"/"medium"/"low", "reason": "brief explanation"}`
+                },
+                { type: "image_url", image_url: { url: `data:${selfieMime};base64,${selfieBase64}` } },
+                { type: "image_url", image_url: { url: `data:${idMime};base64,${idBase64}` } },
+              ],
+            },
+          ],
+        }),
+      });
+
+      if (!aiResponse.ok) {
+        console.error("AI gateway error:", aiResponse.status);
+        return new Response(JSON.stringify({ is_match: true, confidence: "low", reason: "AI verification unavailable" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      const aiResult = await aiResponse.json();
+      const content = aiResult.choices?.[0]?.message?.content || "";
+
+      let result = { is_match: true, confidence: "low", reason: "Unable to parse AI response" };
+      try {
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        if (jsonMatch) result = JSON.parse(jsonMatch[0]);
+      } catch {
+        console.error("Failed to parse cross-verify response:", content);
+      }
+
+      return new Response(JSON.stringify(result), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- Standard single-image verification ---
     if (!storagePath || !type) {
       return new Response(JSON.stringify({ error: "storagePath and type required" }), {
         status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    // Download the image from storage using service role
     const adminClient = createClient(supabaseUrl, serviceRoleKey);
     const { data: fileData, error: downloadError } = await adminClient.storage
       .from("kyc-documents")
@@ -54,15 +134,25 @@ serve(async (req) => {
       });
     }
 
-    // Convert to base64
     const arrayBuffer = await fileData.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     const mimeType = fileData.type || "image/jpeg";
 
-    // Use Lovable AI (Gemini with vision) to verify if the image is an ID
-    const prompt = type === "selfie"
-      ? "Analyze this image. Is this a clear photo of a person's face (a selfie)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid selfie shows a clear, well-lit face looking at the camera. Reject if it's not a person, is blurry, or is an object/document."
-      : "Analyze this image. Is this a photo of an official government-issued identification document (ID card, passport, national ID, driver's license)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid ID shows a card/document with text, a photo, and official formatting. Reject screenshots, random photos, non-ID documents, or anything that is clearly not an identification card.";
+    // Build prompt based on type — for ID front, also extract the ID number if omangNumber provided
+    let prompt: string;
+    if (type === "selfie") {
+      prompt = "Analyze this image. Is this a clear photo of a person's face (a selfie)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid selfie shows a clear, well-lit face looking at the camera. Reject if it's not a person, is blurry, or is an object/document.";
+    } else if (type === "front" && omangNumber) {
+      prompt = `Analyze this image. 
+1. Is this a photo of an official government-issued identification document (ID card, passport, national ID)?
+2. Can you read any ID/document number on it? If so, does it match or contain the number "${omangNumber}"?
+
+Reply with JSON only: {"is_valid": true/false, "id_number_match": true/false/null, "extracted_number": "the number you found or null", "reason": "brief explanation"}. 
+
+A valid ID shows a card/document with text, a photo, and official formatting. Reject screenshots, random photos, non-ID documents. For id_number_match: true if the number matches, false if a different number is visible, null if you cannot read the number clearly.`;
+    } else {
+      prompt = "Analyze this image. Is this a photo of an official government-issued identification document (ID card, passport, national ID, driver's license)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid ID shows a card/document with text, a photo, and official formatting. Reject screenshots, random photos, non-ID documents, or anything that is clearly not an identification card.";
+    }
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -86,7 +176,6 @@ serve(async (req) => {
 
     if (!aiResponse.ok) {
       console.error("AI gateway error:", aiResponse.status);
-      // If AI fails, allow through (don't block KYC due to AI issues)
       return new Response(JSON.stringify({ is_valid: true, reason: "AI verification unavailable, manual review required" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -95,8 +184,7 @@ serve(async (req) => {
     const aiResult = await aiResponse.json();
     const content = aiResult.choices?.[0]?.message?.content || "";
 
-    // Parse the JSON from AI response
-    let verification = { is_valid: true, reason: "Unable to parse AI response" };
+    let verification: any = { is_valid: true, reason: "Unable to parse AI response" };
     try {
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
