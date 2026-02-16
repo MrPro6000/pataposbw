@@ -118,6 +118,54 @@ export type Database = {
         }
         Relationships: []
       }
+      invoices: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_email: string | null
+          customer_name: string
+          customer_phone: string | null
+          description: string | null
+          due_date: string | null
+          id: string
+          invoice_number: string
+          paid_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          customer_email?: string | null
+          customer_name: string
+          customer_phone?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number: string
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_email?: string | null
+          customer_name?: string
+          customer_phone?: string | null
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          invoice_number?: string
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       kyc_submissions: {
         Row: {
           id: string
@@ -343,6 +391,48 @@ export type Database = {
           phone_number?: string
           user_id?: string | null
           verified_at?: string | null
+        }
+        Relationships: []
+      }
+      payment_links: {
+        Row: {
+          amount: number
+          created_at: string
+          customer_name: string
+          customer_phone: string | null
+          description: string | null
+          id: string
+          link_url: string | null
+          paid_at: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          customer_name: string
+          customer_phone?: string | null
+          description?: string | null
+          id?: string
+          link_url?: string | null
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          customer_name?: string
+          customer_phone?: string | null
+          description?: string | null
+          id?: string
+          link_url?: string | null
+          paid_at?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
