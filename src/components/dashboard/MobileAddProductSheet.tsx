@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useProducts } from "@/hooks/useProducts";
 
 interface MobileAddProductSheetProps {
   open: boolean;
@@ -34,6 +35,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
   const [sku, setSku] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { addProduct } = useProducts();
 
   const handleSubmit = async () => {
     if (!productName || !price || !category) {
@@ -46,21 +48,33 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
     }
 
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
+    const result = await addProduct({
+      name: productName,
+      price: parseFloat(price),
+      category,
+      stock: stock ? parseInt(stock) : 0,
+    });
+    setIsSubmitting(false);
+
+    if (result.error) {
+      toast({
+        title: "Error",
+        description: result.error,
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Product added",
       description: `${productName} has been added to your inventory`,
     });
 
-    // Reset form and close
     setProductName("");
     setPrice("");
     setCategory("");
     setStock("");
     setSku("");
-    setIsSubmitting(false);
     onClose();
   };
 
@@ -93,7 +107,6 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
         </DrawerHeader>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-5">
-          {/* Product Image Upload */}
           <div className="flex flex-col items-center">
             <div className="w-28 h-28 bg-muted rounded-2xl flex flex-col items-center justify-center border-2 border-dashed border-border mb-2">
               <Camera className="w-8 h-8 text-muted-foreground mb-1" />
@@ -105,32 +118,16 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
             </button>
           </div>
 
-          {/* Product Name */}
           <div className="space-y-2">
             <Label htmlFor="product-name" className="text-foreground">Product Name *</Label>
-            <Input
-              id="product-name"
-              placeholder="e.g. Cappuccino"
-              value={productName}
-              onChange={(e) => setProductName(e.target.value)}
-              className="h-12 bg-muted border-0 rounded-xl"
-            />
+            <Input id="product-name" placeholder="e.g. Cappuccino" value={productName} onChange={(e) => setProductName(e.target.value)} className="h-12 bg-muted border-0 rounded-xl" />
           </div>
 
-          {/* Price */}
           <div className="space-y-2">
             <Label htmlFor="price" className="text-foreground">Price (P) *</Label>
-            <Input
-              id="price"
-              type="number"
-              placeholder="0.00"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-              className="h-12 bg-muted border-0 rounded-xl"
-            />
+            <Input id="price" type="number" placeholder="0.00" value={price} onChange={(e) => setPrice(e.target.value)} className="h-12 bg-muted border-0 rounded-xl" />
           </div>
 
-          {/* Category */}
           <div className="space-y-2">
             <Label className="text-foreground">Category *</Label>
             <Select value={category} onValueChange={setCategory}>
@@ -139,47 +136,25 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
               </SelectTrigger>
               <SelectContent className="bg-background border-border">
                 {categories.map((cat) => (
-                  <SelectItem key={cat} value={cat} className="text-foreground">
-                    {cat}
-                  </SelectItem>
+                  <SelectItem key={cat} value={cat} className="text-foreground">{cat}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          {/* Stock */}
           <div className="space-y-2">
             <Label htmlFor="stock" className="text-foreground">Stock Quantity</Label>
-            <Input
-              id="stock"
-              type="number"
-              placeholder="0"
-              value={stock}
-              onChange={(e) => setStock(e.target.value)}
-              className="h-12 bg-muted border-0 rounded-xl"
-            />
+            <Input id="stock" type="number" placeholder="0" value={stock} onChange={(e) => setStock(e.target.value)} className="h-12 bg-muted border-0 rounded-xl" />
           </div>
 
-          {/* SKU */}
           <div className="space-y-2">
             <Label htmlFor="sku" className="text-foreground">SKU (Optional)</Label>
-            <Input
-              id="sku"
-              placeholder="e.g. BEV-CAP-001"
-              value={sku}
-              onChange={(e) => setSku(e.target.value)}
-              className="h-12 bg-muted border-0 rounded-xl"
-            />
+            <Input id="sku" placeholder="e.g. BEV-CAP-001" value={sku} onChange={(e) => setSku(e.target.value)} className="h-12 bg-muted border-0 rounded-xl" />
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="p-4 border-t border-border bg-background">
-          <Button
-            onClick={handleSubmit}
-            disabled={isSubmitting || !productName || !price || !category}
-            className="w-full h-14 font-semibold text-lg"
-          >
+          <Button onClick={handleSubmit} disabled={isSubmitting || !productName || !price || !category} className="w-full h-14 font-semibold text-lg">
             {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="animate-spin w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />

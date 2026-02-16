@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,15 +39,15 @@ interface MobileProductSaleSheetProps {
   onClose: () => void;
 }
 
-const retailProducts: Product[] = [
-  { id: "1", name: "Meat", price: 85, category: "Food" },
-  { id: "2", name: "Bread", price: 12, category: "Food" },
-  { id: "3", name: "Milk", price: 18, category: "Food" },
-  { id: "4", name: "Coke", price: 15, category: "Beverages" },
-  { id: "5", name: "Sweets", price: 5, category: "Food" },
-  { id: "6", name: "Cabbage", price: 10, category: "Food" },
-  { id: "7", name: "Cigarette", price: 35, category: "General" },
-  { id: "8", name: "Cappuccino", price: 35, category: "Beverages" },
+const defaultRetailProducts: Product[] = [
+  { id: "default-1", name: "Meat", price: 85, category: "Food" },
+  { id: "default-2", name: "Bread", price: 12, category: "Food" },
+  { id: "default-3", name: "Milk", price: 18, category: "Food" },
+  { id: "default-4", name: "Coke", price: 15, category: "Beverages" },
+  { id: "default-5", name: "Sweets", price: 5, category: "Food" },
+  { id: "default-6", name: "Cabbage", price: 10, category: "Food" },
+  { id: "default-7", name: "Cigarette", price: 35, category: "General" },
+  { id: "default-8", name: "Cappuccino", price: 35, category: "Beverages" },
 ];
 
 const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
@@ -68,9 +69,16 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const { addTransaction } = useTransactions();
+  const { products: dbProducts } = useProducts();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
+
+  // Merge DB products with defaults, DB products take priority
+  const retailProducts: Product[] = [
+    ...dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category })),
+    ...defaultRetailProducts.filter(d => !dbProducts.some(p => p.name.toLowerCase() === d.name.toLowerCase())),
+  ];
 
   const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;

@@ -88,12 +88,19 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     };
   });
 
-  // Mock invoices
-  const invoices = [
-    { status: "Draft", customer: "Nic", amount: "P12.00" },
-    { status: "Paid", customer: "Nic", amount: "P112.00" },
-    { status: "Draft", customer: "Nic", amount: "P320.00" },
-  ];
+  // Invoices from transactions
+  const invoiceTx = transactions.filter(t => t.payment_method === "invoice" || t.type === "invoice").slice(0, 3);
+  const invoices = invoiceTx.length > 0
+    ? invoiceTx.map(t => ({
+        status: t.status === "completed" ? "Paid" : "Draft",
+        customer: t.description?.split("•")[1]?.trim() || "Customer",
+        amount: `P${Math.abs(t.amount).toFixed(2)}`,
+      }))
+    : [
+        { status: "Draft", customer: "Sample", amount: "P12.00" },
+        { status: "Paid", customer: "Sample", amount: "P112.00" },
+        { status: "Draft", customer: "Sample", amount: "P320.00" },
+      ];
 
   const handleQuickAction = (paymentType: PaymentType) => {
     setSelectedPaymentType(paymentType);
