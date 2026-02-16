@@ -150,9 +150,6 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                         </span>
                       </div>
                     </div>
-                    {sale.is_dummy && (
-                      <p className="text-xs text-muted-foreground/50 mt-1 italic">Sample data</p>
-                    )}
                   </div>
                 );
               })
