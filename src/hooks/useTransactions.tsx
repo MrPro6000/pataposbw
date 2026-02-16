@@ -13,59 +13,6 @@ export interface Transaction {
   is_dummy?: boolean;
 }
 
-// Dummy/sample transactions that appear for all users
-const DUMMY_TRANSACTIONS: Transaction[] = [
-  {
-    id: "dummy-1",
-    type: "sale",
-    payment_method: "card",
-    amount: 150.0,
-    status: "completed",
-    description: "Card Sale • Visa •••• 4532",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    is_dummy: true,
-  },
-  {
-    id: "dummy-2",
-    type: "sale",
-    payment_method: "mobile_money",
-    amount: 89.0,
-    status: "completed",
-    description: "Mobile Money • Orange Money",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    is_dummy: true,
-  },
-  {
-    id: "dummy-3",
-    type: "sale",
-    payment_method: "cash",
-    amount: 75.0,
-    status: "completed",
-    description: "Cash Payment",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 8).toISOString(),
-    is_dummy: true,
-  },
-  {
-    id: "dummy-4",
-    type: "refund",
-    payment_method: "card",
-    amount: -12.0,
-    status: "completed",
-    description: "Refund • Visa •••• 8721",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    is_dummy: true,
-  },
-  {
-    id: "dummy-5",
-    type: "sale",
-    payment_method: "wallet",
-    amount: 890.0,
-    status: "completed",
-    description: "Wallet Payment • MyZaka",
-    created_at: new Date(Date.now() - 1000 * 60 * 60 * 26).toISOString(),
-    is_dummy: true,
-  },
-];
 
 export const useTransactions = () => {
   const { user } = useAuth();
@@ -113,8 +60,8 @@ export const useTransactions = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // Combine dummy + real, sorted by date
-  const allTransactions = [...dbTransactions, ...DUMMY_TRANSACTIONS].sort(
+  // All transactions sorted by date
+  const allTransactions = [...dbTransactions].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 
