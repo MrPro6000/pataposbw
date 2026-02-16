@@ -3,6 +3,9 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTransactions } from "@/hooks/useTransactions";
+import { usePaymentLinks } from "@/hooks/usePaymentLinks";
+import { useInvoices } from "@/hooks/useInvoices";
 import {
   Search,
   Download,
@@ -31,216 +34,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 
-interface Transaction {
-  id: string;
-  date: string;
-  time: string;
-  type: "card" | "cash" | "mobile_money" | "wallet" | "tap" | "online" | "qr" | "payment_link";
-  amount: number;
-  status: "success" | "pending" | "failed";
-  cardLast4?: string;
-  customer?: string;
-  reference: string;
-  provider?: string;
-}
-
-interface PaymentLink {
-  id: string;
-  title: string;
-  amount: number;
-  url: string;
-  status: "paid" | "unpaid" | "expired";
-  createdAt: string;
-  customer?: string;
-}
-
-interface Invoice {
-  id: string;
-  invoiceNumber: string;
-  customer: string;
-  amount: number;
-  status: "draft" | "sent" | "paid" | "overdue";
-  dueDate: string;
-  createdAt: string;
-}
-
-const transactions: Transaction[] = [
-  {
-    id: "TXN001",
-    date: "2025-01-28",
-    time: "14:32",
-    type: "card",
-    amount: 150.0,
-    status: "success",
-    cardLast4: "4532",
-    reference: "PAY-001234",
-  },
-  {
-    id: "TXN002",
-    date: "2025-01-28",
-    time: "13:45",
-    type: "mobile_money",
-    amount: 89.0,
-    status: "success",
-    provider: "Orange Money",
-    reference: "PAY-001233",
-  },
-  {
-    id: "TXN003",
-    date: "2025-01-28",
-    time: "12:20",
-    type: "online",
-    amount: 450.0,
-    status: "success",
-    customer: "john@email.com",
-    reference: "PAY-001232",
-  },
-  {
-    id: "TXN004",
-    date: "2025-01-28",
-    time: "11:15",
-    type: "cash",
-    amount: 75.0,
-    status: "success",
-    reference: "PAY-001231",
-  },
-  {
-    id: "TXN005",
-    date: "2025-01-28",
-    time: "10:30",
-    type: "tap",
-    amount: 320.0,
-    status: "success",
-    cardLast4: "5567",
-    reference: "PAY-001230",
-  },
-  {
-    id: "TXN006",
-    date: "2025-01-27",
-    time: "16:45",
-    type: "wallet",
-    amount: 890.0,
-    status: "success",
-    provider: "MyZaka",
-    reference: "PAY-001229",
-  },
-  {
-    id: "TXN007",
-    date: "2025-01-27",
-    time: "15:20",
-    type: "qr",
-    amount: 45.0,
-    status: "success",
-    reference: "PAY-001228",
-  },
-  {
-    id: "TXN008",
-    date: "2025-01-27",
-    time: "14:00",
-    type: "payment_link",
-    amount: 1250.0,
-    status: "success",
-    customer: "sarah@email.com",
-    reference: "PAY-001227",
-  },
-  {
-    id: "TXN009",
-    date: "2025-01-27",
-    time: "12:30",
-    type: "mobile_money",
-    amount: 200.0,
-    status: "pending",
-    provider: "Smega",
-    reference: "PAY-001226",
-  },
-  {
-    id: "TXN010",
-    date: "2025-01-27",
-    time: "10:15",
-    type: "card",
-    amount: 560.0,
-    status: "failed",
-    cardLast4: "3345",
-    reference: "PAY-001225",
-  },
-];
-
-const paymentLinks: PaymentLink[] = [
-  {
-    id: "PL001",
-    title: "Website Design Payment",
-    amount: 2500,
-    url: "https://pay.pata.bw/pl001",
-    status: "unpaid",
-    createdAt: "2025-01-28",
-    customer: "john@email.com",
-  },
-  {
-    id: "PL002",
-    title: "Monthly Subscription",
-    amount: 199,
-    url: "https://pay.pata.bw/pl002",
-    status: "paid",
-    createdAt: "2025-01-27",
-  },
-  {
-    id: "PL003",
-    title: "Consulting Fee",
-    amount: 850,
-    url: "https://pay.pata.bw/pl003",
-    status: "unpaid",
-    createdAt: "2025-01-26",
-    customer: "sarah@email.com",
-  },
-  {
-    id: "PL004",
-    title: "Product Order #45",
-    amount: 320,
-    url: "https://pay.pata.bw/pl004",
-    status: "expired",
-    createdAt: "2025-01-20",
-  },
-];
-
-const invoices: Invoice[] = [
-  {
-    id: "INV001",
-    invoiceNumber: "INV-2025-001",
-    customer: "John Doe",
-    amount: 1250,
-    status: "sent",
-    dueDate: "2025-02-15",
-    createdAt: "2025-01-28",
-  },
-  {
-    id: "INV002",
-    invoiceNumber: "INV-2025-002",
-    customer: "Sarah Smith",
-    amount: 890,
-    status: "paid",
-    dueDate: "2025-02-10",
-    createdAt: "2025-01-27",
-  },
-  {
-    id: "INV003",
-    invoiceNumber: "INV-2025-003",
-    customer: "Mike Johnson",
-    amount: 450,
-    status: "draft",
-    dueDate: "2025-02-20",
-    createdAt: "2025-01-26",
-  },
-  {
-    id: "INV004",
-    invoiceNumber: "INV-2025-004",
-    customer: "Emily Brown",
-    amount: 2100,
-    status: "overdue",
-    dueDate: "2025-01-25",
-    createdAt: "2025-01-15",
-  },
-];
-
 const paymentTypeLabels: Record<string, string> = {
   card: "Card",
   cash: "Cash",
@@ -250,6 +43,7 @@ const paymentTypeLabels: Record<string, string> = {
   online: "Online",
   qr: "QR Payment",
   payment_link: "Payment Link",
+  transport: "Transport",
 };
 
 const mobileMoneyProviders = [
@@ -263,7 +57,7 @@ type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money"
 
 const Sales = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("transactions");
@@ -274,6 +68,10 @@ const Sales = () => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
+
+  const { transactions, addTransaction } = useTransactions();
+  const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
+  const { invoices: dbInvoices, createInvoice } = useInvoices();
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -368,9 +166,7 @@ const Sales = () => {
     const matchesSearch =
       typeLabel.includes(searchQuery.toLowerCase()) ||
       tx.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.reference.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.customer?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      tx.provider?.toLowerCase().includes(searchQuery.toLowerCase());
+      (tx.description?.toLowerCase() || "").includes(searchQuery.toLowerCase());
     const matchesType = typeFilter === "all" || tx.type === typeFilter;
     return matchesSearch && matchesType;
   });
@@ -470,8 +266,8 @@ const Sales = () => {
         <Button
           className="bg-primary hover:bg-primary/90 text-primary-foreground"
           onClick={() => {
-            const csv = ["Reference,Date,Type,Amount,Status"]
-              .concat(transactions.map(tx => `${tx.reference},${tx.date} ${tx.time},${paymentTypeLabels[tx.type]},P${tx.amount.toFixed(2)},${tx.status}`))
+            const csv = ["ID,Date,Type,Amount,Status"]
+              .concat(transactions.map(tx => `${tx.id.slice(0,8)},${tx.created_at},${paymentTypeLabels[tx.type] || tx.type},P${tx.amount.toFixed(2)},${tx.status}`))
               .join("\n");
             const blob = new Blob([csv], { type: "text/csv" });
             const url = URL.createObjectURL(blob);
@@ -643,10 +439,10 @@ const Sales = () => {
                   {filteredTransactions.map((tx) => (
                     <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-foreground">{tx.reference}</span>
+                        <span className="font-medium text-foreground">{tx.id.slice(0, 8)}</span>
                       </td>
                       <td className="p-4 text-muted-foreground">
-                        {tx.date} at {tx.time}
+                        {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </td>
                       <td className="p-4">
                         <span
@@ -672,11 +468,7 @@ const Sales = () => {
                           >
                             <Eye className="w-4 h-4 text-muted-foreground" />
                           </button>
-                          {tx.status === "success" && tx.type !== "cash" && (
-                            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-                              <RotateCcw className="w-4 h-4 text-muted-foreground" />
-                            </button>
-                          )}
+                          
                         </div>
                       </td>
                     </tr>
@@ -714,13 +506,13 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {paymentLinks.map((link) => (
+                  {dbPaymentLinks.map((link) => (
                     <tr key={link.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-foreground">{link.title}</span>
+                        <span className="font-medium text-foreground">{link.description || link.customer_name}</span>
                       </td>
                       <td className="p-4 font-semibold text-foreground">P{link.amount.toFixed(2)}</td>
-                      <td className="p-4 text-muted-foreground">{link.customer || "-"}</td>
+                      <td className="p-4 text-muted-foreground">{link.customer_name || "-"}</td>
                       <td className="p-4">
                         <span
                           className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(link.status)}`}
@@ -728,18 +520,18 @@ const Sales = () => {
                           {link.status}
                         </span>
                       </td>
-                      <td className="p-4 text-muted-foreground">{link.createdAt}</td>
+                      <td className="p-4 text-muted-foreground">{new Date(link.created_at).toLocaleDateString()}</td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <button
-                            onClick={() => copyLink(link.url)}
+                            onClick={() => copyLink(link.link_url || "")}
                             className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Copy link"
                           >
                             <Copy className="w-4 h-4 text-muted-foreground" />
                           </button>
                           <button
-                            onClick={() => window.open(link.url, "_blank")}
+                            onClick={() => window.open(link.link_url || "", "_blank")}
                             className="p-2 hover:bg-muted rounded-lg transition-colors"
                             title="Open link"
                           >
@@ -782,12 +574,12 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {invoices.map((invoice) => (
+                  {dbInvoices.map((invoice) => (
                     <tr key={invoice.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
-                        <span className="font-medium text-foreground">{invoice.invoiceNumber}</span>
+                        <span className="font-medium text-foreground">{invoice.invoice_number}</span>
                       </td>
-                      <td className="p-4 text-foreground">{invoice.customer}</td>
+                      <td className="p-4 text-foreground">{invoice.customer_name}</td>
                       <td className="p-4 font-semibold text-foreground">P{invoice.amount.toFixed(2)}</td>
                       <td className="p-4">
                         <span
@@ -796,7 +588,7 @@ const Sales = () => {
                           {invoice.status}
                         </span>
                       </td>
-                      <td className="p-4 text-muted-foreground">{invoice.dueDate}</td>
+                      <td className="p-4 text-muted-foreground">{invoice.due_date ? new Date(invoice.due_date).toLocaleDateString() : "-"}</td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <button className="p-2 hover:bg-muted rounded-lg transition-colors">
@@ -840,47 +632,30 @@ const Sales = () => {
 
               <div className="space-y-3 bg-muted rounded-xl p-4">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Reference</span>
-                  <span className="font-medium text-foreground">{selectedTransaction.reference}</span>
+                  <span className="text-muted-foreground">ID</span>
+                  <span className="font-medium text-foreground">{selectedTransaction.id.slice(0, 8)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Date</span>
-                  <span className="font-medium text-foreground">{selectedTransaction.date}</span>
+                  <span className="font-medium text-foreground">{new Date(selectedTransaction.created_at).toLocaleDateString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Time</span>
-                  <span className="font-medium text-foreground">{selectedTransaction.time}</span>
+                  <span className="font-medium text-foreground">{new Date(selectedTransaction.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Payment Method</span>
-                  <span className="font-medium text-foreground">{paymentTypeLabels[selectedTransaction.type]}</span>
+                  <span className="font-medium text-foreground">{paymentTypeLabels[selectedTransaction.type] || selectedTransaction.payment_method}</span>
                 </div>
-                {selectedTransaction.provider && (
+                {selectedTransaction.description && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Provider</span>
-                    <span className="font-medium text-foreground">{selectedTransaction.provider}</span>
-                  </div>
-                )}
-                {selectedTransaction.cardLast4 && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Card</span>
-                    <span className="font-medium text-foreground">•••• {selectedTransaction.cardLast4}</span>
-                  </div>
-                )}
-                {selectedTransaction.customer && (
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Customer</span>
-                    <span className="font-medium text-foreground">{selectedTransaction.customer}</span>
+                    <span className="text-muted-foreground">Description</span>
+                    <span className="font-medium text-foreground">{selectedTransaction.description}</span>
                   </div>
                 )}
               </div>
 
-              {selectedTransaction.status === "success" && selectedTransaction.type !== "cash" && (
-                <Button variant="outline" className="w-full text-orange-500 border-orange-500 hover:bg-orange-500/10">
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Issue Refund
-                </Button>
-              )}
+              
             </div>
           )}
         </DialogContent>

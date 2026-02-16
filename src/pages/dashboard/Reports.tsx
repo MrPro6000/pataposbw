@@ -2,6 +2,8 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useProducts } from "@/hooks/useProducts";
 import { 
   Download, 
   Calendar,
@@ -24,40 +26,56 @@ import {
 } from "@/components/ui/chart";
 import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 
-const salesByDate = [
-  { date: "Jan 22", sales: 4500 },
-  { date: "Jan 23", sales: 5200 },
-  { date: "Jan 24", sales: 4800 },
-  { date: "Jan 25", sales: 6100 },
-  { date: "Jan 26", sales: 5500 },
-  { date: "Jan 27", sales: 7200 },
-  { date: "Jan 28", sales: 6800 },
-];
-
-const salesByProduct = [
-  { name: "Cappuccino", sales: 245, revenue: 8575 },
-  { name: "Espresso", sales: 189, revenue: 5292 },
-  { name: "Avocado Toast", sales: 156, revenue: 10140 },
-  { name: "Croissant", sales: 134, revenue: 3350 },
-  { name: "Fresh Juice", sales: 98, revenue: 4410 },
-];
-
-const paymentMethods = [
-  { name: "Card", value: 35, color: "#0066FF" },
-  { name: "Mobile Money", value: 28, color: "#F97316" },
-  { name: "Cash", value: 18, color: "#22C55E" },
-  { name: "Wallet", value: 10, color: "#8B5CF6" },
-  { name: "Tap to Pay", value: 5, color: "#6B7280" },
-  { name: "QR Payment", value: 4, color: "#EC4899" },
-];
-
 const Reports = () => {
   const [dateRange, setDateRange] = useState("week");
   const isMobile = useIsMobile();
+  const { transactions } = useTransactions();
+  const { products } = useProducts();
 
   if (isMobile) {
     return <MobileDashboardHome />;
   }
+
+  // Filter transactions by date range
+  const now = new Date();
+  let rangeStart: Date;
+  switch (dateRange) {
+    case "today": rangeStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()); break;
+    case "month": rangeStart = new Date(now.getFullYear(), now.getMonth(), 1); break;
+    case "year": rangeStart = new Date(now.getFullYear(), 0, 1); break;
+    default: rangeStart = new Date(now); rangeStart.setDate(rangeStart.getDate() - 7);
+  }
+
+  const filteredTx = transactions.filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= rangeStart);
+  const totalRevenue = filteredTx.reduce((s, t) => s + t.amount, 0);
+  const totalTxCount = filteredTx.length;
+  const avgOrder = totalTxCount > 0 ? totalRevenue / totalTxCount : 0;
+
+  // Sales by date (last 7 days)
+  const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+  const salesByDate = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (6 - i));
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate() + 1);
+    const dayTotal = transactions
+      .filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= dayStart && new Date(t.created_at) < dayEnd)
+      .reduce((s, t) => s + t.amount, 0);
+    return { date: `${d.getMonth() + 1}/${d.getDate()}`, sales: dayTotal };
+  });
+
+  // Payment methods breakdown
+  const methodTotals: Record<string, number> = {};
+  filteredTx.forEach(t => {
+    const m = t.payment_method || "other";
+    methodTotals[m] = (methodTotals[m] || 0) + t.amount;
+  });
+  const methodColors: Record<string, string> = { card: "#0066FF", mobile_money: "#F97316", cash: "#22C55E", wallet: "#8B5CF6", tap: "#6B7280", qr: "#EC4899", other: "#94A3B8" };
+  const paymentMethods = Object.entries(methodTotals).map(([name, value]) => ({
+    name: name.replace("_", " ").replace(/\b\w/g, l => l.toUpperCase()),
+    value: totalRevenue > 0 ? Math.round((value / totalRevenue) * 100) : 0,
+    color: methodColors[name] || "#94A3B8",
+  }));
 
   const chartConfig = {
     sales: { label: "Sales", color: "#0066FF" },
@@ -65,7 +83,16 @@ const Reports = () => {
   };
 
   const handleExport = (type: string) => {
-    alert(`Exporting ${type} report...`);
+    const csv = ["Date,Type,Amount,Status,Description"]
+      .concat(filteredTx.map(t => `${t.created_at},${t.type},${t.amount},${t.status},${t.description || ""}`))
+      .join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `report-${dateRange}-${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -88,7 +115,7 @@ const Reports = () => {
               <SelectItem value="year">This Year</SelectItem>
             </SelectContent>
           </Select>
-          <Button onClick={() => handleExport('PDF')} variant="outline">
+          <Button onClick={() => handleExport('csv')} variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
@@ -101,28 +128,28 @@ const Reports = () => {
             <TrendingUp className="w-4 h-4 text-primary" />
             <span className="text-sm text-muted-foreground">Total Revenue</span>
           </div>
-          <p className="text-2xl font-bold text-foreground">P67,890</p>
+          <p className="text-2xl font-bold text-foreground">P{totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
             <Package className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Items Sold</span>
+            <span className="text-sm text-muted-foreground">Transactions</span>
           </div>
-          <p className="text-2xl font-bold text-foreground">1,247</p>
+          <p className="text-2xl font-bold text-foreground">{totalTxCount}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-4 h-4 text-primary" />
-            <span className="text-sm text-muted-foreground">Customers</span>
+            <span className="text-sm text-muted-foreground">Products</span>
           </div>
-          <p className="text-2xl font-bold text-foreground">342</p>
+          <p className="text-2xl font-bold text-foreground">{products.length}</p>
         </div>
         <div className="bg-card border border-border rounded-2xl p-5">
           <div className="flex items-center gap-2 mb-2">
             <TrendingUp className="w-4 h-4 text-primary" />
             <span className="text-sm text-muted-foreground">Avg. Order</span>
           </div>
-          <p className="text-2xl font-bold text-foreground">P198</p>
+          <p className="text-2xl font-bold text-foreground">P{avgOrder.toFixed(2)}</p>
         </div>
       </div>
 
@@ -130,9 +157,6 @@ const Reports = () => {
         <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold text-foreground">Sales by Date</h2>
-            <Button variant="ghost" size="sm" onClick={() => handleExport('sales-csv')}>
-              <Download className="w-4 h-4" />
-            </Button>
           </div>
           <ChartContainer config={chartConfig} className="h-[280px] w-full">
             <BarChart data={salesByDate}>
@@ -146,77 +170,32 @@ const Reports = () => {
 
         <div className="bg-card border border-border rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Payment Methods</h2>
-          <div className="flex items-center">
-            <ChartContainer config={chartConfig} className="h-[200px] w-[200px]">
-              <PieChart>
-                <Pie data={paymentMethods} cx="50%" cy="50%" innerRadius={60} outerRadius={80} dataKey="value">
-                  {paymentMethods.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ChartContainer>
-            <div className="flex-1 space-y-2">
-              {paymentMethods.map((method) => (
-                <div key={method.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: method.color }} />
-                    <span className="text-foreground text-sm">{method.name}</span>
-                  </div>
-                  <span className="font-semibold text-foreground text-sm">{method.value}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-border flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-foreground">Top Products</h2>
-          <Button variant="ghost" size="sm" onClick={() => handleExport('products-csv')}>
-            <Download className="w-4 h-4 mr-2" />
-            CSV
-          </Button>
-        </div>
-        
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted">
-              <tr>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Product</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Units Sold</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Revenue</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">% of Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              {salesByProduct.map((product, index) => (
-                <tr key={product.name} className="border-t border-border">
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center text-xs font-medium text-primary">
-                        {index + 1}
-                      </span>
-                      <span className="font-medium text-foreground">{product.name}</span>
-                    </div>
-                  </td>
-                  <td className="p-4 text-foreground">{product.sales}</td>
-                  <td className="p-4 font-semibold text-foreground">P{product.revenue.toFixed(2)}</td>
-                  <td className="p-4">
+          {paymentMethods.length === 0 ? (
+            <div className="flex items-center justify-center h-[200px] text-muted-foreground">No data yet</div>
+          ) : (
+            <div className="flex items-center">
+              <ChartContainer config={chartConfig} className="h-[200px] w-[200px]">
+                <PieChart>
+                  <Pie data={paymentMethods} cx="50%" cy="50%" innerRadius={60} outerRadius={80} dataKey="value">
+                    {paymentMethods.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ChartContainer>
+              <div className="flex-1 space-y-2">
+                {paymentMethods.map((method) => (
+                  <div key={method.name} className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                        <div className="h-full bg-primary" style={{ width: `${(product.revenue / salesByProduct[0].revenue) * 100}%` }} />
-                      </div>
-                      <span className="text-sm text-muted-foreground">
-                        {Math.round((product.revenue / salesByProduct.reduce((a, b) => a + b.revenue, 0)) * 100)}%
-                      </span>
+                      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: method.color }} />
+                      <span className="text-foreground text-sm">{method.name}</span>
                     </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <span className="font-semibold text-foreground text-sm">{method.value}%</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>
