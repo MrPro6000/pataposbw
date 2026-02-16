@@ -66,7 +66,7 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
 
       {/* Payouts Section */}
       <div className="px-5 py-2">
-        <Link to="/dashboard/payouts" className="block bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform shadow-sm border border-border/50">
+        <Link to="/dashboard/payout-history" className="block bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform shadow-sm border border-border/50">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-card to-muted/30">
             <h2 className="font-semibold text-foreground">Payouts</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />

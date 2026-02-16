@@ -14,6 +14,7 @@ import MobileProductsView from "./MobileProductsView";
 import MobileCustomersView from "./MobileCustomersView";
 import MobileSupportView from "./MobileSupportView";
 import MobileTransportView from "./MobileTransportView";
+import MobilePayoutsView from "./MobilePayoutsView";
 
 const MobileDashboardHome = () => {
   const [user, setUser] = useState<SupabaseUser | null>(null);
@@ -78,6 +79,11 @@ const MobileDashboardHome = () => {
   // Money tab routes
   if (pathname === "/dashboard/payouts") {
     return <MobileMoneyView {...profileProps} />;
+  }
+
+  // Payout history detail view
+  if (pathname === "/dashboard/payout-history") {
+    return <MobilePayoutsView />;
   }
   
   // Reports route
