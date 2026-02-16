@@ -286,7 +286,9 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
             className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
           >
             <p className="font-semibold text-foreground mb-1">Payment Links</p>
-            <p className="text-2xl font-bold text-foreground">13</p>
+            <p className="text-2xl font-bold text-foreground">
+              {transactions.filter(t => t.payment_method === "payment_link" && t.status === "pending").length}
+            </p>
             <p className="text-sm text-muted-foreground">unpaid links</p>
           </button>
           
