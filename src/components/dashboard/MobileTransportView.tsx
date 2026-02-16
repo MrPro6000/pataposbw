@@ -13,22 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { useTransactions } from "@/hooks/useTransactions";
 import PataLogo from "@/components/PataLogo";
-
-interface TransportTransaction {
-  id: string;
-  customerName: string;
-  from: string;
-  to: string;
-  modeOfTransport: string;
-  fare: number;
-  date: string;
-}
 
 const transportModes = ["Combi", "Taxi", "Bus", "Yango", "inDrive"];
 
 const MobileTransportView = () => {
   const { toast } = useToast();
+  const { transactions, addTransaction } = useTransactions();
   const [formData, setFormData] = useState({
     customerName: "",
     from: "",
@@ -36,8 +28,10 @@ const MobileTransportView = () => {
     modeOfTransport: "",
     fare: "",
   });
-  const [transactions, setTransactions] = useState<TransportTransaction[]>([]);
   const [showPaymentFlow, setShowPaymentFlow] = useState(false);
+
+  // Filter only transport transactions
+  const transportTransactions = transactions.filter((t) => t.type === "transport");
 
   const handleProceedToPayment = () => {
     if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport) {
@@ -47,20 +41,26 @@ const MobileTransportView = () => {
     setShowPaymentFlow(true);
   };
 
-  const handlePaymentComplete = () => {
-    const newTx: TransportTransaction = {
-      id: `TR${String(transactions.length + 1).padStart(3, "0")}`,
-      customerName: formData.customerName,
-      from: formData.from,
-      to: formData.to,
-      modeOfTransport: formData.modeOfTransport,
-      fare: parseFloat(formData.fare),
-      date: new Date().toISOString().split("T")[0],
-    };
-    setTransactions([newTx, ...transactions]);
+  const handlePaymentComplete = async () => {
+    const fare = parseFloat(formData.fare);
+    const description = `${formData.modeOfTransport}: ${formData.customerName} — ${formData.from} → ${formData.to}`;
+    
+    const { error } = await addTransaction({
+      type: "transport",
+      payment_method: "cash",
+      amount: fare,
+      description,
+      status: "completed",
+    });
+
+    if (error) {
+      toast({ title: "Error", description: error, variant: "destructive" });
+    } else {
+      toast({ title: "Transport Fare Saved", description: `P${fare.toFixed(2)} — ${formData.from} → ${formData.to}` });
+    }
+
     setShowPaymentFlow(false);
     setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "" });
-    toast({ title: "Transport Fare Saved", description: `P${newTx.fare.toFixed(2)} — ${newTx.from} → ${newTx.to}` });
   };
 
   return (
@@ -156,10 +156,10 @@ const MobileTransportView = () => {
           )}
         </div>
 
-        {/* Recent Transactions */}
+        {/* Recent Transactions from DB */}
         <div className="bg-card border border-border rounded-2xl p-4">
           <h2 className="text-base font-semibold text-foreground mb-3">Recent Transactions</h2>
-          {transactions.length === 0 ? (
+          {transportTransactions.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Bus className="w-8 h-8 mx-auto mb-2 opacity-50" />
               <p className="text-sm">No transport transactions yet</p>
@@ -167,25 +167,36 @@ const MobileTransportView = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {transactions.map((tx) => (
-                <div key={tx.id} className="bg-muted rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <Bus className="w-4 h-4 text-primary" />
-                      <span className="font-medium text-foreground text-sm">{tx.modeOfTransport}</span>
+              {transportTransactions.map((tx) => {
+                // Parse description: "Mode: Customer — From → To"
+                const parts = tx.description?.match(/^(.+?):\s*(.+?)\s*—\s*(.+?)\s*→\s*(.+)$/);
+                const mode = parts?.[1] || "Transport";
+                const customer = parts?.[2] || "";
+                const from = parts?.[3] || "";
+                const to = parts?.[4] || "";
+                
+                return (
+                  <div key={tx.id} className="bg-muted rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <Bus className="w-4 h-4 text-primary" />
+                        <span className="font-medium text-foreground text-sm">{mode}</span>
+                      </div>
+                      <span className="text-base font-bold text-foreground">P{tx.amount.toFixed(2)}</span>
                     </div>
-                    <span className="text-base font-bold text-foreground">P{tx.fare.toFixed(2)}</span>
+                    {from && to && (
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
+                        <MapPin className="w-3 h-3" />
+                        {from} <ArrowRight className="w-3 h-3" /> {to}
+                      </div>
+                    )}
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{customer}</span>
+                      <span>{new Date(tx.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-1">
-                    <MapPin className="w-3 h-3" />
-                    {tx.from} <ArrowRight className="w-3 h-3" /> {tx.to}
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{tx.customerName}</span>
-                    <span>{tx.date}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

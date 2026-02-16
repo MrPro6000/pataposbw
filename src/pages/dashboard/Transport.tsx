@@ -15,23 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-
-interface TransportTransaction {
-  id: string;
-  customerName: string;
-  from: string;
-  to: string;
-  modeOfTransport: string;
-  fare: number;
-  paymentMethod: string;
-  date: string;
-}
+import { useTransactions } from "@/hooks/useTransactions";
 
 const transportModes = ["Combi", "Taxi", "Bus", "Yango", "inDrive"];
 
 const Transport = () => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const { transactions, addTransaction } = useTransactions();
 
   const [formData, setFormData] = useState({
     customerName: "",
@@ -40,12 +31,14 @@ const Transport = () => {
     modeOfTransport: "",
     fare: "",
   });
-  const [transactions, setTransactions] = useState<TransportTransaction[]>([]);
   const [showPaymentFlow, setShowPaymentFlow] = useState(false);
 
   if (isMobile) {
     return <MobileTransportView />;
   }
+
+  // Filter only transport transactions
+  const transportTransactions = transactions.filter((t) => t.type === "transport");
 
   const handleProceedToPayment = () => {
     if (!formData.from || !formData.to || !formData.fare || !formData.customerName || !formData.modeOfTransport) {
@@ -55,21 +48,26 @@ const Transport = () => {
     setShowPaymentFlow(true);
   };
 
-  const handlePaymentComplete = () => {
-    const newTx: TransportTransaction = {
-      id: `TR${String(transactions.length + 1).padStart(3, "0")}`,
-      customerName: formData.customerName,
-      from: formData.from,
-      to: formData.to,
-      modeOfTransport: formData.modeOfTransport,
-      fare: parseFloat(formData.fare),
-      paymentMethod: "completed",
-      date: new Date().toISOString().split("T")[0],
-    };
-    setTransactions([newTx, ...transactions]);
+  const handlePaymentComplete = async () => {
+    const fare = parseFloat(formData.fare);
+    const description = `${formData.modeOfTransport}: ${formData.customerName} — ${formData.from} → ${formData.to}`;
+
+    const { error } = await addTransaction({
+      type: "transport",
+      payment_method: "cash",
+      amount: fare,
+      description,
+      status: "completed",
+    });
+
+    if (error) {
+      toast({ title: "Error", description: error, variant: "destructive" });
+    } else {
+      toast({ title: "Transport Fare Saved", description: `P${fare.toFixed(2)} — ${formData.from} → ${formData.to}` });
+    }
+
     setShowPaymentFlow(false);
     setFormData({ customerName: "", from: "", to: "", modeOfTransport: "", fare: "" });
-    toast({ title: "Transport Fare Saved", description: `P${newTx.fare.toFixed(2)} — ${newTx.from} → ${newTx.to}` });
   };
 
   return (
@@ -158,10 +156,10 @@ const Transport = () => {
           )}
         </div>
 
-        {/* Recent Transport Transactions */}
+        {/* Recent Transport Transactions from DB */}
         <div className="bg-card border border-border rounded-2xl p-6">
           <h2 className="text-lg font-semibold text-foreground mb-4">Recent Transactions</h2>
-          {transactions.length === 0 ? (
+          {transportTransactions.length === 0 ? (
             <div className="text-center py-12 text-muted-foreground">
               <Bus className="w-10 h-10 mx-auto mb-3 opacity-50" />
               <p>No transport transactions yet</p>
@@ -169,25 +167,35 @@ const Transport = () => {
             </div>
           ) : (
             <div className="space-y-3">
-              {transactions.map((tx) => (
-                <div key={tx.id} className="bg-muted rounded-xl p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <Bus className="w-4 h-4 text-primary" />
-                      <span className="font-medium text-foreground text-sm">{tx.modeOfTransport}</span>
+              {transportTransactions.map((tx) => {
+                const parts = tx.description?.match(/^(.+?):\s*(.+?)\s*—\s*(.+?)\s*→\s*(.+)$/);
+                const mode = parts?.[1] || "Transport";
+                const customer = parts?.[2] || "";
+                const from = parts?.[3] || "";
+                const to = parts?.[4] || "";
+
+                return (
+                  <div key={tx.id} className="bg-muted rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Bus className="w-4 h-4 text-primary" />
+                        <span className="font-medium text-foreground text-sm">{mode}</span>
+                      </div>
+                      <span className="text-lg font-bold text-foreground">P{tx.amount.toFixed(2)}</span>
                     </div>
-                    <span className="text-lg font-bold text-foreground">P{tx.fare.toFixed(2)}</span>
+                    {from && to && (
+                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {from} <ArrowRight className="w-3 h-3" /> {to}
+                      </div>
+                    )}
+                    <div className="flex justify-between text-xs text-muted-foreground">
+                      <span>{customer}</span>
+                      <span>{new Date(tx.created_at).toLocaleDateString()}</span>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-1">
-                    <MapPin className="w-3.5 h-3.5" />
-                    {tx.from} <ArrowRight className="w-3 h-3" /> {tx.to}
-                  </div>
-                  <div className="flex justify-between text-xs text-muted-foreground">
-                    <span>{tx.customerName}</span>
-                    <span>{tx.date}</span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
