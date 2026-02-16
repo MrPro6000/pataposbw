@@ -71,6 +71,11 @@ const MobileDashboardHome = () => {
   const pathname = location.pathname;
 
   // Route to appropriate mobile view based on current path
+  // Hub route
+  if (pathname === "/dashboard/hub") {
+    return <MobileHubView profile={profile} userEmail={user?.email} />;
+  }
+
   // Sales tab routes
   if (pathname === "/dashboard/sales") {
     return <MobileSalesView {...profileProps} />;
