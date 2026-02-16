@@ -13,8 +13,10 @@ import { Button } from "@/components/ui/button";
 import { Shield, CheckCircle, ArrowRight, ArrowLeft, Upload, X, User, AlertTriangle, Loader2 } from "lucide-react";
 
 type KYCStep = "omang" | "photos" | "selfie" | "pending" | "rejected";
+type IDType = "omang" | "passport";
 
 const KYC = () => {
+  const [idType, setIdType] = useState<IDType>("omang");
   const [omangNumber, setOmangNumber] = useState("");
   const [idFrontUrl, setIdFrontUrl] = useState("");
   const [idBackUrl, setIdBackUrl] = useState("");
@@ -77,8 +79,13 @@ const KYC = () => {
       return;
     }
 
-    if (!/^\d{9}$/.test(omangNumber.trim())) {
+    if (idType === "omang" && !/^\d{9}$/.test(omangNumber.trim())) {
       toast({ title: "Invalid Omang Number", description: "Omang Number must be 9 digits", variant: "destructive" });
+      return;
+    }
+
+    if (idType === "passport" && omangNumber.trim().length < 5) {
+      toast({ title: "Invalid Passport Number", description: "Please enter a valid passport number", variant: "destructive" });
       return;
     }
 
@@ -257,11 +264,6 @@ const KYC = () => {
   };
 
   const handleFinalSubmit = async () => {
-    if (!selfieUrl) {
-      toast({ title: "Missing selfie", description: "Please upload a selfie photo", variant: "destructive" });
-      return;
-    }
-
     if (!user) {
       navigate("/login");
       return;
@@ -421,10 +423,10 @@ const KYC = () => {
             {renderPhotoUpload("selfie")}
             <Button
               onClick={handleFinalSubmit}
-              disabled={loading || !selfieUrl}
+              disabled={loading}
               className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
             >
-              {loading ? "Submitting..." : "Submit for Verification"}
+              {loading ? "Submitting..." : selfieUrl ? "Submit for Verification" : "Skip Selfie & Submit"}
             </Button>
             <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
               Skip for now
@@ -475,17 +477,54 @@ const KYC = () => {
         return (
           <form onSubmit={handleOmangSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="omang" className="text-foreground">Omang Number (National ID)</Label>
+              <Label className="text-foreground mb-2 block">ID Type</Label>
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                <button
+                  type="button"
+                  onClick={() => { setIdType("omang"); setOmangNumber(""); }}
+                  className={`p-3 rounded-xl text-sm border transition-all ${
+                    idType === "omang"
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "bg-muted border-border text-foreground hover:border-primary/50"
+                  }`}
+                >
+                  🪪 Omang (National ID)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setIdType("passport"); setOmangNumber(""); }}
+                  className={`p-3 rounded-xl text-sm border transition-all ${
+                    idType === "passport"
+                      ? "bg-primary/10 border-primary text-primary"
+                      : "bg-muted border-border text-foreground hover:border-primary/50"
+                  }`}
+                >
+                  🛂 Passport
+                </button>
+              </div>
+            </div>
+            <div>
+              <Label htmlFor="omang" className="text-foreground">
+                {idType === "omang" ? "Omang Number (National ID)" : "Passport Number"}
+              </Label>
               <Input
                 id="omang"
                 type="text"
-                placeholder="Enter your 9-digit Omang Number"
+                placeholder={idType === "omang" ? "Enter your 9-digit Omang Number" : "Enter your passport number"}
                 value={omangNumber}
-                onChange={(e) => setOmangNumber(e.target.value.replace(/\D/g, '').slice(0, 9))}
+                onChange={(e) => {
+                  if (idType === "omang") {
+                    setOmangNumber(e.target.value.replace(/\D/g, '').slice(0, 9));
+                  } else {
+                    setOmangNumber(e.target.value.toUpperCase().slice(0, 20));
+                  }
+                }}
                 className="mt-2 bg-muted border-input rounded-xl py-4"
-                maxLength={9}
+                maxLength={idType === "omang" ? 9 : 20}
               />
-              <p className="mt-2 text-sm text-muted-foreground">Your Omang Number will be verified by our team</p>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {idType === "omang" ? "Your Omang Number will be verified by our team" : "Your passport number will be verified by our team"}
+              </p>
             </div>
             <Button type="submit" className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2">
               Continue <ArrowRight className="w-4 h-4" />

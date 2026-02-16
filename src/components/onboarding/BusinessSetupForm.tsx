@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBusinessProfile } from "@/integrations/firebase/firestore";
-import { uploadBusinessLogo } from "@/integrations/firebase/storage";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PataLogo from "@/components/PataLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -124,13 +124,30 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       return;
     }
 
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please upload an image smaller than 2MB",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { url, error } = await uploadBusinessLogo(userId, file);
+      const ext = file.name.split(".").pop();
+      const filePath = `${userId}/logo_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("avatars")
+        .upload(filePath, file, { cacheControl: "3600", upsert: true });
 
-      if (error) throw new Error(error);
+      if (uploadError) throw uploadError;
 
-      setLogoUrl(url || "");
+      const { data: { publicUrl } } = supabase.storage
+        .from("avatars")
+        .getPublicUrl(filePath);
+
+      setLogoUrl(publicUrl);
       toast({
         title: "Logo uploaded",
         description: "Your business logo has been uploaded successfully.",
