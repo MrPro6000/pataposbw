@@ -88,7 +88,14 @@ const KYC = () => {
   const verifyImage = async (storagePath: string, type: "front" | "back" | "selfie"): Promise<boolean> => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return true; // Allow if no session
+      if (!session) return true;
+
+      const body: any = { storagePath, type };
+      
+      // Pass omang number for ID front verification to cross-check
+      if (type === "front" && omangNumber.trim()) {
+        body.omangNumber = omangNumber.trim();
+      }
 
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-id`,
@@ -99,17 +106,74 @@ const KYC = () => {
             Authorization: `Bearer ${session.access_token}`,
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
-          body: JSON.stringify({ storagePath, type }),
+          body: JSON.stringify(body),
         }
       );
 
-      if (!response.ok) return true; // Allow through on API error
+      if (!response.ok) return true;
 
       const result = await response.json();
-      return result.is_valid !== false; // Default to true
+      
+      // For ID front: also check if Omang number matches
+      if (type === "front" && result.id_number_match === false) {
+        toast({
+          title: "ID Number Mismatch",
+          description: `The ID number on your document doesn't match the Omang number you entered (${omangNumber}). Please check and try again.`,
+          variant: "destructive",
+          duration: 10000,
+        });
+        return false;
+      }
+
+      return result.is_valid !== false;
     } catch (error) {
       console.error("Verification error:", error);
-      return true; // Allow through on network error
+      return true;
+    }
+  };
+
+  const crossVerifySelfie = async (selfiePath: string): Promise<boolean> => {
+    try {
+      if (!idFrontUrl) return true; // No ID front to compare against
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return true;
+
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/verify-id`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            selfieAction: "cross_verify",
+            storagePath: selfiePath,
+            idFrontPath: idFrontUrl,
+          }),
+        }
+      );
+
+      if (!response.ok) return true;
+
+      const result = await response.json();
+      
+      if (result.is_match === false) {
+        toast({
+          title: "Face Mismatch",
+          description: "Your selfie doesn't appear to match the photo on your ID. Please take a clear selfie of yourself.",
+          variant: "destructive",
+          duration: 10000,
+        });
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Cross-verify error:", error);
+      return true;
     }
   };
 
@@ -167,6 +231,17 @@ const KYC = () => {
           duration: 8000,
         });
         return;
+      }
+
+      // For selfie: also cross-verify against ID front photo
+      if (type === "selfie" && idFrontUrl) {
+        const isFaceMatch = await crossVerifySelfie(storagePath);
+        if (!isFaceMatch) {
+          await supabase.storage.from("kyc-documents").remove([storagePath]);
+          setPreview("");
+          setUrl("");
+          return;
+        }
       }
 
       setUrl(storagePath);
