@@ -24,14 +24,7 @@ interface Payout {
   fees: string;
 }
 
-const payoutsData: Payout[] = [
-  { id: "PAY001", type: "Payout", date: "28 Jan 2025", amount: "P5,420.00", amountNum: 5420, status: "processing", reference: "PAYOUT-2025-001", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY002", type: "Payout", date: "21 Jan 2025", amount: "P8,930.00", amountNum: 8930, status: "completed", reference: "PAYOUT-2025-002", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY003", type: "Instant Payout", date: "14 Jan 2025", amount: "P6,780.00", amountNum: 6780, status: "completed", reference: "PAYOUT-2025-003", bankName: "First National Bank", accountEnding: "4532", fees: "P35.00" },
-  { id: "PAY004", type: "Payout", date: "7 Jan 2025", amount: "P4,560.00", amountNum: 4560, status: "completed", reference: "PAYOUT-2025-004", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY005", type: "Payout", date: "31 Dec 2024", amount: "P12,340.00", amountNum: 12340, status: "completed", reference: "PAYOUT-2024-052", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY006", type: "Instant Payout", date: "24 Dec 2024", amount: "P3,210.00", amountNum: 3210, status: "completed", reference: "PAYOUT-2024-051", bankName: "First National Bank", accountEnding: "4532", fees: "P18.50" },
-];
+const payoutsData: Payout[] = [];
 
 const MobilePayoutsView = () => {
   const navigate = useNavigate();
@@ -41,10 +34,10 @@ const MobilePayoutsView = () => {
   const [instantPayoutOpen, setInstantPayoutOpen] = useState(false);
   const [instantPayoutStep, setInstantPayoutStep] = useState<"confirm" | "processing" | "success">("confirm");
   const [bankDetails, setBankDetails] = useState({
-    bankName: "First National Bank",
+    bankName: "",
     accountNumber: "",
-    branchCode: "250655",
-    accountHolder: "Pata Business (Pty) Ltd",
+    branchCode: "",
+    accountHolder: "",
   });
 
   const availableBalance = balance;
@@ -165,26 +158,34 @@ const MobilePayoutsView = () => {
       <div className="px-5">
         <h2 className="font-semibold text-foreground mb-3">Payout History</h2>
         <div className="space-y-2">
-          {payoutsData.map((payout) => (
-            <button
-              key={payout.id}
-              onClick={() => setSelectedPayout(payout)}
-              className="w-full bg-card border border-border rounded-2xl p-4 active:bg-muted/50 transition-colors text-left"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-medium text-foreground">{payout.type}</p>
-                <p className="font-semibold text-foreground">{payout.amount}</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <p className="text-xs text-muted-foreground">{payout.date}</p>
-                  <span className="text-xs text-muted-foreground">•</span>
-                  <p className="text-xs text-muted-foreground">{payout.reference}</p>
+          {payoutsData.length === 0 ? (
+            <div className="text-center py-10">
+              <CheckCircle className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+              <p className="text-muted-foreground">No payouts yet</p>
+              <p className="text-sm text-muted-foreground/60">Payouts will appear here when processed</p>
+            </div>
+          ) : (
+            payoutsData.map((payout) => (
+              <button
+                key={payout.id}
+                onClick={() => setSelectedPayout(payout)}
+                className="w-full bg-card border border-border rounded-2xl p-4 active:bg-muted/50 transition-colors text-left"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-medium text-foreground">{payout.type}</p>
+                  <p className="font-semibold text-foreground">{payout.amount}</p>
                 </div>
-                {getStatusBadge(payout.status)}
-              </div>
-            </button>
-          ))}
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground">{payout.date}</p>
+                    <span className="text-xs text-muted-foreground">•</span>
+                    <p className="text-xs text-muted-foreground">{payout.reference}</p>
+                  </div>
+                  {getStatusBadge(payout.status)}
+                </div>
+              </button>
+            ))
+          )}
         </div>
       </div>
 

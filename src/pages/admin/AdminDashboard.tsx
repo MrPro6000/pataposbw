@@ -191,7 +191,7 @@ const AdminDashboard = () => {
               </BarChart>
             </ChartContainer>
           </div>
-          <p className="text-green-500 font-semibold text-lg mt-4">P 141,400</p>
+          <p className="text-green-500 font-semibold text-lg mt-4">P 0.00</p>
         </div>
 
         {/* Transaction Volume Chart */}
@@ -225,7 +225,7 @@ const AdminDashboard = () => {
               </LineChart>
             </ChartContainer>
           </div>
-          <p className="text-blue-500 font-semibold text-lg mt-4">2,890 transactions</p>
+          <p className="text-blue-500 font-semibold text-lg mt-4">0 transactions</p>
         </div>
       </div>
 
@@ -270,26 +270,7 @@ const AdminDashboard = () => {
             <Clock className="w-5 h-5 text-white/40" />
           </div>
           <div className="space-y-4">
-            {[
-              { text: "New KYC submission from user", time: "2 min ago", type: "kyc" },
-              { text: "Support ticket #1234 resolved", time: "15 min ago", type: "ticket" },
-              { text: "AML flag raised for transaction", time: "1 hr ago", type: "aml" },
-              { text: "New user registered", time: "2 hr ago", type: "user" },
-              { text: "FAQ article updated", time: "3 hr ago", type: "content" },
-            ].map((activity, index) => (
-              <div key={index} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                <div className="flex items-center gap-3">
-                  <div className={`w-2 h-2 rounded-full ${
-                    activity.type === "aml" ? "bg-red-500" :
-                    activity.type === "kyc" ? "bg-yellow-500" :
-                    activity.type === "ticket" ? "bg-purple-500" :
-                    "bg-green-500"
-                  }`}></div>
-                  <span className="text-white/80 text-sm">{activity.text}</span>
-                </div>
-                <span className="text-white/40 text-sm">{activity.time}</span>
-              </div>
-            ))}
+            <p className="text-white/40 text-sm text-center py-6">No recent activity</p>
           </div>
         </div>
       </div>
