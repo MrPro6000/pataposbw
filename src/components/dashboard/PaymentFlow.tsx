@@ -21,11 +21,12 @@ interface PaymentFlowProps {
   total: number;
   itemCount: number;
   onComplete: () => void;
+  onPaymentSuccess?: (method: string, total: number, description?: string) => void;
   onBack: () => void;
   className?: string;
 }
 
-const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: PaymentFlowProps) => {
+const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, className = "" }: PaymentFlowProps) => {
   const [step, setStep] = useState<PaymentStep>("select");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
@@ -42,19 +43,32 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
       return () => clearTimeout(timer);
     }
     if (step === "card-processing") {
-      const timer = setTimeout(() => setStep("success"), 2000);
+      const timer = setTimeout(() => {
+        setStep("success");
+        onPaymentSuccess?.("card", total, `Product Sale • Card`);
+      }, 2000);
       return () => clearTimeout(timer);
     }
     if (step === "mobile-sending") {
-      const timer = setTimeout(() => setStep("success"), 2500);
+      const timer = setTimeout(() => {
+        setStep("success");
+        const providerName = mobileMoneyProviders.find(p => p.id === selectedProvider)?.name || "Mobile Money";
+        onPaymentSuccess?.("mobile_money", total, `Product Sale • ${providerName}`);
+      }, 2500);
       return () => clearTimeout(timer);
     }
     if (step === "qr-scan") {
-      const timer = setTimeout(() => setStep("success"), 3000);
+      const timer = setTimeout(() => {
+        setStep("success");
+        onPaymentSuccess?.("qr", total, `Product Sale • QR Payment`);
+      }, 3000);
       return () => clearTimeout(timer);
     }
     if (step === "payment-link-sending") {
-      const timer = setTimeout(() => setStep("success"), 2500);
+      const timer = setTimeout(() => {
+        setStep("success");
+        onPaymentSuccess?.("payment_link", total, `Product Sale • Payment Link`);
+      }, 2500);
       return () => clearTimeout(timer);
     }
   }, [step]);
@@ -71,6 +85,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onBack, className = "" }: P
   const handleCashComplete = () => {
     if (!cashTendered || parseFloat(cashTendered) < total) return;
     setStep("success");
+    onPaymentSuccess?.("cash", total, `Product Sale • Cash`);
   };
 
   const handleMobileSend = () => {

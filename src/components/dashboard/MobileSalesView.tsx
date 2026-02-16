@@ -22,6 +22,7 @@ import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileProductSaleSheet from "./MobileProductSaleSheet";
 import PataLogo from "@/components/PataLogo";
+import { useTransactions } from "@/hooks/useTransactions";
 
 // Quick Action Button Component
 const QuickActionButton = ({ 
@@ -63,20 +64,29 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [productSaleOpen, setProductSaleOpen] = useState(false);
+  const { transactions, last7DaysIncome, addTransaction, refetch } = useTransactions();
   
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
                    userEmail?.slice(0, 2).toUpperCase() || "NH";
 
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
-                           userEmail?.slice(0, 2).toUpperCase() || "U";
+                            userEmail?.slice(0, 2).toUpperCase() || "U";
 
-  // Mock sales history
-  const salesHistory = [
-    { type: "Card", status: "Approved", amount: -12.00, icon: RefreshCw },
-    { type: "Card", status: "Refunded", amount: 12.00, icon: CreditCard },
-    { type: "Card", status: "Approved", amount: -5.00, icon: CheckCircle },
-  ];
+  // Recent 3 transactions for preview
+  const recentSales = transactions.slice(0, 3).map((tx) => {
+    const methodLabel = tx.payment_method === "mobile_money" ? "Mobile Money" : 
+                        tx.payment_method === "card" ? "Card" : 
+                        tx.payment_method === "cash" ? "Cash" : 
+                        tx.payment_method === "wallet" ? "Wallet" : tx.payment_method;
+    const statusLabel = tx.amount < 0 ? "Refunded" : tx.status === "completed" ? "Approved" : "Pending";
+    return {
+      type: methodLabel,
+      status: statusLabel,
+      amount: tx.amount,
+      icon: tx.amount < 0 ? RefreshCw : tx.status === "completed" ? CheckCircle : CreditCard,
+    };
+  });
 
   // Mock invoices
   const invoices = [
@@ -106,8 +116,10 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
         <div className="text-center">
           <p className="text-sm text-muted-foreground mb-1">Last 7 days</p>
-          <p className="text-5xl font-bold text-foreground mb-2">P0.00</p>
-          <p className="text-sm text-muted-foreground">Today's the day to make things happen.</p>
+          <p className="text-5xl font-bold text-foreground mb-2">P{last7DaysIncome.toFixed(2)}</p>
+          <p className="text-sm text-muted-foreground">
+            {last7DaysIncome > 0 ? "Keep it going!" : "Today's the day to make things happen."}
+          </p>
         </div>
       </header>
 
@@ -210,7 +222,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           </div>
           
           <div className="divide-y divide-border">
-            {salesHistory.map((sale, index) => (
+            {recentSales.map((sale, index) => (
               <div key={index} className="flex items-center justify-between px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
@@ -221,8 +233,8 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
                     <p className="text-sm text-muted-foreground">{sale.status}</p>
                   </div>
                 </div>
-                <p className={`font-semibold ${sale.amount > 0 ? "text-green-600" : "text-foreground"}`}>
-                  {sale.amount > 0 ? "+" : "-"}P{Math.abs(sale.amount).toFixed(2)}
+                <p className={`font-semibold ${sale.amount > 0 ? "text-foreground" : "text-green-600"}`}>
+                  {sale.amount > 0 ? "-" : "+"}P{Math.abs(sale.amount).toFixed(2)}
                 </p>
               </div>
             ))}

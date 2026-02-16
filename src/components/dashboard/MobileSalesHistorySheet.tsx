@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ChevronLeft, CreditCard, RefreshCw, CheckCircle, Clock, XCircle } from "lucide-react";
+import { X, ChevronLeft, CreditCard, RefreshCw, CheckCircle, Clock, XCircle, Smartphone, Banknote, Wallet } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -7,6 +7,8 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer";
+import { useTransactions } from "@/hooks/useTransactions";
+import { format } from "date-fns";
 
 interface MobileSalesHistorySheetProps {
   open: boolean;
@@ -14,34 +16,48 @@ interface MobileSalesHistorySheetProps {
 }
 
 const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps) => {
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "approved" | "refunded" | "pending">("all");
+  const [selectedFilter, setSelectedFilter] = useState<"all" | "completed" | "pending">("all");
+  const { transactions, loading } = useTransactions();
 
-  const salesHistory = [
-    { id: "1", type: "Card", customer: "Walk-in", amount: 12.00, status: "approved", date: "Today, 10:45 AM", method: "Visa •••• 4532" },
-    { id: "2", type: "Card", customer: "John Doe", amount: 45.50, status: "refunded", date: "Today, 09:30 AM", method: "Mastercard •••• 8721" },
-    { id: "3", type: "Cash", customer: "Walk-in", amount: 5.00, status: "approved", date: "Yesterday, 4:15 PM", method: "Cash" },
-    { id: "4", type: "Mobile Money", customer: "Mary Smith", amount: 120.00, status: "approved", date: "Yesterday, 2:30 PM", method: "Orange Money" },
-    { id: "5", type: "Card", customer: "Walk-in", amount: 35.00, status: "pending", date: "Yesterday, 11:00 AM", method: "Visa •••• 9012" },
-    { id: "6", type: "Payment Link", customer: "Tech Corp", amount: 500.00, status: "approved", date: "2 days ago", method: "Online Payment" },
-  ];
+  const filteredHistory = selectedFilter === "all"
+    ? transactions
+    : transactions.filter(t => t.status === selectedFilter);
 
-  const filteredHistory = selectedFilter === "all" 
-    ? salesHistory 
-    : salesHistory.filter(s => s.status === selectedFilter);
+  const getMethodIcon = (method: string) => {
+    switch (method) {
+      case "card": return CreditCard;
+      case "mobile_money": return Smartphone;
+      case "cash": return Banknote;
+      case "wallet": return Wallet;
+      default: return CreditCard;
+    }
+  };
 
-  const getStatusIcon = (status: string) => {
+  const getMethodLabel = (method: string) => {
+    switch (method) {
+      case "card": return "Card";
+      case "mobile_money": return "Mobile Money";
+      case "cash": return "Cash";
+      case "wallet": return "Wallet";
+      case "payment_link": return "Payment Link";
+      case "invoice": return "Invoice";
+      default: return method;
+    }
+  };
+
+  const getStatusIcon = (status: string, amount: number) => {
+    if (amount < 0) return <RefreshCw className="w-4 h-4 text-orange-500" />;
     switch (status) {
-      case "approved": return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "refunded": return <RefreshCw className="w-4 h-4 text-orange-500" />;
+      case "completed": return <CheckCircle className="w-4 h-4 text-green-500" />;
       case "pending": return <Clock className="w-4 h-4 text-yellow-500" />;
       default: return <XCircle className="w-4 h-4 text-red-500" />;
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string, amount: number) => {
+    if (amount < 0) return "text-orange-600 bg-orange-500/10 dark:text-orange-400";
     switch (status) {
-      case "approved": return "text-green-600 bg-green-500/10 dark:text-green-400";
-      case "refunded": return "text-orange-600 bg-orange-500/10 dark:text-orange-400";
+      case "completed": return "text-green-600 bg-green-500/10 dark:text-green-400";
       case "pending": return "text-yellow-600 bg-yellow-500/10 dark:text-yellow-400";
       default: return "text-red-600 bg-red-500/10 dark:text-red-400";
     }
@@ -49,8 +65,7 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
 
   const filters = [
     { id: "all", label: "All" },
-    { id: "approved", label: "Approved" },
-    { id: "refunded", label: "Refunded" },
+    { id: "completed", label: "Completed" },
     { id: "pending", label: "Pending" },
   ] as const;
 
@@ -95,39 +110,53 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
 
           {/* Sales List */}
           <div className="space-y-3">
-            {filteredHistory.map((sale) => (
-              <button
-                key={sale.id}
-                className="w-full bg-muted rounded-2xl p-4 text-left active:bg-muted/70 transition-colors"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center">
-                      <CreditCard className="w-5 h-5 text-muted-foreground" />
+            {loading ? (
+              <div className="flex justify-center py-10">
+                <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+              </div>
+            ) : (
+              filteredHistory.map((sale) => {
+                const Icon = getMethodIcon(sale.payment_method);
+                const statusLabel = sale.amount < 0 ? "Refunded" : sale.status === "completed" ? "Approved" : sale.status;
+                return (
+                  <div
+                    key={sale.id}
+                    className="w-full bg-muted rounded-2xl p-4 text-left"
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center">
+                          <Icon className="w-5 h-5 text-muted-foreground" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground">{getMethodLabel(sale.payment_method)}</p>
+                          <p className="text-xs text-muted-foreground">{sale.description || "Transaction"}</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className={`font-bold ${sale.amount < 0 ? "text-orange-500" : "text-foreground"}`}>
+                          {sale.amount < 0 ? "-" : ""}P{Math.abs(sale.amount).toFixed(2)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium text-foreground">{sale.type}</p>
-                      <p className="text-xs text-muted-foreground">{sale.customer}</p>
+                    <div className="flex items-center justify-between">
+                      <p className="text-xs text-muted-foreground">
+                        {format(new Date(sale.created_at), "MMM d, h:mm a")}
+                      </p>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize flex items-center gap-1 ${getStatusColor(sale.status, sale.amount)}`}>
+                          {getStatusIcon(sale.status, sale.amount)}
+                          {statusLabel}
+                        </span>
+                      </div>
                     </div>
+                    {sale.is_dummy && (
+                      <p className="text-xs text-muted-foreground/50 mt-1 italic">Sample data</p>
+                    )}
                   </div>
-                  <div className="text-right">
-                    <p className={`font-bold ${sale.status === "refunded" ? "text-orange-500" : "text-foreground"}`}>
-                      {sale.status === "refunded" ? "-" : ""}P{sale.amount.toFixed(2)}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">{sale.method}</p>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize flex items-center gap-1 ${getStatusColor(sale.status)}`}>
-                      {getStatusIcon(sale.status)}
-                      {sale.status}
-                    </span>
-                  </div>
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">{sale.date}</p>
-              </button>
-            ))}
+                );
+              })
+            )}
           </div>
 
           {filteredHistory.length === 0 && (
