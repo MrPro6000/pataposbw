@@ -39,16 +39,7 @@ interface MobileProductSaleSheetProps {
   onClose: () => void;
 }
 
-const defaultRetailProducts: Product[] = [
-  { id: "default-1", name: "Meat", price: 85, category: "Food" },
-  { id: "default-2", name: "Bread", price: 12, category: "Food" },
-  { id: "default-3", name: "Milk", price: 18, category: "Food" },
-  { id: "default-4", name: "Coke", price: 15, category: "Beverages" },
-  { id: "default-5", name: "Sweets", price: 5, category: "Food" },
-  { id: "default-6", name: "Cabbage", price: 10, category: "Food" },
-  { id: "default-7", name: "Cigarette", price: 35, category: "General" },
-  { id: "default-8", name: "Cappuccino", price: 35, category: "Beverages" },
-];
+// No default products - merchants add their own
 
 const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
   id: d.id,
@@ -59,7 +50,7 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 }));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
-const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services", "Custom"];
+const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
 type Step = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "cart" | "payment";
 
@@ -74,11 +65,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
 
-  // Merge DB products with defaults, DB products take priority
-  const retailProducts: Product[] = [
-    ...dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category })),
-    ...defaultRetailProducts.filter(d => !dbProducts.some(p => p.name.toLowerCase() === d.name.toLowerCase())),
-  ];
+  // Only show user's own products from DB
+  const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
+  const categories = [...baseCategories, ...Array.from(new Set(dbProducts.map(p => p.category))).filter(c => !baseCategories.includes(c))];
 
   const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;

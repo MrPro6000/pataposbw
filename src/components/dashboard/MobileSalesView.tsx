@@ -21,8 +21,11 @@ import MobilePaymentLinksSheet from "./MobilePaymentLinksSheet";
 import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileProductSaleSheet from "./MobileProductSaleSheet";
+import MobileInvoiceSheet from "./MobileInvoiceSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useInvoices } from "@/hooks/useInvoices";
+import { usePaymentLinks } from "@/hooks/usePaymentLinks";
 
 // Quick Action Button Component
 const QuickActionButton = ({ 
@@ -64,12 +67,11 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [productSaleOpen, setProductSaleOpen] = useState(false);
-  const { transactions, last7DaysIncome, addTransaction, refetch } = useTransactions();
+  const [invoiceSheetOpen, setInvoiceSheetOpen] = useState(false);
+  const { transactions, last7DaysIncome } = useTransactions();
+  const { invoices } = useInvoices();
+  const { paymentLinks } = usePaymentLinks();
   
-  const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
-                   profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   userEmail?.slice(0, 2).toUpperCase() || "NH";
-
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                             userEmail?.slice(0, 2).toUpperCase() || "U";
 
@@ -78,7 +80,9 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     const methodLabel = tx.payment_method === "mobile_money" ? "Mobile Money" : 
                         tx.payment_method === "card" ? "Card" : 
                         tx.payment_method === "cash" ? "Cash" : 
-                        tx.payment_method === "wallet" ? "Wallet" : tx.payment_method;
+                        tx.payment_method === "wallet" ? "Wallet" :
+                        tx.payment_method === "payment_link" ? "Payment Link" :
+                        tx.payment_method === "invoice" ? "Invoice" : tx.payment_method;
     const statusLabel = tx.amount < 0 ? "Refunded" : tx.status === "completed" ? "Approved" : "Pending";
     return {
       type: methodLabel,
@@ -88,21 +92,21 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     };
   });
 
-  // Invoices from transactions
-  const invoiceTx = transactions.filter(t => t.payment_method === "invoice" || t.type === "invoice").slice(0, 3);
-  const invoices = invoiceTx.length > 0
-    ? invoiceTx.map(t => ({
-        status: t.status === "completed" ? "Paid" : "Draft",
-        customer: t.description?.split("•")[1]?.trim() || "Customer",
-        amount: `P${Math.abs(t.amount).toFixed(2)}`,
-      }))
-    : [
-        { status: "Draft", customer: "Sample", amount: "P12.00" },
-        { status: "Paid", customer: "Sample", amount: "P112.00" },
-        { status: "Draft", customer: "Sample", amount: "P320.00" },
-      ];
+  // Recent invoices from DB
+  const recentInvoices = invoices.slice(0, 3);
+
+  // Pending payment links count
+  const pendingLinksCount = paymentLinks.filter(l => l.status === "pending").length;
 
   const handleQuickAction = (paymentType: PaymentType) => {
+    if (paymentType === "invoice") {
+      setInvoiceSheetOpen(true);
+      return;
+    }
+    if (paymentType === "payment-link") {
+      setPaymentLinksOpen(true);
+      return;
+    }
     setSelectedPaymentType(paymentType);
     setPaymentSheetOpen(true);
   };
@@ -132,7 +136,6 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
       {/* Quick Actions */}
       <div className="px-5 py-4">
-        {/* Products/POS Button - Full Width */}
         <button 
           onClick={() => setProductSaleOpen(true)}
           className="w-full flex items-center justify-between p-4 bg-[#0066FF] rounded-2xl mb-3 active:scale-98 transition-transform"
@@ -150,59 +153,25 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         </button>
 
         <div className="grid grid-cols-3 gap-3 mb-3">
-          <QuickActionButton 
-            icon={CreditCard} 
-            label="Card sale" 
-            variant="light" 
-            onClick={() => handleQuickAction('card-sale')}
-          />
-          <QuickActionButton 
-            icon={Link2} 
-            label="Payment Link" 
-            variant="light" 
-            onClick={() => handleQuickAction('payment-link')}
-          />
-          <QuickActionButton 
-            icon={FileText} 
-            label="New invoice" 
-            variant="light" 
-            onClick={() => handleQuickAction('invoice')}
-          />
+          <QuickActionButton icon={CreditCard} label="Card sale" variant="light" onClick={() => handleQuickAction('card-sale')} />
+          <QuickActionButton icon={Link2} label="Payment Link" variant="light" onClick={() => handleQuickAction('payment-link')} />
+          <QuickActionButton icon={FileText} label="New invoice" variant="light" onClick={() => handleQuickAction('invoice')} />
         </div>
         <div className="grid grid-cols-3 gap-3">
-          <QuickActionButton 
-            icon={Banknote} 
-            label="Cash" 
-            variant="light" 
-            onClick={() => handleQuickAction('cash')}
-          />
-          <QuickActionButton 
-            icon={Smartphone} 
-            label="Mobile Money" 
-            variant="light" 
-            onClick={() => handleQuickAction('mobile-money')}
-          />
-          <QuickActionButton 
-            icon={Wallet} 
-            label="Wallet" 
-            variant="light" 
-            onClick={() => handleQuickAction('wallet')}
-          />
+          <QuickActionButton icon={Banknote} label="Cash" variant="light" onClick={() => handleQuickAction('cash')} />
+          <QuickActionButton icon={Smartphone} label="Mobile Money" variant="light" onClick={() => handleQuickAction('mobile-money')} />
+          <QuickActionButton icon={Wallet} label="Wallet" variant="light" onClick={() => handleQuickAction('wallet')} />
         </div>
       </div>
 
       {/* Products Quick View */}
       <div className="px-5 py-2">
-        <Link 
-          to="/dashboard/products"
-          state={{ from: "sales" }}
-          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform block"
-        >
+        <Link to="/dashboard/products" state={{ from: "sales" }}
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform block">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <h2 className="font-semibold text-foreground">Products</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
-          
           <div className="px-5 py-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
@@ -219,17 +188,14 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
       {/* Sales History */}
       <div className="px-5 py-2">
-        <button 
-          onClick={() => setSalesHistoryOpen(true)}
-          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
-        >
+        <button onClick={() => setSalesHistoryOpen(true)}
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <h2 className="font-semibold text-foreground">Sales history</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
-          
           <div className="divide-y divide-border">
-            {recentSales.map((sale, index) => (
+            {recentSales.length > 0 ? recentSales.map((sale, index) => (
               <div key={index} className="flex items-center justify-between px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
@@ -244,36 +210,41 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
                   {sale.amount > 0 ? "-" : "+"}P{Math.abs(sale.amount).toFixed(2)}
                 </p>
               </div>
-            ))}
+            )) : (
+              <div className="px-5 py-6 text-center">
+                <p className="text-sm text-muted-foreground">No transactions yet</p>
+              </div>
+            )}
           </div>
         </button>
       </div>
 
       {/* Invoices Section */}
       <div className="px-5 py-2">
-        <button 
-          onClick={() => handleQuickAction('invoice')}
-          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left"
-        >
+        <button onClick={() => setInvoiceSheetOpen(true)}
+          className="w-full bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform text-left">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border">
             <h2 className="font-semibold text-foreground">Invoices</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
-          
           <div className="divide-y divide-border">
-            {invoices.map((invoice, index) => (
-              <div key={index} className="flex items-center justify-between px-5 py-4">
+            {recentInvoices.length > 0 ? recentInvoices.map((inv) => (
+              <div key={inv.id} className="flex items-center justify-between px-5 py-4">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
                     <FileText className="w-4 h-4 text-muted-foreground" />
                   </div>
                   <span className="text-sm text-foreground">
-                    {invoice.status} • {invoice.customer}
+                    {inv.status === "paid" ? "Paid" : "Draft"} • {inv.customer_name}
                   </span>
                 </div>
-                <p className="font-semibold text-foreground">{invoice.amount}</p>
+                <p className="font-semibold text-foreground">P{inv.amount.toFixed(2)}</p>
               </div>
-            ))}
+            )) : (
+              <div className="px-5 py-6 text-center">
+                <p className="text-sm text-muted-foreground">No invoices yet — tap to create one</p>
+              </div>
+            )}
           </div>
         </button>
       </div>
@@ -281,19 +252,14 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       {/* Payment Links & Payment Page */}
       <div className="px-5 py-2">
         <div className="grid grid-cols-2 gap-3">
-          <button 
-            onClick={() => setPaymentLinksOpen(true)}
-            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
-          >
+          <button onClick={() => setPaymentLinksOpen(true)}
+            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left">
             <p className="font-semibold text-foreground mb-1">Payment Links</p>
-            <p className="text-2xl font-bold text-foreground">13</p>
-            <p className="text-sm text-muted-foreground">unpaid links</p>
+            <p className="text-2xl font-bold text-foreground">{pendingLinksCount}</p>
+            <p className="text-sm text-muted-foreground">pending links</p>
           </button>
-          
-          <button 
-            onClick={() => setPaymentGatewayOpen(true)}
-            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
-          >
+          <button onClick={() => setPaymentGatewayOpen(true)}
+            className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left">
             <p className="font-semibold text-foreground mb-1">Payment Page</p>
             <p className="text-sm text-muted-foreground mt-4">Configure & share</p>
           </button>
@@ -302,10 +268,8 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
       {/* Payment Gateway */}
       <div className="px-5 py-2">
-        <button 
-          onClick={() => setPaymentGatewayOpen(true)}
-          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left"
-        >
+        <button onClick={() => setPaymentGatewayOpen(true)}
+          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
               <Globe className="w-5 h-5 text-muted-foreground" />
@@ -318,46 +282,14 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         </button>
       </div>
 
-      {/* Payment Sheet */}
-      <MobilePaymentSheet
-        open={paymentSheetOpen}
-        onClose={() => setPaymentSheetOpen(false)}
-        paymentType={selectedPaymentType}
-      />
-
-      {/* Sales History Sheet */}
-      <MobileSalesHistorySheet
-        open={salesHistoryOpen}
-        onClose={() => setSalesHistoryOpen(false)}
-      />
-
-      {/* Payment Links Sheet */}
-      <MobilePaymentLinksSheet
-        open={paymentLinksOpen}
-        onClose={() => setPaymentLinksOpen(false)}
-      />
-
-      {/* Payment Gateway Sheet */}
-      <MobilePaymentGatewaySheet
-        open={paymentGatewayOpen}
-        onClose={() => setPaymentGatewayOpen(false)}
-      />
-
-      {/* Product Sale Sheet */}
-      <MobileProductSaleSheet
-        open={productSaleOpen}
-        onClose={() => setProductSaleOpen(false)}
-      />
-
-      {/* Profile Sheet */}
-      <MobileProfileSheet
-        open={profileOpen}
-        onClose={() => setProfileOpen(false)}
-        profile={profile}
-        userEmail={userEmail}
-      />
-
-      {/* Bottom Navigation */}
+      {/* Sheets */}
+      <MobilePaymentSheet open={paymentSheetOpen} onClose={() => setPaymentSheetOpen(false)} paymentType={selectedPaymentType} />
+      <MobileSalesHistorySheet open={salesHistoryOpen} onClose={() => setSalesHistoryOpen(false)} />
+      <MobilePaymentLinksSheet open={paymentLinksOpen} onClose={() => setPaymentLinksOpen(false)} />
+      <MobilePaymentGatewaySheet open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
+      <MobileProductSaleSheet open={productSaleOpen} onClose={() => setProductSaleOpen(false)} />
+      <MobileInvoiceSheet open={invoiceSheetOpen} onClose={() => setInvoiceSheetOpen(false)} />
+      <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>
   );

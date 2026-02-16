@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, ChevronLeft, CreditCard, RefreshCw, CheckCircle, Clock, XCircle, Smartphone, Banknote, Wallet } from "lucide-react";
+import { X, ChevronLeft, CreditCard, RefreshCw, CheckCircle, Clock, XCircle, Smartphone, Banknote, Wallet, Link2, FileText } from "lucide-react";
 import {
   Drawer,
   DrawerClose,
@@ -16,12 +16,14 @@ interface MobileSalesHistorySheetProps {
 }
 
 const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps) => {
-  const [selectedFilter, setSelectedFilter] = useState<"all" | "completed" | "pending">("all");
+  const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const { transactions, loading } = useTransactions();
 
   const filteredHistory = selectedFilter === "all"
     ? transactions
-    : transactions.filter(t => t.status === selectedFilter);
+    : selectedFilter === "completed" || selectedFilter === "pending"
+      ? transactions.filter(t => t.status === selectedFilter)
+      : transactions.filter(t => t.payment_method === selectedFilter);
 
   const getMethodIcon = (method: string) => {
     switch (method) {
@@ -29,6 +31,8 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
       case "mobile_money": return Smartphone;
       case "cash": return Banknote;
       case "wallet": return Wallet;
+      case "payment_link": return Link2;
+      case "invoice": return FileText;
       default: return CreditCard;
     }
   };
@@ -65,9 +69,13 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
 
   const filters = [
     { id: "all", label: "All" },
-    { id: "completed", label: "Completed" },
-    { id: "pending", label: "Pending" },
-  ] as const;
+    { id: "card", label: "Card" },
+    { id: "cash", label: "Cash" },
+    { id: "mobile_money", label: "Mobile Money" },
+    { id: "payment_link", label: "Links" },
+    { id: "invoice", label: "Invoices" },
+    { id: "wallet", label: "Wallet" },
+  ];
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -119,10 +127,7 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                 const Icon = getMethodIcon(sale.payment_method);
                 const statusLabel = sale.amount < 0 ? "Refunded" : sale.status === "completed" ? "Approved" : sale.status;
                 return (
-                  <div
-                    key={sale.id}
-                    className="w-full bg-muted rounded-2xl p-4 text-left"
-                  >
+                  <div key={sale.id} className="w-full bg-muted rounded-2xl p-4 text-left">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-card rounded-xl flex items-center justify-center">
@@ -143,23 +148,18 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
                       <p className="text-xs text-muted-foreground">
                         {format(new Date(sale.created_at), "MMM d, h:mm a")}
                       </p>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize flex items-center gap-1 ${getStatusColor(sale.status, sale.amount)}`}>
-                          {getStatusIcon(sale.status, sale.amount)}
-                          {statusLabel}
-                        </span>
-                      </div>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize flex items-center gap-1 ${getStatusColor(sale.status, sale.amount)}`}>
+                        {getStatusIcon(sale.status, sale.amount)}
+                        {statusLabel}
+                      </span>
                     </div>
-                    {sale.is_dummy && (
-                      <p className="text-xs text-muted-foreground/50 mt-1 italic">Sample data</p>
-                    )}
                   </div>
                 );
               })
             )}
           </div>
 
-          {filteredHistory.length === 0 && (
+          {filteredHistory.length === 0 && !loading && (
             <div className="text-center py-10">
               <p className="text-muted-foreground">No sales found</p>
             </div>
