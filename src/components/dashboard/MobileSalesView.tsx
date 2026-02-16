@@ -96,11 +96,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         customer: t.description?.split("•")[1]?.trim() || "Customer",
         amount: `P${Math.abs(t.amount).toFixed(2)}`,
       }))
-    : [
-        { status: "Draft", customer: "Sample", amount: "P12.00" },
-        { status: "Paid", customer: "Sample", amount: "P112.00" },
-        { status: "Draft", customer: "Sample", amount: "P320.00" },
-      ];
+    : [];
 
   const handleQuickAction = (paymentType: PaymentType) => {
     setSelectedPaymentType(paymentType);

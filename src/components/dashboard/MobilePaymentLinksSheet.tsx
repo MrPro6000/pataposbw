@@ -144,7 +144,6 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                             <Send className="w-3 h-3 mr-1" /> Resend
                           </Button>
                         </div>
-                        {link.is_dummy && <p className="text-xs text-muted-foreground/50 mt-2 italic">Sample data</p>}
                       </div>
                     ))}
                   </div>
@@ -173,7 +172,7 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                             </span>
                           </div>
                         </div>
-                        {link.is_dummy && <p className="text-xs text-muted-foreground/50 mt-2 italic">Sample data</p>}
+                        
                       </div>
                     ))}
                   </div>

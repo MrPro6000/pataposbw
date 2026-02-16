@@ -45,19 +45,15 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
 
-  // Mock stock data
+  // Stock data - starts at zero
   const stockData = [
     { label: "Out of stock", count: 0, color: "text-red-500" },
     { label: "Low stock", count: 0, color: "text-orange-500" },
-    { label: "In stock", count: 1, color: "text-green-500" },
+    { label: "In stock", count: 0, color: "text-green-500" },
   ];
 
-  // Mock staff data
-  const staffMembers = [
-    { name: "Nic HTEST", role: "Supervisor" },
-    { name: "Nic Haralambous", role: "Manager" },
-    { name: "Nicholas Haralambous", role: "Administrator" },
-  ];
+  // Staff data - empty by default
+  const staffMembers: { name: string; role: string }[] = [];
 
   // Settings items
   const settingsItems = [

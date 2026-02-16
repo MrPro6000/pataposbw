@@ -70,31 +70,31 @@ const AdminDashboard = () => {
     }
   };
 
-  // Mock data for charts
+  // Chart data - starts at zero, populated by real data
   const revenueData = [
-    { day: "Mon", value: 12500 },
-    { day: "Tue", value: 18200 },
-    { day: "Wed", value: 15800 },
-    { day: "Thu", value: 22100 },
-    { day: "Fri", value: 28400 },
-    { day: "Sat", value: 24600 },
-    { day: "Sun", value: 19800 },
+    { day: "Mon", value: 0 },
+    { day: "Tue", value: 0 },
+    { day: "Wed", value: 0 },
+    { day: "Thu", value: 0 },
+    { day: "Fri", value: 0 },
+    { day: "Sat", value: 0 },
+    { day: "Sun", value: 0 },
   ];
 
   const transactionData = [
-    { hour: "6am", value: 120 },
-    { hour: "9am", value: 450 },
-    { hour: "12pm", value: 680 },
-    { hour: "3pm", value: 520 },
-    { hour: "6pm", value: 780 },
-    { hour: "9pm", value: 340 },
+    { hour: "6am", value: 0 },
+    { hour: "9am", value: 0 },
+    { hour: "12pm", value: 0 },
+    { hour: "3pm", value: 0 },
+    { hour: "6pm", value: 0 },
+    { hour: "9pm", value: 0 },
   ];
 
   const regionData = [
-    { name: "Gaborone", value: 45 },
-    { name: "Francistown", value: 25 },
-    { name: "Maun", value: 15 },
-    { name: "Other", value: 15 },
+    { name: "Gaborone", value: 0 },
+    { name: "Francistown", value: 0 },
+    { name: "Maun", value: 0 },
+    { name: "Other", value: 0 },
   ];
 
   const COLORS = ["#00C8E6", "#6366f1", "#f59e0b", "#10b981"];
