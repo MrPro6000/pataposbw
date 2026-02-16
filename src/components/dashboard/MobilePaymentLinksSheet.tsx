@@ -11,6 +11,8 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
+import { useTransactions } from "@/hooks/useTransactions";
+import { format } from "date-fns";
 
 interface MobilePaymentLinksSheetProps {
   open: boolean;
@@ -19,35 +21,27 @@ interface MobilePaymentLinksSheetProps {
 
 const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps) => {
   const { toast } = useToast();
+  const { transactions, addTransaction } = useTransactions();
   const [view, setView] = useState<"list" | "create">("list");
   const [newLink, setNewLink] = useState({ amount: "", description: "", customerName: "", customerPhone: "" });
+  const [creating, setCreating] = useState(false);
 
-  const paymentLinks = [
-    { id: "1", customer: "John Doe", amount: 150.00, status: "unpaid", createdAt: "2 hours ago", phone: "+267 71 234 5678" },
-    { id: "2", customer: "Mary Smith", amount: 75.50, status: "unpaid", createdAt: "5 hours ago", phone: "+267 72 345 6789" },
-    { id: "3", customer: "Tech Corp Ltd", amount: 1200.00, status: "unpaid", createdAt: "Yesterday", phone: "+267 73 456 7890" },
-    { id: "4", customer: "Alice Johnson", amount: 45.00, status: "paid", createdAt: "2 days ago", phone: "+267 74 567 8901" },
-    { id: "5", customer: "Bob Wilson", amount: 320.00, status: "expired", createdAt: "1 week ago", phone: "+267 75 678 9012" },
-  ];
-
-  const unpaidLinks = paymentLinks.filter(l => l.status === "unpaid");
-  const otherLinks = paymentLinks.filter(l => l.status !== "unpaid");
+  // Filter transactions that are payment links
+  const paymentLinkTx = transactions.filter(t => t.payment_method === "payment_link");
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "paid": return <CheckCircle className="w-4 h-4 text-green-500" />;
-      case "unpaid": return <Clock className="w-4 h-4 text-yellow-500" />;
-      case "expired": return <XCircle className="w-4 h-4 text-red-500" />;
-      default: return null;
+      case "completed": return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "pending": return <Clock className="w-4 h-4 text-yellow-500" />;
+      default: return <XCircle className="w-4 h-4 text-red-500" />;
     }
   };
 
   const getStatusClass = (status: string) => {
     switch (status) {
-      case "paid": return "status-paid";
-      case "unpaid": return "status-unpaid";
-      case "expired": return "status-expired";
-      default: return "bg-muted text-muted-foreground";
+      case "completed": return "bg-green-500/10 text-green-600 dark:text-green-400";
+      case "pending": return "bg-yellow-500/10 text-yellow-600 dark:text-yellow-400";
+      default: return "bg-red-500/10 text-red-600 dark:text-red-400";
     }
   };
 
@@ -56,19 +50,35 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
     toast({ title: "Link Copied", description: "Payment link copied to clipboard" });
   };
 
-  const handleResend = (customer: string) => {
-    toast({ title: "Link Sent", description: `Payment link resent to ${customer}` });
+  const handleResend = (description: string) => {
+    toast({ title: "Link Sent", description: `Payment link resent for ${description}` });
   };
 
-  const handleCreateLink = () => {
+  const handleCreateLink = async () => {
     if (!newLink.amount || !newLink.customerName) {
       toast({ title: "Error", description: "Please fill in required fields", variant: "destructive" });
       return;
     }
-    toast({ title: "Link Created", description: `Payment link sent to ${newLink.customerName}` });
-    setNewLink({ amount: "", description: "", customerName: "", customerPhone: "" });
-    setView("list");
+    setCreating(true);
+    const result = await addTransaction({
+      type: "sale",
+      payment_method: "payment_link",
+      amount: parseFloat(newLink.amount),
+      description: `Payment Link • ${newLink.customerName}${newLink.description ? ` — ${newLink.description}` : ""}`,
+      status: "pending",
+    });
+    setCreating(false);
+    if (result.error) {
+      toast({ title: "Error", description: result.error, variant: "destructive" });
+    } else {
+      toast({ title: "Link Created", description: `Payment link created for ${newLink.customerName}` });
+      setNewLink({ amount: "", description: "", customerName: "", customerPhone: "" });
+      setView("list");
+    }
   };
+
+  const pendingLinks = paymentLinkTx.filter(t => t.status === "pending");
+  const completedLinks = paymentLinkTx.filter(t => t.status !== "pending");
 
   return (
     <Drawer open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
@@ -76,14 +86,12 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <DrawerClose asChild>
-                <button 
-                  onClick={() => view === "create" ? setView("list") : undefined}
-                  className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
-                >
-                  <ChevronLeft className="w-4 h-4 text-foreground" />
-                </button>
-              </DrawerClose>
+              <button
+                onClick={() => view === "create" ? setView("list") : onClose()}
+                className="w-8 h-8 rounded-full bg-muted flex items-center justify-center"
+              >
+                <ChevronLeft className="w-4 h-4 text-foreground" />
+              </button>
               <DrawerTitle className="text-foreground">
                 {view === "create" ? "Create Payment Link" : "Payment Links"}
               </DrawerTitle>
@@ -99,31 +107,26 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
         <div className="p-5 overflow-y-auto pb-10">
           {view === "list" ? (
             <>
-              {/* Create New Button */}
-              <Button
-                onClick={() => setView("create")}
-                className="w-full mb-5 font-medium"
-              >
+              <Button onClick={() => setView("create")} className="w-full mb-5 font-medium">
                 <Link2 className="w-4 h-4 mr-2" />
                 Create New Payment Link
               </Button>
 
-              {/* Unpaid Links */}
-              {unpaidLinks.length > 0 && (
+              {/* Pending Links */}
+              {pendingLinks.length > 0 && (
                 <div className="mb-6">
                   <h3 className="text-sm font-semibold text-muted-foreground mb-3">
-                    Unpaid ({unpaidLinks.length})
+                    Pending ({pendingLinks.length})
                   </h3>
                   <div className="space-y-3">
-                    {unpaidLinks.map((link) => (
-                      <div
-                        key={link.id}
-                        className="bg-muted rounded-2xl p-4"
-                      >
+                    {pendingLinks.map((link) => (
+                      <div key={link.id} className="bg-muted rounded-2xl p-4">
                         <div className="flex items-start justify-between mb-2">
                           <div>
-                            <p className="font-medium text-foreground">{link.customer}</p>
-                            <p className="text-xs text-muted-foreground">{link.phone}</p>
+                            <p className="font-medium text-foreground">{link.description || "Payment Link"}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {format(new Date(link.created_at), "MMM d, h:mm a")}
+                            </p>
                           </div>
                           <div className="text-right">
                             <p className="font-bold text-foreground">P{link.amount.toFixed(2)}</p>
@@ -133,64 +136,59 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                             </span>
                           </div>
                         </div>
-                        <p className="text-xs text-muted-foreground mb-3">{link.createdAt}</p>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleCopyLink(link.id)}
-                            className="flex-1"
-                          >
-                            <Copy className="w-3 h-3 mr-1" />
-                            Copy
+                        <div className="flex gap-2 mt-3">
+                          <Button variant="outline" size="sm" onClick={() => handleCopyLink(link.id)} className="flex-1">
+                            <Copy className="w-3 h-3 mr-1" /> Copy
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleResend(link.customer)}
-                            className="flex-1"
-                          >
-                            <Send className="w-3 h-3 mr-1" />
-                            Resend
+                          <Button variant="outline" size="sm" onClick={() => handleResend(link.description || "Payment Link")} className="flex-1">
+                            <Send className="w-3 h-3 mr-1" /> Resend
                           </Button>
                         </div>
+                        {link.is_dummy && <p className="text-xs text-muted-foreground/50 mt-2 italic">Sample data</p>}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
 
-              {/* Other Links */}
-              {otherLinks.length > 0 && (
+              {/* Completed / History */}
+              {completedLinks.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-muted-foreground mb-3">History</h3>
                   <div className="space-y-3">
-                    {otherLinks.map((link) => (
-                      <div
-                        key={link.id}
-                        className="bg-muted rounded-2xl p-4"
-                      >
+                    {completedLinks.map((link) => (
+                      <div key={link.id} className="bg-muted rounded-2xl p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-medium text-foreground">{link.customer}</p>
-                            <p className="text-xs text-muted-foreground">{link.createdAt}</p>
+                            <p className="font-medium text-foreground">{link.description || "Payment Link"}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {format(new Date(link.created_at), "MMM d, h:mm a")}
+                            </p>
                           </div>
                           <div className="text-right">
                             <p className="font-bold text-foreground">P{link.amount.toFixed(2)}</p>
                             <span className={`px-2 py-0.5 rounded-full text-xs font-medium capitalize inline-flex items-center gap-1 ${getStatusClass(link.status)}`}>
                               {getStatusIcon(link.status)}
-                              {link.status}
+                              {link.status === "completed" ? "Paid" : link.status}
                             </span>
                           </div>
                         </div>
+                        {link.is_dummy && <p className="text-xs text-muted-foreground/50 mt-2 italic">Sample data</p>}
                       </div>
                     ))}
                   </div>
                 </div>
               )}
+
+              {paymentLinkTx.length === 0 && (
+                <div className="text-center py-10">
+                  <Link2 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No payment links yet</p>
+                  <p className="text-sm text-muted-foreground/70">Create your first payment link above</p>
+                </div>
+              )}
             </>
           ) : (
-            /* Create Link Form */
             <div className="space-y-5">
               <div className="space-y-2">
                 <Label className="text-foreground">Amount (P) *</Label>
@@ -202,7 +200,6 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                   className="text-xl font-bold h-12 bg-muted border-0"
                 />
               </div>
-
               <div className="space-y-2">
                 <Label className="text-foreground">Customer Name *</Label>
                 <Input
@@ -212,7 +209,6 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                   className="bg-muted border-0"
                 />
               </div>
-
               <div className="space-y-2">
                 <Label className="text-foreground">Customer Phone</Label>
                 <Input
@@ -223,7 +219,6 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                   className="bg-muted border-0"
                 />
               </div>
-
               <div className="space-y-2">
                 <Label className="text-foreground">Description (optional)</Label>
                 <Input
@@ -233,12 +228,8 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                   className="bg-muted border-0"
                 />
               </div>
-
-              <Button
-                onClick={handleCreateLink}
-                className="w-full h-12 font-semibold"
-              >
-                Create & Send Link
+              <Button onClick={handleCreateLink} disabled={creating} className="w-full h-12 font-semibold">
+                {creating ? "Creating..." : "Create & Send Link"}
               </Button>
             </div>
           )}
