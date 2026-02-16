@@ -22,7 +22,7 @@ const countries = [
   { code: "ZM", name: "Zambia", flag: "🇿🇲", currency: "ZMW" },
   { code: "MW", name: "Malawi", flag: "🇲🇼", currency: "MWK" },
   { code: "NA", name: "Namibia", flag: "🇳🇦", currency: "NAD" },
-  { code: "BW", name: "Botswana", flag: "🇿🇦", currency: "BWP" },
+  { code: "BW", name: "Botswana", flag: "🇧🇼", currency: "BWP" },
 ];
 
 // Mock exchange rates (BWP to other currencies)
