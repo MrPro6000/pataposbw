@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, TouchEvent } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createBusinessProfile } from "@/integrations/firebase/firestore";
 import { uploadBusinessLogo } from "@/integrations/firebase/storage";
@@ -65,32 +65,6 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  // Swipe support
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
-
-  const handleTouchStart = (e: TouchEvent) => {
-    touchStartX.current = e.targetTouches[0].clientX;
-    touchEndX.current = null;
-  };
-
-  const handleTouchMove = (e: TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (touchStartX.current === null || touchEndX.current === null) return;
-    const diff = touchStartX.current - touchEndX.current;
-    const MIN_SWIPE = 50;
-    if (diff > MIN_SWIPE) {
-      handleNext();
-    } else if (diff < -MIN_SWIPE) {
-      handleBack();
-    }
-    touchStartX.current = null;
-    touchEndX.current = null;
-  };
-
   // Form data
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
@@ -116,22 +90,6 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   
   // Terms
   const [termsAccepted, setTermsAccepted] = useState(false);
-
-  // Auto-advance: when business type is selected and name is filled
-  useEffect(() => {
-    if (currentStep === "business" && businessName.trim() && businessType) {
-      const timer = setTimeout(() => setCurrentStep("address"), 600);
-      return () => clearTimeout(timer);
-    }
-  }, [businessType]);
-
-  // Auto-advance: when bank option "later" is selected
-  useEffect(() => {
-    if (currentStep === "banking" && bankSetupOption === "later") {
-      const timer = setTimeout(() => setCurrentStep("logo"), 600);
-      return () => clearTimeout(timer);
-    }
-  }, [bankSetupOption]);
 
   const steps = [
     { key: "business", label: "Business Info", icon: Building2 },
@@ -326,14 +284,9 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   }
 
   return (
-    <div 
-      className="h-[100dvh] bg-background text-foreground flex flex-col overflow-hidden"
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-3 border-b border-border flex-shrink-0">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <PataLogo className="h-5" />
         <div className="flex items-center gap-4">
           <ThemeToggle />
@@ -347,7 +300,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       </header>
 
       {/* Progress Steps */}
-      <div className="px-6 py-3 border-b border-border flex-shrink-0">
+      <div className="px-6 py-4 border-b border-border">
         <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
           {steps.map((step, index) => (
             <div key={step.key} className="flex items-center">
@@ -369,8 +322,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </div>
 
-      {/* Main Content - scrollable */}
-      <main className="flex-1 px-6 py-6 overflow-y-auto min-h-0">
+      {/* Main Content */}
+      <main className="flex-1 px-6 py-8 overflow-auto">
         <div className="max-w-md mx-auto">
           {currentStep === "business" && (
             <div className="space-y-6">
@@ -767,8 +720,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </main>
 
-      {/* Footer - always visible */}
-      <footer className="flex-shrink-0 px-6 pt-3 border-t border-border safe-area-bottom" style={{ paddingBottom: "max(1rem, env(safe-area-inset-bottom))" }}>
+      {/* Footer */}
+      <footer className="px-6 pb-8 pt-4 border-t border-border">
         <div className="max-w-md mx-auto flex gap-3">
           {currentStep !== "business" && (
             <Button

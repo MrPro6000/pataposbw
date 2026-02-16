@@ -17,7 +17,11 @@ interface StaffMember {
 }
 
 const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
-  const staffMembers: StaffMember[] = [];
+  const staffMembers: StaffMember[] = [
+    { id: "1", name: "Nic HTEST", role: "Supervisor", email: "nic@example.com", status: "active" },
+    { id: "2", name: "Nic Haralambous", role: "Manager", email: "nic.h@example.com", status: "active" },
+    { id: "3", name: "Nicholas Haralambous", role: "Administrator", email: "nicholas@example.com", status: "active" },
+  ];
 
   const getRoleColor = (role: string) => {
     switch (role) {
@@ -62,43 +66,36 @@ const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
       <div className="px-5">
         <h2 className="text-sm text-muted-foreground mb-3">Team</h2>
         <div className="space-y-3">
-          {staffMembers.length === 0 ? (
-            <div className="text-center py-10">
-              <User className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="text-muted-foreground">No team members yet</p>
-              <p className="text-sm text-muted-foreground/60">Add staff to manage your business</p>
-            </div>
-          ) : (
-            staffMembers.map((member) => (
-              <div key={member.id} className="bg-card rounded-2xl p-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
-                      {member.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{member.name}</h3>
-                      <p className="text-sm text-muted-foreground">{member.email}</p>
-                    </div>
+          {staffMembers.map((member) => (
+            <div key={member.id} className="bg-card rounded-2xl p-4">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
+                    {member.name.slice(0, 2).toUpperCase()}
                   </div>
-                  <button className="p-2">
-                    <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                  </button>
+                  <div>
+                    <h3 className="font-semibold text-foreground">{member.name}</h3>
+                    <p className="text-sm text-muted-foreground">{member.email}</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-2 mt-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role)}`}>
-                    <Shield className="w-3 h-3 inline mr-1" />
-                    {member.role}
-                  </span>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                    member.status === "active" ? "bg-green-500/10 text-green-600 dark:text-green-400" : "bg-muted text-muted-foreground"
-                  }`}>
-                    {member.status}
-                  </span>
-                </div>
+                <button className="p-2">
+                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                </button>
               </div>
-            ))
-          )}
+
+              <div className="flex items-center gap-2 mt-3">
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role)}`}>
+                  <Shield className="w-3 h-3 inline mr-1" />
+                  {member.role}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  member.status === "active" ? "bg-green-500/10 text-green-600 dark:text-green-400" : "bg-muted text-muted-foreground"
+                }`}>
+                  {member.status}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Add Staff Card */}

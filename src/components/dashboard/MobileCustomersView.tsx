@@ -19,7 +19,14 @@ interface Customer {
 }
 
 const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) => {
-  const customers: Customer[] = [];
+  const customers: Customer[] = [
+    { id: "1", name: "Keabetswe Moeng", email: "keabetswe@email.com", phone: "+267 72 234 5678", totalSpent: 2450, visits: 12 },
+    { id: "2", name: "Onalenna Kgosi", email: "onalenna@email.com", phone: "+267 73 345 6789", totalSpent: 1890, visits: 8 },
+    { id: "3", name: "Tebogo Molefe", email: "tebogo@email.com", phone: "+267 74 456 7890", totalSpent: 3200, visits: 15 },
+    { id: "4", name: "Gaborone City Council", email: "revenue@gaboronecity.gov.bw", phone: "+267 36 588 00", totalSpent: 72000, visits: 120 },
+    { id: "5", name: "Tsabong Sub-District Council", email: "accounts@tsabongcouncil.gov.bw", phone: "+267 65 440 123", totalSpent: 28500, visits: 45 },
+    { id: "6", name: "Extension 14 Clinic", email: "admin@ext14clinic.gov.bw", phone: "+267 39 531 22", totalSpent: 8900, visits: 18 },
+  ];
 
   return (
     <div className="min-h-screen bg-muted pb-24">
@@ -66,43 +73,42 @@ const MobileCustomersView = ({ profile, userEmail }: MobileCustomersViewProps) =
       <div className="px-5">
         <h2 className="text-sm text-muted-foreground mb-3">All customers</h2>
         <div className="space-y-3">
-          {customers.length === 0 ? (
-            <div className="text-center py-10">
-              <Users className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
-              <p className="text-muted-foreground">No customers yet</p>
-              <p className="text-sm text-muted-foreground/60">Customers will appear here as they make purchases</p>
-            </div>
-          ) : (
-            customers.map((customer) => (
-              <div key={customer.id} className="bg-card rounded-2xl p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
-                      {customer.name.slice(0, 2).toUpperCase()}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground">{customer.name}</h3>
-                      <p className="text-sm text-muted-foreground">{customer.visits} visits</p>
-                    </div>
+          {customers.map((customer) => (
+            <div key={customer.id} className="bg-card rounded-2xl p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-primary-foreground font-bold">
+                    {customer.name.slice(0, 2).toUpperCase()}
                   </div>
-                  <div className="text-right">
-                    <p className="font-bold text-foreground">P{customer.totalSpent.toLocaleString()}</p>
-                    <p className="text-xs text-muted-foreground">total spent</p>
+                  <div>
+                    <h3 className="font-semibold text-foreground">{customer.name}</h3>
+                    <p className="text-sm text-muted-foreground">{customer.visits} visits</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 pt-3 border-t border-border">
-                  <a href={`mailto:${customer.email}`} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Mail className="w-4 h-4" />
-                    <span className="truncate max-w-[120px]">{customer.email}</span>
-                  </a>
-                  <a href={`tel:${customer.phone}`} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <Phone className="w-4 h-4" />
-                    <span>{customer.phone.split(' ').slice(-2).join(' ')}</span>
-                  </a>
+                <div className="text-right">
+                  <p className="font-bold text-foreground">P{customer.totalSpent.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">total spent</p>
                 </div>
               </div>
-            ))
-          )}
+
+              <div className="flex items-center gap-4 pt-3 border-t border-border">
+                <a 
+                  href={`mailto:${customer.email}`} 
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground"
+                >
+                  <Mail className="w-4 h-4" />
+                  <span className="truncate max-w-[120px]">{customer.email}</span>
+                </a>
+                <a 
+                  href={`tel:${customer.phone}`} 
+                  className="flex items-center gap-1.5 text-sm text-muted-foreground"
+                >
+                  <Phone className="w-4 h-4" />
+                  <span>{customer.phone.split(' ').slice(-2).join(' ')}</span>
+                </a>
+              </div>
+            </div>
+          ))}
         </div>
 
         {/* Add Customer Card */}

@@ -35,15 +35,15 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
 
-  // Chart data - starts empty, populated by real transactions
+  // Chart data - show sample stats by default
   const weeklyChartData = [
-    { day: "M", value: 0 },
-    { day: "T", value: 0 },
-    { day: "W", value: 0 },
-    { day: "T", value: 0 },
-    { day: "F", value: 0 },
-    { day: "S", value: 0 },
-    { day: "S", value: 0 },
+    { day: "M", value: 4500 },
+    { day: "T", value: 6200 },
+    { day: "W", value: 5100 },
+    { day: "T", value: 7800 },
+    { day: "F", value: 9200 },
+    { day: "S", value: 8400 },
+    { day: "S", value: 6800 },
   ];
 
   const chartConfig = {
@@ -52,7 +52,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   userEmail?.slice(0, 2).toUpperCase() || "U";
+                   userEmail?.slice(0, 2).toUpperCase() || "NH";
 
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
@@ -80,7 +80,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           className="inline-block mt-1 px-3 py-1 bg-secondary/80 backdrop-blur-sm rounded-full border border-border/50"
         >
           <span className="text-sm font-medium text-foreground">
-            {profile?.business_name || "Your Business"}
+            {profile?.business_name || "One Guy Can"}
           </span>
         </Link>
       </div>
@@ -102,18 +102,18 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform text-left shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20"
           >
             <p className="text-sm text-muted-foreground mb-1">Sales history</p>
-            <p className="text-sm text-foreground">No sales yet</p>
-            <p className="text-xl font-semibold text-foreground">P0.00</p>
-            <span className="text-sm text-muted-foreground">—</span>
+            <p className="text-sm text-foreground">card</p>
+            <p className="text-xl font-semibold text-foreground">- P12</p>
+            <span className="text-sm text-success font-medium">Approved</span>
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to="/dashboard/payouts" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
             <p className="text-sm text-muted-foreground mb-1">Payouts</p>
-            <p className="text-sm text-muted-foreground">No payouts yet</p>
-            <p className="text-xl font-bold text-foreground">P0.00</p>
-            <p className="text-xs text-muted-foreground">—</p>
+            <p className="text-sm text-muted-foreground">Payout</p>
+            <p className="text-xl font-bold text-foreground">P16</p>
+            <p className="text-xs text-info font-medium">9 May 2024</p>
           </Link>
           
           <Link to="/dashboard/settings" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
@@ -158,7 +158,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           
           <div className="flex items-center justify-between border-t border-border pt-3">
             <p className="text-sm text-muted-foreground">Last week</p>
-            <p className="text-lg font-bold text-primary">P0.00</p>
+            <p className="text-lg font-bold text-primary">P48,000</p>
           </div>
         </button>
 
@@ -208,7 +208,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Card machine</p>
-              <p className="text-xs text-muted-foreground">0 devices</p>
+              <p className="text-xs text-muted-foreground">4 devices</p>
             </div>
           </Link>
           

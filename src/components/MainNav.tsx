@@ -17,12 +17,12 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
   
   return (
     <header className="flex items-center justify-between px-5 md:px-20 py-4 text-foreground safe-area-top">
-      <div className="flex items-center gap-8">
-        <Link to="/" className="flex items-center">
+      <div className="flex items-center gap-10">
+        <Link to="/">
           <PataLogo className="h-5" />
         </Link>
         
-        <nav className="hidden lg:flex items-center gap-6">
+        <nav className="hidden lg:flex items-center gap-8">
           <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity">
             Products
           </Link>

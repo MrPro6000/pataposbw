@@ -28,8 +28,12 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
 
-  // Payouts from real data - empty by default
-  const payouts: { type: string; date: string; amount: string; fees: string }[] = [];
+  // Mock payouts data
+  const payouts = [
+    { type: "Payout", date: "9 May 2024", amount: "P16.34", fees: "Fees -P35.16" },
+    { type: "Instant Payout", date: "8 May 2024", amount: "-P12.45", fees: "Fees P17.25" },
+    { type: "Instant Payout", date: "8 May 2024", amount: "-P12.45", fees: "Fees P17.25" },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted to-pata-cream dark:from-background dark:to-background pb-24">
@@ -47,8 +51,8 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
 
         <div className="text-center">
           <p className="text-sm text-white/80 mb-1">Payout amount</p>
-          <p className="text-5xl font-bold text-white mb-2">P0.00</p>
-          <p className="text-sm text-white/70">No payouts yet</p>
+          <p className="text-5xl font-bold text-white mb-2">P4.34</p>
+          <p className="text-sm text-white/70">You are below the minimum payout amount</p>
         </div>
       </header>
 
@@ -69,24 +73,18 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
           </div>
           
           <div className="divide-y divide-border">
-            {payouts.length === 0 ? (
-              <div className="px-5 py-6 text-center">
-                <p className="text-sm text-muted-foreground">No payouts yet</p>
-              </div>
-            ) : (
-              payouts.map((payout, index) => (
-                <div key={index} className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
-                  <div>
-                    <p className="font-medium text-foreground">{payout.type}</p>
-                    <p className="text-sm text-muted-foreground">{payout.date}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-foreground">{payout.amount}</p>
-                    <p className="text-sm text-muted-foreground">{payout.fees}</p>
-                  </div>
+            {payouts.map((payout, index) => (
+              <div key={index} className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
+                <div>
+                  <p className="font-medium text-foreground">{payout.type}</p>
+                  <p className="text-sm text-muted-foreground">{payout.date}</p>
                 </div>
-              ))
-            )}
+                <div className="text-right">
+                  <p className="font-semibold text-foreground">{payout.amount}</p>
+                  <p className="text-sm text-muted-foreground">{payout.fees}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </Link>
       </div>

@@ -70,31 +70,31 @@ const AdminDashboard = () => {
     }
   };
 
-  // Chart data - starts at zero, populated by real data
+  // Mock data for charts
   const revenueData = [
-    { day: "Mon", value: 0 },
-    { day: "Tue", value: 0 },
-    { day: "Wed", value: 0 },
-    { day: "Thu", value: 0 },
-    { day: "Fri", value: 0 },
-    { day: "Sat", value: 0 },
-    { day: "Sun", value: 0 },
+    { day: "Mon", value: 12500 },
+    { day: "Tue", value: 18200 },
+    { day: "Wed", value: 15800 },
+    { day: "Thu", value: 22100 },
+    { day: "Fri", value: 28400 },
+    { day: "Sat", value: 24600 },
+    { day: "Sun", value: 19800 },
   ];
 
   const transactionData = [
-    { hour: "6am", value: 0 },
-    { hour: "9am", value: 0 },
-    { hour: "12pm", value: 0 },
-    { hour: "3pm", value: 0 },
-    { hour: "6pm", value: 0 },
-    { hour: "9pm", value: 0 },
+    { hour: "6am", value: 120 },
+    { hour: "9am", value: 450 },
+    { hour: "12pm", value: 680 },
+    { hour: "3pm", value: 520 },
+    { hour: "6pm", value: 780 },
+    { hour: "9pm", value: 340 },
   ];
 
   const regionData = [
-    { name: "Gaborone", value: 0 },
-    { name: "Francistown", value: 0 },
-    { name: "Maun", value: 0 },
-    { name: "Other", value: 0 },
+    { name: "Gaborone", value: 45 },
+    { name: "Francistown", value: 25 },
+    { name: "Maun", value: 15 },
+    { name: "Other", value: 15 },
   ];
 
   const COLORS = ["#00C8E6", "#6366f1", "#f59e0b", "#10b981"];
@@ -191,7 +191,7 @@ const AdminDashboard = () => {
               </BarChart>
             </ChartContainer>
           </div>
-          <p className="text-green-500 font-semibold text-lg mt-4">P 0.00</p>
+          <p className="text-green-500 font-semibold text-lg mt-4">P 141,400</p>
         </div>
 
         {/* Transaction Volume Chart */}
@@ -225,7 +225,7 @@ const AdminDashboard = () => {
               </LineChart>
             </ChartContainer>
           </div>
-          <p className="text-blue-500 font-semibold text-lg mt-4">0 transactions</p>
+          <p className="text-blue-500 font-semibold text-lg mt-4">2,890 transactions</p>
         </div>
       </div>
 
@@ -270,7 +270,26 @@ const AdminDashboard = () => {
             <Clock className="w-5 h-5 text-white/40" />
           </div>
           <div className="space-y-4">
-            <p className="text-white/40 text-sm text-center py-6">No recent activity</p>
+            {[
+              { text: "New KYC submission from user", time: "2 min ago", type: "kyc" },
+              { text: "Support ticket #1234 resolved", time: "15 min ago", type: "ticket" },
+              { text: "AML flag raised for transaction", time: "1 hr ago", type: "aml" },
+              { text: "New user registered", time: "2 hr ago", type: "user" },
+              { text: "FAQ article updated", time: "3 hr ago", type: "content" },
+            ].map((activity, index) => (
+              <div key={index} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+                <div className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${
+                    activity.type === "aml" ? "bg-red-500" :
+                    activity.type === "kyc" ? "bg-yellow-500" :
+                    activity.type === "ticket" ? "bg-purple-500" :
+                    "bg-green-500"
+                  }`}></div>
+                  <span className="text-white/80 text-sm">{activity.text}</span>
+                </div>
+                <span className="text-white/40 text-sm">{activity.time}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

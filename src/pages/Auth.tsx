@@ -66,7 +66,7 @@ const Auth = ({ mode }: AuthProps) => {
         // Check KYC status
         const { data: kyc } = await getKYCSubmission(user.id);
         
-        if (!kyc || kyc.status !== "approved") {
+        if (!kyc || kyc.status === "pending") {
           navigate("/kyc");
         } else {
           navigate("/dashboard/sales");

@@ -96,7 +96,11 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         customer: t.description?.split("•")[1]?.trim() || "Customer",
         amount: `P${Math.abs(t.amount).toFixed(2)}`,
       }))
-    : [];
+    : [
+        { status: "Draft", customer: "Sample", amount: "P12.00" },
+        { status: "Paid", customer: "Sample", amount: "P112.00" },
+        { status: "Draft", customer: "Sample", amount: "P320.00" },
+      ];
 
   const handleQuickAction = (paymentType: PaymentType) => {
     setSelectedPaymentType(paymentType);
@@ -282,9 +286,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
             className="bg-card rounded-2xl p-4 active:scale-98 transition-transform text-left"
           >
             <p className="font-semibold text-foreground mb-1">Payment Links</p>
-            <p className="text-2xl font-bold text-foreground">
-              {transactions.filter(t => t.payment_method === "payment_link" && t.status === "pending").length}
-            </p>
+            <p className="text-2xl font-bold text-foreground">13</p>
             <p className="text-sm text-muted-foreground">unpaid links</p>
           </button>
           

@@ -30,40 +30,40 @@ const AdminAnalytics = () => {
     setTimeout(() => setLoading(false), 1000);
   }, []);
 
-  // Chart data - starts at zero, populated by real data
+  // Mock data for charts
   const revenueData = [
-    { month: "Jan", revenue: 0, transactions: 0 },
-    { month: "Feb", revenue: 0, transactions: 0 },
-    { month: "Mar", revenue: 0, transactions: 0 },
-    { month: "Apr", revenue: 0, transactions: 0 },
-    { month: "May", revenue: 0, transactions: 0 },
-    { month: "Jun", revenue: 0, transactions: 0 },
+    { month: "Jan", revenue: 125000, transactions: 1200 },
+    { month: "Feb", revenue: 148000, transactions: 1450 },
+    { month: "Mar", revenue: 165000, transactions: 1580 },
+    { month: "Apr", revenue: 142000, transactions: 1320 },
+    { month: "May", revenue: 189000, transactions: 1890 },
+    { month: "Jun", revenue: 215000, transactions: 2100 },
   ];
 
   const dailyTransactions = [
-    { hour: "00:00", value: 0 },
-    { hour: "04:00", value: 0 },
-    { hour: "08:00", value: 0 },
-    { hour: "12:00", value: 0 },
-    { hour: "16:00", value: 0 },
-    { hour: "20:00", value: 0 },
-    { hour: "23:00", value: 0 },
+    { hour: "00:00", value: 45 },
+    { hour: "04:00", value: 28 },
+    { hour: "08:00", value: 156 },
+    { hour: "12:00", value: 289 },
+    { hour: "16:00", value: 312 },
+    { hour: "20:00", value: 178 },
+    { hour: "23:00", value: 89 },
   ];
 
   const paymentMethods = [
-    { name: "Card", value: 0, color: "#00C8E6" },
-    { name: "Mobile Money", value: 0, color: "#f59e0b" },
-    { name: "Cash", value: 0, color: "#10b981" },
-    { name: "Wallet", value: 0, color: "#6366f1" },
+    { name: "Card", value: 45, color: "#00C8E6" },
+    { name: "Mobile Money", value: 30, color: "#f59e0b" },
+    { name: "Cash", value: 15, color: "#10b981" },
+    { name: "Wallet", value: 10, color: "#6366f1" },
   ];
 
   const regionData = [
-    { region: "Gaborone", value: 0, users: 0 },
-    { region: "Francistown", value: 0, users: 0 },
-    { region: "Maun", value: 0, users: 0 },
-    { region: "Kasane", value: 0, users: 0 },
-    { region: "Selebi-Phikwe", value: 0, users: 0 },
-    { region: "Other", value: 0, users: 0 },
+    { region: "Gaborone", value: 45000, users: 1200 },
+    { region: "Francistown", value: 28000, users: 780 },
+    { region: "Maun", value: 18000, users: 450 },
+    { region: "Kasane", value: 12000, users: 320 },
+    { region: "Selebi-Phikwe", value: 9000, users: 280 },
+    { region: "Other", value: 15000, users: 420 },
   ];
 
   const chartConfig = {
@@ -75,33 +75,33 @@ const AdminAnalytics = () => {
   const statCards = [
     {
       title: "Total Revenue",
-      value: "P 0",
-      change: "0%",
+      value: "P 984,000",
+      change: "+12.5%",
       isPositive: true,
       icon: DollarSign,
       color: "bg-green-500/20 text-green-500",
     },
     {
       title: "Total Transactions",
-      value: "0",
-      change: "0%",
+      value: "9,540",
+      change: "+8.2%",
       isPositive: true,
       icon: CreditCard,
       color: "bg-blue-500/20 text-blue-500",
     },
     {
       title: "Active Users",
-      value: "0",
-      change: "0%",
+      value: "3,450",
+      change: "+15.3%",
       isPositive: true,
       icon: Users,
       color: "bg-purple-500/20 text-purple-500",
     },
     {
       title: "Avg. Transaction",
-      value: "P 0",
-      change: "0%",
-      isPositive: true,
+      value: "P 103.15",
+      change: "-2.1%",
+      isPositive: false,
       icon: TrendingUp,
       color: "bg-yellow-500/20 text-yellow-500",
     },

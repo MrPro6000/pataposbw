@@ -313,7 +313,9 @@ const KYC = () => {
             </div>
             <h2 className="text-xl font-semibold text-foreground mb-2">Verification Pending</h2>
             <p className="text-muted-foreground mb-6">Your KYC submission is being reviewed. You'll be notified once approved.</p>
-            <p className="text-sm text-muted-foreground">Please wait while our team reviews your documents.</p>
+            <Button onClick={() => navigate("/dashboard")} className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
+              Continue to Dashboard
+            </Button>
           </div>
         );
 
@@ -348,6 +350,9 @@ const KYC = () => {
               className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
             >
               {loading ? "Submitting..." : "Submit for Verification"}
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
+              Skip for now
             </Button>
           </div>
         );
@@ -385,6 +390,9 @@ const KYC = () => {
             >
               Continue to Selfie <ArrowRight className="w-4 h-4" />
             </Button>
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
+              Skip for now
+            </Button>
           </div>
         );
 
@@ -406,6 +414,9 @@ const KYC = () => {
             </div>
             <Button type="submit" className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2">
               Continue <ArrowRight className="w-4 h-4" />
+            </Button>
+            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
+              Skip for now
             </Button>
           </form>
         );
