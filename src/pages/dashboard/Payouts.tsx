@@ -4,6 +4,7 @@ import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import FeesDialog from "@/components/dashboard/FeesDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTransactions } from "@/hooks/useTransactions";
 import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -37,6 +38,17 @@ const Payouts = () => {
     accountHolder: "Pata Business (Pty) Ltd",
   });
   const isMobile = useIsMobile();
+  const { balance, transactions } = useTransactions();
+
+  const processingAmount = transactions
+    .filter(t => t.status === "processing")
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const paidThisMonth = transactions
+    .filter(t => t.status === "completed" && t.amount > 0 && new Date(t.created_at) >= startOfMonth)
+    .reduce((sum, t) => sum + t.amount, 0);
 
   if (isMobile) {
     return <MobileDashboardHome />;
@@ -83,7 +95,7 @@ const Payouts = () => {
             </div>
             <span className="text-muted-foreground">Available Balance</span>
           </div>
-          <p className="text-3xl font-bold">P12,450.00</p>
+          <p className="text-3xl font-bold">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           <p className="text-sm text-muted-foreground mt-2">Next payout: Monday</p>
         </div>
 
@@ -94,7 +106,7 @@ const Payouts = () => {
             </div>
             <span className="text-muted-foreground">Processing</span>
           </div>
-          <p className="text-3xl font-bold text-foreground">P5,420.00</p>
+          <p className="text-3xl font-bold text-foreground">P{processingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           <p className="text-sm text-muted-foreground mt-2">Expected in 1-2 days</p>
         </div>
 
@@ -105,8 +117,8 @@ const Payouts = () => {
             </div>
             <span className="text-muted-foreground">Paid Out (This Month)</span>
           </div>
-          <p className="text-3xl font-bold text-foreground">P67,890.00</p>
-          <p className="text-sm text-muted-foreground mt-2">4 payouts completed</p>
+          <p className="text-3xl font-bold text-foreground">P{paidThisMonth.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-sm text-muted-foreground mt-2">{transactions.filter(t => t.status === "completed" && t.amount > 0 && new Date(t.created_at) >= startOfMonth).length} payouts completed</p>
         </div>
       </div>
 

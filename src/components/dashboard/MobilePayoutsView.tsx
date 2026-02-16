@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { toast } from "sonner";
 import MobileBottomNav from "./MobileBottomNav";
+import { useTransactions } from "@/hooks/useTransactions";
 
 type PayoutStatus = "completed" | "processing";
 
@@ -34,6 +35,7 @@ const payoutsData: Payout[] = [
 
 const MobilePayoutsView = () => {
   const navigate = useNavigate();
+  const { balance, totalIncome, totalExpenses, transactions } = useTransactions();
   const [selectedPayout, setSelectedPayout] = useState<Payout | null>(null);
   const [bankSheetOpen, setBankSheetOpen] = useState(false);
   const [instantPayoutOpen, setInstantPayoutOpen] = useState(false);
@@ -45,8 +47,19 @@ const MobilePayoutsView = () => {
     accountHolder: "Pata Business (Pty) Ltd",
   });
 
-  const availableBalance = 12450;
-  const instantFee = 62.25; // 0.5% fee
+  const availableBalance = balance;
+  const processingAmount = transactions
+    .filter(t => t.status === "processing")
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+  
+  // This month's completed payouts
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+  const paidThisMonth = transactions
+    .filter(t => t.status === "completed" && t.amount > 0 && new Date(t.created_at) >= startOfMonth)
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const instantFee = Math.round(availableBalance * 0.005 * 100) / 100;
 
   const getStatusBadge = (status: PayoutStatus) => {
     if (status === "completed") {
@@ -96,7 +109,7 @@ const MobilePayoutsView = () => {
       <div className="px-5 py-4 space-y-3">
         <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-5 text-primary-foreground">
           <p className="text-sm opacity-80 mb-1">Available Balance</p>
-          <p className="text-3xl font-bold">P{availableBalance.toLocaleString()}.00</p>
+          <p className="text-3xl font-bold">P{availableBalance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           <p className="text-sm opacity-70 mt-1">Next payout: Monday</p>
         </div>
 
@@ -106,14 +119,14 @@ const MobilePayoutsView = () => {
               <Clock className="w-4 h-4 text-orange-500" />
               <span className="text-xs text-muted-foreground">Processing</span>
             </div>
-            <p className="text-lg font-bold text-foreground">P5,420.00</p>
+            <p className="text-lg font-bold text-foreground">P{processingAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           </button>
           <button onClick={() => {}} className="bg-card border border-border rounded-2xl p-4 text-left active:bg-muted/50 transition-colors">
             <div className="flex items-center gap-2 mb-2">
               <CheckCircle className="w-4 h-4 text-green-500" />
               <span className="text-xs text-muted-foreground">Paid This Month</span>
             </div>
-            <p className="text-lg font-bold text-foreground">P67,890.00</p>
+            <p className="text-lg font-bold text-foreground">P{paidThisMonth.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           </button>
         </div>
       </div>
