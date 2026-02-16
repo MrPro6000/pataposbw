@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/select";
 import PaymentFlow from "./PaymentFlow";
 import { deviceModels } from "@/data/devices";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useProducts } from "@/hooks/useProducts";
 
 interface Product {
   id: string;
@@ -36,16 +38,7 @@ interface SellProductsDialogProps {
   onClose: () => void;
 }
 
-const retailProducts: Product[] = [
-  { id: "meat", name: "Meat", price: 85, category: "Food" },
-  { id: "bread", name: "Bread", price: 12, category: "Food" },
-  { id: "milk", name: "Milk", price: 18, category: "Food" },
-  { id: "coke", name: "Coke", price: 15, category: "Beverages" },
-  { id: "sweets", name: "Sweets", price: 5, category: "Food" },
-  { id: "cabbage", name: "Cabbage", price: 10, category: "Food" },
-  { id: "cigarette", name: "Cigarette", price: 35, category: "General" },
-  { id: "cappuccino", name: "Cappuccino", price: 35, category: "Beverages" },
-];
+// No dummy products — merchants add their own via Products page
 
 const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
   id: d.id,
@@ -56,7 +49,7 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 }));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
-const categories = ["All", "Food", "Beverages", "General", "Transport", "Devices", "Services", "Custom"];
+const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
 type SubView = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "payment";
 
@@ -65,9 +58,15 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const { addTransaction } = useTransactions();
+  const { products: dbProducts } = useProducts();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
+
+  // Only show user's own products from DB
+  const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
+  const categories = [...baseCategories, ...Array.from(new Set(dbProducts.map(p => p.category))).filter(c => !baseCategories.includes(c))];
 
   const filteredProducts = retailProducts.filter(p => {
     const matchesCategory = selectedCategory === "All" || p.category === selectedCategory;
@@ -149,7 +148,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     }
   };
 
-  // Payment view - full screen
+  // Payment view
   if (subView === "payment") {
     return (
       <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
@@ -322,7 +321,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
             )}
           </div>
 
-          {/* RIGHT: Cart & Total - always visible */}
+          {/* RIGHT: Cart & Total */}
           <div className="w-80 flex-shrink-0 border-l border-border pl-6 flex flex-col overflow-hidden">
             <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               <ShoppingCart className="w-4 h-4" />
@@ -357,7 +356,6 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                   ))}
                 </div>
 
-                {/* Total & Checkout */}
                 <div className="border-t border-border pt-4 space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground">Subtotal</span>
