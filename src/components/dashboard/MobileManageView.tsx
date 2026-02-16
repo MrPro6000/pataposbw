@@ -38,9 +38,9 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
   const [sectionTitle, setSectionTitle] = useState("");
   const [profileOpen, setProfileOpen] = useState(false);
 
-  const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
+   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   userEmail?.slice(0, 2).toUpperCase() || "NH";
+                   userEmail?.slice(0, 2).toUpperCase() || "U";
 
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
@@ -114,7 +114,7 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
           className="inline-block mt-1 px-3 py-1 bg-card border border-border rounded-full"
         >
           <span className="text-sm font-medium text-foreground">
-            {profile?.business_name || "One Guy Can"}
+            {profile?.business_name || "Your Business"}
           </span>
         </button>
       </div>
@@ -138,10 +138,10 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
           {/* Products Card */}
           <Link to="/dashboard/products" className="bg-card border border-border rounded-2xl p-4 active:scale-98 transition-transform">
             <p className="font-semibold text-foreground mb-2">Products</p>
-            <p className="text-4xl font-bold text-foreground">7</p>
+            <p className="text-4xl font-bold text-foreground">0</p>
             <div className="flex items-center justify-between mt-2">
               <span className="text-sm text-muted-foreground">Categories</span>
-              <span className="text-sm font-medium text-foreground">3</span>
+              <span className="text-sm font-medium text-foreground">0</span>
             </div>
           </Link>
         </div>
@@ -176,7 +176,7 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
               </div>
               <div>
                 <p className="font-semibold text-foreground">Card machines</p>
-                <p className="text-sm text-green-500">1 active</p>
+                <p className="text-sm text-muted-foreground">0 active</p>
               </div>
             </div>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />

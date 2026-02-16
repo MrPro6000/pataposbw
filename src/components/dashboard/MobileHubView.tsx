@@ -52,7 +52,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   userEmail?.slice(0, 2).toUpperCase() || "NH";
+                   userEmail?.slice(0, 2).toUpperCase() || "U";
 
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
@@ -80,7 +80,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           className="inline-block mt-1 px-3 py-1 bg-secondary/80 backdrop-blur-sm rounded-full border border-border/50"
         >
           <span className="text-sm font-medium text-foreground">
-            {profile?.business_name || "One Guy Can"}
+            {profile?.business_name || "Your Business"}
           </span>
         </Link>
       </div>
@@ -208,7 +208,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Card machine</p>
-              <p className="text-xs text-muted-foreground">4 devices</p>
+              <p className="text-xs text-muted-foreground">0 devices</p>
             </div>
           </Link>
           
