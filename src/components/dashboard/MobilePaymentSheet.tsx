@@ -11,6 +11,7 @@ import {
   DrawerTitle,
 } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
+import { useTransactions } from "@/hooks/useTransactions";
 
 type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
 
@@ -48,6 +49,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
+  const { addTransaction } = useTransactions();
 
   const config = paymentConfig[paymentType];
   const Icon = config.icon;
@@ -70,10 +72,38 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
 
     setIsProcessing(true);
     
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
+    // Map payment type to DB fields
+    const paymentMethodMap: Record<string, string> = {
+      "card-sale": "card",
+      "payment-link": "payment_link",
+      "invoice": "invoice",
+      "cash": "cash",
+      "mobile-money": "mobile_money",
+      "wallet": "wallet",
+    };
+
+    const providerLabel = selectedProvider ? 
+      mobileMoneyProviders.find(p => p.id === selectedProvider)?.name : undefined;
+
+    const descParts = [config.title];
+    if (providerLabel) descParts.push(providerLabel);
+    if (description) descParts.push(description);
+
+    const { error } = await addTransaction({
+      type: "sale",
+      payment_method: paymentMethodMap[paymentType] || paymentType,
+      amount: parseFloat(amount),
+      description: descParts.join(" • "),
+      status: "completed",
+    });
+
     setIsProcessing(false);
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to save transaction. Please try again.", variant: "destructive" });
+      return;
+    }
+
     setIsSuccess(true);
     
     toast({

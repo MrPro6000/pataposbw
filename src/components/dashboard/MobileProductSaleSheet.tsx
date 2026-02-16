@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
+import { useTransactions } from "@/hooks/useTransactions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -66,6 +67,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const { addTransaction } = useTransactions();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
@@ -367,6 +369,15 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 total={cartTotal}
                 itemCount={cartItemCount}
                 onComplete={resetAndClose}
+                onPaymentSuccess={(method, total, desc) => {
+                  addTransaction({
+                    type: "sale",
+                    payment_method: method,
+                    amount: total,
+                    description: desc || `Product Sale • ${cartItemCount} items`,
+                    status: "completed",
+                  });
+                }}
                 onBack={() => setStep("cart")}
               />
             </div>
