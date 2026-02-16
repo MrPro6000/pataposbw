@@ -16,18 +16,18 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
   const [posOpen, setPosOpen] = useState(false);
   
   return (
-    <header className="flex items-center justify-between px-5 md:px-20 py-4 text-foreground safe-area-top">
+    <header className="flex items-center justify-between px-5 md:px-20 h-16 text-foreground safe-area-top">
       <div className="flex items-center gap-10">
-        <Link to="/">
+        <Link to="/" className="flex items-center">
           <PataLogo className="h-5" />
         </Link>
         
-        <nav className="hidden lg:flex items-center gap-8">
-          <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity">
+        <nav className="hidden lg:flex items-center gap-8 h-10">
+          <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Products
           </Link>
-          <div className="relative" onMouseEnter={() => setPosOpen(true)} onMouseLeave={() => setPosOpen(false)}>
-            <button className="text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-1">
+          <div className="relative flex items-center h-full" onMouseEnter={() => setPosOpen(true)} onMouseLeave={() => setPosOpen(false)}>
+            <button className="text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-1 leading-none h-full min-h-0">
               POS
               <ChevronDown className="w-3 h-3" />
             </button>
@@ -45,13 +45,13 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
               </div>
             )}
           </div>
-          <Link to="/business-type" className="text-sm font-medium hover:opacity-80 transition-opacity">
+          <Link to="/business-type" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Business Type
           </Link>
-          <Link to="/pricing" className="text-sm font-medium hover:opacity-80 transition-opacity">
+          <Link to="/pricing" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Pricing
           </Link>
-          <Link to="/shop" className="text-sm font-medium hover:opacity-80 transition-opacity">
+          <Link to="/shop" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Shop
           </Link>
         </nav>
