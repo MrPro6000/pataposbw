@@ -11,21 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-interface Payout {
-  id: string;
-  date: string;
-  amount: number;
-  status: "completed" | "pending" | "processing";
-  reference: string;
-}
-
-const payouts: Payout[] = [
-  { id: "PAY001", date: "2025-01-28", amount: 5420.0, status: "processing", reference: "PAYOUT-2025-001" },
-  { id: "PAY002", date: "2025-01-21", amount: 8930.0, status: "completed", reference: "PAYOUT-2025-002" },
-  { id: "PAY003", date: "2025-01-14", amount: 6780.0, status: "completed", reference: "PAYOUT-2025-003" },
-  { id: "PAY004", date: "2025-01-07", amount: 4560.0, status: "completed", reference: "PAYOUT-2025-004" },
-  { id: "PAY005", date: "2024-12-31", amount: 12340.0, status: "completed", reference: "PAYOUT-2024-052" },
-];
+// Payout history now derived from transactions
 
 const Payouts = () => {
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
@@ -179,40 +165,47 @@ const Payouts = () => {
 
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
         <div className="p-6 border-b border-border">
-          <h2 className="text-lg font-semibold text-foreground">Payout History</h2>
+          <h2 className="text-lg font-semibold text-foreground">Transaction History</h2>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-muted">
-              <tr>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Reference</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
-                <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payouts.map((payout) => (
-                <tr key={payout.id} className="border-t border-border hover:bg-muted/50">
-                  <td className="p-4">
-                    <span className="font-medium text-foreground">{payout.reference}</span>
-                  </td>
-                  <td className="p-4 text-muted-foreground">{payout.date}</td>
-                  <td className="p-4 font-semibold text-foreground">P{payout.amount.toFixed(2)}</td>
-                  <td className="p-4">
-                    <span
-                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(payout.status)}`}
-                    >
-                      {getStatusIcon(payout.status)}
-                      {payout.status}
-                    </span>
-                  </td>
+        {transactions.length === 0 ? (
+          <div className="p-12 text-center text-muted-foreground">
+            <Wallet className="w-10 h-10 mx-auto mb-3 opacity-50" />
+            <p>No transactions yet</p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted">
+                <tr>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">ID</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {transactions.slice(0, 10).map((tx) => (
+                  <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
+                    <td className="p-4">
+                      <span className="font-medium text-foreground">{tx.id.slice(0, 8)}</span>
+                    </td>
+                    <td className="p-4 text-muted-foreground">{new Date(tx.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 font-semibold text-foreground">P{tx.amount.toFixed(2)}</td>
+                    <td className="p-4">
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(tx.status)}`}
+                      >
+                        {getStatusIcon(tx.status)}
+                        {tx.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       <Dialog open={isBankModalOpen} onOpenChange={setIsBankModalOpen}>

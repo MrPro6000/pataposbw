@@ -7,13 +7,15 @@ import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import MobileWalletSheet from "@/components/dashboard/MobileWalletSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useTransactions } from "@/hooks/useTransactions";
+import { useProducts } from "@/hooks/useProducts";
+import { usePaymentLinks } from "@/hooks/usePaymentLinks";
 import { 
   TrendingUp,
   Link2,
   Package,
   Smartphone,
   ChevronRight,
-  BarChart3,
   User,
   Wallet,
   Banknote,
@@ -35,31 +37,26 @@ const DashboardHome = () => {
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
   const isMobile = useIsMobile();
+
+  const { transactions, balance, last7DaysIncome } = useTransactions();
+  const { products } = useProducts();
+  const { paymentLinks } = usePaymentLinks();
 
   useEffect(() => {
     let initialCheckDone = false;
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         setUser(session?.user ?? null);
-        // Only redirect on sign-out after initial check is done
-        if (initialCheckDone && !session?.user) {
-          navigate("/login");
-        }
+        if (initialCheckDone && !session?.user) navigate("/login");
       }
     );
-
     supabase.auth.getSession().then(({ data: { session } }) => {
       initialCheckDone = true;
       setUser(session?.user ?? null);
       setLoading(false);
-      if (!session?.user) {
-        navigate("/login");
-      }
+      if (!session?.user) navigate("/login");
     });
-
     return () => subscription.unsubscribe();
   }, [navigate]);
 
@@ -71,90 +68,55 @@ const DashboardHome = () => {
     );
   }
 
-  // Show mobile view on mobile devices
   if (isMobile) {
     return <MobileDashboardHome />;
   }
 
-  // Mini chart data for Today's sales card
-  const miniChartData = [
-    { day: "M", value: 1200 },
-    { day: "T", value: 1800 },
-    { day: "W", value: 1400 },
-    { day: "T", value: 2200 },
-    { day: "F", value: 2800 },
-    { day: "S", value: 3200 },
-    { day: "S", value: 2450 },
-  ];
+  // Build weekly chart from real transactions
+  const now = new Date();
+  const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+  const weeklyChartData = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (6 - i));
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    const dayTotal = transactions
+      .filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= dayStart && new Date(t.created_at) < dayEnd)
+      .reduce((s, t) => s + t.amount, 0);
+    return { day: dayLabels[d.getDay()], value: dayTotal };
+  });
 
-  // Weekly sales chart data
-  const weeklyChartData = [
-    { day: "M", value: 4500 },
-    { day: "T", value: 6200 },
-    { day: "W", value: 5100 },
-    { day: "T", value: 7800 },
-    { day: "F", value: 9200 },
-    { day: "S", value: 8400 },
-    { day: "S", value: 6800 },
-  ];
+  // Today's sales
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todaySales = transactions
+    .filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= todayStart)
+    .reduce((s, t) => s + t.amount, 0);
 
-  const chartConfig = {
-    value: {
-      label: "Sales",
-      color: "#0066FF",
-    },
-  };
+  // Payment method breakdowns for today
+  const todayTx = transactions.filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= todayStart);
+  const mobileMoneyTotal = todayTx.filter(t => t.payment_method === "mobile_money").reduce((s, t) => s + t.amount, 0);
+  const cashTotal = todayTx.filter(t => t.payment_method === "cash").reduce((s, t) => s + t.amount, 0);
+  const walletCardTotal = todayTx.filter(t => ["card", "wallet", "tap"].includes(t.payment_method)).reduce((s, t) => s + t.amount, 0);
 
-  const mostVisitedCards = [
-    { 
-      title: "Today's sales", 
-      value: "P 3,345.87",
-      hasChart: true,
-      link: "/dashboard/sales"
-    },
-    { 
-      title: "Mobile Money", 
-      value: "P 1,245",
-      subtitle: "28% of sales",
-      icon: Smartphone,
-      iconColor: "text-orange-500 bg-orange-500/20",
-      link: "/dashboard/sales"
-    },
-    { 
-      title: "Cash Sales", 
-      value: "P 890",
-      subtitle: "18% of sales",
-      icon: Banknote,
-      iconColor: "text-green-500 bg-green-500/20",
-      link: "/dashboard/sales"
-    },
-    { 
-      title: "Wallet & Cards", 
-      value: "P 1,210",
-      subtitle: "45% of sales",
-      icon: Wallet,
-      iconColor: "text-purple-500 bg-purple-500/20",
-      link: "/dashboard/sales"
-    },
-  ];
+  const pct = (val: number) => todaySales > 0 ? Math.round((val / todaySales) * 100) : 0;
 
-  const quickLinks = [
-    { title: "Payment Links", value: "3 unpaid", icon: Link2, link: "/dashboard/sales" },
-    { title: "Products", value: "12 active", icon: Package, link: "/dashboard/products" },
-  ];
+  const unpaidLinks = paymentLinks.filter(l => l.status === "pending").length;
+  const activeProducts = products.length;
+
+  const chartConfig = { value: { label: "Sales", color: "#0066FF" } };
 
   const quickAccessItems = [
     { title: "Mobile POS", subtitle: "Sell from your phone", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", link: "/dashboard", action: undefined },
-    { title: "Card Machine", subtitle: "4 devices", icon: Smartphone, iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400", link: "/dashboard/devices", action: undefined },
+    { title: "Card Machine", subtitle: "Manage devices", icon: Smartphone, iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400", link: "/dashboard/devices", action: undefined },
     { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-emerald-100 dark:bg-emerald-900/30", iconColor: "text-emerald-600 dark:text-emerald-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
     { title: "Send Money", subtitle: "International transfers", icon: Banknote, iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400", link: "/dashboard/payouts", action: undefined },
     { title: "Business Loan", subtitle: "Apply for funding", icon: TrendingUp, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
-    { title: "Wallet", subtitle: "P0.00 balance", icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: undefined, action: () => setWalletOpen(true) },
+    { title: "Wallet", subtitle: `P${balance.toFixed(2)} balance`, icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: undefined, action: () => setWalletOpen(true) },
   ];
 
   return (
     <DashboardLayout>
-      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-foreground">Hub</h1>
       </div>
@@ -163,65 +125,68 @@ const DashboardHome = () => {
       <section className="mb-8">
         <h2 className="text-sm text-muted-foreground mb-4">Most visited</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {mostVisitedCards.map((card) => (
-            <Link
-              key={card.title}
-              to={card.link}
-              className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group"
-            >
-              <p className="text-sm text-muted-foreground mb-3">{card.title}</p>
-              
-              {card.hasChart ? (
-                <>
-                  <div className="h-12 mb-2">
-                    <ChartContainer config={chartConfig} className="h-full w-full">
-                      <BarChart data={miniChartData} barSize={6}>
-                        <Bar 
-                          dataKey="value" 
-                          fill="#0066FF" 
-                          radius={[2, 2, 0, 0]}
-                        />
-                      </BarChart>
-                    </ChartContainer>
-                  </div>
-                  <p className="text-lg font-semibold text-foreground">{card.value}</p>
-                </>
-              ) : (
-                <>
-                  {card.icon && (
-                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center mb-2 ${card.iconColor}`}>
-                      <card.icon className="w-5 h-5" />
-                    </div>
-                  )}
-                  <p className="text-lg font-semibold text-foreground">{card.value}</p>
-                  {card.subtitle && (
-                    <p className="text-sm text-muted-foreground">{card.subtitle}</p>
-                  )}
-                </>
-              )}
-            </Link>
-          ))}
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group">
+            <p className="text-sm text-muted-foreground mb-3">Today's sales</p>
+            <div className="h-12 mb-2">
+              <ChartContainer config={chartConfig} className="h-full w-full">
+                <BarChart data={weeklyChartData} barSize={6}>
+                  <Bar dataKey="value" fill="#0066FF" radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ChartContainer>
+            </div>
+            <p className="text-lg font-semibold text-foreground">P {todaySales.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          </Link>
+
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group">
+            <p className="text-sm text-muted-foreground mb-3">Mobile Money</p>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2 text-orange-500 bg-orange-500/20">
+              <Smartphone className="w-5 h-5" />
+            </div>
+            <p className="text-lg font-semibold text-foreground">P {mobileMoneyTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <p className="text-sm text-muted-foreground">{pct(mobileMoneyTotal)}% of sales</p>
+          </Link>
+
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group">
+            <p className="text-sm text-muted-foreground mb-3">Cash Sales</p>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2 text-green-500 bg-green-500/20">
+              <Banknote className="w-5 h-5" />
+            </div>
+            <p className="text-lg font-semibold text-foreground">P {cashTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <p className="text-sm text-muted-foreground">{pct(cashTotal)}% of sales</p>
+          </Link>
+
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group">
+            <p className="text-sm text-muted-foreground mb-3">Wallet & Cards</p>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-2 text-purple-500 bg-purple-500/20">
+              <Wallet className="w-5 h-5" />
+            </div>
+            <p className="text-lg font-semibold text-foreground">P {walletCardTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            <p className="text-sm text-muted-foreground">{pct(walletCardTotal)}% of sales</p>
+          </Link>
         </div>
       </section>
 
       {/* Quick Links */}
       <section className="mb-8">
         <div className="grid grid-cols-2 gap-4">
-          {quickLinks.map((item) => (
-            <Link
-              key={item.title}
-              to={item.link}
-              className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
-            >
-              <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
-                <item.icon className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <p className="font-semibold text-foreground">{item.title}</p>
-                <p className="text-sm text-muted-foreground">{item.value}</p>
-              </div>
-            </Link>
-          ))}
+          <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+              <Link2 className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Payment Links</p>
+              <p className="text-sm text-muted-foreground">{unpaidLinks} unpaid</p>
+            </div>
+          </Link>
+          <Link to="/dashboard/products" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4">
+            <div className="w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center">
+              <Package className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Products</p>
+              <p className="text-sm text-muted-foreground">{activeProducts} active</p>
+            </div>
+          </Link>
         </div>
       </section>
 
@@ -231,11 +196,7 @@ const DashboardHome = () => {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {quickAccessItems.map((item) => 
             item.link ? (
-              <Link
-                key={item.title}
-                to={item.link}
-                className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4"
-              >
+              <Link key={item.title} to={item.link} className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4">
                 <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
                   <item.icon className={`w-6 h-6 ${item.iconColor}`} />
                 </div>
@@ -245,11 +206,7 @@ const DashboardHome = () => {
                 </div>
               </Link>
             ) : (
-              <button
-                key={item.title}
-                onClick={item.action}
-                className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4 text-left"
-              >
+              <button key={item.title} onClick={item.action} className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow flex items-center gap-4 text-left">
                 <div className={`w-12 h-12 ${item.iconBg} rounded-xl flex items-center justify-center`}>
                   <item.icon className={`w-6 h-6 ${item.iconColor}`} />
                 </div>
@@ -267,59 +224,35 @@ const DashboardHome = () => {
       <section>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm text-muted-foreground">Sales reports</h2>
-          <Link 
-            to="/dashboard/reports" 
-            className="text-sm text-primary font-medium flex items-center gap-1 hover:underline"
-          >
-            View all
-            <ChevronRight className="w-4 h-4" />
+          <Link to="/dashboard/reports" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+            View all <ChevronRight className="w-4 h-4" />
           </Link>
         </div>
 
         <div className="grid md:grid-cols-3 gap-4">
-          {/* Gross Revenue Chart */}
           <div className="bg-card rounded-2xl p-5 md:col-span-1">
             <p className="text-sm text-muted-foreground mb-1">Gross revenue</p>
-            <p className="text-xs text-muted-foreground mb-4">Last week</p>
-            
+            <p className="text-xs text-muted-foreground mb-4">Last 7 days</p>
             <div className="h-32">
               <ChartContainer config={chartConfig} className="h-full w-full">
                 <BarChart data={weeklyChartData} barSize={16}>
-                  <XAxis 
-                    dataKey="day" 
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: '#999', fontSize: 11 }}
-                  />
+                  <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{ fill: '#999', fontSize: 11 }} />
                   <ChartTooltip content={<ChartTooltipContent />} />
-                  <Bar 
-                    dataKey="value" 
-                    fill="#0066FF" 
-                    radius={[4, 4, 0, 0]}
-                  />
+                  <Bar dataKey="value" fill="#0066FF" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ChartContainer>
             </div>
-            
-            <p className="text-lg font-semibold text-foreground mt-3">P 19,789.07</p>
+            <p className="text-lg font-semibold text-foreground mt-3">P {last7DaysIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           </div>
 
-          {/* Product Report Card */}
-          <Link 
-            to="/dashboard/reports"
-            className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
-          >
+          <Link to="/dashboard/reports" className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow">
             <p className="text-sm text-muted-foreground mb-1">Product report</p>
             <div className="flex-1 flex items-center justify-center">
               <Package className="w-12 h-12 text-muted-foreground/50" />
             </div>
           </Link>
 
-          {/* Staff Report Card */}
-          <Link 
-            to="/dashboard/reports"
-            className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow"
-          >
+          <Link to="/dashboard/reports" className="bg-card rounded-2xl p-5 flex flex-col hover:shadow-md transition-shadow">
             <p className="text-sm text-muted-foreground mb-1">Staff report</p>
             <div className="flex-1 flex items-center justify-center">
               <User className="w-12 h-12 text-muted-foreground/50" />
@@ -328,23 +261,9 @@ const DashboardHome = () => {
         </div>
       </section>
 
-      {/* Payment Gateway Dialog */}
-      <PaymentGatewayDialog
-        open={paymentGatewayOpen}
-        onClose={() => setPaymentGatewayOpen(false)}
-      />
-
-      {/* Capital Dialog */}
-      <CapitalDialog
-        open={capitalOpen}
-        onClose={() => setCapitalOpen(false)}
-      />
-
-      {/* Wallet Sheet */}
-      <MobileWalletSheet
-        open={walletOpen}
-        onClose={() => setWalletOpen(false)}
-      />
+      <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
+      <CapitalDialog open={capitalOpen} onClose={() => setCapitalOpen(false)} />
+      <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
     </DashboardLayout>
   );
 };
