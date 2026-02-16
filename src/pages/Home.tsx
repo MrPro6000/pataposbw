@@ -64,7 +64,7 @@ const Home = () => {
               </div>
               <div className="space-y-3 pt-8">
                 <div className="bg-muted rounded-2xl aspect-square overflow-hidden">
-                  <img src={pataPlatinum} alt="Pata Platinum Card Machine" className="w-full h-full object-cover" />
+                  <img src={pataPlatinum} alt="Pata Platinum Card Machine" className="w-full h-full object-cover" fetchPriority="high" />
                 </div>
                 <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
                   <img
