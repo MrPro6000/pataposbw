@@ -57,17 +57,17 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
         </nav>
       </div>
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 h-10">
         <ThemeToggle className="text-foreground" />
         <ContactSalesDialog>
-          <button className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+          <button className="hidden md:flex items-center text-sm font-medium text-foreground/80 hover:text-foreground transition-colors leading-none h-full">
             Support
           </button>
         </ContactSalesDialog>
-        <Link to="/login" className="hidden md:block text-sm font-medium text-foreground/80 hover:text-foreground transition-colors">
+        <Link to="/login" className="hidden md:flex items-center text-sm font-medium text-foreground/80 hover:text-foreground transition-colors leading-none h-full">
           Login
         </Link>
-        <Link to="/signup" className={isDark ? 'pata-btn-outline-dark' : 'pata-btn-outline-light'}>
+        <Link to="/signup" className={`flex items-center ${isDark ? 'pata-btn-outline-dark' : 'pata-btn-outline-light'}`}>
           Get started
         </Link>
       </div>
