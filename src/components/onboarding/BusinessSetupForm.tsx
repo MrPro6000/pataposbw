@@ -137,11 +137,15 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
     try {
       const ext = file.name.split(".").pop();
       const filePath = `${userId}/logo_${Date.now()}.${ext}`;
+      console.log("Uploading logo to path:", filePath, "userId:", userId);
       const { error: uploadError } = await supabase.storage
         .from("avatars")
         .upload(filePath, file, { cacheControl: "3600", upsert: true });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error("Logo upload error:", uploadError);
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from("avatars")
