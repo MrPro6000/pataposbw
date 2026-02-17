@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBusinessProfile } from "@/integrations/firebase/firestore";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PataLogo from "@/components/PataLogo";
@@ -252,9 +251,18 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         termsAcceptedAt: new Date().toISOString(),
       };
 
-      const { error } = await createBusinessProfile(userId, businessData);
+      // Save business profile to Supabase profiles table
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          business_name: businessData.businessName,
+          phone: businessData.contactPhone ? `+267${businessData.contactPhone}` : undefined,
+          email: businessData.contactEmail || undefined,
+          avatar_url: businessData.logoUrl || undefined,
+        })
+        .eq("user_id", userId);
 
-      if (error) throw new Error(error);
+      if (error) throw new Error(error.message);
 
       toast({
         title: "Business setup complete!",
