@@ -366,12 +366,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 total={cartTotal}
                 itemCount={cartItemCount}
                 onComplete={resetAndClose}
-                onPaymentSuccess={async (method, total, desc) => {
+                onPaymentSuccess={async (method, totalAmount) => {
+                  const itemNames = cart.map(i => i.quantity > 1 ? `${i.name} x${i.quantity}` : i.name).join(", ");
+                  const methodLabel = method === "mobile_money" ? "Mobile Money" : method === "payment_link" ? "Payment Link" : method.charAt(0).toUpperCase() + method.slice(1);
                   await addTransaction({
                     type: "sale",
                     payment_method: method,
-                    amount: total,
-                    description: desc || `Product Sale • ${cartItemCount} items`,
+                    amount: totalAmount,
+                    description: `${itemNames} • ${methodLabel}`,
                     status: "completed",
                   });
                 }}
