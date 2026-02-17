@@ -70,7 +70,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [productSaleOpen, setProductSaleOpen] = useState(false);
   const [invoiceSheetOpen, setInvoiceSheetOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
-  const { transactions, last7DaysIncome } = useTransactions();
+  const { transactions, last7DaysIncome, balance } = useTransactions();
   const { invoices } = useInvoices();
   const { paymentLinks } = usePaymentLinks();
   
@@ -120,10 +120,10 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         </div>
 
         <div className="text-center">
-          <p className="text-sm text-muted-foreground mb-1">Last 7 days</p>
-          <p className="text-5xl font-bold text-foreground mb-2">P{last7DaysIncome.toFixed(2)}</p>
+          <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
+          <p className="text-5xl font-bold text-foreground mb-2">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           <p className="text-sm text-muted-foreground">
-            {last7DaysIncome > 0 ? "Keep it going!" : "Today's the day to make things happen."}
+            Last 7 days: P{last7DaysIncome.toFixed(2)}
           </p>
         </div>
       </header>
