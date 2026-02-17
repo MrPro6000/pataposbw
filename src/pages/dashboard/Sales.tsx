@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import PaymentFlow from "@/components/dashboard/PaymentFlow";
+import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { usePaymentLinks } from "@/hooks/usePaymentLinks";
 import { useInvoices } from "@/hooks/useInvoices";
+import { useProducts } from "@/hooks/useProducts";
 import {
   Search,
   Download,
@@ -26,6 +29,8 @@ import {
   ExternalLink,
   CheckCircle,
   X,
+  ChevronRight,
+  Package,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -73,8 +78,9 @@ const Sales = () => {
   const isMobile = useIsMobile();
   const { toast } = useToast();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
+  const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
 
-  const { transactions, addTransaction } = useTransactions();
+  const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
   const { invoices: dbInvoices, createInvoice } = useInvoices();
 
@@ -323,8 +329,20 @@ const Sales = () => {
   const config = getPaymentTypeConfig(paymentType);
   const PaymentIcon = config.icon;
 
+  // Recent 3 transactions for sales history preview
+  const recentSales = transactions.slice(0, 3);
+  const recentInvoices = dbInvoices.slice(0, 3);
+  const pendingLinksCount = dbPaymentLinks.filter(l => l.status === "pending").length;
+
   return (
     <DashboardLayout>
+      {/* Available Balance Header */}
+      <div className="bg-card border border-border rounded-2xl p-6 mb-6 text-center">
+        <p className="text-sm text-muted-foreground mb-1">Available Balance</p>
+        <p className="text-5xl font-bold text-foreground mb-2">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+        <p className="text-sm text-muted-foreground">Last 7 days: P{last7DaysIncome.toFixed(2)}</p>
+      </div>
+
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
@@ -419,7 +437,107 @@ const Sales = () => {
             <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
           </Button>
+      </div>
+
+      {/* Products Quick View */}
+      <div className="bg-card border border-border rounded-2xl p-5 mb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-semibold text-foreground">Products</h2>
+          <Link to="/dashboard/products" className="text-sm text-primary font-medium flex items-center gap-1 hover:underline">
+            Manage <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+            <Package className="w-5 h-5 text-primary" />
+          </div>
+          <div>
+            <p className="font-medium text-foreground">Manage Products</p>
+            <p className="text-sm text-muted-foreground">Add, edit, and view inventory</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Sales History & Invoices Preview */}
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        {/* Sales History Card */}
+        <div className="bg-card border border-border rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Sales History</h2>
+          </div>
+          {recentSales.length > 0 ? (
+            <div className="divide-y divide-border">
+              {recentSales.map((tx) => (
+                <div key={tx.id} className="flex items-center justify-between px-5 py-4 hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedTransaction(tx)}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                      {getTypeIcon(tx.type)}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">{paymentTypeLabels[tx.type] || tx.type}</p>
+                      <p className="text-sm text-muted-foreground capitalize">{tx.status}</p>
+                    </div>
+                  </div>
+                  <p className="font-semibold text-foreground">P{tx.amount.toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-6 text-center text-muted-foreground">
+              <p className="text-sm">No transactions yet</p>
+            </div>
+          )}
+        </div>
+
+        {/* Invoices Card */}
+        <div className="bg-card border border-border rounded-2xl overflow-hidden">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+            <h2 className="font-semibold text-foreground">Invoices</h2>
+            <Button variant="ghost" size="sm" onClick={() => setInvoiceDialogOpen(true)}>
+              <Plus className="w-4 h-4 mr-1" /> New
+            </Button>
+          </div>
+          {recentInvoices.length > 0 ? (
+            <div className="divide-y divide-border">
+              {recentInvoices.map((inv) => (
+                <div key={inv.id} className="flex items-center justify-between px-5 py-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                      <FileText className="w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <span className="text-sm text-foreground capitalize">{inv.status} • {inv.customer_name}</span>
+                  </div>
+                  <p className="font-semibold text-foreground">P{inv.amount.toFixed(2)}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="px-5 py-6 text-center text-muted-foreground">
+              <p className="text-sm">No invoices yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Payment Links & Payment Gateway Cards */}
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <button onClick={() => setPaymentLinkDialogOpen(true)} className="bg-card border border-border rounded-2xl p-5 text-left hover:bg-muted/50 transition-colors">
+          <p className="font-semibold text-foreground mb-1">Payment Links</p>
+          <p className="text-3xl font-bold text-foreground">{pendingLinksCount}</p>
+          <p className="text-sm text-muted-foreground">pending links</p>
+        </button>
+        <button onClick={() => setPaymentGatewayOpen(true)} className="bg-card border border-border rounded-2xl p-5 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+              <Globe className="w-5 h-5 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Payment Gateway</p>
+              <p className="text-sm text-muted-foreground">Add the Pata Payment gateway to your online store</p>
+            </div>
+          </div>
+        </button>
+      </div>
       </div>
 
       {/* Tabs */}
@@ -896,6 +1014,7 @@ const Sales = () => {
       </Dialog>
 
       <SellProductsDialog open={sellProductsOpen} onClose={() => setSellProductsOpen(false)} />
+      <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
     </DashboardLayout>
   );
 };
