@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Zap, Percent, Send, Smartphone } from "lucide-react";
+import { ChevronRight, Zap, Percent, Send, Smartphone, Wallet } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
 import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
+import MobileWalletSheet from "./MobileWalletSheet";
 import PataLogo from "@/components/PataLogo";
+import { useTransactions } from "@/hooks/useTransactions";
 
 interface MobileMoneyViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -20,6 +22,8 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
+  const { balance, transactions } = useTransactions();
 
   const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
                    profile?.full_name?.slice(0, 2).toUpperCase() || 
@@ -28,12 +32,13 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
 
-  // Mock payouts data
-  const payouts = [
-    { type: "Payout", date: "9 May 2024", amount: "P16.34", fees: "Fees -P35.16" },
-    { type: "Instant Payout", date: "8 May 2024", amount: "-P12.45", fees: "Fees P17.25" },
-    { type: "Instant Payout", date: "8 May 2024", amount: "-P12.45", fees: "Fees P17.25" },
-  ];
+  // Recent payouts from real transactions
+  const recentPayouts = transactions.slice(0, 3).map(tx => ({
+    type: tx.payment_method === "payout" ? "Withdrawal" : tx.payment_method === "card" ? "Card Sale" : tx.payment_method === "mobile_money" ? "Mobile Money" : tx.type,
+    date: new Date(tx.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+    amount: `${tx.amount < 0 ? "-" : ""}P${Math.abs(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    status: tx.status,
+  }));
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-muted to-pata-cream dark:from-background dark:to-background pb-24">
@@ -50,17 +55,20 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </div>
 
         <div className="text-center">
-          <p className="text-sm text-white/80 mb-1">Payout amount</p>
-          <p className="text-5xl font-bold text-white mb-2">P4.34</p>
-          <p className="text-sm text-white/70">You are below the minimum payout amount</p>
+          <p className="text-sm text-white/80 mb-1">Available Balance</p>
+          <p className="text-5xl font-bold text-white mb-2">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+          <p className="text-sm text-white/70">Withdraw to bank or mobile money</p>
         </div>
       </header>
 
-      {/* Instant Payout Button */}
+      {/* Wallet Button */}
       <div className="px-5 py-4 -mt-4">
-        <button className="w-full bg-card rounded-2xl py-4 flex items-center justify-center gap-2 text-foreground active:bg-muted transition-colors shadow-sm border border-border/50 font-medium">
-          <Zap className="w-5 h-5 text-warning" />
-          <span>Instant payout</span>
+        <button
+          onClick={() => setWalletOpen(true)}
+          className="w-full bg-card rounded-2xl py-4 flex items-center justify-center gap-2 text-foreground active:bg-muted transition-colors shadow-sm border border-border/50 font-medium"
+        >
+          <Wallet className="w-5 h-5 text-primary" />
+          <span>Wallet & Connected Accounts</span>
         </button>
       </div>
 
@@ -68,24 +76,30 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
       <div className="px-5 py-2">
         <Link to="/dashboard/payout-history" className="block bg-card rounded-2xl overflow-hidden active:scale-98 transition-transform shadow-sm border border-border/50">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-gradient-to-r from-card to-muted/30">
-            <h2 className="font-semibold text-foreground">Payouts</h2>
+            <h2 className="font-semibold text-foreground">Recent Payouts</h2>
             <ChevronRight className="w-5 h-5 text-muted-foreground" />
           </div>
           
-          <div className="divide-y divide-border">
-            {payouts.map((payout, index) => (
-              <div key={index} className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
-                <div>
-                  <p className="font-medium text-foreground">{payout.type}</p>
-                  <p className="text-sm text-muted-foreground">{payout.date}</p>
+          {recentPayouts.length === 0 ? (
+            <div className="px-5 py-6 text-center text-muted-foreground">
+              <p className="text-sm">No transactions yet</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-border">
+              {recentPayouts.map((payout, index) => (
+                <div key={index} className="flex items-center justify-between px-5 py-4 hover:bg-muted/30 transition-colors">
+                  <div>
+                    <p className="font-medium text-foreground">{payout.type}</p>
+                    <p className="text-sm text-muted-foreground">{payout.date}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-semibold text-foreground">{payout.amount}</p>
+                    <p className="text-xs text-muted-foreground capitalize">{payout.status}</p>
+                  </div>
                 </div>
-                <div className="text-right">
-                  <p className="font-semibold text-foreground">{payout.amount}</p>
-                  <p className="text-sm text-muted-foreground">{payout.fees}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </Link>
       </div>
 
@@ -161,39 +175,13 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </button>
       </div>
 
-      {/* Fees Sheet */}
-      <MobileFeesSheet
-        open={feesOpen}
-        onClose={() => setFeesOpen(false)}
-      />
+      <MobileFeesSheet open={feesOpen} onClose={() => setFeesOpen(false)} />
+      <MobileCapitalSheet open={capitalOpen} onClose={() => setCapitalOpen(false)} />
+      <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
+      <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
+      <MobileLoanApplicationSheet open={loanApplicationOpen} onClose={() => setLoanApplicationOpen(false)} />
+      <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
 
-      {/* Capital Sheet */}
-      <MobileCapitalSheet
-        open={capitalOpen}
-        onClose={() => setCapitalOpen(false)}
-      />
-
-      {/* Profile Sheet */}
-      <MobileProfileSheet
-        open={profileOpen}
-        onClose={() => setProfileOpen(false)}
-        profile={profile}
-        userEmail={userEmail}
-      />
-
-      {/* Money Transfer Sheet */}
-      <MobileMoneyTransferSheet
-        open={moneyTransferOpen}
-        onClose={() => setMoneyTransferOpen(false)}
-      />
-
-      {/* Loan Application Sheet */}
-      <MobileLoanApplicationSheet
-        open={loanApplicationOpen}
-        onClose={() => setLoanApplicationOpen(false)}
-      />
-
-      {/* Bottom Navigation */}
       <MobileBottomNav />
     </div>
   );
