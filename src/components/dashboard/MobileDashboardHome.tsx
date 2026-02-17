@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { User as SupabaseUser } from "@supabase/supabase-js";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect } from "react";
 import MobileHubView from "./MobileHubView";
 import MobileSalesView from "./MobileSalesView";
 import MobileMoneyView from "./MobileMoneyView";
@@ -17,47 +16,15 @@ import MobileTransportView from "./MobileTransportView";
 import MobilePayoutsView from "./MobilePayoutsView";
 
 const MobileDashboardHome = () => {
-  const [user, setUser] = useState<SupabaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<{ full_name: string | null; business_name: string | null; avatar_url: string | null; phone: string | null } | null>(null);
+  const { user, userProfile, loading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    let initialCheckDone = false;
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setUser(session?.user ?? null);
-        if (initialCheckDone && !session?.user) {
-          navigate("/login");
-        }
-      }
-    );
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      initialCheckDone = true;
-      setUser(session?.user ?? null);
-      setLoading(false);
-      if (!session?.user) {
-        navigate("/login");
-      } else {
-        fetchProfile(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate]);
-
-  const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from("profiles")
-      .select("full_name, business_name, avatar_url, phone")
-      .eq("user_id", userId)
-      .maybeSingle();
-    
-    setProfile(data);
-  };
+    if (!loading && !user) {
+      navigate("/login");
+    }
+  }, [loading, user, navigate]);
 
   if (loading) {
     return (
@@ -67,72 +34,45 @@ const MobileDashboardHome = () => {
     );
   }
 
-  const profileProps = { profile, userEmail: user?.email, userId: user?.id, onProfileUpdated: () => user && fetchProfile(user.id) };
+  if (!user) return null;
+
+  const profile = userProfile ? {
+    full_name: userProfile.full_name,
+    business_name: userProfile.business_name,
+    avatar_url: userProfile.avatar_url ?? null,
+    phone: userProfile.phone ?? null,
+  } : null;
+
+  const profileProps = {
+    profile,
+    userEmail: user.email,
+    userId: user.id,
+    onProfileUpdated: () => {},
+  };
+
   const pathname = location.pathname;
 
-  // Route to appropriate mobile view based on current path
-  // Hub route
-  if (pathname === "/dashboard/hub") {
-    return <MobileHubView profile={profile} userEmail={user?.email} />;
-  }
-
-  // Sales tab routes
-  if (pathname === "/dashboard/sales") {
+  const renderView = () => {
+    if (pathname === "/dashboard/hub") return <MobileHubView profile={profile} userEmail={user.email} />;
+    if (pathname === "/dashboard/payouts") return <MobileMoneyView {...profileProps} />;
+    if (pathname === "/dashboard/payout-history") return <MobilePayoutsView />;
+    if (pathname === "/dashboard/reports") return <MobileReportsView {...profileProps} />;
+    if (pathname === "/dashboard/settings") return <MobileSettingsView {...profileProps} />;
+    if (pathname === "/dashboard/devices") return <MobileDevicesView {...profileProps} />;
+    if (pathname === "/dashboard/staff") return <MobileStaffView {...profileProps} />;
+    if (pathname === "/dashboard/products") return <MobileProductsView {...profileProps} />;
+    if (pathname === "/dashboard/customers") return <MobileCustomersView {...profileProps} />;
+    if (pathname === "/dashboard/support") return <MobileSupportView {...profileProps} />;
+    if (pathname === "/dashboard/transport") return <MobileTransportView />;
+    // Default: Sales view
     return <MobileSalesView {...profileProps} />;
-  }
-  
-  // Money tab routes
-  if (pathname === "/dashboard/payouts") {
-    return <MobileMoneyView {...profileProps} />;
-  }
+  };
 
-  // Payout history detail view
-  if (pathname === "/dashboard/payout-history") {
-    return <MobilePayoutsView />;
-  }
-  
-  // Reports route
-  if (pathname === "/dashboard/reports") {
-    return <MobileReportsView {...profileProps} />;
-  }
-  
-  // Settings route
-  if (pathname === "/dashboard/settings") {
-    return <MobileSettingsView {...profileProps} />;
-  }
-  
-  // Devices route
-  if (pathname === "/dashboard/devices") {
-    return <MobileDevicesView {...profileProps} />;
-  }
-  
-  // Staff route
-  if (pathname === "/dashboard/staff") {
-    return <MobileStaffView {...profileProps} />;
-  }
-  
-  // Products route
-  if (pathname === "/dashboard/products") {
-    return <MobileProductsView {...profileProps} />;
-  }
-  
-  // Customers route
-  if (pathname === "/dashboard/customers") {
-    return <MobileCustomersView {...profileProps} />;
-  }
-  
-  // Support route
-  if (pathname === "/dashboard/support") {
-    return <MobileSupportView {...profileProps} />;
-  }
-
-  // Transport route
-  if (pathname === "/dashboard/transport") {
-    return <MobileTransportView />;
-  }
-
-  // Default: Sales view for /dashboard and other routes
-  return <MobileSalesView {...profileProps} />;
+  return (
+    <div key={pathname} className="animate-fade-in">
+      {renderView()}
+    </div>
+  );
 };
 
 export default MobileDashboardHome;
