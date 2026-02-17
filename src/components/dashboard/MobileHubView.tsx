@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet, Send, Banknote } from "lucide-react";
+import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet, Send, Banknote, CheckCircle, RefreshCw } from "lucide-react";
 import {
   ChartContainer,
 } from "@/components/ui/chart";
@@ -16,13 +16,14 @@ import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
 import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
 import PataLogo from "@/components/PataLogo";
-
+import { useTransactions } from "@/hooks/useTransactions";
 interface MobileHubViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
   userEmail?: string;
 }
 
 const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
+  const { transactions, balance, last7DaysIncome } = useTransactions();
   const [productReportOpen, setProductReportOpen] = useState(false);
   const [staffReportOpen, setStaffReportOpen] = useState(false);
   const [revenueReportOpen, setRevenueReportOpen] = useState(false);
@@ -35,24 +36,31 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
 
-  // Chart data - show sample stats by default
-  const weeklyChartData = [
-    { day: "M", value: 4500 },
-    { day: "T", value: 6200 },
-    { day: "W", value: 5100 },
-    { day: "T", value: 7800 },
-    { day: "F", value: 9200 },
-    { day: "S", value: 8400 },
-    { day: "S", value: 6800 },
-  ];
+  // Build weekly chart from real transactions
+  const now = new Date();
+  const dayLabels = ["S", "M", "T", "W", "T", "F", "S"];
+  const weeklyChartData = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() - (6 - i));
+    const dayStart = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dayEnd = new Date(dayStart);
+    dayEnd.setDate(dayEnd.getDate() + 1);
+    const dayTotal = transactions
+      .filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= dayStart && new Date(t.created_at) < dayEnd)
+      .reduce((s, t) => s + t.amount, 0);
+    return { day: dayLabels[d.getDay()], value: dayTotal };
+  });
 
   const chartConfig = {
     value: { label: "Revenue", color: "#0066FF" },
   };
 
-  const initials = profile?.business_name?.slice(0, 2).toUpperCase() || 
-                   profile?.full_name?.slice(0, 2).toUpperCase() || 
-                   userEmail?.slice(0, 2).toUpperCase() || "NH";
+  // Today's completed sales count
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todaySalesCount = transactions.filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= todayStart).length;
+
+  // Most recent transaction for sales history preview
+  const recentTx = transactions[0];
 
   const personalInitials = profile?.full_name?.slice(0, 2).toUpperCase() || 
                            userEmail?.slice(0, 2).toUpperCase() || "U";
@@ -75,25 +83,27 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       {/* Hub Title */}
       <div className="px-5 py-4">
         <h1 className="text-2xl font-bold text-foreground">Hub</h1>
-        <Link 
-          to="/dashboard/settings"
-          className="inline-block mt-1 px-3 py-1 bg-secondary/80 backdrop-blur-sm rounded-full border border-border/50"
-        >
-          <span className="text-sm font-medium text-foreground">
-            {profile?.business_name || "One Guy Can"}
-          </span>
-        </Link>
+        {profile?.business_name && (
+          <Link 
+            to="/dashboard/settings"
+            className="inline-block mt-1 px-3 py-1 bg-secondary/80 backdrop-blur-sm rounded-full border border-border/50"
+          >
+            <span className="text-sm font-medium text-foreground">
+              {profile.business_name}
+            </span>
+          </Link>
+        )}
       </div>
 
       {/* Stats Cards - 2x2 Grid with colored accents */}
       <div className="px-5">
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to="/dashboard/sales" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
-            <p className="text-sm text-muted-foreground mb-1">Sales made</p>
-            <p className="text-3xl font-bold text-foreground mb-auto">0</p>
+            <p className="text-sm text-muted-foreground mb-1">Sales today</p>
+            <p className="text-3xl font-bold text-foreground mb-auto">{todaySalesCount}</p>
             <div className="flex items-center gap-1">
               <span className="w-2 h-2 rounded-full bg-success"></span>
-              <p className="text-xs text-muted-foreground">Last week</p>
+              <p className="text-xs text-muted-foreground">transactions</p>
             </div>
           </Link>
           
@@ -101,19 +111,24 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             onClick={() => setSalesHistoryOpen(true)}
             className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform text-left shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20"
           >
-            <p className="text-sm text-muted-foreground mb-1">Sales history</p>
-            <p className="text-sm text-foreground">card</p>
-            <p className="text-xl font-semibold text-foreground">- P12</p>
-            <span className="text-sm text-success font-medium">Approved</span>
+            <p className="text-sm text-muted-foreground mb-1">Latest sale</p>
+            {recentTx ? (
+              <>
+                <p className="text-sm text-foreground">{recentTx.payment_method === "mobile_money" ? "Mobile Money" : recentTx.payment_method === "card" ? "Card" : recentTx.payment_method}</p>
+                <p className="text-xl font-semibold text-foreground">P{recentTx.amount.toFixed(2)}</p>
+                <span className="text-sm text-success font-medium">{recentTx.status === "completed" ? "Approved" : "Pending"}</span>
+              </>
+            ) : (
+              <p className="text-sm text-muted-foreground mt-auto">No sales yet</p>
+            )}
           </button>
         </div>
 
         <div className="grid grid-cols-2 gap-3 mb-4">
           <Link to="/dashboard/payouts" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
-            <p className="text-sm text-muted-foreground mb-1">Payouts</p>
-            <p className="text-sm text-muted-foreground">Payout</p>
-            <p className="text-xl font-bold text-foreground">P16</p>
-            <p className="text-xs text-info font-medium">9 May 2024</p>
+            <p className="text-sm text-muted-foreground mb-1">Balance</p>
+            <p className="text-xl font-bold text-foreground">P{balance.toFixed(2)}</p>
+            <p className="text-xs text-muted-foreground mt-auto">Available</p>
           </Link>
           
           <Link to="/dashboard/settings" className="bg-card rounded-2xl p-4 min-h-[110px] flex flex-col active:scale-98 transition-transform shadow-sm border border-border/50 hover:shadow-md hover:border-primary/20">
@@ -157,8 +172,8 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           </div>
           
           <div className="flex items-center justify-between border-t border-border pt-3">
-            <p className="text-sm text-muted-foreground">Last week</p>
-            <p className="text-lg font-bold text-primary">P48,000</p>
+            <p className="text-sm text-muted-foreground">Last 7 days</p>
+            <p className="text-lg font-bold text-primary">P{last7DaysIncome.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
           </div>
         </button>
 
@@ -260,7 +275,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
             </div>
             <div>
               <p className="font-semibold text-foreground text-sm">Wallet</p>
-              <p className="text-xs text-muted-foreground">P0.00 balance</p>
+              <p className="text-xs text-muted-foreground">P{balance.toFixed(2)} balance</p>
             </div>
           </button>
         </div>

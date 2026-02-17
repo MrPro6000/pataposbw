@@ -2,6 +2,7 @@ import { useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
+import PaymentFlow from "@/components/dashboard/PaymentFlow";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { usePaymentLinks } from "@/hooks/usePaymentLinks";
@@ -61,6 +62,10 @@ const Sales = () => {
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("transactions");
+  const [paymentFlowOpen, setPaymentFlowOpen] = useState(false);
+  const [paymentFlowAmount, setPaymentFlowAmount] = useState("");
+  const [paymentFlowDescription, setPaymentFlowDescription] = useState("");
+  const [paymentFlowStep, setPaymentFlowStep] = useState<"amount" | "flow">("amount");
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [paymentType, setPaymentType] = useState<PaymentType>("card");
   const [paymentLinkDialogOpen, setPaymentLinkDialogOpen] = useState(false);
@@ -170,6 +175,24 @@ const Sales = () => {
     const matchesType = typeFilter === "all" || tx.type === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  const openPaymentFlow = (type: PaymentType) => {
+    setPaymentType(type);
+    setPaymentFlowAmount("");
+    setPaymentFlowDescription("");
+    setPaymentFlowStep("amount");
+    setPaymentFlowOpen(true);
+  };
+
+  const handlePaymentFlowSuccess = async (method: string, total: number, desc?: string) => {
+    await addTransaction({
+      type: "sale",
+      payment_method: method,
+      amount: total,
+      description: desc || `${method} sale`,
+      status: "completed",
+    });
+  };
 
   const openPaymentDialog = (type: PaymentType) => {
     setPaymentType(type);
@@ -346,7 +369,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("mobile-money")}
+            onClick={() => openPaymentFlow("mobile-money")}
           >
             <Smartphone className="w-5 h-5" />
             <span className="text-xs">Mobile Money</span>
@@ -355,7 +378,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("card")}
+            onClick={() => openPaymentFlow("card")}
           >
             <CreditCard className="w-5 h-5" />
             <span className="text-xs">Card Sale</span>
@@ -373,7 +396,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("cash")}
+            onClick={() => openPaymentFlow("cash")}
           >
             <Banknote className="w-5 h-5" />
             <span className="text-xs">Cash</span>
@@ -391,7 +414,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentDialog("wallet")}
+            onClick={() => openPaymentFlow("wallet")}
           >
             <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
@@ -706,9 +729,9 @@ const Sales = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Payment Dialog */}
-      <Dialog open={paymentDialogOpen} onOpenChange={setPaymentDialogOpen}>
-        <DialogContent className="max-w-md">
+      {/* PaymentFlow Dialog - animated payment experience */}
+      <Dialog open={paymentFlowOpen} onOpenChange={(o) => { if (!o) { setPaymentFlowOpen(false); setPaymentFlowStep("amount"); } }}>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
               <div className={`w-10 h-10 ${config.color} rounded-xl flex items-center justify-center`}>
@@ -718,100 +741,56 @@ const Sales = () => {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-5">
-            {isSuccess ? (
-              <div className="flex flex-col items-center justify-center py-10">
-                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
-                  <CheckCircle className="w-10 h-10 text-green-500" />
-                </div>
-                <p className="text-xl font-bold text-foreground">Payment Successful!</p>
-                <p className="text-muted-foreground">P{parseFloat(amount || "0").toFixed(2)}</p>
+          {paymentFlowStep === "amount" ? (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label>Amount (P)</Label>
+                <Input
+                  type="number"
+                  placeholder="0.00"
+                  value={paymentFlowAmount}
+                  onChange={(e) => setPaymentFlowAmount(e.target.value)}
+                  className="text-2xl font-bold h-14 text-center"
+                />
               </div>
-            ) : (
-              <>
-                <div className="space-y-2">
-                  <Label>Amount (P)</Label>
-                  <Input
-                    type="number"
-                    placeholder="0.00"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    className="text-2xl font-bold h-14 text-center"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Description (optional)</Label>
-                  <Input
-                    placeholder="What is this payment for?"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
-                </div>
-
-                {paymentType === "mobile-money" && (
-                  <div className="space-y-3">
-                    <Label>Select Provider</Label>
-                    <div className="grid grid-cols-2 gap-3">
-                      {mobileMoneyProviders.map((provider) => (
-                        <button
-                          key={provider.id}
-                          onClick={() => setSelectedProvider(provider.id)}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            selectedProvider === provider.id ? "border-primary bg-primary/10" : "border-border bg-card"
-                          }`}
-                        >
-                          <div className={`w-8 h-8 ${provider.color} rounded-lg mb-2`} />
-                          <p className="text-sm font-medium text-foreground">{provider.name}</p>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {paymentType === "mobile-money" && (
-                  <div className="space-y-2">
-                    <Label>Customer Phone</Label>
-                    <Input
-                      type="tel"
-                      placeholder="+267 71 234 5678"
-                      value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
-                    />
-                  </div>
-                )}
-
-                {paymentType === "card" && (
-                  <div className="bg-muted rounded-xl p-4">
-                    <p className="text-sm text-muted-foreground">
-                      Enter the amount and tap your card machine to complete the transaction.
-                    </p>
-                  </div>
-                )}
-
-                {paymentType === "cash" && (
-                  <div className="bg-muted rounded-xl p-4">
-                    <p className="text-sm text-muted-foreground">Record cash received from the customer.</p>
-                  </div>
-                )}
-
-                <Button
-                  onClick={handlePaymentSubmit}
-                  disabled={isProcessing}
-                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-                >
-                  {isProcessing ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin w-5 h-5 border-2 border-white border-t-transparent rounded-full" />
-                      Processing...
-                    </div>
-                  ) : (
-                    `Process ${config.title}`
-                  )}
-                </Button>
-              </>
-            )}
-          </div>
+              <div className="space-y-2">
+                <Label>Description (optional)</Label>
+                <Input
+                  placeholder="What is this payment for?"
+                  value={paymentFlowDescription}
+                  onChange={(e) => setPaymentFlowDescription(e.target.value)}
+                />
+              </div>
+              <Button
+                onClick={() => {
+                  if (!paymentFlowAmount || parseFloat(paymentFlowAmount) <= 0) {
+                    toast({ title: "Error", description: "Please enter a valid amount", variant: "destructive" });
+                    return;
+                  }
+                  setPaymentFlowStep("flow");
+                }}
+                className="w-full h-12 font-semibold"
+              >
+                Continue to Payment
+              </Button>
+            </div>
+          ) : (
+            <PaymentFlow
+              total={parseFloat(paymentFlowAmount)}
+              itemCount={1}
+              onComplete={() => {
+                setPaymentFlowOpen(false);
+                setPaymentFlowStep("amount");
+              }}
+              onPaymentSuccess={(method, total, desc) => {
+                const fullDesc = paymentFlowDescription
+                  ? `${desc || method} • ${paymentFlowDescription}`
+                  : desc || `${method} sale`;
+                handlePaymentFlowSuccess(method, total, fullDesc);
+              }}
+              onBack={() => setPaymentFlowStep("amount")}
+            />
+          )}
         </DialogContent>
       </Dialog>
 

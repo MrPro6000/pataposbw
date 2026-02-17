@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import MobileBottomNav from "./MobileBottomNav";
 import { useTransactions } from "@/hooks/useTransactions";
 
-type PayoutStatus = "completed" | "processing";
+type PayoutStatus = "completed" | "processing" | "pending";
 
 interface Payout {
   id: string;
@@ -18,20 +18,9 @@ interface Payout {
   amount: string;
   amountNum: number;
   status: PayoutStatus;
-  reference: string;
-  bankName: string;
-  accountEnding: string;
-  fees: string;
+  description: string | null;
+  payment_method: string;
 }
-
-const payoutsData: Payout[] = [
-  { id: "PAY001", type: "Payout", date: "28 Jan 2025", amount: "P5,420.00", amountNum: 5420, status: "processing", reference: "PAYOUT-2025-001", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY002", type: "Payout", date: "21 Jan 2025", amount: "P8,930.00", amountNum: 8930, status: "completed", reference: "PAYOUT-2025-002", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY003", type: "Instant Payout", date: "14 Jan 2025", amount: "P6,780.00", amountNum: 6780, status: "completed", reference: "PAYOUT-2025-003", bankName: "First National Bank", accountEnding: "4532", fees: "P35.00" },
-  { id: "PAY004", type: "Payout", date: "7 Jan 2025", amount: "P4,560.00", amountNum: 4560, status: "completed", reference: "PAYOUT-2025-004", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY005", type: "Payout", date: "31 Dec 2024", amount: "P12,340.00", amountNum: 12340, status: "completed", reference: "PAYOUT-2024-052", bankName: "First National Bank", accountEnding: "4532", fees: "P0.00" },
-  { id: "PAY006", type: "Instant Payout", date: "24 Dec 2024", amount: "P3,210.00", amountNum: 3210, status: "completed", reference: "PAYOUT-2024-051", bankName: "First National Bank", accountEnding: "4532", fees: "P18.50" },
-];
 
 const MobilePayoutsView = () => {
   const navigate = useNavigate();
@@ -46,6 +35,18 @@ const MobilePayoutsView = () => {
     branchCode: "250655",
     accountHolder: "Pata Business (Pty) Ltd",
   });
+
+  // Build payouts from real transactions
+  const payoutsFromDB: Payout[] = transactions.map(tx => ({
+    id: tx.id,
+    type: tx.payment_method === "card" ? "Card Sale" : tx.payment_method === "mobile_money" ? "Mobile Money" : tx.payment_method === "cash" ? "Cash" : tx.payment_method === "invoice" ? "Invoice" : tx.payment_method === "payment_link" ? "Payment Link" : tx.type,
+    date: new Date(tx.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
+    amount: `P${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+    amountNum: tx.amount,
+    status: tx.status as PayoutStatus,
+    description: tx.description,
+    payment_method: tx.payment_method,
+  }));
 
   const availableBalance = balance;
   const processingAmount = transactions
@@ -69,9 +70,16 @@ const MobilePayoutsView = () => {
         </span>
       );
     }
+    if (status === "processing") {
+      return (
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+          <Clock className="w-3 h-3" /> Processing
+        </span>
+      );
+    }
     return (
-      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
-        <Clock className="w-3 h-3" /> Processing
+      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+        <Clock className="w-3 h-3" /> Pending
       </span>
     );
   };
@@ -161,31 +169,41 @@ const MobilePayoutsView = () => {
         </button>
       </div>
 
-      {/* Payout History */}
+      {/* Transaction History */}
       <div className="px-5">
-        <h2 className="font-semibold text-foreground mb-3">Payout History</h2>
-        <div className="space-y-2">
-          {payoutsData.map((payout) => (
-            <button
-              key={payout.id}
-              onClick={() => setSelectedPayout(payout)}
-              className="w-full bg-card border border-border rounded-2xl p-4 active:bg-muted/50 transition-colors text-left"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-medium text-foreground">{payout.type}</p>
-                <p className="font-semibold text-foreground">{payout.amount}</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <p className="text-xs text-muted-foreground">{payout.date}</p>
-                  <span className="text-xs text-muted-foreground">•</span>
-                  <p className="text-xs text-muted-foreground">{payout.reference}</p>
+        <h2 className="font-semibold text-foreground mb-3">Transaction History</h2>
+        {payoutsFromDB.length === 0 ? (
+          <div className="bg-card border border-border rounded-2xl p-8 text-center">
+            <p className="text-sm text-muted-foreground">No transactions yet</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {payoutsFromDB.map((payout) => (
+              <button
+                key={payout.id}
+                onClick={() => setSelectedPayout(payout)}
+                className="w-full bg-card border border-border rounded-2xl p-4 active:bg-muted/50 transition-colors text-left"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <p className="font-medium text-foreground">{payout.type}</p>
+                  <p className="font-semibold text-foreground">{payout.amount}</p>
                 </div>
-                {getStatusBadge(payout.status)}
-              </div>
-            </button>
-          ))}
-        </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-muted-foreground">{payout.date}</p>
+                    {payout.description && (
+                      <>
+                        <span className="text-xs text-muted-foreground">•</span>
+                        <p className="text-xs text-muted-foreground truncate max-w-[120px]">{payout.description}</p>
+                      </>
+                    )}
+                  </div>
+                  {getStatusBadge(payout.status)}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Payout Detail Sheet */}
@@ -212,22 +230,20 @@ const MobilePayoutsView = () => {
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Reference</span>
-                  <button onClick={() => handleCopyReference(selectedPayout.reference)} className="flex items-center gap-1 text-sm font-medium text-primary">
-                    {selectedPayout.reference} <Copy className="w-3 h-3" />
+                  <button onClick={() => handleCopyReference(selectedPayout.id.slice(0, 8))} className="flex items-center gap-1 text-sm font-medium text-primary">
+                    {selectedPayout.id.slice(0, 8)} <Copy className="w-3 h-3" />
                   </button>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Bank</span>
-                  <span className="text-sm font-medium text-foreground">{selectedPayout.bankName}</span>
+                  <span className="text-sm text-muted-foreground">Method</span>
+                  <span className="text-sm font-medium text-foreground">{selectedPayout.payment_method}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Account</span>
-                  <span className="text-sm font-medium text-foreground">•••• {selectedPayout.accountEnding}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-sm text-muted-foreground">Fees</span>
-                  <span className="text-sm font-medium text-foreground">{selectedPayout.fees}</span>
-                </div>
+                {selectedPayout.description && (
+                  <div className="flex justify-between">
+                    <span className="text-sm text-muted-foreground">Description</span>
+                    <span className="text-sm font-medium text-foreground text-right max-w-[180px]">{selectedPayout.description}</span>
+                  </div>
+                )}
               </div>
 
               <Button variant="outline" onClick={() => setSelectedPayout(null)} className="w-full">
