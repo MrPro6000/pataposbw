@@ -44,37 +44,60 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    let isMounted = true;
+    let initialLoadDone = false;
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, newSession) => {
+        if (!isMounted) return;
         setSession(newSession);
         setUser(newSession?.user ?? null);
 
         // Defer profile fetch to avoid deadlock
         if (newSession?.user) {
-          setTimeout(() => fetchProfile(newSession.user.id), 0);
+          setTimeout(() => {
+            if (isMounted) fetchProfile(newSession.user.id);
+          }, 0);
         } else {
           setUserProfile(null);
           setIsAdmin(false);
         }
 
-        setLoading(false);
+        // Only set loading false from listener AFTER initial load is done
+        if (initialLoadDone) {
+          setLoading(false);
+        }
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
-      setSession(existingSession);
-      setUser(existingSession?.user ?? null);
+    // THEN check for existing session — controls initial loading state
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: existingSession } } = await supabase.auth.getSession();
+        if (!isMounted) return;
 
-      if (existingSession?.user) {
-        fetchProfile(existingSession.user.id);
+        setSession(existingSession);
+        setUser(existingSession?.user ?? null);
+
+        // Fetch profile BEFORE setting loading false
+        if (existingSession?.user) {
+          await fetchProfile(existingSession.user.id);
+        }
+      } finally {
+        if (isMounted) {
+          initialLoadDone = true;
+          setLoading(false);
+        }
       }
+    };
 
-      setLoading(false);
-    });
+    initializeAuth();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const value: AuthContextType = {
