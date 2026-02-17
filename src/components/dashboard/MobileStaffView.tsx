@@ -18,9 +18,9 @@ interface StaffMember {
 
 const MobileStaffView = ({ profile, userEmail }: MobileStaffViewProps) => {
   const staffMembers: StaffMember[] = [
-    { id: "1", name: "Nic HTEST", role: "Supervisor", email: "nic@example.com", status: "active" },
-    { id: "2", name: "Nic Haralambous", role: "Manager", email: "nic.h@example.com", status: "active" },
-    { id: "3", name: "Nicholas Haralambous", role: "Administrator", email: "nicholas@example.com", status: "active" },
+    { id: "1", name: "Kago Motswana", role: "Supervisor", email: "kago@pata.co.bw", status: "active" },
+    { id: "2", name: "Lesego Mosweu", role: "Manager", email: "lesego@pata.co.bw", status: "active" },
+    { id: "3", name: "Tebogo Modise", role: "Administrator", email: "tebogo@pata.co.bw", status: "active" },
   ];
 
   const getRoleColor = (role: string) => {
