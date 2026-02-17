@@ -56,6 +56,8 @@ const Payouts = () => {
 
   const handleAddMobile = () => {
     if (!form.phoneNumber) { toast.error("Enter phone number"); return; }
+    const digits = form.phoneNumber.replace(/\D/g, "").replace(/^267/, "");
+    if (!/^7\d{7}$/.test(digits)) { toast.error("Invalid Botswana mobile number. Must start with 7 and be 8 digits."); return; }
     const provider = mobileMoneyProviders.find(p => p.id === selectedProvider);
     syncAccounts([...accounts, { id: crypto.randomUUID(), type: "mobile_money", name: provider?.name || "Mobile Money", details: form.phoneNumber, provider: selectedProvider, providerImg: provider?.img, isDefault: accounts.length === 0 }]);
     toast.success(`${provider?.name} connected`); setAddAccountType(""); setSelectedProvider(""); setForm({ ...form, phoneNumber: "" });

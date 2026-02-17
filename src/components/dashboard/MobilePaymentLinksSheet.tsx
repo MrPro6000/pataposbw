@@ -65,6 +65,13 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
       toast({ title: "Error", description: "Please fill in required fields", variant: "destructive" });
       return;
     }
+    if (newLink.customerPhone) {
+      const digits = newLink.customerPhone.replace(/\D/g, "").replace(/^267/, "");
+      if (!/^7\d{7}$/.test(digits)) {
+        toast({ title: "Invalid number", description: "Botswana mobile number must start with 7 and be 8 digits.", variant: "destructive" });
+        return;
+      }
+    }
     setCreating(true);
     const result = await createPaymentLink({
       amount: parseFloat(newLink.amount),

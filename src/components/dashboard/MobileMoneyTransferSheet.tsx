@@ -75,6 +75,14 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
       toast({ title: "Error", description: "Please enter recipient phone", variant: "destructive" });
       return false;
     }
+    // Validate Botswana number if sending to Botswana
+    if (selectedCountry === "BW") {
+      const digits = recipientPhone.replace(/\D/g, "").replace(/^267/, "");
+      if (!/^7\d{7}$/.test(digits)) {
+        toast({ title: "Invalid number", description: "Botswana mobile number must start with 7 and be 8 digits.", variant: "destructive" });
+        return false;
+      }
+    }
     if (!selectedCountry) {
       toast({ title: "Error", description: "Please select destination country", variant: "destructive" });
       return false;

@@ -24,7 +24,7 @@ const PhoneOTPInput = ({ isDark, onVerified, onBack }: PhoneOTPInputProps) => {
     return "+267" + cleaned;
   };
 
-  const validateNumber = () => /^\+267[78]\d{7}$/.test(getFormattedNumber());
+  const validateNumber = () => /^\+2677\d{7}$/.test(getFormattedNumber());
 
   const handleSendOTP = async () => {
     if (!validateNumber()) {
