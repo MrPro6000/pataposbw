@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight, Zap, Percent, Send, Smartphone, Wallet } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
@@ -17,6 +17,7 @@ interface MobileMoneyViewProps {
 }
 
 const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
+  const navigate = useNavigate();
   const [feesOpen, setFeesOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -69,6 +70,17 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         >
           <Wallet className="w-5 h-5 text-primary" />
           <span>Wallet & Connected Accounts</span>
+        </button>
+      </div>
+
+      {/* Instant Payout Button */}
+      <div className="px-5 pb-2">
+        <button
+          onClick={() => navigate("/dashboard/payout-history")}
+          className="w-full bg-card rounded-2xl py-4 flex items-center justify-center gap-2 text-foreground active:bg-muted transition-colors shadow-sm border border-border/50 font-medium"
+        >
+          <Zap className="w-5 h-5 text-warning" />
+          <span>Instant Payout</span>
         </button>
       </div>
 
