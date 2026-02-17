@@ -6,6 +6,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  const chunkSize = 8192;
+  let binary = "";
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    const chunk = bytes.subarray(i, Math.min(i + chunkSize, bytes.length));
+    for (let j = 0; j < chunk.length; j++) {
+      binary += String.fromCharCode(chunk[j]);
+    }
+  }
+  return btoa(binary);
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -64,8 +77,8 @@ serve(async (req) => {
         idResult.data.arrayBuffer(),
       ]);
 
-      const selfieBase64 = btoa(String.fromCharCode(...new Uint8Array(selfieBuffer)));
-      const idBase64 = btoa(String.fromCharCode(...new Uint8Array(idBuffer)));
+      const selfieBase64 = arrayBufferToBase64(selfieBuffer);
+      const idBase64 = arrayBufferToBase64(idBuffer);
       const selfieMime = selfieResult.data.type || "image/jpeg";
       const idMime = idResult.data.type || "image/jpeg";
 
@@ -135,7 +148,7 @@ serve(async (req) => {
     }
 
     const arrayBuffer = await fileData.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const base64 = arrayBufferToBase64(arrayBuffer);
     const mimeType = fileData.type || "image/jpeg";
 
     // Build prompt based on type — for ID front, also extract the ID number if omangNumber provided
