@@ -90,7 +90,22 @@ const Payouts = () => {
   const withdrawAmountNum = parseFloat(withdrawAmount) || balance;
   const withdrawFee = Math.round(withdrawAmountNum * 0.005 * 100) / 100;
 
+  const validateWithdraw = (): string | null => {
+    if (!withdrawAccount) return "No account selected.";
+    const amt = parseFloat(withdrawAmount);
+    if (!amt || amt <= 0) return "Enter a valid amount.";
+    if (amt > balance) return "Insufficient funds. Your balance is P" + balance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ".";
+    if (amt < 5) return "Minimum withdrawal is P5.00.";
+    if (withdrawAccount.type === "mobile_money" && withdrawAccount.details) {
+      const digits = withdrawAccount.details.replace(/\D/g, "").replace(/^267/, "");
+      if (!/^[234678]\d{7}$/.test(digits)) return "Invalid Botswana mobile number on this account.";
+    }
+    return null;
+  };
+
   const handleWithdraw = async () => {
+    const error = validateWithdraw();
+    if (error) { toast.error(error); return; }
     if (!withdrawAccount) return;
     setWithdrawStep("processing");
     const destLabel = withdrawAccount.type === "bank"
