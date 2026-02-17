@@ -25,7 +25,7 @@ export const useInvoices = () => {
   const fetchInvoices = useCallback(async () => {
     if (!user) { setInvoices([]); setLoading(false); return; }
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("invoices")
         .select("*")
         .eq("user_id", user.id)
@@ -52,7 +52,7 @@ export const useInvoices = () => {
     if (!user) return { error: "Not authenticated" };
     const invoiceNumber = `INV-${Date.now().toString(36).toUpperCase()}`;
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("invoices")
         .insert({
           user_id: user.id, invoice_number: invoiceNumber,
@@ -70,7 +70,7 @@ export const useInvoices = () => {
   const updateInvoice = async (id: string, updates: Partial<Pick<Invoice, "status" | "paid_at">>) => {
     if (!user) return { error: "Not authenticated" };
     try {
-      const { error } = await (supabase as any).from("invoices").update(updates).eq("id", id).eq("user_id", user.id);
+      const { error } = await supabase.from("invoices").update(updates).eq("id", id).eq("user_id", user.id);
       if (error) return { error: error.message };
       setInvoices(prev => prev.map(i => i.id === id ? { ...i, ...updates } : i));
       return { error: null };
@@ -80,7 +80,7 @@ export const useInvoices = () => {
   const deleteInvoice = async (id: string) => {
     if (!user) return { error: "Not authenticated" };
     try {
-      const { error } = await (supabase as any).from("invoices").delete().eq("id", id).eq("user_id", user.id);
+      const { error } = await supabase.from("invoices").delete().eq("id", id).eq("user_id", user.id);
       if (error) return { error: error.message };
       setInvoices(prev => prev.filter(i => i.id !== id));
       return { error: null };

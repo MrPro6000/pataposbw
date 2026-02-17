@@ -23,7 +23,7 @@ export const usePaymentLinks = () => {
   const fetchPaymentLinks = useCallback(async () => {
     if (!user) { setPaymentLinks([]); setLoading(false); return; }
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("payment_links")
         .select("*")
         .eq("user_id", user.id)
@@ -48,7 +48,7 @@ export const usePaymentLinks = () => {
   }) => {
     if (!user) return { error: "Not authenticated", data: null };
     try {
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from("payment_links")
         .insert({
           user_id: user.id, amount: link.amount, customer_name: link.customer_name,
@@ -59,7 +59,7 @@ export const usePaymentLinks = () => {
       if (error) return { error: error.message, data: null };
       // Generate link URL using the record ID
       const linkUrl = `${window.location.origin}/pay/${data.id}`;
-      await (supabase as any).from("payment_links").update({ link_url: linkUrl }).eq("id", data.id);
+      await supabase.from("payment_links").update({ link_url: linkUrl }).eq("id", data.id);
       const finalData = { ...data, amount: Number(data.amount), link_url: linkUrl };
       setPaymentLinks(prev => [finalData, ...prev]);
       return { error: null, data: finalData };

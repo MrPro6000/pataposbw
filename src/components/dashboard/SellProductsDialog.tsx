@@ -166,8 +166,8 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
               total={cartTotal}
               itemCount={cartItemCount}
               onComplete={resetAndClose}
-              onPaymentSuccess={(method, total, desc) => {
-                addTransaction({
+              onPaymentSuccess={async (method, total, desc) => {
+                await addTransaction({
                   type: "sale",
                   payment_method: method,
                   amount: total,
