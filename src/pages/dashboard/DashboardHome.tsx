@@ -6,6 +6,8 @@ import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import MobileWalletSheet from "@/components/dashboard/MobileWalletSheet";
+import MobileMoneyTransferSheet from "@/components/dashboard/MobileMoneyTransferSheet";
+import MobileLoanApplicationSheet from "@/components/dashboard/MobileLoanApplicationSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
@@ -36,6 +38,8 @@ const DashboardHome = () => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
+  const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
+  const [loanOpen, setLoanOpen] = useState(false);
   const navigate = useNavigate();
   const isMobile = useIsMobile();
 
@@ -110,8 +114,8 @@ const DashboardHome = () => {
     { title: "Mobile POS", subtitle: "Sell from your phone", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", link: "/dashboard", action: undefined },
     { title: "Card Machine", subtitle: "Manage devices", icon: Smartphone, iconBg: "bg-purple-100 dark:bg-purple-900/30", iconColor: "text-purple-600 dark:text-purple-400", link: "/dashboard/devices", action: undefined },
     { title: "Payment Gateway", subtitle: "Online payments", icon: Globe, iconBg: "bg-emerald-100 dark:bg-emerald-900/30", iconColor: "text-emerald-600 dark:text-emerald-400", link: undefined, action: () => setPaymentGatewayOpen(true) },
-    { title: "Send Money", subtitle: "International transfers", icon: Banknote, iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400", link: "/dashboard/payouts", action: undefined },
-    { title: "Business Loan", subtitle: "Apply for funding", icon: TrendingUp, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setCapitalOpen(true) },
+    { title: "Send Money", subtitle: "International transfers", icon: Banknote, iconBg: "bg-orange-100 dark:bg-orange-900/30", iconColor: "text-orange-600 dark:text-orange-400", link: undefined, action: () => setMoneyTransferOpen(true) },
+    { title: "Mobile Money Loans", subtitle: "Orange, Smega, MyZaka", icon: Smartphone, iconBg: "bg-amber-100 dark:bg-amber-900/30", iconColor: "text-amber-600 dark:text-amber-400", link: undefined, action: () => setLoanOpen(true) },
     { title: "Wallet", subtitle: `P${balance.toFixed(2)} balance`, icon: Wallet, iconBg: "bg-cyan-100 dark:bg-cyan-900/30", iconColor: "text-cyan-600 dark:text-cyan-400", link: undefined, action: () => setWalletOpen(true) },
   ];
 
@@ -121,10 +125,18 @@ const DashboardHome = () => {
         <h1 className="text-2xl font-bold text-foreground">Hub</h1>
       </div>
 
-      {/* Most Visited Section */}
+      {/* Stats Overview */}
       <section className="mb-8">
-        <h2 className="text-sm text-muted-foreground mb-4">Most visited</h2>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+          <Link to="/dashboard/payouts" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow">
+            <p className="text-sm text-muted-foreground mb-1">Balance</p>
+            <p className="text-2xl font-bold text-foreground">P{balance.toFixed(2)}</p>
+            <p className="text-xs text-muted-foreground mt-2">Available</p>
+          </Link>
+          <Link to="/dashboard/settings" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow">
+            <p className="text-sm text-muted-foreground mb-1">Business details</p>
+            <p className="text-sm text-muted-foreground mt-4">Trading name, Address, contact...</p>
+          </Link>
           <Link to="/dashboard/sales" className="bg-card rounded-2xl p-5 hover:shadow-md transition-shadow group">
             <p className="text-sm text-muted-foreground mb-3">Today's sales</p>
             <div className="h-12 mb-2">
@@ -264,6 +276,8 @@ const DashboardHome = () => {
       <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
       <CapitalDialog open={capitalOpen} onClose={() => setCapitalOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
+      <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
+      <MobileLoanApplicationSheet open={loanOpen} onClose={() => setLoanOpen(false)} />
     </DashboardLayout>
   );
 };

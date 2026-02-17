@@ -3,9 +3,11 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import FeesDialog from "@/components/dashboard/FeesDialog";
+import MobileMoneyTransferSheet from "@/components/dashboard/MobileMoneyTransferSheet";
+import MobileLoanApplicationSheet from "@/components/dashboard/MobileLoanApplicationSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
-import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle } from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -35,6 +37,8 @@ const Payouts = () => {
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
   const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", phoneNumber: "" });
+  const [loanOpen, setLoanOpen] = useState(false);
+  const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   
   const isMobile = useIsMobile();
   const { balance, transactions, addTransaction } = useTransactions();
@@ -178,6 +182,12 @@ const Payouts = () => {
         </button>
         <button onClick={() => setFeesOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
           <div className="flex items-center gap-4"><div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center"><Percent className="w-6 h-6 text-muted-foreground" /></div><div><p className="font-semibold text-foreground">Fees</p><p className="text-sm text-muted-foreground">All fees related to your business</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
+        </button>
+        <button onClick={() => setLoanOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center"><Smartphone className="w-6 h-6 text-amber-500" /></div><div><p className="font-semibold text-foreground">Mobile Money Loans</p><p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
+        </button>
+        <button onClick={() => setMoneyTransferOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center"><Send className="w-6 h-6 text-orange-500" /></div><div><p className="font-semibold text-foreground">Send Money</p><p className="text-sm text-muted-foreground">International transfers via Mukuru</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
         </button>
       </div>
 
@@ -325,6 +335,8 @@ const Payouts = () => {
 
       <CapitalDialog open={capitalOpen} onClose={() => setCapitalOpen(false)} />
       <FeesDialog open={feesOpen} onClose={() => setFeesOpen(false)} />
+      <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
+      <MobileLoanApplicationSheet open={loanOpen} onClose={() => setLoanOpen(false)} />
     </DashboardLayout>
   );
 };
