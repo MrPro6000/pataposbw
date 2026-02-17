@@ -192,42 +192,87 @@ const Sales = () => {
       return;
     }
     setIsProcessing(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    const paymentMethodMap: Record<string, string> = {
+      "card": "card", "payment-link": "payment_link", "invoice": "invoice",
+      "cash": "cash", "mobile-money": "mobile_money", "wallet": "wallet",
+    };
+    const providerLabel = selectedProvider ? mobileMoneyProviders.find(p => p.id === selectedProvider)?.name : undefined;
+    const descParts = [paymentType.replace("-", " ")];
+    if (providerLabel) descParts.push(providerLabel);
+    if (description) descParts.push(description);
+
+    const { error } = await addTransaction({
+      type: "sale",
+      payment_method: paymentMethodMap[paymentType] || paymentType,
+      amount: parseFloat(amount),
+      description: descParts.join(" • "),
+      status: "completed",
+    });
+
     setIsProcessing(false);
+    if (error) {
+      toast({ title: "Error", description: "Failed to save transaction", variant: "destructive" });
+      return;
+    }
     setIsSuccess(true);
     toast({ title: "Payment Successful", description: `P${parseFloat(amount).toFixed(2)} payment completed` });
     setTimeout(() => {
       setPaymentDialogOpen(false);
       setIsSuccess(false);
+      setAmount(""); setDescription(""); setCustomerPhone(""); setCustomerEmail(""); setSelectedProvider("");
     }, 1500);
   };
 
-  const handleCreatePaymentLink = () => {
+  const handleCreatePaymentLink = async () => {
     if (!linkTitle || !linkAmount) {
       toast({ title: "Error", description: "Please fill in all required fields", variant: "destructive" });
       return;
     }
-    toast({
-      title: "Payment Link Created",
-      description: "Your payment link has been generated and copied to clipboard",
+    const result = await createPaymentLink({
+      amount: parseFloat(linkAmount),
+      customer_name: linkCustomer || linkTitle,
+      description: linkTitle,
     });
+    if (result.error) {
+      toast({ title: "Error", description: result.error, variant: "destructive" });
+      return;
+    }
+    await addTransaction({
+      type: "sale", payment_method: "payment_link",
+      amount: parseFloat(linkAmount),
+      description: `Payment Link • ${linkCustomer || linkTitle}${linkTitle ? ` — ${linkTitle}` : ""}`,
+      status: "pending",
+    });
+    toast({ title: "Payment Link Created", description: "Your payment link has been generated" });
     setPaymentLinkDialogOpen(false);
-    setLinkTitle("");
-    setLinkAmount("");
-    setLinkCustomer("");
+    setLinkTitle(""); setLinkAmount(""); setLinkCustomer("");
   };
 
-  const handleCreateInvoice = () => {
+  const handleCreateInvoice = async () => {
     if (!invoiceCustomer || !invoiceAmount) {
       toast({ title: "Error", description: "Please fill in all required fields", variant: "destructive" });
       return;
     }
+    const result = await createInvoice({
+      customer_name: invoiceCustomer,
+      amount: parseFloat(invoiceAmount),
+      description: invoiceItems || undefined,
+      due_date: invoiceDueDate || undefined,
+    });
+    if (result.error) {
+      toast({ title: "Error", description: result.error, variant: "destructive" });
+      return;
+    }
+    await addTransaction({
+      type: "invoice", payment_method: "invoice",
+      amount: parseFloat(invoiceAmount),
+      description: `Invoice • ${invoiceCustomer}${invoiceItems ? ` — ${invoiceItems}` : ""}`,
+      status: "pending",
+    });
     toast({ title: "Invoice Created", description: "Your invoice has been created successfully" });
     setInvoiceDialogOpen(false);
-    setInvoiceCustomer("");
-    setInvoiceAmount("");
-    setInvoiceDueDate("");
-    setInvoiceItems("");
+    setInvoiceCustomer(""); setInvoiceAmount(""); setInvoiceDueDate(""); setInvoiceItems("");
   };
 
   const copyLink = (url: string) => {
