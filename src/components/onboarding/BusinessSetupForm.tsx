@@ -758,6 +758,21 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
               Back
             </Button>
           )}
+          {currentStep !== "logo" && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (currentStep === "business") setCurrentStep("address");
+                else if (currentStep === "address") setCurrentStep("operations");
+                else if (currentStep === "operations") setCurrentStep("banking");
+                else if (currentStep === "banking") setCurrentStep("logo");
+              }}
+              className="text-muted-foreground"
+              disabled={loading}
+            >
+              Skip
+            </Button>
+          )}
           {currentStep === "logo" && !logoUrl && (
             <Button
               variant="ghost"
@@ -772,7 +787,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                 }
                 handleSubmit();
               }}
-              className="flex-1"
+              className="text-muted-foreground"
               disabled={loading}
             >
               Skip Logo
