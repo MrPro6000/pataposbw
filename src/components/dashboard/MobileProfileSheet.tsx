@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { X, ChevronLeft, Camera, Mail, Phone, User, LogOut, Loader2 } from "lucide-react";
+import { X, ChevronLeft, Camera, Mail, Phone, User, LogOut, Loader2, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,9 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const logoInputRef = useRef<HTMLInputElement>(null);
 
   // Change password state
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
@@ -261,7 +264,51 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
               </div>
             </div>
 
-            {/* Security Section */}
+            {/* Business Logo Upload */}
+            <div className="bg-muted rounded-2xl p-4 mb-6">
+              <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
+                <Upload className="w-4 h-4" /> Business Logo
+              </h3>
+              {logoUrl ? (
+                <div className="flex items-center gap-3">
+                  <img src={logoUrl} alt="Business logo" className="w-16 h-16 rounded-xl object-contain bg-background" />
+                  <Button variant="outline" size="sm" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}>
+                    {uploadingLogo ? <Loader2 className="w-4 h-4 animate-spin" /> : "Change Logo"}
+                  </Button>
+                </div>
+              ) : (
+                <Button variant="outline" className="w-full justify-start" onClick={() => logoInputRef.current?.click()} disabled={uploadingLogo}>
+                  {uploadingLogo ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Upload className="w-4 h-4 mr-2" />}
+                  Upload Business Logo
+                </Button>
+              )}
+              <input
+                ref={logoInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  if (!file || !userId) return;
+                  setUploadingLogo(true);
+                  try {
+                    const ext = file.name.split(".").pop();
+                    const path = `${userId}/logo_${Date.now()}.${ext}`;
+                    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+                    if (uploadError) throw uploadError;
+                    const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+                    setLogoUrl(publicUrl);
+                    toast({ title: "Logo uploaded" });
+                  } catch (err: any) {
+                    toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+                  } finally {
+                    setUploadingLogo(false);
+                  }
+                }}
+              />
+            </div>
+
+
             <div className="bg-muted rounded-2xl p-4 mb-6">
               <h3 className="font-medium text-foreground mb-3">Security</h3>
               <Button variant="outline" className="w-full justify-start mb-2" onClick={() => setPasswordDialogOpen(true)}>

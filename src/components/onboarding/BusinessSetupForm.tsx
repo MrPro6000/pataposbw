@@ -746,6 +746,26 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
               Back
             </Button>
           )}
+          {currentStep === "logo" && !logoUrl && (
+            <Button
+              variant="ghost"
+              onClick={() => {
+                if (!termsAccepted) {
+                  toast({
+                    title: "Terms Required",
+                    description: "You must accept the Terms and Conditions to continue.",
+                    variant: "destructive",
+                  });
+                  return;
+                }
+                handleSubmit();
+              }}
+              className="flex-1"
+              disabled={loading}
+            >
+              Skip Logo
+            </Button>
+          )}
           <Button
             onClick={handleNext}
             className="flex-1"
