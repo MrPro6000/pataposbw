@@ -91,7 +91,12 @@ export const useTransactions = () => {
     .filter((t) => t.amount < 0 && t.status === "completed")
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
-  const balance = totalIncome - totalExpenses;
+  // Processing payouts should also reduce available balance
+  const processingPayouts = allTransactions
+    .filter((t) => t.amount < 0 && t.status === "processing")
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+  const balance = totalIncome - totalExpenses - processingPayouts;
 
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);

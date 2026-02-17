@@ -53,8 +53,8 @@ const MobilePayoutsView = () => {
   const now = new Date();
   const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
   const paidThisMonth = transactions
-    .filter(t => t.status === "completed" && t.amount > 0 && new Date(t.created_at) >= startOfMonth)
-    .reduce((sum, t) => sum + t.amount, 0);
+    .filter(t => (t.status === "completed" || t.status === "processing") && t.amount < 0 && new Date(t.created_at) >= startOfMonth)
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
   const instantFee = Math.round((parseFloat(payoutAmount) || availableBalance) * 0.005 * 100) / 100;
   const payoutAmountNum = parseFloat(payoutAmount) || availableBalance;
