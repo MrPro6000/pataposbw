@@ -25,15 +25,26 @@ interface PaymentFlowProps {
   onPaymentSuccess?: (method: string, total: number, description?: string) => void;
   onBack: () => void;
   className?: string;
+  initialMethod?: PaymentMethod;
 }
 
-const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, className = "" }: PaymentFlowProps) => {
-  const [step, setStep] = useState<PaymentStep>("select");
+const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, className = "", initialMethod }: PaymentFlowProps) => {
+  const getInitialStep = (): PaymentStep => {
+    if (!initialMethod) return "select";
+    if (initialMethod === "card") return "card-tap";
+    if (initialMethod === "cash") return "cash-tendered";
+    if (initialMethod === "qr") return "qr-scan";
+    if (initialMethod === "payment-link") return "payment-link-form";
+    if (initialMethod === "mobile-money") return "mobile-provider";
+    return "select";
+  };
+
+  const [step, setStep] = useState<PaymentStep>(getInitialStep);
   const [selectedProvider, setSelectedProvider] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [cashTendered, setCashTendered] = useState("");
   const [linkPhone, setLinkPhone] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(initialMethod ?? null);
 
   const cashChange = cashTendered ? parseFloat(cashTendered) - total : 0;
 

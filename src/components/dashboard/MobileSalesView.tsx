@@ -58,7 +58,7 @@ interface MobileSalesViewProps {
   userEmail?: string;
 }
 
-type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money";
 
 const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
@@ -101,14 +101,6 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const pendingLinksCount = paymentLinks.filter(l => l.status === "pending").length;
 
   const handleQuickAction = (paymentType: PaymentType) => {
-    if (paymentType === "invoice") {
-      setInvoiceSheetOpen(true);
-      return;
-    }
-    if (paymentType === "payment-link") {
-      setPaymentLinksOpen(true);
-      return;
-    }
     setSelectedPaymentType(paymentType);
     setPaymentSheetOpen(true);
   };
@@ -156,8 +148,8 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
 
         <div className="grid grid-cols-3 gap-3 mb-3">
           <QuickActionButton icon={CreditCard} label="Card sale" variant="light" onClick={() => handleQuickAction('card-sale')} />
-          <QuickActionButton icon={Link2} label="Payment Link" variant="light" onClick={() => handleQuickAction('payment-link')} />
-          <QuickActionButton icon={FileText} label="New invoice" variant="light" onClick={() => handleQuickAction('invoice')} />
+          <QuickActionButton icon={Link2} label="Payment Link" variant="light" onClick={() => setPaymentLinksOpen(true)} />
+          <QuickActionButton icon={FileText} label="New invoice" variant="light" onClick={() => setInvoiceSheetOpen(true)} />
         </div>
         <div className="grid grid-cols-3 gap-3">
           <QuickActionButton icon={Banknote} label="Cash" variant="light" onClick={() => handleQuickAction('cash')} />
