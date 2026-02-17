@@ -166,6 +166,15 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
               total={cartTotal}
               itemCount={cartItemCount}
               onComplete={resetAndClose}
+              onPaymentSuccess={(method, total, desc) => {
+                addTransaction({
+                  type: "sale",
+                  payment_method: method,
+                  amount: total,
+                  description: desc || `Product Sale • ${cartItemCount} items`,
+                  status: "completed",
+                });
+              }}
               onBack={() => setSubView("products")}
             />
           </div>
