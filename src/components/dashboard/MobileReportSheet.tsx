@@ -47,14 +47,23 @@ const MobileReportSheet = ({ open, onClose, reportType }: MobileReportSheetProps
 
   const totalRevenue = filteredTx.reduce((s, t) => s + t.amount, 0);
 
-  // Product data from real products + transactions
+  // Product data from real products only — no dummy data
   const productData = useMemo(() => {
     if (products.length === 0) return [];
-    return products.slice(0, 5).map(p => ({
-      name: p.name.length > 12 ? p.name.slice(0, 12) + "…" : p.name,
-      sales: Math.max(p.stock > 0 ? Math.ceil(Math.random() * 20 + 5) : 0, filteredTx.length > 0 ? Math.ceil(filteredTx.length / products.length) : 0),
-      revenue: p.price * Math.max(1, Math.ceil(filteredTx.length / products.length)),
-    }));
+    // Count transactions that mention each product in the description
+    return products.map(p => {
+      const productTx = filteredTx.filter(t => t.description?.toLowerCase().includes(p.name.toLowerCase()));
+      const sales = productTx.length;
+      const revenue = productTx.reduce((s, t) => s + t.amount, 0);
+      return {
+        name: p.name.length > 14 ? p.name.slice(0, 14) + "…" : p.name,
+        fullName: p.name,
+        sales,
+        revenue: revenue > 0 ? revenue : 0,
+        stock: p.stock,
+        price: p.price,
+      };
+    }).sort((a, b) => b.sales - a.sales);
   }, [products, filteredTx]);
 
   // Staff data with Botswana names
