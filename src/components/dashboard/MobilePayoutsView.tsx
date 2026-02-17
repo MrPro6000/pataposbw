@@ -98,11 +98,42 @@ const MobilePayoutsView = () => {
   };
 
   const handleSelectAccount = (account: ConnectedAccount) => {
+    const amt = parseFloat(payoutAmount);
+    if (!amt || amt <= 0) {
+      toast.error("Enter a valid amount first.");
+      return;
+    }
+    if (amt > availableBalance) {
+      toast.error("Insufficient funds. Your balance is P" + availableBalance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ".");
+      return;
+    }
     setSelectedAccount(account);
     setInstantPayoutStep("confirm");
   };
 
+  const validatePayout = (): string | null => {
+    if (!selectedAccount) return "No account selected.";
+    const amt = parseFloat(payoutAmount);
+    if (!amt || amt <= 0) return "Enter a valid amount.";
+    if (amt > availableBalance) return "Insufficient funds. Your balance is P" + availableBalance.toLocaleString(undefined, { minimumFractionDigits: 2 }) + ".";
+    if (amt < 5) return "Minimum withdrawal is P5.00.";
+
+    // Validate Botswana mobile numbers for mobile_money accounts
+    if (selectedAccount.type === "mobile_money" && selectedAccount.details) {
+      const digits = selectedAccount.details.replace(/\D/g, "").replace(/^267/, "");
+      if (!/^[234678]\d{7}$/.test(digits)) {
+        return "Invalid Botswana mobile number on this account.";
+      }
+    }
+    return null;
+  };
+
   const handleInstantPayout = async () => {
+    const error = validatePayout();
+    if (error) {
+      toast.error(error);
+      return;
+    }
     if (!selectedAccount) return;
     setInstantPayoutStep("processing");
 
