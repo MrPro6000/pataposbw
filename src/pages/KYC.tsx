@@ -423,13 +423,10 @@ const KYC = () => {
             {renderPhotoUpload("selfie")}
             <Button
               onClick={handleFinalSubmit}
-              disabled={loading}
+              disabled={loading || !selfieUrl}
               className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50"
             >
-              {loading ? "Submitting..." : selfieUrl ? "Submit for Verification" : "Skip Selfie & Submit"}
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
-              Skip for now
+              {loading ? "Submitting..." : "Submit for Verification"}
             </Button>
           </div>
         );
@@ -466,9 +463,6 @@ const KYC = () => {
               className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium disabled:opacity-50 flex items-center justify-center gap-2"
             >
               Continue to Selfie <ArrowRight className="w-4 h-4" />
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
-              Skip for now
             </Button>
           </div>
         );
@@ -528,9 +522,6 @@ const KYC = () => {
             </div>
             <Button type="submit" className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl text-base font-medium flex items-center justify-center gap-2">
               Continue <ArrowRight className="w-4 h-4" />
-            </Button>
-            <Button type="button" variant="ghost" onClick={() => navigate("/dashboard")} className="w-full py-4 text-muted-foreground hover:text-foreground rounded-xl">
-              Skip for now
             </Button>
           </form>
         );
