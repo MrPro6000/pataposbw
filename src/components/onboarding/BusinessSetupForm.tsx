@@ -744,8 +744,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </main>
 
-      {/* Footer */}
-      <footer className="px-6 pb-8 pt-4 border-t border-border">
+      {/* Footer - sticky at bottom */}
+      <footer className="sticky bottom-0 px-6 pb-8 pt-4 border-t border-border bg-background z-10">
         <div className="max-w-md mx-auto flex gap-3">
           {currentStep !== "business" && (
             <Button

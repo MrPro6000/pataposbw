@@ -57,7 +57,7 @@ interface MobileSalesViewProps {
   userEmail?: string;
 }
 
-type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
+type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money";
 
 const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
@@ -160,7 +160,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         <div className="grid grid-cols-3 gap-3">
           <QuickActionButton icon={Banknote} label="Cash" variant="light" onClick={() => handleQuickAction('cash')} />
           <QuickActionButton icon={Smartphone} label="Mobile Money" variant="light" onClick={() => handleQuickAction('mobile-money')} />
-          <QuickActionButton icon={Wallet} label="Wallet" variant="light" onClick={() => handleQuickAction('wallet')} />
+          <QuickActionButton icon={FileText} label="Invoice" variant="light" onClick={() => { setInvoiceSheetOpen(true); }} />
         </div>
       </div>
 

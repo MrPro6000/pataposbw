@@ -275,7 +275,7 @@ const MobilePayoutsView = () => {
 
       {/* Payout Detail Sheet */}
       <Sheet open={!!selectedPayout} onOpenChange={(o) => { if (!o) setSelectedPayout(null); }}>
-        <SheetContent side="bottom" className="rounded-t-2xl max-h-[85vh] overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto pb-safe">
           <SheetHeader><SheetTitle>Transaction Details</SheetTitle></SheetHeader>
           {selectedPayout && (
             <div className="py-4 space-y-4">
@@ -307,7 +307,7 @@ const MobilePayoutsView = () => {
 
       {/* Withdraw Funds Sheet */}
       <Sheet open={instantPayoutOpen} onOpenChange={(o) => { if (!o) setInstantPayoutOpen(false); }}>
-        <SheetContent side="bottom" className="rounded-t-2xl max-h-[85vh] overflow-y-auto">
+        <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto pb-safe">
           <SheetHeader>
             <SheetTitle>
               {instantPayoutStep === "select_account" && "Withdraw To"}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, CreditCard, Banknote, Smartphone, Wallet, Link2, FileText, CheckCircle } from "lucide-react";
+import { X, CreditCard, Banknote, Smartphone, Link2, FileText, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,7 +13,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useTransactions } from "@/hooks/useTransactions";
 
-type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
+type PaymentType = "card-sale" | "payment-link" | "invoice" | "cash" | "mobile-money";
 
 interface MobilePaymentSheetProps {
   open: boolean;
@@ -27,7 +27,6 @@ const paymentConfig = {
   "invoice": { title: "New Invoice", icon: FileText, color: "bg-blue-500" },
   "cash": { title: "Cash Payment", icon: Banknote, color: "bg-green-500" },
   "mobile-money": { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" },
-  "wallet": { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" },
 };
 
 import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
