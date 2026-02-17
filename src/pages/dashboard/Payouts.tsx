@@ -5,7 +5,7 @@ import CapitalDialog from "@/components/dashboard/CapitalDialog";
 import FeesDialog from "@/components/dashboard/FeesDialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
-import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap } from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 
 const Payouts = () => {
   const [isBankModalOpen, setIsBankModalOpen] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<any>(null);
   const [capitalOpen, setCapitalOpen] = useState(false);
   const [feesOpen, setFeesOpen] = useState(false);
   const [bankDetails, setBankDetails] = useState({
@@ -182,15 +183,18 @@ const Payouts = () => {
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th>
                   <th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th>
+                  <th className="text-left p-4 text-sm font-medium text-muted-foreground">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {transactions.slice(0, 10).map((tx) => (
-                  <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
+                {transactions.slice(0, 20).map((tx) => (
+                  <tr key={tx.id} className="border-t border-border hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedTx(tx)}>
                     <td className="p-4">
                       <span className="font-medium text-foreground">{tx.id.slice(0, 8)}</span>
                     </td>
-                    <td className="p-4 text-muted-foreground">{new Date(tx.created_at).toLocaleDateString()}</td>
+                    <td className="p-4 text-muted-foreground">
+                      {new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </td>
                     <td className="p-4 font-semibold text-foreground">P{tx.amount.toFixed(2)}</td>
                     <td className="p-4">
                       <span
@@ -199,6 +203,11 @@ const Payouts = () => {
                         {getStatusIcon(tx.status)}
                         {tx.status}
                       </span>
+                    </td>
+                    <td className="p-4">
+                      <button className="p-2 hover:bg-muted rounded-lg transition-colors" onClick={(e) => { e.stopPropagation(); setSelectedTx(tx); }}>
+                        <Eye className="w-4 h-4 text-muted-foreground" />
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -254,6 +263,49 @@ const Payouts = () => {
               Save Changes
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Transaction Detail Dialog */}
+      <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Transaction Details</DialogTitle>
+          </DialogHeader>
+          {selectedTx && (
+            <div className="space-y-4">
+              <div className="text-center py-4">
+                <p className="text-3xl font-bold text-foreground">P{selectedTx.amount.toFixed(2)}</p>
+                <span className={`inline-block mt-2 px-3 py-1 rounded-full text-xs font-medium capitalize ${getStatusColor(selectedTx.status)}`}>
+                  {selectedTx.status}
+                </span>
+              </div>
+              <div className="space-y-3 bg-muted rounded-xl p-4">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">ID</span>
+                  <span className="font-medium text-foreground">{selectedTx.id.slice(0, 8)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium text-foreground">{new Date(selectedTx.created_at).toLocaleDateString()}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="font-medium text-foreground">{new Date(selectedTx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Payment Method</span>
+                  <span className="font-medium text-foreground capitalize">{selectedTx.payment_method.replace("_", " ")}</span>
+                </div>
+                {selectedTx.description && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Description</span>
+                    <span className="font-medium text-foreground text-right max-w-[200px]">{selectedTx.description}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
