@@ -6,12 +6,20 @@ import { Link } from "react-router-dom";
 const Products = () => {
   const products = [
     {
+      icon: Smartphone,
+      title: "PataPOS",
+      description: "Turn your phone into a powerful point-of-sale system. Sell products, manage inventory, and accept payments anywhere.",
+      features: ["Mobile POS", "Inventory management", "Instant receipts"],
+      link: "/card-machines",
+      color: "from-primary/20 to-primary/5"
+    },
+    {
       icon: CreditCard,
       title: "Payment Terminals",
       description: "Professional card machines designed for African businesses. Accept every payment method, anywhere you operate.",
       features: ["All card types", "Portable & wireless", "Fast settlements"],
       link: "/card-machines",
-      color: "from-primary/20 to-primary/5"
+      color: "from-blue-500/20 to-blue-500/5"
     },
     {
       icon: Smartphone,
