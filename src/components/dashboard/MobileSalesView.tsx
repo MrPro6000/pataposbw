@@ -22,6 +22,7 @@ import MobilePaymentGatewaySheet from "./MobilePaymentGatewaySheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileProductSaleSheet from "./MobileProductSaleSheet";
 import MobileInvoiceSheet from "./MobileInvoiceSheet";
+import MobileWalletSheet from "./MobileWalletSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvoices } from "@/hooks/useInvoices";
@@ -68,6 +69,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [productSaleOpen, setProductSaleOpen] = useState(false);
   const [invoiceSheetOpen, setInvoiceSheetOpen] = useState(false);
+  const [walletOpen, setWalletOpen] = useState(false);
   const { transactions, last7DaysIncome } = useTransactions();
   const { invoices } = useInvoices();
   const { paymentLinks } = usePaymentLinks();
@@ -160,7 +162,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         <div className="grid grid-cols-3 gap-3">
           <QuickActionButton icon={Banknote} label="Cash" variant="light" onClick={() => handleQuickAction('cash')} />
           <QuickActionButton icon={Smartphone} label="Mobile Money" variant="light" onClick={() => handleQuickAction('mobile-money')} />
-          <QuickActionButton icon={FileText} label="Invoice" variant="light" onClick={() => { setInvoiceSheetOpen(true); }} />
+          <QuickActionButton icon={Wallet} label="Wallet" variant="light" onClick={() => setWalletOpen(true)} />
         </div>
       </div>
 
@@ -289,6 +291,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobilePaymentGatewaySheet open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
       <MobileProductSaleSheet open={productSaleOpen} onClose={() => setProductSaleOpen(false)} />
       <MobileInvoiceSheet open={invoiceSheetOpen} onClose={() => setInvoiceSheetOpen(false)} />
+      <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>
