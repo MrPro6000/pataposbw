@@ -98,7 +98,7 @@ const Payouts = () => {
     if (amt < 5) return "Minimum withdrawal is P5.00.";
     if (withdrawAccount.type === "mobile_money" && withdrawAccount.details) {
       const digits = withdrawAccount.details.replace(/\D/g, "").replace(/^267/, "");
-      if (!/^[234678]\d{7}$/.test(digits)) return "Invalid Botswana mobile number on this account.";
+      if (!/^7\d{7}$/.test(digits)) return "Invalid Botswana mobile number. Must start with 7 and be 8 digits.";
     }
     return null;
   };

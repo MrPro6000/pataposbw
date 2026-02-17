@@ -121,8 +121,8 @@ const MobilePayoutsView = () => {
     // Validate Botswana mobile numbers for mobile_money accounts
     if (selectedAccount.type === "mobile_money" && selectedAccount.details) {
       const digits = selectedAccount.details.replace(/\D/g, "").replace(/^267/, "");
-      if (!/^[234678]\d{7}$/.test(digits)) {
-        return "Invalid Botswana mobile number on this account.";
+      if (!/^7\d{7}$/.test(digits)) {
+        return "Invalid Botswana mobile number. Must start with 7 and be 8 digits.";
       }
     }
     return null;
