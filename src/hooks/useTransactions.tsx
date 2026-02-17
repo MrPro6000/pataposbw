@@ -1,6 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import {
+  getCachedData,
+  setCachedData,
+  addToOfflineQueue,
+  isOnline,
+} from "@/lib/offlineCache";
 
 export interface Transaction {
   id: string;
@@ -13,16 +19,25 @@ export interface Transaction {
   is_dummy?: boolean;
 }
 
-// No dummy transactions - all data comes from DB
-
 export const useTransactions = () => {
   const { user } = useAuth();
-  const [dbTransactions, setDbTransactions] = useState<Transaction[]>([]);
+  const cacheKey = user ? `transactions_${user.id}` : "";
+  const [dbTransactions, setDbTransactions] = useState<Transaction[]>(
+    () => (cacheKey ? getCachedData<Transaction[]>(cacheKey) : null) || []
+  );
   const [loading, setLoading] = useState(true);
 
   const fetchTransactions = useCallback(async () => {
     if (!user) {
       setDbTransactions([]);
+      setLoading(false);
+      return;
+    }
+
+    // If offline, just use cached data
+    if (!isOnline()) {
+      const cached = getCachedData<Transaction[]>(cacheKey);
+      if (cached) setDbTransactions(cached);
       setLoading(false);
       return;
     }
@@ -37,36 +52,37 @@ export const useTransactions = () => {
       if (error) {
         console.error("Error fetching transactions:", error);
       } else {
-        setDbTransactions(
-          (data || []).map((t) => ({
-            id: t.id,
-            type: t.type,
-            payment_method: t.payment_method,
-            amount: Number(t.amount),
-            status: t.status || "completed",
-            description: t.description,
-            created_at: t.created_at || new Date().toISOString(),
-            is_dummy: false,
-          }))
-        );
+        const mapped = (data || []).map((t) => ({
+          id: t.id,
+          type: t.type,
+          payment_method: t.payment_method,
+          amount: Number(t.amount),
+          status: t.status || "completed",
+          description: t.description,
+          created_at: t.created_at || new Date().toISOString(),
+          is_dummy: false,
+        }));
+        setDbTransactions(mapped);
+        setCachedData(cacheKey, mapped);
       }
     } catch (err) {
       console.error("Error fetching transactions:", err);
+      // Fallback to cache
+      const cached = getCachedData<Transaction[]>(cacheKey);
+      if (cached) setDbTransactions(cached);
     } finally {
       setLoading(false);
     }
-  }, [user]);
+  }, [user, cacheKey]);
 
   useEffect(() => {
     fetchTransactions();
   }, [fetchTransactions]);
 
-  // All transactions from DB only
   const allTransactions = [...dbTransactions].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
 
-  // Balance calculations
   const totalIncome = allTransactions
     .filter((t) => t.amount > 0 && t.status === "completed")
     .reduce((sum, t) => sum + t.amount, 0);
@@ -77,7 +93,6 @@ export const useTransactions = () => {
 
   const balance = totalIncome - totalExpenses;
 
-  // Last 7 days income
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
   const last7DaysIncome = allTransactions
@@ -98,6 +113,41 @@ export const useTransactions = () => {
   }) => {
     if (!user) return { error: "Not authenticated" };
 
+    const newTx: Transaction = {
+      id: crypto.randomUUID(),
+      type: tx.type,
+      payment_method: tx.payment_method,
+      amount: tx.amount,
+      status: tx.status || "completed",
+      description: tx.description || null,
+      created_at: new Date().toISOString(),
+      is_dummy: false,
+    };
+
+    // Optimistically add to local state
+    setDbTransactions((prev) => {
+      const updated = [newTx, ...prev];
+      setCachedData(cacheKey, updated);
+      return updated;
+    });
+
+    if (!isOnline()) {
+      // Queue for later sync
+      addToOfflineQueue({
+        table: "transactions",
+        type: "insert",
+        payload: {
+          user_id: user.id,
+          type: tx.type,
+          payment_method: tx.payment_method,
+          amount: tx.amount,
+          description: tx.description || null,
+          status: tx.status || "completed",
+        },
+      });
+      return { error: null, data: newTx };
+    }
+
     try {
       const { data, error } = await supabase
         .from("transactions")
@@ -117,20 +167,25 @@ export const useTransactions = () => {
         return { error: error.message };
       }
 
-      // Add to local state immediately
-      setDbTransactions((prev) => [
-        {
-          id: data.id,
-          type: data.type,
-          payment_method: data.payment_method,
-          amount: Number(data.amount),
-          status: data.status || "completed",
-          description: data.description,
-          created_at: data.created_at || new Date().toISOString(),
-          is_dummy: false,
-        },
-        ...prev,
-      ]);
+      // Replace optimistic entry with real one
+      setDbTransactions((prev) => {
+        const updated = prev.map((t) =>
+          t.id === newTx.id
+            ? {
+                id: data.id,
+                type: data.type,
+                payment_method: data.payment_method,
+                amount: Number(data.amount),
+                status: data.status || "completed",
+                description: data.description,
+                created_at: data.created_at || new Date().toISOString(),
+                is_dummy: false,
+              }
+            : t
+        );
+        setCachedData(cacheKey, updated);
+        return updated;
+      });
 
       return { error: null, data };
     } catch (err: any) {

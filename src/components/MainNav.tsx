@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import PataLogo from "./PataLogo";
 import ThemeToggle from "./ThemeToggle";
@@ -14,6 +14,19 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
   const { theme: contextTheme } = useTheme();
   const isDark = propTheme ? propTheme === "dark" : contextTheme === "dark";
   const [posOpen, setPosOpen] = useState(false);
+
+  // Close dropdown when clicking outside
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+  React.useEffect(() => {
+    if (!posOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setPosOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [posOpen]);
   
   return (
     <header className="flex items-center justify-between px-5 md:px-20 h-16 text-foreground safe-area-top">
@@ -26,10 +39,13 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
           <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Products
           </Link>
-          <div className="relative flex items-center h-full" onMouseEnter={() => setPosOpen(true)} onMouseLeave={() => setPosOpen(false)}>
-            <button className="text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-1 leading-none h-full min-h-0">
+          <div ref={dropdownRef} className="relative flex items-center h-full">
+            <button 
+              onClick={() => setPosOpen(!posOpen)}
+              className="text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-1 leading-none h-full min-h-0"
+            >
               POS
-              <ChevronDown className="w-3 h-3" />
+              <ChevronDown className={`w-3 h-3 transition-transform duration-150 ${posOpen ? 'rotate-180' : ''}`} />
             </button>
             {posOpen && (
               <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[180px] z-50">

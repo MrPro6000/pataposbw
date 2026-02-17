@@ -8,6 +8,8 @@ import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/contexts/CartContext";
 import AIChatbot from "./components/AIChatbot";
 import CartDrawer from "./components/CartDrawer";
+import OfflineIndicator from "./components/OfflineIndicator";
+import { useOfflineSync } from "./hooks/useOfflineSync";
 import Home from "./pages/Home";
 import CardMachines from "./pages/CardMachines";
 import OnlinePayments from "./pages/OnlinePayments";
@@ -49,6 +51,62 @@ import AdminLiveChat from "./pages/admin/AdminLiveChat";
 
 const queryClient = new QueryClient();
 
+const AppContent = () => {
+  const { online, pendingCount } = useOfflineSync();
+
+  return (
+    <>
+      <OfflineIndicator online={online} pendingCount={pendingCount} />
+      <AIChatbot />
+      <CartDrawer />
+      <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/card-machines" element={<CardMachines />} />
+      <Route path="/online-payments" element={<OnlinePayments />} />
+      <Route path="/capital" element={<Capital />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="/products" element={<Products />} />
+      <Route path="/business-type" element={<BusinessType />} />
+      <Route path="/shop" element={<Shop />} />
+      <Route path="/login" element={<Auth mode="login" />} />
+      <Route path="/signup" element={<Auth mode="signup" />} />
+      <Route path="/kyc" element={<KYC />} />
+      <Route path="/business-setup" element={<BusinessSetup />} />
+      
+      {/* Dashboard routes */}
+      <Route path="/dashboard" element={<Sales />} />
+      <Route path="/dashboard/hub" element={<DashboardHome />} />
+      <Route path="/dashboard/sales" element={<Sales />} />
+      <Route path="/dashboard/products" element={<DashboardProducts />} />
+      <Route path="/dashboard/customers" element={<Customers />} />
+      <Route path="/dashboard/payouts" element={<Payouts />} />
+      <Route path="/dashboard/payout-history" element={<Payouts />} />
+      <Route path="/dashboard/reports" element={<Reports />} />
+      <Route path="/dashboard/devices" element={<Devices />} />
+      <Route path="/dashboard/staff" element={<Staff />} />
+      <Route path="/dashboard/settings" element={<Settings />} />
+      <Route path="/dashboard/transport" element={<Transport />} />
+      <Route path="/dashboard/support" element={<Support />} />
+      
+      {/* Admin routes */}
+      <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/admin/kyc" element={<AdminKYC />} />
+      <Route path="/admin/users" element={<AdminUsers />} />
+      <Route path="/admin/team" element={<AdminTeam />} />
+      <Route path="/admin/aml" element={<AdminAML />} />
+      <Route path="/admin/tickets" element={<AdminTickets />} />
+      <Route path="/admin/live-chat" element={<AdminLiveChat />} />
+      <Route path="/admin/faqs" element={<AdminFAQs />} />
+      <Route path="/admin/notifications" element={<AdminNotifications />} />
+      <Route path="/admin/analytics" element={<AdminAnalytics />} />
+      
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
+  );
+};
+
 const App = () => (
   <ThemeProvider>
     <AuthProvider>
@@ -58,53 +116,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <AIChatbot />
-            <CartDrawer />
-            <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/card-machines" element={<CardMachines />} />
-            <Route path="/online-payments" element={<OnlinePayments />} />
-            <Route path="/capital" element={<Capital />} />
-            <Route path="/pricing" element={<Pricing />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/business-type" element={<BusinessType />} />
-            <Route path="/shop" element={<Shop />} />
-            <Route path="/login" element={<Auth mode="login" />} />
-            <Route path="/signup" element={<Auth mode="signup" />} />
-            <Route path="/kyc" element={<KYC />} />
-            <Route path="/business-setup" element={<BusinessSetup />} />
-            
-            {/* Dashboard routes - /dashboard redirects to /dashboard/sales */}
-            <Route path="/dashboard" element={<Sales />} />
-            <Route path="/dashboard/hub" element={<DashboardHome />} />
-            <Route path="/dashboard/sales" element={<Sales />} />
-            <Route path="/dashboard/products" element={<DashboardProducts />} />
-            <Route path="/dashboard/customers" element={<Customers />} />
-            <Route path="/dashboard/payouts" element={<Payouts />} />
-            <Route path="/dashboard/payout-history" element={<Payouts />} />
-            <Route path="/dashboard/reports" element={<Reports />} />
-            <Route path="/dashboard/devices" element={<Devices />} />
-            <Route path="/dashboard/staff" element={<Staff />} />
-            <Route path="/dashboard/settings" element={<Settings />} />
-            <Route path="/dashboard/transport" element={<Transport />} />
-            <Route path="/dashboard/support" element={<Support />} />
-            
-            {/* Admin routes */}
-            <Route path="/admin/login" element={<AdminLogin />} />
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/kyc" element={<AdminKYC />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/team" element={<AdminTeam />} />
-            <Route path="/admin/aml" element={<AdminAML />} />
-            <Route path="/admin/tickets" element={<AdminTickets />} />
-            <Route path="/admin/live-chat" element={<AdminLiveChat />} />
-            <Route path="/admin/faqs" element={<AdminFAQs />} />
-            <Route path="/admin/notifications" element={<AdminNotifications />} />
-            <Route path="/admin/analytics" element={<AdminAnalytics />} />
-            
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <AppContent />
           </BrowserRouter>
         </TooltipProvider>
       </QueryClientProvider>
