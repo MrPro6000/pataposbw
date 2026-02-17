@@ -113,6 +113,11 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       toast.error("Please enter phone number");
       return;
     }
+    const digits = form.phoneNumber.replace(/\D/g, "").replace(/^267/, "");
+    if (!/^7\d{7}$/.test(digits)) {
+      toast.error("Invalid Botswana mobile number. Must start with 7 and be 8 digits.");
+      return;
+    }
     const provider = mobileMoneyProviders.find(p => p.id === selectedProvider);
     const newAccount: ConnectedAccount = {
       id: crypto.randomUUID(),

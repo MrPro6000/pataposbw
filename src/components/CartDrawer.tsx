@@ -73,6 +73,11 @@ const CartDrawer = () => {
       toast({ title: "Error", description: "Please select provider and enter phone", variant: "destructive" });
       return;
     }
+    const digits = customerPhone.replace(/\D/g, "").replace(/^267/, "");
+    if (!/^7\d{7}$/.test(digits)) {
+      toast({ title: "Invalid number", description: "Botswana mobile number must start with 7 and be 8 digits.", variant: "destructive" });
+      return;
+    }
     setIsProcessing(true);
     await new Promise(r => setTimeout(r, 1500));
     setIsProcessing(false);

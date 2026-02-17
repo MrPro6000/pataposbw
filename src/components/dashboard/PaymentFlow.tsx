@@ -3,6 +3,7 @@ import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode,
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast as sonnerToast } from "sonner";
 
 import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
 import smegaLogo from "@/assets/mobile-money/smega.png";
@@ -90,6 +91,11 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
 
   const handleMobileSend = () => {
     if (!selectedProvider || !customerPhone) return;
+    const digits = customerPhone.replace(/\D/g, "").replace(/^267/, "");
+    if (!/^7\d{7}$/.test(digits)) {
+      sonnerToast.error("Botswana mobile number must start with 7 and be 8 digits.");
+      return;
+    }
     setStep("mobile-sending");
   };
 

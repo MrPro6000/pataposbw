@@ -79,18 +79,16 @@ const Auth = ({ mode }: AuthProps) => {
 
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");
-    if (cleaned.startsWith("267")) {
-      return "+" + cleaned;
-    }
-    if (cleaned.startsWith("7") || cleaned.startsWith("8")) {
-      return "+267" + cleaned;
+    const local = cleaned.replace(/^267/, "");
+    if (/^7\d{0,7}$/.test(local)) {
+      return "+267" + local;
     }
     return cleaned;
   };
 
   const validateBotswanaNumber = (phone: string) => {
-    const regex = /^\+267[78]\d{7}$/;
-    return regex.test(phone);
+    const local = phone.replace(/\D/g, "").replace(/^267/, "");
+    return /^7\d{7}$/.test(local);
   };
 
   const handleSendOTP = async () => {
