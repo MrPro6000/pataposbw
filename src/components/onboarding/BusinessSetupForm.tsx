@@ -87,6 +87,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const [accountNumber, setAccountNumber] = useState("");
   const [branchCode, setBranchCode] = useState("");
   const [accountHolder, setAccountHolder] = useState("");
+  const [customBusinessType, setCustomBusinessType] = useState("");
   
   // Terms
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -227,7 +228,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
     try {
       const businessData = {
         businessName: businessName.trim(),
-        businessType,
+        businessType: businessType === "Other" && customBusinessType.trim() ? customBusinessType.trim() : businessType,
         registrationNumber: registrationNumber.trim() || undefined,
         address: businessAddress.trim(),
         city: city.trim(),
@@ -275,13 +276,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
     }
   };
 
-  const handleSkip = () => {
-    toast({
-      title: "Setup skipped",
-      description: "You can complete your business profile later from Settings.",
-    });
-    onComplete();
-  };
+  // No skip — onboarding is mandatory
 
   if (currentStep === "complete") {
     return (
@@ -305,15 +300,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <PataLogo className="h-5" />
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <button 
-            onClick={handleSkip}
-            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Skip for now
-          </button>
-        </div>
+        <ThemeToggle />
       </header>
 
       {/* Progress Steps */}
@@ -385,6 +372,14 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                       </button>
                     ))}
                   </div>
+                  {businessType === "Other" && (
+                    <Input
+                      value={customBusinessType}
+                      onChange={(e) => setCustomBusinessType(e.target.value)}
+                      placeholder="Enter your business type"
+                      className="mt-3"
+                    />
+                  )}
                 </div>
 
                 <div>

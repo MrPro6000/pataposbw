@@ -3,7 +3,7 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, Check } from "lucide-react";
+import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,11 +15,11 @@ type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | 
 
 const Settings = () => {
   const isMobile = useIsMobile();
-  const { theme, toggleTheme, colors, setColors, colorPresets } = useTheme();
+  const { theme, toggleTheme } = useTheme();
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   
-  const [businessInfo, setBusinessInfo] = useState({ name: "Pata Business (Pty) Ltd", registrationNumber: "2025/123456/07", email: "info@patabusiness.com", phone: "+27 11 123 4567", address: "123 Main Street, Sandton, Johannesburg, 2196" });
-  const [storeSettings, setStoreSettings] = useState({ storeName: "Main Branch", operatingHours: "08:00 - 18:00", currency: "ZAR", timezone: "Africa/Johannesburg" });
+  const [businessInfo, setBusinessInfo] = useState({ name: "", registrationNumber: "", email: "", phone: "+267 ", address: "" });
+  const [storeSettings, setStoreSettings] = useState({ storeName: "Main Branch", operatingHours: "08:00 - 18:00", currency: "BWP", timezone: "Africa/Gaborone" });
   const [taxSettings, setTaxSettings] = useState({ vatEnabled: true, vatRate: "15", vatNumber: "4123456789", pricesIncludeVat: true });
   const [receiptSettings, setReceiptSettings] = useState({ showLogo: true, footerMessage: "Thank you for your business!", includeVatBreakdown: true, emailReceipts: true });
   const [notifications, setNotifications] = useState({ dailySummary: true, lowStock: true, newSale: false, payoutComplete: true });
@@ -60,14 +60,14 @@ const Settings = () => {
                 <Label>Currency</Label>
                 <Select value={storeSettings.currency} onValueChange={(v) => setStoreSettings({ ...storeSettings, currency: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-popover border border-border"><SelectItem value="ZAR">ZAR - South African Rand</SelectItem><SelectItem value="USD">USD - US Dollar</SelectItem><SelectItem value="EUR">EUR - Euro</SelectItem></SelectContent>
+                  <SelectContent className="bg-popover border border-border"><SelectItem value="BWP">BWP - Botswana Pula</SelectItem><SelectItem value="ZAR">ZAR - South African Rand</SelectItem><SelectItem value="USD">USD - US Dollar</SelectItem><SelectItem value="EUR">EUR - Euro</SelectItem></SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
                 <Label>Timezone</Label>
                 <Select value={storeSettings.timezone} onValueChange={(v) => setStoreSettings({ ...storeSettings, timezone: v })}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-popover border border-border"><SelectItem value="Africa/Johannesburg">Africa/Johannesburg (SAST)</SelectItem><SelectItem value="UTC">UTC</SelectItem></SelectContent>
+                  <SelectContent className="bg-popover border border-border"><SelectItem value="Africa/Gaborone">Africa/Gaborone (CAT)</SelectItem><SelectItem value="Africa/Johannesburg">Africa/Johannesburg (SAST)</SelectItem><SelectItem value="UTC">UTC</SelectItem></SelectContent>
                 </Select>
               </div>
             </div>
@@ -79,6 +79,7 @@ const Settings = () => {
             {[
               { label: "Card Payments", desc: "Accept Visa, Mastercard, Amex", color: "bg-primary/20", iconColor: "text-primary" },
               { label: "Tap to Pay", desc: "NFC contactless payments", color: "bg-purple-500/20", iconColor: "text-purple-500" },
+              { label: "Mobile Money", desc: "Orange Money, Smega, MyZaka", color: "bg-amber-500/20", iconColor: "text-amber-500" },
               { label: "Online Payments", desc: "Payment links & invoices", color: "bg-green-500/20", iconColor: "text-green-500" },
             ].map(item => (
               <div key={item.label} className="p-4 bg-muted rounded-xl flex items-center justify-between">
@@ -140,33 +141,6 @@ const Settings = () => {
                 <div><p className="font-medium text-foreground">Theme Mode</p><p className="text-sm text-muted-foreground">{theme === "light" ? "Light mode" : "Dark mode"}</p></div>
               </div>
               <Switch checked={theme === "dark"} onCheckedChange={toggleTheme} />
-            </div>
-            <div>
-              <h3 className="font-medium text-foreground mb-4">Accent Color</h3>
-              <p className="text-sm text-muted-foreground mb-4">Choose a color theme for your dashboard</p>
-              <div className="grid grid-cols-3 gap-3">
-                {colorPresets.map((preset) => {
-                  const isSelected = colors.primary === preset.primary;
-                  const hslMatch = preset.primary.match(/(\d+)\s+(\d+)%\s+(\d+)%/);
-                  const bgColor = hslMatch ? `hsl(${hslMatch[1]}, ${hslMatch[2]}%, ${hslMatch[3]}%)` : '#0066FF';
-                  return (
-                    <button key={preset.name} onClick={() => setColors({ primary: preset.primary, accent: preset.accent })}
-                      className={`p-4 rounded-xl border-2 transition-all flex items-center gap-3 ${isSelected ? "border-primary" : "border-border"}`}>
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{ backgroundColor: bgColor }}>
-                        {isSelected && <Check className="w-4 h-4 text-white" />}
-                      </div>
-                      <span className="font-medium text-foreground">{preset.name}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-            <div className="bg-muted rounded-xl p-4">
-              <p className="text-sm text-muted-foreground mb-3">Preview</p>
-              <div className="flex gap-3">
-                <Button className="text-white" style={{ backgroundColor: `hsl(${colors.primary})` }}>Primary Button</Button>
-                <Button variant="outline">Secondary Button</Button>
-              </div>
             </div>
           </div>
         );
