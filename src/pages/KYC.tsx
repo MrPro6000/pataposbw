@@ -132,15 +132,48 @@ const KYC = () => {
 
       const result = await response.json();
       
-      // For ID front: check if Omang number matches
-      if (type === "front" && result.id_number_match === false) {
-        toast({
-          title: "ID Number Mismatch",
-          description: `The ID number on your document doesn't match the Omang number you entered (${omangNumber}). Please check and try again.`,
-          variant: "destructive",
-          duration: 10000,
-        });
-        return false;
+      // For ID front: check it's the correct side first
+      if (type === "front") {
+        if (result.is_valid === false) {
+          toast({
+            title: "Invalid ID Photo",
+            description: "This doesn't appear to be a valid government-issued ID. Please upload a clear photo of your ID front.",
+            variant: "destructive",
+            duration: 10000,
+          });
+          return false;
+        }
+
+        if (result.is_front === false) {
+          toast({
+            title: "Wrong side of ID",
+            description: "This looks like the back of your ID. Please flip your ID card and upload the front side (the side showing your photo and name).",
+            variant: "destructive",
+            duration: 10000,
+          });
+          return false;
+        }
+
+        // Check ID number match — reject if mismatch OR if AI couldn't read it at all
+        if (result.id_number_match === false) {
+          toast({
+            title: "ID Number Mismatch",
+            description: `The ID number on your document doesn't match "${omangNumber}". Please check the number you entered and try again.`,
+            variant: "destructive",
+            duration: 10000,
+          });
+          return false;
+        }
+
+        if (result.id_number_match === null) {
+          toast({
+            title: "ID Number Not Readable",
+            description: "AI could not clearly read the ID number on your document. Please take a clearer photo with better lighting.",
+            variant: "destructive",
+            duration: 10000,
+          });
+          return false;
+        }
       }
 
       // For ID back: AI must confirm it's the back side specifically
@@ -156,17 +189,6 @@ const KYC = () => {
           });
           return false;
         }
-      }
-
-      // For ID front: AI must confirm it's the front side specifically
-      if (type === "front" && result.is_front === false) {
-        toast({
-          title: "Wrong side of ID",
-          description: "This looks like the back of your ID. Please flip your ID card and upload the front side (the side showing your photo and name).",
-          variant: "destructive",
-          duration: 10000,
-        });
-        return false;
       }
 
       return result.is_valid !== false;
