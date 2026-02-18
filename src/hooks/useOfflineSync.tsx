@@ -58,7 +58,7 @@ export const useOfflineSync = () => {
       setOnline(false);
       toast({
         title: "You're offline",
-        description: "Viewing cached data. Actions will sync when you're back online.",
+        description: "Actions will sync when you're back online.",
       });
     };
 

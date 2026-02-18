@@ -16,7 +16,7 @@ const OfflineIndicator = ({ online, pendingCount }: OfflineIndicatorProps) => {
     }`}>
       {!online && <WifiOff className="w-3.5 h-3.5" />}
       {!online
-        ? "You're offline — viewing cached data"
+        ? "You're offline"
         : `Syncing ${pendingCount} queued action(s)…`}
     </div>
   );
