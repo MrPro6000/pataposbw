@@ -34,6 +34,7 @@ const KYC = () => {
   const [verifyingFront, setVerifyingFront] = useState(false);
   const [verifyingBack, setVerifyingBack] = useState(false);
   const [verifyingSelfie, setVerifyingSelfie] = useState(false);
+  const [rejectionReason, setRejectionReason] = useState("");
   
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -70,6 +71,7 @@ const KYC = () => {
         } else if (kyc.status === "pending") {
           setCurrentStep("pending");
         } else if (kyc.status === "rejected") {
+          setRejectionReason(kyc.rejection_reason || "");
           setCurrentStep("rejected");
         }
       }
@@ -348,22 +350,66 @@ const KYC = () => {
 
     setLoading(true);
     try {
-      const { error } = await submitKYC(user.id, {
-        omangNumber: omangNumber.trim(),
-        phoneNumber: user.email || "",
-        idFrontUrl,
-        idBackUrl,
-        selfieUrl,
-      });
+      // 1. Insert KYC record as pending first to get an ID
+      const { data: kycRecord, error: insertError } = await supabase
+        .from("kyc_submissions")
+        .insert({
+          user_id: user.id,
+          omang_number: omangNumber.trim(),
+          phone_number: user.email || "",
+          id_front_url: idFrontUrl,
+          id_back_url: idBackUrl,
+          selfie_url: selfieUrl,
+          status: "pending",
+        })
+        .select("id")
+        .single();
 
-      if (error) throw new Error(error);
+      if (insertError) throw new Error(insertError.message);
 
+      // Show spinner-like message while AI reviews
       toast({
-        title: "KYC Submitted",
-        description: "Your verification is pending approval. Setting up your business...",
+        title: "AI is reviewing your documents...",
+        description: "This takes a few seconds. Please wait.",
       });
-      
-      navigate("/business-setup");
+
+      // 2. Call AI auto-approve edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/auto-approve-kyc`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.access_token}`,
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          },
+          body: JSON.stringify({
+            kycId: kycRecord.id,
+            idFrontPath: idFrontUrl,
+            idBackPath: idBackUrl,
+            selfiePath: selfieUrl,
+            omangNumber: omangNumber.trim(),
+          }),
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.approved) {
+        // KYC approved — go to business setup
+        toast({
+          title: "✅ KYC Approved!",
+          description: "Your identity has been verified. Let's set up your business!",
+          duration: 6000,
+        });
+        navigate("/business-setup");
+      } else {
+        // KYC rejected by AI — show reason, let them retry
+        setCurrentStep("rejected");
+        // Store reason to display on rejected screen
+        setRejectionReason(result.reason || "Your documents could not be verified. Please try again.");
+      }
     } catch (error: any) {
       toast({ title: "Error", description: error.message || "Failed to submit KYC", variant: "destructive" });
     } finally {
@@ -478,23 +524,39 @@ const KYC = () => {
             <div className="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <div className="w-8 h-8 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">Verification Pending</h2>
-            <p className="text-muted-foreground mb-6">Your KYC submission is being reviewed. You'll be notified once approved.</p>
-            <Button onClick={() => navigate("/dashboard")} className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
-              Continue to Dashboard
-            </Button>
+            <h2 className="text-xl font-semibold text-foreground mb-2">Under Review</h2>
+            <p className="text-muted-foreground mb-2">Your documents are being reviewed by our team.</p>
+            <p className="text-sm text-muted-foreground">You'll receive a notification once the review is complete. You cannot access the dashboard until your KYC is approved.</p>
           </div>
         );
 
       case "rejected":
         return (
-          <div className="text-center">
-            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-              <span className="text-red-500 text-2xl">✕</span>
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 bg-destructive/20 rounded-full flex items-center justify-center mx-auto">
+              <span className="text-destructive text-2xl">✕</span>
             </div>
-            <h2 className="text-xl font-semibold text-foreground mb-2">Verification Rejected</h2>
-            <p className="text-muted-foreground mb-6">Please contact support for assistance.</p>
-            <Button onClick={() => navigate("/dashboard/support")} className="w-full py-4 bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
+            <h2 className="text-xl font-semibold text-foreground">Verification Failed</h2>
+            {rejectionReason ? (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 text-left">
+                <p className="text-sm font-medium text-destructive mb-1">Reason:</p>
+                <p className="text-sm text-muted-foreground">{rejectionReason}</p>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Your documents could not be verified. Please check the details and try again.</p>
+            )}
+            <Button
+              onClick={() => {
+                setCurrentStep("omang");
+                setIdFrontUrl(""); setIdBackUrl(""); setSelfieUrl("");
+                setIdFrontPreview(""); setIdBackPreview(""); setSelfiePreview("");
+                setOmangNumber(""); setRejectionReason("");
+              }}
+              className="w-full py-4 rounded-xl text-base font-medium"
+            >
+              Try Again
+            </Button>
+            <Button variant="outline" onClick={() => navigate("/dashboard/support")} className="w-full py-3 rounded-xl">
               Contact Support
             </Button>
           </div>
