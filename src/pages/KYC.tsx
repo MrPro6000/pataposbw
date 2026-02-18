@@ -108,7 +108,7 @@ const KYC = () => {
 
       const body: any = { storagePath, type };
       
-      // Pass omang number for ID front verification to cross-check
+      // Pass omang number for ID front verification to cross-check number
       if (type === "front" && omangNumber.trim()) {
         body.omangNumber = omangNumber.trim();
       }
@@ -130,11 +130,22 @@ const KYC = () => {
 
       const result = await response.json();
       
-      // For ID front: also check if Omang number matches
+      // For ID front: check if Omang number matches
       if (type === "front" && result.id_number_match === false) {
         toast({
           title: "ID Number Mismatch",
           description: `The ID number on your document doesn't match the Omang number you entered (${omangNumber}). Please check and try again.`,
+          variant: "destructive",
+          duration: 10000,
+        });
+        return false;
+      }
+
+      // For ID back: AI must confirm it's a valid ID document (back side)
+      if (type === "back" && result.is_valid === false) {
+        toast({
+          title: "Invalid ID Back Photo",
+          description: "AI could not confirm this is the back of a valid government-issued ID. Please flip your ID and take a clear photo of the reverse side.",
           variant: "destructive",
           duration: 10000,
         });
@@ -193,6 +204,57 @@ const KYC = () => {
     }
   };
 
+  // Crop image using canvas — scales it down and centres on the ID card area
+  const cropToIDSize = (file: File, isSelfie: boolean): Promise<File> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let targetW: number, targetH: number, sx: number, sy: number, sw: number, sh: number;
+
+        if (isSelfie) {
+          // For selfie: square crop centred on the face (top 60% of image)
+          const size = Math.min(img.width, img.height);
+          targetW = 600;
+          targetH = 600;
+          sx = (img.width - size) / 2;
+          sy = Math.max(0, img.height * 0.05);
+          sw = size;
+          sh = size;
+        } else {
+          // For ID card: crop centre 85% horizontally, 65% vertically to focus on the card
+          targetW = 1000;
+          targetH = 630;
+          sw = img.width * 0.85;
+          sh = img.height * 0.65;
+          sx = (img.width - sw) / 2;
+          sy = (img.height - sh) / 2;
+        }
+
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext("2d")!;
+        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          0.92
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
+  };
+
   const handleFileUpload = async (file: File, type: "front" | "back" | "selfie") => {
     if (!user) return;
 
@@ -213,15 +275,19 @@ const KYC = () => {
 
     setUploading(true);
     try {
+      // Crop/scale the image before uploading
+      const processedFile = await cropToIDSize(file, type === "selfie");
+
+      // Show preview of the cropped image
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(processedFile);
 
-      // Upload to private kyc-documents bucket
-      const storagePath = `${user.id}/${type}_${Date.now()}.${file.name.split(".").pop()}`;
+      // Upload cropped image to private kyc-documents bucket
+      const storagePath = `${user.id}/${type}_${Date.now()}.jpg`;
       const { error } = await supabase.storage
         .from("kyc-documents")
-        .upload(storagePath, file, { cacheControl: "3600", upsert: true });
+        .upload(storagePath, processedFile, { cacheControl: "3600", upsert: true });
 
       if (error) throw error;
 
@@ -237,12 +303,14 @@ const KYC = () => {
         setPreview("");
         setUrl("");
         
-        const label = type === "selfie" ? "selfie" : `ID ${type}`;
+        const label = type === "selfie" ? "selfie" : `ID ${type === "front" ? "Front" : "Back"}`;
         toast({
           title: `Invalid ${label} photo`,
-          description: type === "selfie" 
+          description: type === "selfie"
             ? "Please upload a clear photo of your face. The image doesn't appear to be a valid selfie."
-            : "Please upload a photo of your actual government-issued ID card. Screenshots, random images, or non-ID documents are not accepted.",
+            : type === "front"
+            ? "The front of your ID card was not recognized. Please ensure the photo shows the side with your name, photo, and ID number clearly."
+            : "The back of your ID card was not recognized. Please ensure the photo shows the reverse side of your government-issued ID clearly.",
           variant: "destructive",
           duration: 8000,
         });
@@ -261,7 +329,7 @@ const KYC = () => {
       }
 
       setUrl(storagePath);
-      toast({ title: "Photo verified ✓", description: `${type === "selfie" ? "Selfie" : `ID ${type}`} uploaded and verified successfully` });
+      toast({ title: "Photo verified ✓", description: `${type === "selfie" ? "Selfie" : `ID ${type === "front" ? "Front" : "Back"}`} uploaded and verified successfully` });
     } catch (error: any) {
       console.error("Upload error:", error);
       toast({ title: "Upload failed", description: error.message || "Failed to upload photo", variant: "destructive" });
@@ -318,15 +386,28 @@ const KYC = () => {
     const verifying = type === "front" ? verifyingFront : type === "back" ? verifyingBack : verifyingSelfie;
     const setPreview = type === "front" ? setIdFrontPreview : type === "back" ? setIdBackPreview : setSelfiePreview;
     const setUrl = type === "front" ? setIdFrontUrl : type === "back" ? setIdBackUrl : setSelfieUrl;
-    const label = type === "selfie" ? "Selfie Photo" : `ID ${type === "front" ? "Front" : "Back"}`;
     const isRound = type === "selfie";
+
+    const labelMap = {
+      front: "ID Front Side",
+      back: "ID Back Side",
+      selfie: "Selfie Photo",
+    };
+    const hintMap = {
+      front: "The side showing your photo, name & ID number",
+      back: "The reverse side of your ID card",
+      selfie: "Look straight at the camera",
+    };
+    const label = labelMap[type];
+    const hint = hintMap[type];
 
     return (
       <div className={`rounded-2xl p-4 ${isDark ? "bg-[#2a2a2a] border border-white/10" : "bg-white border border-[#e0e0e0]"}`}>
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-1">
           <h3 className={`font-medium ${isDark ? "text-white" : "text-[#141414]"}`}>{label}</h3>
           {url && <CheckCircle className="w-5 h-5 text-green-500" />}
         </div>
+        <p className={`text-xs mb-3 ${isDark ? "text-white/50" : "text-[#141414]/50"}`}>{hint}</p>
 
         {preview ? (
           <div className="relative flex justify-center">
@@ -357,7 +438,7 @@ const KYC = () => {
             </div>
             {!isRound && (
               <p className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
-                {uploading ? "Uploading..." : `Upload ${label}`}
+                {uploading ? "Uploading..." : `Tap to scan ${label}`}
               </p>
             )}
             <input
@@ -378,7 +459,7 @@ const KYC = () => {
           <div className="mt-3 flex items-center justify-center gap-2">
             <Loader2 className={`w-4 h-4 animate-spin ${verifying ? "text-blue-500" : "text-primary"}`} />
             <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
-              {verifying ? "AI verifying photo..." : "Uploading..."}
+              {verifying ? (isRound ? "AI verifying selfie..." : `AI verifying ${type === "front" ? "front" : "back"} of ID...`) : "Processing & cropping..."}
             </span>
           </div>
         )}
