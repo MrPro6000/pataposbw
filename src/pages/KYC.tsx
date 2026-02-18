@@ -6,6 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import PataLogo from "@/components/PataLogo";
 import { useTheme } from "@/contexts/ThemeContext";
 import ThemeToggle from "@/components/ThemeToggle";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -39,6 +40,14 @@ const KYC = () => {
   const { toast } = useToast();
   const isDark = theme === "dark";
   const { user, loading: authLoading } = useAuth();
+  const isMobile = useIsMobile();
+
+  const handleLogoBack = () => {
+    if (!isMobile) return;
+    if (currentStep === "selfie") { setCurrentStep("photos"); return; }
+    if (currentStep === "photos") { setCurrentStep("omang"); return; }
+    navigate(-1);
+  };
 
   useEffect(() => {
     if (!authLoading) {
@@ -531,7 +540,13 @@ const KYC = () => {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col transition-colors duration-300">
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
-        <PataLogo className="h-5 text-foreground" />
+        <button
+          onClick={handleLogoBack}
+          className={isMobile ? "cursor-pointer active:opacity-70 transition-opacity" : "cursor-default"}
+          aria-label="Go back"
+        >
+          <PataLogo className="h-5 text-foreground" />
+        </button>
         <ThemeToggle />
       </header>
       <main className="flex-1 flex items-center justify-center p-6">
