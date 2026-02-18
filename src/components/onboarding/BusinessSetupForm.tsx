@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import PataLogo from "@/components/PataLogo";
@@ -63,6 +64,13 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+
+  const handleLogoBack = () => {
+    if (!isMobile) return;
+    if (currentStep === "business") { navigate(-1); return; }
+    handleBack();
+  };
 
   // Form data
   const [businessName, setBusinessName] = useState("");
@@ -311,7 +319,13 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
     <div className="min-h-screen bg-background text-foreground flex flex-col">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
-        <PataLogo className="h-5" />
+        <button
+          onClick={handleLogoBack}
+          className={isMobile ? "cursor-pointer active:opacity-70 transition-opacity" : "cursor-default"}
+          aria-label="Go back"
+        >
+          <PataLogo className="h-5" />
+        </button>
         <ThemeToggle />
       </header>
 
