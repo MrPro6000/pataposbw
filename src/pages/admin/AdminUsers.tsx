@@ -243,6 +243,7 @@ const AdminUsers = () => {
           <table className="w-full">
             <thead>
               <tr className="border-b border-white/10">
+                <th className="text-left py-4 px-4 text-white/60 text-sm font-medium w-12">#</th>
                 <th className="text-left py-4 px-6 text-white/60 text-sm font-medium">User</th>
                 <th className="text-left py-4 px-6 text-white/60 text-sm font-medium">Business</th>
                 <th className="text-left py-4 px-6 text-white/60 text-sm font-medium">Limit</th>
@@ -261,8 +262,9 @@ const AdminUsers = () => {
                   <td colSpan={6} className="py-12 text-center text-white/40">No users found</td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                filteredUsers.map((user, index) => (
                   <tr key={user.id} className="border-b border-white/5 hover:bg-white/5">
+                    <td className="py-4 px-4 text-white/40 text-sm font-mono">{index + 1}</td>
                     <td className="py-4 px-6">
                       <div>
                         <p className="text-white font-medium">{user.full_name || "No name"}</p>
