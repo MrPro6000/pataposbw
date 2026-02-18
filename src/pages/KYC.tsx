@@ -143,11 +143,26 @@ const KYC = () => {
         return false;
       }
 
-      // For ID back: AI must confirm it's a valid ID document (back side)
-      if (type === "back" && result.is_valid === false) {
+      // For ID back: AI must confirm it's the back side specifically
+      if (type === "back") {
+        if (result.is_valid === false || result.is_back === false) {
+          toast({
+            title: result.is_back === false ? "Wrong side of ID" : "Invalid ID Back Photo",
+            description: result.is_back === false
+              ? "This looks like the front of your ID. Please flip your ID card and upload the reverse/back side."
+              : "AI could not confirm this is the back of a valid government-issued ID. Please flip your ID and take a clear photo of the reverse side.",
+            variant: "destructive",
+            duration: 10000,
+          });
+          return false;
+        }
+      }
+
+      // For ID front: AI must confirm it's the front side specifically
+      if (type === "front" && result.is_front === false) {
         toast({
-          title: "Invalid ID Back Photo",
-          description: "AI could not confirm this is the back of a valid government-issued ID. Please flip your ID and take a clear photo of the reverse side.",
+          title: "Wrong side of ID",
+          description: "This looks like the back of your ID. Please flip your ID card and upload the front side (the side showing your photo and name).",
           variant: "destructive",
           duration: 10000,
         });
@@ -206,57 +221,6 @@ const KYC = () => {
     }
   };
 
-  // Crop image using canvas — scales it down and centres on the ID card area
-  const cropToIDSize = (file: File, isSelfie: boolean): Promise<File> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      const url = URL.createObjectURL(file);
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        let targetW: number, targetH: number, sx: number, sy: number, sw: number, sh: number;
-
-        if (isSelfie) {
-          // For selfie: square crop centred on the face (top 60% of image)
-          const size = Math.min(img.width, img.height);
-          targetW = 600;
-          targetH = 600;
-          sx = (img.width - size) / 2;
-          sy = Math.max(0, img.height * 0.05);
-          sw = size;
-          sh = size;
-        } else {
-          // For ID card: crop centre 85% horizontally, 65% vertically to focus on the card
-          targetW = 1000;
-          targetH = 630;
-          sw = img.width * 0.85;
-          sh = img.height * 0.65;
-          sx = (img.width - sw) / 2;
-          sy = (img.height - sh) / 2;
-        }
-
-        canvas.width = targetW;
-        canvas.height = targetH;
-        const ctx = canvas.getContext("2d")!;
-        ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetW, targetH);
-        URL.revokeObjectURL(url);
-
-        canvas.toBlob(
-          (blob) => {
-            if (blob) {
-              resolve(new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" }));
-            } else {
-              resolve(file);
-            }
-          },
-          "image/jpeg",
-          0.92
-        );
-      };
-      img.onerror = () => resolve(file);
-      img.src = url;
-    });
-  };
-
   const handleFileUpload = async (file: File, type: "front" | "back" | "selfie") => {
     if (!user) return;
 
@@ -277,19 +241,17 @@ const KYC = () => {
 
     setUploading(true);
     try {
-      // Crop/scale the image before uploading
-      const processedFile = await cropToIDSize(file, type === "selfie");
-
-      // Show preview of the cropped image
+      // Show preview of the original image
       const reader = new FileReader();
       reader.onload = (e) => setPreview(e.target?.result as string);
-      reader.readAsDataURL(processedFile);
+      reader.readAsDataURL(file);
 
-      // Upload cropped image to private kyc-documents bucket
-      const storagePath = `${user.id}/${type}_${Date.now()}.jpg`;
+      // Upload original image to private kyc-documents bucket
+      const ext = file.name.split(".").pop() || "jpg";
+      const storagePath = `${user.id}/${type}_${Date.now()}.${ext}`;
       const { error } = await supabase.storage
         .from("kyc-documents")
-        .upload(storagePath, processedFile, { cacheControl: "3600", upsert: true });
+        .upload(storagePath, file, { cacheControl: "3600", upsert: true });
 
       if (error) throw error;
 
@@ -505,7 +467,7 @@ const KYC = () => {
           <div className="mt-3 flex items-center justify-center gap-2">
             <Loader2 className={`w-4 h-4 animate-spin ${verifying ? "text-blue-500" : "text-primary"}`} />
             <span className={`text-sm ${isDark ? "text-white/60" : "text-[#141414]/60"}`}>
-              {verifying ? (isRound ? "AI verifying selfie..." : `AI verifying ${type === "front" ? "front" : "back"} of ID...`) : "Processing & cropping..."}
+              {verifying ? (isRound ? "AI verifying selfie..." : `AI verifying ${type === "front" ? "front" : "back"} side of ID...`) : "Uploading..."}
             </span>
           </div>
         )}

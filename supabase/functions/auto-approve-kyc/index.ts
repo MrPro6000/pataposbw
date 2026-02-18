@@ -161,7 +161,7 @@ Respond with JSON only:
       .update({
         status: newStatus,
         reviewed_at: new Date().toISOString(),
-        reviewed_by: "ai-system",
+        reviewed_by: null,
         rejection_reason: decision.approved ? null : decision.reason,
       })
       .eq("id", kycId);
