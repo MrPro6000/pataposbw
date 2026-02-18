@@ -316,7 +316,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
+    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
       {/* Header */}
       <header className="flex items-center justify-between px-6 py-4 border-b border-border">
         <button
@@ -352,8 +352,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="flex-1 px-6 py-8 overflow-auto">
+      {/* Main Content — scrollable so continue button is always reachable on mobile */}
+      <main className="flex-1 px-6 py-8 overflow-y-auto">
         <div className="max-w-md mx-auto">
           {currentStep === "business" && (
             <div className="space-y-6">
