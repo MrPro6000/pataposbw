@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,23 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
 const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
-type Step = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "cart" | "payment";
+// Utility service types with their icons and colors
+const utilityServices = [
+  { id: "airtime", label: "Airtime", icon: Phone, color: "text-green-500", bg: "bg-green-500/10" },
+  { id: "dstv", label: "DSTV", icon: Tv, color: "text-blue-500", bg: "bg-blue-500/10" },
+  { id: "electricity", label: "Electricity", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
+  { id: "water", label: "Water Bill", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10" },
+  { id: "insurance", label: "Insurance", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" },
+];
+
+// Airtime providers in Botswana
+const airtimeProviders = [
+  { id: "orange", name: "Orange", color: "bg-orange-500" },
+  { id: "mascom", name: "Mascom", color: "bg-red-600" },
+  { id: "btc", name: "BTC", color: "bg-blue-700" },
+];
+
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -64,6 +80,17 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
+
+  // Airtime state
+  const [airtimeProvider, setAirtimeProvider] = useState("");
+  const [airtimeAmount, setAirtimeAmount] = useState("");
+  const [airtimePhone, setAirtimePhone] = useState("");
+
+  // Utility (DSTV, Electricity, Water, Insurance) state
+  const [activeUtility, setActiveUtility] = useState<typeof utilityServices[0] | null>(null);
+  const [utilityAmount, setUtilityAmount] = useState("");
+  const [utilityRef, setUtilityRef] = useState("");
+  const [utilityCustomer, setUtilityCustomer] = useState("");
 
   // Only show user's own products from DB
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
@@ -123,6 +150,25 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const handleAddAirtime = () => {
+    if (!airtimeProvider || !airtimeAmount) return;
+    const provider = airtimeProviders.find(p => p.id === airtimeProvider);
+    const id = `airtime-${Date.now()}`;
+    const name = `Airtime — ${provider?.name}${airtimePhone ? ` (${airtimePhone})` : ""}`;
+    addToCart({ id, name, price: parseFloat(airtimeAmount), category: "Services" });
+    setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    setStep("products");
+  };
+
+  const handleAddUtility = () => {
+    if (!activeUtility || !utilityAmount) return;
+    const id = `utility-${Date.now()}`;
+    const name = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
+    addToCart({ id, name, price: parseFloat(utilityAmount), category: "Services" });
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    setStep("products");
+  };
+
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
     const id = `product-${Date.now()}`;
@@ -141,6 +187,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
     setProductForm({ productName: "", price: "", quantity: "1" });
+    setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     onClose();
   };
 
@@ -151,6 +199,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "products": return "Select Products";
       case "transport-form": return "Add Transport";
       case "service-form": return "Add Service";
+      case "services-list": return "Services";
+      case "airtime-form": return "Buy Airtime";
+      case "utility-form": return activeUtility?.label ?? "Utility Payment";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
@@ -203,11 +254,11 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   </button>
                 )}
                 {showServiceTile && (
-                  <button onClick={() => setStep("service-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                  <button onClick={() => setStep("services-list")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
                     <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
-                    <p className="font-medium text-foreground text-sm">Custom Service</p>
-                    <p className="text-xs text-muted-foreground">Licence, levy, etc.</p>
-                    <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                    <p className="font-medium text-foreground text-sm">Services</p>
+                    <p className="text-xs text-muted-foreground">Airtime, DSTV & more</p>
+                    <p className="text-xs text-primary font-semibold mt-1">View All</p>
                   </button>
                 )}
                 {showDevicesTile && (
@@ -243,6 +294,112 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     </button>
                   );
                 })}
+              </div>
+            </div>
+          )}
+
+          {/* SERVICES LIST */}
+          {step === "services-list" && (
+            <div className="p-4 space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setStep("products")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="grid grid-cols-2 gap-3">
+                {utilityServices.map(svc => {
+                  const Icon = svc.icon;
+                  return (
+                    <button
+                      key={svc.id}
+                      onClick={() => {
+                        if (svc.id === "airtime") { setStep("airtime-form"); }
+                        else { setActiveUtility(svc); setStep("utility-form"); }
+                      }}
+                      className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
+                    >
+                      <div className={`w-10 h-10 ${svc.bg} rounded-xl flex items-center justify-center mb-2`}>
+                        <Icon className={`w-5 h-5 ${svc.color}`} />
+                      </div>
+                      <p className="font-medium text-foreground text-sm">{svc.label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">+ Add</p>
+                    </button>
+                  );
+                })}
+                {/* Custom service tile */}
+                <button onClick={() => setStep("service-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
+                  <p className="font-medium text-foreground text-sm">Custom Service</p>
+                  <p className="text-xs text-muted-foreground">Licence, levy, etc.</p>
+                  <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* AIRTIME FORM */}
+          {step === "airtime-form" && (
+            <div className="p-4 space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="space-y-2">
+                <Label>Select Provider *</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {airtimeProviders.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => setAirtimeProvider(p.id)}
+                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${airtimeProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}
+                    >
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Airtime Amount (P) *</Label>
+                <Input type="number" inputMode="numeric" value={airtimeAmount} onChange={e => setAirtimeAmount(e.target.value)} placeholder="e.g. 10.00" />
+              </div>
+              <div className="space-y-2">
+                <Label>Phone Number (optional)</Label>
+                <Input type="tel" inputMode="numeric" value={airtimePhone} onChange={e => setAirtimePhone(e.target.value)} placeholder="e.g. 71234567" />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
+                <Button onClick={handleAddAirtime} disabled={!airtimeProvider || !airtimeAmount} className="flex-1 h-12">Add to Cart</Button>
+              </div>
+            </div>
+          )}
+
+          {/* UTILITY FORM (DSTV / Electricity / Water / Insurance) */}
+          {step === "utility-form" && activeUtility && (
+            <div className="p-4 space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="flex items-center gap-3 mb-2">
+                <div className={`w-12 h-12 ${activeUtility.bg} rounded-xl flex items-center justify-center`}>
+                  <activeUtility.icon className={`w-6 h-6 ${activeUtility.color}`} />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">{activeUtility.label}</p>
+                  <p className="text-xs text-muted-foreground">Fill in the payment details</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input type="number" inputMode="numeric" value={utilityAmount} onChange={e => setUtilityAmount(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <Label>Account / Reference No. (optional)</Label>
+                <Input value={utilityRef} onChange={e => setUtilityRef(e.target.value)} placeholder="e.g. account or meter number" />
+              </div>
+              <div className="space-y-2">
+                <Label>Customer Name (optional)</Label>
+                <Input value={utilityCustomer} onChange={e => setUtilityCustomer(e.target.value)} placeholder="e.g. John Moeng" />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
+                <Button onClick={handleAddUtility} disabled={!utilityAmount} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}

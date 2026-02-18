@@ -10,6 +10,7 @@ import AIChatbot from "./components/AIChatbot";
 import CartDrawer from "./components/CartDrawer";
 import OfflineIndicator from "./components/OfflineIndicator";
 import { useOfflineSync } from "./hooks/useOfflineSync";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Home from "./pages/Home";
 import CardMachines from "./pages/CardMachines";
 import OnlinePayments from "./pages/OnlinePayments";
@@ -73,20 +74,20 @@ const AppContent = () => {
       <Route path="/kyc" element={<KYC />} />
       <Route path="/business-setup" element={<BusinessSetup />} />
       
-      {/* Dashboard routes */}
-      <Route path="/dashboard" element={<Sales />} />
-      <Route path="/dashboard/hub" element={<DashboardHome />} />
-      <Route path="/dashboard/sales" element={<Sales />} />
-      <Route path="/dashboard/products" element={<DashboardProducts />} />
-      <Route path="/dashboard/customers" element={<Customers />} />
-      <Route path="/dashboard/payouts" element={<Payouts />} />
-      <Route path="/dashboard/payout-history" element={<Payouts />} />
-      <Route path="/dashboard/reports" element={<Reports />} />
-      <Route path="/dashboard/devices" element={<Devices />} />
-      <Route path="/dashboard/staff" element={<Staff />} />
-      <Route path="/dashboard/settings" element={<Settings />} />
-      <Route path="/dashboard/transport" element={<Transport />} />
-      <Route path="/dashboard/support" element={<Support />} />
+      {/* Dashboard routes — all protected: requires auth + KYC approved + business setup */}
+      <Route path="/dashboard" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
+      <Route path="/dashboard/hub" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} />
+      <Route path="/dashboard/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
+      <Route path="/dashboard/products" element={<ProtectedRoute><DashboardProducts /></ProtectedRoute>} />
+      <Route path="/dashboard/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
+      <Route path="/dashboard/payouts" element={<ProtectedRoute><Payouts /></ProtectedRoute>} />
+      <Route path="/dashboard/payout-history" element={<ProtectedRoute><Payouts /></ProtectedRoute>} />
+      <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+      <Route path="/dashboard/devices" element={<ProtectedRoute><Devices /></ProtectedRoute>} />
+      <Route path="/dashboard/staff" element={<ProtectedRoute><Staff /></ProtectedRoute>} />
+      <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+      <Route path="/dashboard/transport" element={<ProtectedRoute><Transport /></ProtectedRoute>} />
+      <Route path="/dashboard/support" element={<ProtectedRoute><Support /></ProtectedRoute>} />
       
       {/* Admin routes */}
       <Route path="/admin/login" element={<AdminLogin />} />
