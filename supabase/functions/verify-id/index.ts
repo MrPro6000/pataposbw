@@ -60,7 +60,6 @@ serve(async (req) => {
 
       const adminClient = createClient(supabaseUrl, serviceRoleKey);
 
-      // Download both images in parallel
       const [selfieResult, idResult] = await Promise.all([
         adminClient.storage.from("kyc-documents").download(storagePath),
         adminClient.storage.from("kyc-documents").download(idFrontPath),
@@ -151,20 +150,38 @@ serve(async (req) => {
     const base64 = arrayBufferToBase64(arrayBuffer);
     const mimeType = fileData.type || "image/jpeg";
 
-    // Build prompt based on type — for ID front, also extract the ID number if omangNumber provided
     let prompt: string;
     if (type === "selfie") {
-      prompt = "Analyze this image. Is this a clear photo of a person's face (a selfie)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid selfie shows a clear, well-lit face looking at the camera. Reject if it's not a person, is blurry, or is an object/document.";
-    } else if (type === "front" && omangNumber) {
-      prompt = `Analyze this image. 
-1. Is this a photo of an official government-issued identification document (ID card, passport, national ID)?
-2. Can you read any ID/document number on it? If so, does it match or contain the number "${omangNumber}"?
+      prompt = `Analyze this image. Is this a clear photo of a person's face (a selfie)?
+Reply with JSON only: {"is_valid": true/false, "reason": "brief explanation"}.
+A valid selfie shows a clear, well-lit face looking at the camera. Reject if it's not a person, is blurry, or is an object/document.`;
+    } else if (type === "front") {
+      prompt = `Analyze this image carefully.
+1. Is this the FRONT side of a government-issued ID card or passport? The front typically shows: the holder's photo/face, their full name, ID/document number, date of birth, and other personal details.
+2. Is it clearly the FRONT and NOT the back/reverse side?
+${omangNumber ? `3. Can you read the ID/document number? Does it match or contain "${omangNumber}"?` : ""}
 
-Reply with JSON only: {"is_valid": true/false, "id_number_match": true/false/null, "extracted_number": "the number you found or null", "reason": "brief explanation"}. 
+Reply with JSON only: {
+  "is_valid": true/false,
+  "is_front": true/false,
+  ${omangNumber ? `"id_number_match": true/false/null,` : ""}
+  "reason": "brief explanation"
+}
 
-A valid ID shows a card/document with text, a photo, and official formatting. Reject screenshots, random photos, non-ID documents. For id_number_match: true if the number matches, false if a different number is visible, null if you cannot read the number clearly.`;
+Reject if: it's not an ID, it's the back side of an ID, it's blurry, or it's not a government document.`;
     } else {
-      prompt = "Analyze this image. Is this a photo of an official government-issued identification document (ID card, passport, national ID, driver's license)? Reply with JSON only: {\"is_valid\": true/false, \"reason\": \"brief explanation\"}. A valid ID shows a card/document with text, a photo, and official formatting. Reject screenshots, random photos, non-ID documents, or anything that is clearly not an identification card.";
+      // type === "back"
+      prompt = `Analyze this image carefully.
+1. Is this the BACK side (reverse side) of a government-issued ID card? The back typically shows: a barcode or magnetic strip, additional security features, address, or other supplementary information — but usually does NOT show a face photo.
+2. Is it clearly the BACK and NOT the front/face side of the ID?
+
+Reply with JSON only: {
+  "is_valid": true/false,
+  "is_back": true/false,
+  "reason": "brief explanation"
+}
+
+Reject if: it's the front/face side of the ID, it's not an ID at all, or it's blurry. If this appears to be the front (with a face photo), set is_back to false.`;
     }
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
