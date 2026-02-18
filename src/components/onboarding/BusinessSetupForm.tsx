@@ -316,9 +316,9 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   }
 
   return (
-    <div className="h-screen bg-background text-foreground flex flex-col overflow-hidden">
+    <div className="h-[100dvh] bg-background text-foreground flex flex-col overflow-hidden">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border">
+      <header className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
         <button
           onClick={handleLogoBack}
           className={isMobile ? "cursor-pointer active:opacity-70 transition-opacity" : "cursor-default"}
@@ -329,32 +329,52 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         <ThemeToggle />
       </header>
 
-      {/* Progress Steps */}
-      <div className="px-6 py-4 border-b border-border">
-        <div className="flex items-center justify-center gap-2 max-w-md mx-auto">
-          {steps.map((step, index) => (
-            <div key={step.key} className="flex items-center">
-              <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm ${
-                index <= currentStepIndex 
-                  ? "bg-primary/10 text-primary" 
-                  : "bg-muted text-muted-foreground"
-              }`}>
-                <step.icon className="w-4 h-4" />
-                <span className="hidden sm:inline">{step.label}</span>
+      {/* Progress Steps — icon-only on mobile, compact */}
+      <div className="px-3 py-3 border-b border-border shrink-0">
+        <div className="flex items-center justify-center gap-1 max-w-md mx-auto overflow-x-auto">
+          {steps.map((step, index) => {
+            const isPast = index < currentStepIndex;
+            const isCurrent = index === currentStepIndex;
+            const isClickable = index < currentStepIndex;
+            return (
+              <div key={step.key} className="flex items-center shrink-0">
+                <button
+                  disabled={!isClickable}
+                  onClick={() => {
+                    if (isClickable) {
+                      const stepKeys: SetupStep[] = ["business", "address", "operations", "banking", "logo"];
+                      setCurrentStep(stepKeys[index]);
+                    }
+                  }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium transition-all ${
+                    isCurrent
+                      ? "bg-primary text-primary-foreground shadow-sm"
+                      : isPast
+                      ? "bg-primary/15 text-primary cursor-pointer hover:bg-primary/25"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <step.icon className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden xs:inline sm:inline">{step.label}</span>
+                </button>
+                {index < steps.length - 1 && (
+                  <div className={`w-4 h-0.5 mx-0.5 shrink-0 ${
+                    index < currentStepIndex ? "bg-primary" : "bg-border"
+                  }`} />
+                )}
               </div>
-              {index < steps.length - 1 && (
-                <div className={`w-8 h-0.5 mx-1 ${
-                  index < currentStepIndex ? "bg-primary" : "bg-border"
-                }`} />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
+        {/* Step counter for mobile */}
+        <p className="text-center text-xs text-muted-foreground mt-1.5">
+          Step {currentStepIndex + 1} of {steps.length} — {steps[currentStepIndex]?.label}
+        </p>
       </div>
 
-      {/* Main Content — scrollable so continue button is always reachable on mobile */}
-      <main className="flex-1 px-6 py-8 overflow-y-auto">
-        <div className="max-w-md mx-auto">
+      {/* Main Content — scrollable, takes remaining height above the sticky footer */}
+      <main className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="max-w-md mx-auto px-4 py-6 pb-4">
           {currentStep === "business" && (
             <div className="space-y-6">
               <div className="text-center mb-8">
@@ -758,14 +778,14 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </main>
 
-      {/* Footer - sticky at bottom */}
-      <footer className="sticky bottom-0 px-6 pb-8 pt-4 border-t border-border bg-background z-10">
-        <div className="max-w-md mx-auto flex gap-3">
+      {/* Floating sticky footer — always visible above keyboard/home bar */}
+      <footer className="shrink-0 border-t border-border bg-background px-4 pt-3 pb-[env(safe-area-inset-bottom,16px)] z-20">
+        <div className="max-w-md mx-auto flex gap-3 pb-2">
           {currentStep !== "business" && (
             <Button
               variant="outline"
               onClick={handleBack}
-              className="flex-1"
+              className="flex-1 h-12 text-base"
               disabled={loading}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
@@ -786,7 +806,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                 }
                 handleSubmit();
               }}
-              className="text-muted-foreground"
+              className="text-muted-foreground h-12"
               disabled={loading}
             >
               Skip Logo
@@ -794,7 +814,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
           )}
           <Button
             onClick={handleNext}
-            className="flex-1"
+            className="flex-1 h-12 text-base font-semibold"
             disabled={loading}
           >
             {loading ? (
@@ -818,3 +838,4 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
 };
 
 export default BusinessSetupForm;
+
