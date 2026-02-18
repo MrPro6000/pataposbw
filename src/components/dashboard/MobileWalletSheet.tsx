@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Wallet, CreditCard, Smartphone, Plus, Building2, Check, Trash2, ChevronRight } from "lucide-react";
+import { Wallet, CreditCard, Smartphone, Plus, Building2, Check, Trash2, ChevronRight, ArrowDownLeft, CheckCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -58,10 +58,13 @@ export const setConnectedAccounts = (accounts: ConnectedAccount[]) => {
   sharedAccounts = accounts;
 };
 
+type WalletView = "main" | "add_type" | "add_bank" | "add_mobile" | "add_card" | "provider_select"
+  | "deposit_select" | "deposit_confirm" | "deposit_processing" | "deposit_success";
+
 const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
-  const { balance } = useTransactions();
+  const { balance, addTransaction } = useTransactions();
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(sharedAccounts);
-  const [view, setView] = useState<"main" | "add_type" | "add_bank" | "add_mobile" | "add_card" | "provider_select">("main");
+  const [view, setView] = useState<WalletView>("main");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [form, setForm] = useState({
     bankName: "",
@@ -71,6 +74,10 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     cardNumber: "",
     phoneNumber: "",
   });
+
+  // Deposit state
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositAccount, setDepositAccount] = useState<ConnectedAccount | null>(null);
 
   const syncAccounts = (updated: ConnectedAccount[]) => {
     setAccounts(updated);
@@ -85,6 +92,8 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
 
   const handleClose = () => {
     resetForm();
+    setDepositAmount("");
+    setDepositAccount(null);
     onClose();
   };
 
@@ -165,6 +174,46 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     toast.success("Account removed");
   };
 
+  const handleStartDeposit = () => {
+    setDepositAmount("");
+    setDepositAccount(null);
+    setView("deposit_select");
+  };
+
+  const handleSelectDepositAccount = (account: ConnectedAccount) => {
+    const amt = parseFloat(depositAmount);
+    if (!amt || amt <= 0) {
+      toast.error("Enter a valid amount first.");
+      return;
+    }
+    setDepositAccount(account);
+    setView("deposit_confirm");
+  };
+
+  const handleConfirmDeposit = async () => {
+    if (!depositAccount) return;
+    const amt = parseFloat(depositAmount);
+    if (!amt || amt <= 0) { toast.error("Invalid amount"); return; }
+
+    setView("deposit_processing");
+
+    const sourceLabel = depositAccount.type === "bank"
+      ? `${depositAccount.name} (${depositAccount.details})`
+      : `${depositAccount.name} - ${depositAccount.details}`;
+
+    await addTransaction({
+      type: "deposit",
+      payment_method: depositAccount.type === "bank" ? "bank_transfer" : depositAccount.type === "mobile_money" ? "mobile_money" : "card",
+      amount: amt,
+      description: `Top up from ${sourceLabel}`,
+      status: "processing",
+    });
+
+    setTimeout(() => {
+      setView("deposit_success");
+    }, 2000);
+  };
+
   const getAccountIcon = (type: string) => {
     switch (type) {
       case "bank": return <Building2 className="w-5 h-5 text-muted-foreground" />;
@@ -174,28 +223,45 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     }
   };
 
+  const getTitle = () => {
+    switch (view) {
+      case "main": return "Wallet";
+      case "add_type": return "Connect Account";
+      case "add_bank": return "Add Bank Account";
+      case "provider_select": return "Select Provider";
+      case "add_mobile": return "Add Mobile Money";
+      case "add_card": return "Add Card";
+      case "deposit_select": return "Top Up Wallet";
+      case "deposit_confirm": return "Confirm Deposit";
+      case "deposit_processing": return "Processing...";
+      case "deposit_success": return "Deposit Sent!";
+    }
+  };
+
   return (
     <Sheet open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
       <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto pb-safe">
         <SheetHeader>
-          <SheetTitle>
-            {view === "main" && "Wallet"}
-            {view === "add_type" && "Connect Account"}
-            {view === "add_bank" && "Add Bank Account"}
-            {view === "provider_select" && "Select Provider"}
-            {view === "add_mobile" && "Add Mobile Money"}
-            {view === "add_card" && "Add Card"}
-          </SheetTitle>
+          <SheetTitle>{getTitle()}</SheetTitle>
         </SheetHeader>
 
+        {/* ── MAIN VIEW ── */}
         {view === "main" && (
           <div className="space-y-4 py-4">
-            {/* Pata Wallet Balance */}
             <div className="bg-gradient-to-br from-primary to-primary/80 rounded-2xl p-6 text-center">
               <Wallet className="w-8 h-8 text-primary-foreground mx-auto mb-2" />
               <p className="text-sm text-primary-foreground/70">Pata Wallet Balance</p>
               <p className="text-3xl font-bold text-primary-foreground mt-1">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
             </div>
+
+            {/* Top Up Button */}
+            <button
+              onClick={handleStartDeposit}
+              className="w-full flex items-center justify-center gap-2 bg-primary/10 border border-primary/20 text-primary font-semibold rounded-2xl py-4 active:bg-primary/20 transition-colors"
+            >
+              <ArrowDownLeft className="w-5 h-5" />
+              Top Up / Deposit
+            </button>
 
             {/* Connected Accounts */}
             <div>
@@ -215,10 +281,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
               ) : (
                 <div className="space-y-2">
                   {accounts.map((account) => (
-                    <div
-                      key={account.id}
-                      className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card"
-                    >
+                    <div key={account.id} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card">
                       <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
                         {account.providerImg ? (
                           <img src={account.providerImg} alt={account.name} className="w-6 h-6 rounded object-contain" />
@@ -250,6 +313,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
           </div>
         )}
 
+        {/* ── ADD ACCOUNT VIEWS (unchanged) ── */}
         {view === "add_type" && (
           <div className="space-y-3 py-4">
             <p className="text-sm text-muted-foreground">Choose account type to connect</p>
@@ -317,6 +381,115 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
             <div className="space-y-2"><Label>Card Number</Label><Input value={form.cardNumber} onChange={(e) => setForm({ ...form, cardNumber: e.target.value })} placeholder="4242 4242 4242 4242" maxLength={19} /></div>
             <Button onClick={handleAddCard} className="w-full">Connect Card</Button>
             <Button variant="outline" onClick={() => setView("add_type")} className="w-full">Back</Button>
+          </div>
+        )}
+
+        {/* ── DEPOSIT: SELECT SOURCE ACCOUNT ── */}
+        {view === "deposit_select" && (
+          <div className="py-4 space-y-3">
+            <div className="space-y-2 mb-4">
+              <Label>Amount to Deposit (P)</Label>
+              <Input
+                type="number"
+                inputMode="decimal"
+                value={depositAmount}
+                onChange={(e) => setDepositAmount(e.target.value)}
+                placeholder="0.00"
+                className="text-xl font-bold h-12 text-center"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground text-center">Current balance: P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            </div>
+            <p className="text-sm text-muted-foreground">Select source account:</p>
+            {accounts.length === 0 ? (
+              <div className="text-center py-6 text-muted-foreground">
+                <p className="text-sm">No connected accounts.</p>
+                <p className="text-xs">Go back to Wallet to connect a bank or mobile money account.</p>
+              </div>
+            ) : (
+              accounts.map((account) => (
+                <button
+                  key={account.id}
+                  onClick={() => handleSelectDepositAccount(account)}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-border bg-card active:bg-muted/50 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+                    {account.providerImg ? (
+                      <img src={account.providerImg} alt={account.name} className="w-6 h-6 rounded object-contain" />
+                    ) : (
+                      getAccountIcon(account.type)
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-sm text-foreground">{account.name}</p>
+                    <p className="text-xs text-muted-foreground">{account.details}{account.branchCode ? ` • Branch ${account.branchCode}` : ""}</p>
+                  </div>
+                  {account.isDefault && <span className="text-[10px] bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">Default</span>}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              ))
+            )}
+            <Button variant="outline" onClick={() => setView("main")} className="w-full">Cancel</Button>
+          </div>
+        )}
+
+        {/* ── DEPOSIT: CONFIRM ── */}
+        {view === "deposit_confirm" && depositAccount && (
+          <div className="py-4 space-y-4">
+            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 text-center">
+              <ArrowDownLeft className="w-8 h-8 text-primary mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground mb-1">Depositing</p>
+              <p className="text-4xl font-bold text-foreground">P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+            </div>
+            <div className="bg-muted rounded-xl p-4 space-y-3">
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">From</span>
+                <span className="text-sm font-medium text-foreground">{depositAccount.name}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">Account</span>
+                <span className="text-sm font-medium text-foreground">{depositAccount.details}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-sm text-muted-foreground">To</span>
+                <span className="text-sm font-medium text-foreground">Pata Wallet</span>
+              </div>
+              <div className="flex justify-between border-t border-border pt-3">
+                <span className="text-sm font-semibold text-foreground">You'll receive</span>
+                <span className="text-sm font-bold text-primary">P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
+              </div>
+            </div>
+            <Button onClick={handleConfirmDeposit} className="w-full h-12 text-base font-semibold">Confirm Deposit</Button>
+            <Button variant="outline" onClick={() => setView("deposit_select")} className="w-full">Back</Button>
+          </div>
+        )}
+
+        {/* ── DEPOSIT: PROCESSING ── */}
+        {view === "deposit_processing" && (
+          <div className="py-12 text-center space-y-4">
+            <div className="w-16 h-16 rounded-full border-4 border-primary border-t-transparent animate-spin mx-auto" />
+            <p className="font-semibold text-foreground">Processing your deposit...</p>
+            <p className="text-sm text-muted-foreground">This may take a moment</p>
+          </div>
+        )}
+
+        {/* ── DEPOSIT: SUCCESS ── */}
+        {view === "deposit_success" && (
+          <div className="py-10 text-center space-y-4">
+            <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto">
+              <CheckCircle className="w-8 h-8 text-green-500" />
+            </div>
+            <div>
+              <p className="text-xl font-bold text-foreground">Deposit Initiated!</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })} from {depositAccount?.name} is being processed.
+              </p>
+              <div className="inline-flex items-center gap-1.5 mt-3 px-3 py-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-full">
+                <Clock className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" />
+                <span className="text-xs font-medium text-orange-700 dark:text-orange-400">Processing</span>
+              </div>
+            </div>
+            <Button onClick={() => { setView("main"); setDepositAmount(""); setDepositAccount(null); }} className="w-full">Done</Button>
           </div>
         )}
       </SheetContent>
