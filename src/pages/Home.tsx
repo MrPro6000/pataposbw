@@ -3,6 +3,21 @@ import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
+import { useEffect, useRef, useState } from "react";
+
+function useInView(threshold = 0.15) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setInView(true); observer.disconnect(); } },
+      { threshold }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [threshold]);
+  return { ref, inView };
+}
 
 // Device images
 import pataPro from "@/assets/devices/pata-pro.jpeg";
@@ -15,6 +30,11 @@ const Home = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
+  const hero = useInView(0.05);
+  const heroImages = useInView(0.05);
+  const features = useInView(0.1);
+  const services = useInView(0.1);
+
   return (
     <div className="bg-background text-foreground min-h-screen">
       <MainNav />
@@ -24,7 +44,10 @@ const Home = () => {
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
-            <div>
+            <div
+              ref={hero.ref}
+              className={`transition-all duration-700 ease-out ${hero.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
+            >
               <div className="flex items-center gap-2 mb-6">
                 <Star className="w-4 h-4 text-primary" />
                 <span className="text-muted-foreground">Payments made easier, no hassle, no contracts.</span>
@@ -53,20 +76,23 @@ const Home = () => {
             </div>
 
             {/* Right Content - Image Grid */}
-            <div className="relative grid grid-cols-2 gap-3 max-w-full overflow-hidden">
+            <div
+              ref={heroImages.ref}
+              className={`relative grid grid-cols-2 gap-3 max-w-full overflow-hidden transition-all duration-700 ease-out delay-200 ${heroImages.inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-12"}`}
+            >
               <div className="space-y-3">
-                <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-video overflow-hidden hover:scale-[1.02] transition-transform duration-300">
                   <img src={pataPro} alt="Pata Pro POS Display" className="w-full h-full object-cover" />
                 </div>
-                <div className="bg-muted rounded-2xl aspect-square overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-square overflow-hidden hover:scale-[1.02] transition-transform duration-300">
                   <img src={pataDiamond} alt="Pata Diamond Card Machine" className="w-full h-full object-cover" />
                 </div>
               </div>
               <div className="space-y-3 pt-8">
-                <div className="bg-muted rounded-2xl aspect-square overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-square overflow-hidden hover:scale-[1.02] transition-transform duration-300">
                   <img src={pataPlatinum} alt="Pata Platinum Card Machine" className="w-full h-full object-cover" />
                 </div>
-                <div className="bg-muted rounded-2xl aspect-video overflow-hidden">
+                <div className="bg-muted rounded-2xl aspect-video overflow-hidden hover:scale-[1.02] transition-transform duration-300">
                   <img
                     src={pata3dLogo}
                     alt="Pata - POS, Payment Gateway, Wallet"
@@ -81,11 +107,11 @@ const Home = () => {
 
       {/* Features Section */}
       <section className="px-5 md:px-20 py-12 md:py-20 bg-secondary overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 text-center">
+        <div ref={features.ref} className="max-w-7xl mx-auto">
+          <h2 className={`text-3xl md:text-4xl font-bold text-foreground mb-4 text-center transition-all duration-700 ${features.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             One platform. <span className="pata-hero-gradient">Infinite possibilities.</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+          <p className={`text-muted-foreground text-center mb-12 max-w-2xl mx-auto transition-all duration-700 delay-100 ${features.inView ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"}`}>
             Payments made easier across Botswana — from Pata POS to card terminals.
           </p>
 
@@ -133,11 +159,16 @@ const Home = () => {
                 link: "/online-payments",
                 tagline: "Pay with mobile",
               },
-            ].map((feature) => (
+            ].map((feature, i) => (
               <Link
                 key={feature.title}
                 to={feature.link}
-                className="bg-card rounded-2xl p-6 hover:bg-card/80 transition-colors group border border-border"
+                className="bg-card rounded-2xl p-6 hover:bg-card/80 hover:scale-[1.03] transition-all duration-300 group border border-border"
+                style={{
+                  opacity: features.inView ? 1 : 0,
+                  transform: features.inView ? "translateY(0)" : "translateY(24px)",
+                  transition: `opacity 0.5s ease ${i * 80 + 200}ms, transform 0.5s ease ${i * 80 + 200}ms, background-color 0.2s, scale 0.2s`,
+                }}
               >
                 <div className="w-12 h-12 bg-primary/20 rounded-xl mb-4 flex items-center justify-center">
                   <feature.icon className="w-6 h-6 text-primary" />
@@ -174,11 +205,11 @@ const Home = () => {
 
       {/* Additional Services */}
       <section className="px-5 md:px-20 py-12 md:py-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+        <div ref={services.ref} className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
             <Link
               to="/capital"
-              className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-colors group border border-primary/20"
+              className={`bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 hover:scale-[1.02] transition-all duration-500 group border border-primary/20 ${services.inView ? "opacity-100 translate-x-0" : "opacity-0 -translate-x-10"}`}
             >
               <p className="text-muted-foreground text-sm mb-2">
                 Funding that flows with you
@@ -195,7 +226,7 @@ const Home = () => {
 
             <Link
               to="/products"
-              className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-colors group border border-info/20"
+              className={`bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 hover:scale-[1.02] transition-all duration-500 delay-150 group border border-info/20 ${services.inView ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10"}`}
             >
               <p className="text-muted-foreground text-sm mb-2">Send money across borders</p>
               <h3 className="text-2xl font-bold text-foreground mb-3">Mukuru Transfer</h3>
@@ -218,3 +249,4 @@ const Home = () => {
 };
 
 export default Home;
+
