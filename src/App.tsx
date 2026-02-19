@@ -23,6 +23,7 @@ import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
 import BusinessSetup from "./pages/BusinessSetup";
+import PaymentLinkPage from "./pages/PaymentLinkPage";
 
 // Dashboard pages
 import DashboardHome from "./pages/dashboard/DashboardHome";
@@ -73,6 +74,7 @@ const AppContent = () => {
       <Route path="/signup" element={<Auth mode="signup" />} />
       <Route path="/kyc" element={<KYC />} />
       <Route path="/business-setup" element={<BusinessSetup />} />
+      <Route path="/pay/:id" element={<PaymentLinkPage />} />
       
       {/* Dashboard routes — all protected: requires auth + KYC approved + business setup */}
       <Route path="/dashboard" element={<ProtectedRoute><Sales /></ProtectedRoute>} />

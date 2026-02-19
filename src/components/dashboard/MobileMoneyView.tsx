@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronRight, Zap, Percent, Send, Smartphone, Wallet } from "lucide-react";
+import { ChevronRight, Zap, Percent, Send, Smartphone, Wallet, TrendingDown } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileFeesSheet from "./MobileFeesSheet";
 import MobileCapitalSheet from "./MobileCapitalSheet";
 import MobileProfileSheet from "./MobileProfileSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
 import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
+import MobileLoanRepaymentSheet from "./MobileLoanRepaymentSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -23,6 +24,7 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
+  const [loanRepaymentOpen, setLoanRepaymentOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const { balance, transactions } = useTransactions();
 
@@ -115,22 +117,31 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
         </Link>
       </div>
 
-      {/* Mobile Money Loans Section */}
+      {/* Mobile Money Loans Section — Two-way: Take Loan / Repay Loan */}
       <div className="px-5 py-2">
-        <button 
-          onClick={() => setLoanApplicationOpen(true)}
-          className="w-full bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-5 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-              <Smartphone className="w-6 h-6 text-amber-100" />
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => setLoanApplicationOpen(true)}
+            className="bg-gradient-to-br from-amber-50 to-amber-100/50 dark:from-amber-900/20 dark:to-amber-800/10 rounded-2xl p-4 active:scale-98 transition-transform text-left border border-amber-200/50 dark:border-amber-700/30"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/20 mb-3">
+              <Smartphone className="w-5 h-5 text-amber-100" />
             </div>
-            <div>
-              <p className="font-semibold text-foreground">Mobile Money Loans</p>
-              <p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p>
+            <p className="font-semibold text-foreground text-sm">Take Loan</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Mobile Money</p>
+          </button>
+
+          <button
+            onClick={() => setLoanRepaymentOpen(true)}
+            className="bg-gradient-to-br from-rose-50 to-rose-100/50 dark:from-rose-900/20 dark:to-rose-800/10 rounded-2xl p-4 active:scale-98 transition-transform text-left border border-rose-200/50 dark:border-rose-700/30"
+          >
+            <div className="w-10 h-10 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center shadow-lg shadow-rose-500/20 mb-3">
+              <TrendingDown className="w-5 h-5 text-white" />
             </div>
-          </div>
-        </button>
+            <p className="font-semibold text-foreground text-sm">Repay Loan</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Pay from wallet</p>
+          </button>
+        </div>
       </div>
 
       {/* Pata Capital Section */}
@@ -192,6 +203,7 @@ const MobileMoneyView = ({ profile, userEmail }: MobileMoneyViewProps) => {
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
       <MobileLoanApplicationSheet open={loanApplicationOpen} onClose={() => setLoanApplicationOpen(false)} />
+      <MobileLoanRepaymentSheet open={loanRepaymentOpen} onClose={() => setLoanRepaymentOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
 
       <MobileBottomNav />
