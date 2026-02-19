@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -65,6 +66,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { refreshProfile } = useAuth();
 
   const handleLogoBack = () => {
     if (!isMobile) return;
@@ -280,6 +282,9 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         title: "Business setup complete!",
         description: "Your merchant profile is ready. Welcome to Pata!",
       });
+
+      // Refresh auth context so ProtectedRoute sees the updated business_name
+      await refreshProfile();
 
       setCurrentStep("complete");
       setTimeout(() => {
