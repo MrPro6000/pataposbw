@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, CreditCard, Smartphone, Globe, Phone, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronDown, ChevronRight, CreditCard, Smartphone, Globe, Phone } from "lucide-react";
+import heroPhoneFront from "@/assets/hero-phone-front.png";
+import heroPhoneBack from "@/assets/hero-phone-back.png";
+import trustedBadge from "@/assets/trusted-users-badge.png";
 
+// ── Feature cards data ──────────────────────────────────────────────────────
 const features = [
   {
     title: "PataPOS",
@@ -63,18 +67,28 @@ const faqs = [
   },
 ];
 
+// ── Shared arrow icon for buttons ──────────────────────────────────────────
+const Arrow = () => (
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="inline-block">
+    <path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// ── Component ──────────────────────────────────────────────────────────────
 const Home = () => {
   return (
-    <div className="bg-[#050a14] text-white min-h-screen overflow-x-hidden">
+    <div className="bg-[#030810] text-white min-h-screen overflow-x-hidden">
 
       {/* ── NAV ── */}
-      <header className="flex items-center justify-between px-5 md:px-16 lg:px-24 h-16 border-b border-white/5 sticky top-0 z-50 bg-[#050a14]/90 backdrop-blur-md">
-        <Link to="/" className="flex items-center gap-2">
+      <header className="flex items-center justify-between px-5 md:px-12 lg:px-20 h-[68px] sticky top-0 z-50 bg-[#030810]/90 backdrop-blur-md border-b border-white/[0.06]">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2.5">
           <img src="/pata-icon.png" alt="Pata" className="h-7 w-7" />
-          <span className="font-bold text-lg tracking-tight">PATA</span>
+          <span className="font-extrabold text-xl tracking-widest text-white">PATA</span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-8">
+        {/* Center nav */}
+        <nav className="hidden lg:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
           {[
             { label: "Products", to: "/products" },
             { label: "Business Type", to: "/business-type" },
@@ -85,178 +99,134 @@ const Home = () => {
             <Link
               key={item.label}
               to={item.to}
-              className="text-sm text-white/70 hover:text-white transition-colors font-medium"
+              className="text-sm text-white/70 hover:text-white transition-colors font-medium tracking-wide"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
+        {/* Right CTA buttons */}
         <div className="flex items-center gap-3">
           <Link
-            to="/login"
-            className="hidden md:inline-flex items-center gap-1.5 px-5 py-2 rounded-full border border-white/20 text-sm font-medium text-white hover:bg-white/5 transition-all"
+            to="/auth"
+            className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-lg border border-white/30 text-sm font-semibold text-white hover:bg-white/5 transition-all"
           >
-            Login <ArrowUpRight className="w-3.5 h-3.5" />
+            Login <Arrow />
           </Link>
           <Link
-            to="/signup"
-            className="inline-flex items-center gap-1.5 px-5 py-2 rounded-full bg-[#1e6ff5] hover:bg-[#1a5ed4] text-sm font-semibold text-white transition-all"
+            to="/auth"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#1e6ff5] hover:bg-[#1a5ed4] text-sm font-semibold text-white transition-all"
           >
-            Get Started <ArrowUpRight className="w-3.5 h-3.5" />
+            Get Started <Arrow />
           </Link>
         </div>
       </header>
 
       {/* ── HERO ── */}
-      <section className="relative min-h-[92vh] flex items-center px-5 md:px-16 lg:px-24 py-20 overflow-hidden">
-        {/* Glowing radial behind phones */}
+      <section className="relative min-h-[calc(100vh-68px)] flex items-center px-5 md:px-12 lg:px-20 py-16 overflow-hidden">
+        {/* Big blue radial glow behind the phones */}
         <div
-          className="absolute right-[-100px] top-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full pointer-events-none"
+          className="absolute right-0 top-0 w-[750px] h-[750px] pointer-events-none"
           style={{
             background:
-              "radial-gradient(circle, rgba(30,111,245,0.32) 0%, rgba(30,111,245,0.07) 50%, transparent 72%)",
+              "radial-gradient(ellipse at 70% 40%, rgba(20,80,220,0.55) 0%, rgba(10,40,140,0.25) 40%, transparent 70%)",
           }}
         />
+        {/* Subtle dark overlay on left to keep text readable */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: "linear-gradient(90deg, #030810 35%, transparent 65%)" }}
+        />
 
-        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-12 items-center relative z-10">
-          {/* Left copy */}
-          <div>
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/15 bg-white/5 text-xs font-semibold uppercase tracking-widest text-white/65 mb-8">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#1e6ff5]" />
-              Payments made easier, no hassle, no contracts.
+        <div className="max-w-7xl mx-auto w-full grid lg:grid-cols-2 gap-8 items-center relative z-10">
+
+          {/* ── Left copy ── */}
+          <div className="max-w-[640px]">
+            {/* Pill badge */}
+            <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-md border border-white/20 bg-white/[0.06] text-[11px] font-bold uppercase tracking-[0.15em] text-white/70 mb-8">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M7 1L8.8 5.2L13 7L8.8 8.8L7 13L5.2 8.8L1 7L5.2 5.2L7 1Z" fill="#1e6ff5" />
+              </svg>
+              PAYMENTS MADE EASIER, NO HASSLE, NO CONTRACTS.
             </div>
 
-            <h1 className="font-extrabold leading-none tracking-tight mb-8">
-              <span className="block text-5xl md:text-6xl lg:text-7xl text-white uppercase">
+            {/* Hero headline — Barlow Condensed Italic Black */}
+            <h1 className="font-hero font-black italic leading-[0.9] tracking-tight mb-8 uppercase">
+              <span className="block text-[clamp(3.5rem,8vw,7rem)] text-white">
                 YOUR BUSINESS,
               </span>
               <span
-                className="block text-5xl md:text-6xl lg:text-7xl uppercase"
+                className="block text-[clamp(3.5rem,8vw,7rem)]"
                 style={{ color: "#1e6ff5" }}
               >
                 YOUR POCKET
               </span>
             </h1>
 
-            <p className="text-white/55 text-base md:text-lg max-w-md mb-10 leading-relaxed">
-              Turn your phone into a complete payment terminal. Accept card payments, scan &amp; pay, send money worldwide, and manage your entire business all from your pocket.
+            <p className="text-white/55 text-base md:text-[17px] max-w-[500px] mb-10 leading-relaxed">
+              Turn your phone into a complete payment terminal. Accept card payments, scan &amp; pay, send money worldwide, and manage your entire business&nbsp; all from your pocket.
             </p>
 
+            {/* CTA Buttons — rectangle style like Framer */}
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                to="/signup"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-white/25 text-sm font-semibold text-white hover:bg-white/5 transition-all"
+                to="/auth"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg border border-white/30 text-sm font-semibold text-white hover:bg-white/5 transition-all"
               >
-                Start accepting Payments <ArrowUpRight className="w-4 h-4" />
+                Start accepting Payments <Arrow />
               </Link>
               <Link
                 to="/products"
-                className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full bg-[#1e6ff5] hover:bg-[#1a5ed4] text-sm font-semibold text-white transition-all"
+                className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-lg bg-[#1e6ff5] hover:bg-[#1a5ed4] text-sm font-semibold text-white transition-all"
               >
-                Explore Products <ArrowUpRight className="w-4 h-4" />
+                Explore Products <Arrow />
               </Link>
             </div>
           </div>
 
-          {/* Right — phone mockups */}
-          <div className="relative flex justify-center lg:justify-end items-center h-[520px]">
-            {/* Back phone */}
-            <div className="absolute right-0 top-0 w-[200px] md:w-[230px] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl z-10 rotate-6 bg-[#0d1526]">
-              <div className="h-[460px] md:h-[520px] flex flex-col p-4 gap-3">
-                <div className="flex justify-between text-white/30 text-[9px] mb-1">
-                  <span>PATA</span>
-                  <div className="w-5 h-2.5 rounded-sm border border-white/20 relative">
-                    <div className="absolute inset-[2px] right-[3px] bg-white/30 rounded-sm" />
-                  </div>
-                </div>
-                <div className="bg-[#1e3a6e]/60 rounded-2xl p-4 text-center border border-[#1e6ff5]/20">
-                  <p className="text-white/40 text-[10px] mb-1">Payout amount</p>
-                  <p className="text-white font-bold text-2xl">P1204.00</p>
-                  <p className="text-white/30 text-[10px] mt-1">Net transfer</p>
-                </div>
-                <div className="mt-2 space-y-2">
-                  {[
-                    { label: "Payout", date: "9 May 2024", amt: "P16.35" },
-                    { label: "Instant Payout", date: "8 May 2024", amt: "-P12.45" },
-                    { label: "Instant Payout", date: "8 May 2024", amt: "-P12.45" },
-                  ].map((row, i) => (
-                    <div key={i} className="flex justify-between items-center bg-[#111c33] rounded-xl px-3 py-2.5">
-                      <div>
-                        <p className="text-white/70 text-[10px] font-medium">{row.label}</p>
-                        <p className="text-white/30 text-[9px]">{row.date}</p>
-                      </div>
-                      <span className="text-white/70 text-[10px] font-semibold">{row.amt}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {/* ── Right — phone mockups ── */}
+          <div className="relative flex justify-center lg:justify-end items-center h-[520px] lg:h-[600px]">
+
+            {/* Back phone (tilted right, partially behind) */}
+            <div
+              className="absolute right-[-20px] md:right-[-10px] top-8 z-10"
+              style={{ transform: "rotate(10deg) translateX(10px)" }}
+            >
+              <img
+                src={heroPhoneBack}
+                alt=""
+                className="w-[160px] md:w-[200px] lg:w-[220px] object-contain"
+                style={{ filter: "drop-shadow(0 30px 60px rgba(5,20,80,0.8))" }}
+              />
             </div>
 
-            {/* Front phone */}
-            <div className="relative w-[215px] md:w-[250px] rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl z-20 -rotate-2 bg-[#0b1220]">
-              <div className="h-[480px] md:h-[540px] flex flex-col p-4 gap-3">
-                <div className="flex justify-between items-center text-white/35 text-[9px] pb-1">
-                  <span>1:01</span>
-                  <div className="bg-[#1a2744] px-2 py-0.5 rounded-full text-white/60 text-[9px] font-bold">PATA</div>
-                </div>
-
-                <div className="bg-[#1e6ff5]/15 rounded-2xl p-4 text-center border border-[#1e6ff5]/25">
-                  <p className="text-white/45 text-[10px] mb-1">Payout amount</p>
-                  <p className="text-white font-bold text-3xl">P4.34</p>
-                  <p className="text-white/35 text-[10px] mt-1">You are below the minimum payout amount</p>
-                </div>
-
-                <div className="bg-[#1e6ff5] rounded-xl py-2.5 text-center">
-                  <p className="text-white text-xs font-semibold">⚡ Instant payout</p>
-                </div>
-
-                <div>
-                  <p className="text-white font-semibold text-xs mb-2">Payouts</p>
-                  <div className="space-y-0">
-                    {[
-                      { label: "Payout", date: "9 May 2024", amt: "P16.35", fees: "Fees: P0.35" },
-                      { label: "Instant Payout", date: "8 May 2024", amt: "-P12.45", fees: "Fees: P17.25" },
-                      { label: "Instant Payout", date: "8 May 2024", amt: "-P12.45", fees: "Fees: P17.25" },
-                    ].map((row, i) => (
-                      <div key={i} className="flex justify-between items-center py-2.5 border-b border-white/5">
-                        <div>
-                          <p className="text-white text-[10px] font-medium">{row.label}</p>
-                          <p className="text-white/35 text-[9px]">{row.date}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-white text-[10px] font-semibold">{row.amt}</p>
-                          <p className="text-white/35 text-[9px]">{row.fees}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+            {/* Front phone (main, slightly tilted left) */}
+            <div
+              className="relative z-20"
+              style={{ transform: "rotate(-2deg) translateX(-20px)" }}
+            >
+              <img
+                src={heroPhoneFront}
+                alt="Pata app"
+                className="w-[240px] md:w-[290px] lg:w-[340px] object-contain"
+                style={{ filter: "drop-shadow(0 40px 80px rgba(10,40,160,0.5))" }}
+              />
             </div>
 
-            {/* Floating trust badge */}
-            <div className="absolute bottom-4 left-0 md:-left-6 bg-[#0d1526] border border-white/10 rounded-2xl px-5 py-3 flex items-center gap-3 shadow-xl z-30">
-              <div className="flex -space-x-2">
-                {["#1e6ff5", "#10b981", "#f59e0b"].map((color, i) => (
-                  <div
-                    key={i}
-                    className="w-8 h-8 rounded-full border-2 border-[#0d1526]"
-                    style={{ backgroundColor: color }}
-                  />
-                ))}
-              </div>
-              <div>
-                <p className="text-white font-bold text-base leading-none">152,78k+</p>
-                <p className="text-white/45 text-xs mt-0.5">Trusted Users</p>
-              </div>
+            {/* Trusted users badge — bottom left */}
+            <div className="absolute bottom-[2%] left-0 md:left-[-10px] z-30">
+              <img
+                src={trustedBadge}
+                alt="152,78k+ Trusted Users"
+                className="w-[200px] md:w-[240px] object-contain drop-shadow-xl"
+              />
             </div>
           </div>
         </div>
       </section>
 
       {/* ── FEATURES ── */}
-      <section id="benefits" className="px-5 md:px-16 lg:px-24 py-20 bg-[#070d1a]">
+      <section id="benefits" className="px-5 md:px-12 lg:px-20 py-24 bg-[#070d1a]">
         <div className="max-w-7xl mx-auto">
           <p className="text-[#1e6ff5] text-xs font-bold uppercase tracking-widest text-center mb-3">
             Payments made easier across Botswana
@@ -292,7 +262,7 @@ const Home = () => {
       </section>
 
       {/* ── ADDITIONAL SERVICES ── */}
-      <section className="px-5 md:px-16 lg:px-24 py-20 bg-[#050a14]">
+      <section className="px-5 md:px-12 lg:px-20 py-20 bg-[#050a14]">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
           <Link
             to="/capital"
@@ -333,7 +303,7 @@ const Home = () => {
       </section>
 
       {/* ── FAQ ── */}
-      <section className="px-5 md:px-16 lg:px-24 py-20 bg-[#070d1a]">
+      <section className="px-5 md:px-12 lg:px-20 py-20 bg-[#070d1a]">
         <div className="max-w-3xl mx-auto">
           <p className="text-[#1e6ff5] text-xs font-bold uppercase tracking-widest text-center mb-4">
             WE'VE GOT YOU COVERED
@@ -358,13 +328,13 @@ const Home = () => {
       </section>
 
       {/* ── FOOTER ── */}
-      <footer className="bg-[#050a14] text-white py-16 px-5 md:px-16 lg:px-24 border-t border-white/[0.07]">
+      <footer className="bg-[#050a14] text-white py-16 px-5 md:px-12 lg:px-20 border-t border-white/[0.07]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
             <div className="col-span-2 md:col-span-1">
               <div className="flex items-center gap-2 mb-5">
                 <img src="/pata-icon.png" alt="Pata" className="h-6 w-6" />
-                <span className="font-bold text-sm">PATA</span>
+                <span className="font-extrabold text-sm tracking-widest">PATA</span>
               </div>
               <p className="text-white/40 text-sm leading-relaxed mb-5">
                 Empowering African businesses with seamless payments, smart terminals, and growth capital. Built in Botswana.
