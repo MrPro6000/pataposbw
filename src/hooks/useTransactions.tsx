@@ -79,6 +79,48 @@ export const useTransactions = () => {
     fetchTransactions();
   }, [fetchTransactions]);
 
+  // Real-time subscription — balance updates instantly when a payment link is paid
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel(`transactions_realtime_${user.id}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "transactions",
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const t = payload.new as any;
+          const newTx: Transaction = {
+            id: t.id,
+            type: t.type,
+            payment_method: t.payment_method,
+            amount: Number(t.amount),
+            status: t.status || "completed",
+            description: t.description,
+            created_at: t.created_at || new Date().toISOString(),
+            is_dummy: false,
+          };
+          setDbTransactions((prev) => {
+            // Avoid duplicates (optimistic entry may already exist)
+            if (prev.some((tx) => tx.id === newTx.id)) return prev;
+            const updated = [newTx, ...prev];
+            setCachedData(cacheKey, updated);
+            return updated;
+          });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user, cacheKey]);
+
   const allTransactions = [...dbTransactions].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
