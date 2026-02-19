@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
+import { Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,9 +49,20 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 }));
 
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
+const botswanaUnions = [
+  "BTU (Botswana Teachers Union)",
+  "BOFEPUSU (Botswana Federation of Public Sector Unions)",
+  "BHW (Botswana Health Workers Union)",
+  "BOPEU (Botswana Public Employees Union)",
+  "BNMUWD (Botswana Nurses, Midwives & Allied Health Workers)",
+  "BAM (Botswana Agriculture & Marketing Union)",
+  "BLLAHWU (Botswana Land Labour & Allied Health Workers Union)",
+  "Other Union",
+];
+const membershipPeriods = ["Monthly", "Quarterly", "Bi-Annual", "Annual"];
 const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
-type SubView = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "payment";
+type SubView = "products" | "transport-form" | "service-form" | "union-form" | "product-form" | "devices-list" | "payment";
 
 const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [subView, setSubView] = useState<SubView>("products");
@@ -63,6 +74,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
+  const [unionForm, setUnionForm] = useState({ union: "", memberName: "", memberId: "", period: "Monthly", amount: "", customUnion: "" });
 
   // Only show user's own products from DB
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
@@ -118,6 +130,16 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     setSubView("products");
   };
 
+  const handleAddUnion = () => {
+    if (!unionForm.union || !unionForm.amount) return;
+    const id = `union-${Date.now()}`;
+    const unionName = unionForm.union === "Other Union" && unionForm.customUnion ? unionForm.customUnion : unionForm.union;
+    const name = `Union Membership — ${unionName}${unionForm.memberName ? ` (${unionForm.memberName})` : ""}${unionForm.memberId ? ` #${unionForm.memberId}` : ""} • ${unionForm.period}`;
+    addToCart({ id, name, price: parseFloat(unionForm.amount), category: "Services" });
+    setUnionForm({ union: "", memberName: "", memberId: "", period: "Monthly", amount: "", customUnion: "" });
+    setSubView("products");
+  };
+
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
     const id = `product-${Date.now()}`;
@@ -136,6 +158,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     setTransportForm({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
     setProductForm({ productName: "", price: "", quantity: "1" });
+    setUnionForm({ union: "", memberName: "", memberId: "", period: "Monthly", amount: "", customUnion: "" });
     onClose();
   };
 
@@ -229,6 +252,13 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                       <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
                     </button>
                   )}
+                  {showServiceTile && (
+                    <button onClick={() => setSubView("union-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                      <div className="w-8 h-8 bg-indigo-500/10 rounded-lg flex items-center justify-center mb-2"><Users className="w-5 h-5 text-indigo-500" /></div>
+                      <p className="font-medium text-foreground text-sm">Union Membership</p>
+                      <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                    </button>
+                  )}
                   {showDevicesTile && (
                     <button onClick={() => setSubView("devices-list")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
                       <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><Monitor className="w-5 h-5 text-primary" /></div>
@@ -302,6 +332,58 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                   <div className="space-y-2"><Label>Quantity</Label><Input type="number" inputMode="numeric" value={productForm.quantity} onChange={e => setProductForm({ ...productForm, quantity: e.target.value })} placeholder="1" /></div>
                 </div>
                 <Button onClick={handleAddProduct} disabled={!productForm.productName || !productForm.price} className="w-full">Add to Cart</Button>
+              </div>
+            )}
+
+            {subView === "union-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center">
+                    <Users className="w-5 h-5 text-indigo-500" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-foreground">Union Membership</p>
+                    <p className="text-xs text-muted-foreground">Process union subscription payment</p>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Select Union *</Label>
+                  <Select value={unionForm.union} onValueChange={val => setUnionForm({ ...unionForm, union: val })}>
+                    <SelectTrigger><SelectValue placeholder="Choose union" /></SelectTrigger>
+                    <SelectContent>{botswanaUnions.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                {unionForm.union === "Other Union" && (
+                  <div className="space-y-2">
+                    <Label>Union Name *</Label>
+                    <Input value={unionForm.customUnion} onChange={e => setUnionForm({ ...unionForm, customUnion: e.target.value })} placeholder="Enter union name" />
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Member Name</Label>
+                    <Input value={unionForm.memberName} onChange={e => setUnionForm({ ...unionForm, memberName: e.target.value })} placeholder="e.g. Kabo Moeng" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Member ID / Staff No.</Label>
+                    <Input value={unionForm.memberId} onChange={e => setUnionForm({ ...unionForm, memberId: e.target.value })} placeholder="e.g. 12345" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-2">
+                    <Label>Period *</Label>
+                    <Select value={unionForm.period} onValueChange={val => setUnionForm({ ...unionForm, period: val })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{membershipPeriods.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Amount (P) *</Label>
+                    <Input type="number" inputMode="numeric" value={unionForm.amount} onChange={e => setUnionForm({ ...unionForm, amount: e.target.value })} placeholder="0.00" />
+                  </div>
+                </div>
+                <Button onClick={handleAddUnion} disabled={!unionForm.union || !unionForm.amount || (unionForm.union === "Other Union" && !unionForm.customUnion)} className="w-full">Add to Cart</Button>
               </div>
             )}
 
