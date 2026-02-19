@@ -18,7 +18,6 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-        hero: ['Barlow Condensed', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
