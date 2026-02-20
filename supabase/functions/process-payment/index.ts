@@ -13,8 +13,19 @@ Deno.serve(async (req) => {
   try {
     const { payment_link_id, payment_method } = await req.json();
 
-    if (!payment_link_id || !payment_method) {
-      return new Response(JSON.stringify({ error: "Missing required fields" }), {
+    // Validate UUID format
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!payment_link_id || !uuidRegex.test(payment_link_id)) {
+      return new Response(JSON.stringify({ error: "Invalid payment link ID" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Whitelist allowed payment methods
+    const allowedMethods = ["card", "mobile_money", "cash", "qr", "orange_money", "myzaka", "smega"];
+    if (!payment_method || !allowedMethods.includes(payment_method)) {
+      return new Response(JSON.stringify({ error: "Invalid payment method" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
