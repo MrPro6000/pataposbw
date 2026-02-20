@@ -102,20 +102,26 @@ const PaymentLinkPage = () => {
       setProcessingStep(i + 1);
     }
 
-    await supabase
-      .from("payment_links")
-      .update({ status: "paid", paid_at: new Date().toISOString() })
-      .eq("id", link.id);
+    // Use edge function so unauthenticated users can trigger payment and credit merchant
+    const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+    const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    await fetch(
+      `https://${projectId}.supabase.co/functions/v1/process-payment`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": anonKey,
+        },
+        body: JSON.stringify({
+          payment_link_id: link.id,
+          payment_method: selectedMethod || "card",
+        }),
+      }
+    );
 
-    await supabase.from("transactions").insert({
-      user_id: link.user_id,
-      type: "sale",
-      payment_method: selectedMethod || "card",
-      amount: link.amount,
-      description: `Payment Link • ${link.customer_name}${link.description ? ` — ${link.description}` : ""}`,
-      status: "completed",
-    });
-
+    // Update local state to reflect payment
+    setLink((prev) => prev ? { ...prev, status: "paid" } : prev);
     setView("success");
   };
 
