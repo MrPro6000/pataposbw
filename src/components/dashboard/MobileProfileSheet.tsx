@@ -89,13 +89,30 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
         .from("avatars")
         .getPublicUrl(path);
 
-      setAvatarUrl(`${publicUrl}?t=${Date.now()}`);
+      const urlWithBust = `${publicUrl}?t=${Date.now()}`;
+      setAvatarUrl(urlWithBust);
       
       await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", userId);
 
       toast({ title: "Photo uploaded" });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      // Reset input so same file can be re-selected
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!userId) return;
+    setUploading(true);
+    try {
+      await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", userId);
+      setAvatarUrl("");
+      toast({ title: "Photo removed" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
     } finally {
       setUploading(false);
     }
@@ -238,7 +255,27 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
                 </button>
                 <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
               </div>
-              <p className="text-sm text-muted-foreground">Tap to change photo</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="text-sm text-primary font-medium"
+                >
+                  {avatarUrl ? "Replace photo" : "Upload photo"}
+                </button>
+                {avatarUrl && (
+                  <>
+                    <span className="text-muted-foreground">·</span>
+                    <button
+                      onClick={handleRemoveAvatar}
+                      disabled={uploading}
+                      className="text-sm text-destructive font-medium"
+                    >
+                      Remove
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Personal Information */}

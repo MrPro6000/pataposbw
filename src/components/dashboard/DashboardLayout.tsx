@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import PataLogo from "@/components/PataLogo";
+import { useAuth } from "@/hooks/useAuth";
 import { 
   LayoutGrid,
   CreditCard, 
@@ -79,6 +80,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
   const location = useLocation();
   const navigate = useNavigate();
+  const { userProfile, user } = useAuth();
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -171,11 +173,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         {/* Business Switcher & Sign Out */}
         <div className="border-t border-border p-4">
           <div className="flex items-center gap-3 px-2 py-2 mb-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground">
-              PA
-            </div>
+            {userProfile?.avatar_url ? (
+              <img
+                src={`${userProfile.avatar_url}?t=${userProfile.updated_at}`}
+                alt="Profile"
+                className="w-8 h-8 rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-xs font-bold text-primary-foreground">
+                {(userProfile?.full_name || user?.email || "U").slice(0, 2).toUpperCase()}
+              </div>
+            )}
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-foreground truncate">Pata Business</p>
+              <p className="text-sm font-medium text-foreground truncate">
+                {userProfile?.business_name || userProfile?.full_name || "My Business"}
+              </p>
             </div>
           </div>
           <button 
