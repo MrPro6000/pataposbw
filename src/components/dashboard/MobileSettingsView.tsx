@@ -20,13 +20,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
 interface MobileSettingsViewProps {
-  profile: { full_name: string | null; business_name: string | null } | null;
+  profile: { full_name: string | null; business_name: string | null; email?: string | null; phone?: string | null; avatar_url?: string | null } | null;
   userEmail?: string;
+  userId?: string;
+  onProfileUpdated?: () => void;
 }
 
 type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support" | "theme";
 
-const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => {
+const MobileSettingsView = ({ profile, userEmail, userId, onProfileUpdated }: MobileSettingsViewProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [settingsSheetOpen, setSettingsSheetOpen] = useState(false);
@@ -161,6 +163,9 @@ const MobileSettingsView = ({ profile, userEmail }: MobileSettingsViewProps) => 
         onClose={() => setSettingsSheetOpen(false)}
         section={selectedSection}
         title={sectionTitle}
+        profile={profile}
+        userId={userId}
+        onProfileUpdated={onProfileUpdated}
       />
 
       {/* Profile Sheet */}

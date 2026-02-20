@@ -16,7 +16,7 @@ import MobileTransportView from "./MobileTransportView";
 import MobilePayoutsView from "./MobilePayoutsView";
 
 const MobileDashboardHome = () => {
-  const { user, userProfile, loading } = useAuth();
+  const { user, userProfile, loading, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,13 +41,14 @@ const MobileDashboardHome = () => {
     business_name: userProfile.business_name,
     avatar_url: userProfile.avatar_url ?? null,
     phone: userProfile.phone ?? null,
+    email: userProfile.email ?? null,
   } : null;
 
   const profileProps = {
     profile,
     userEmail: user.email,
     userId: user.id,
-    onProfileUpdated: () => {},
+    onProfileUpdated: refreshProfile,
   };
 
   const pathname = location.pathname;
