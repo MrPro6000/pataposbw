@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { format } from "date-fns";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -6,7 +7,7 @@ import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { 
   Download, 
-  Calendar,
+  CalendarIcon,
   TrendingUp,
   Package,
   Users
@@ -19,6 +20,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import {
   ChartContainer,
   ChartTooltip,
@@ -28,6 +32,7 @@ import { BarChart, Bar, XAxis, YAxis, PieChart, Pie, Cell } from "recharts";
 
 const Reports = () => {
   const [dateRange, setDateRange] = useState("week");
+  const [customDate, setCustomDate] = useState<Date | undefined>(undefined);
   const isMobile = useIsMobile();
   const { transactions } = useTransactions();
   const { products } = useProducts();
@@ -39,14 +44,21 @@ const Reports = () => {
   // Filter transactions by date range
   const now = new Date();
   let rangeStart: Date;
-  switch (dateRange) {
-    case "today": rangeStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()); break;
-    case "month": rangeStart = new Date(now.getFullYear(), now.getMonth(), 1); break;
-    case "year": rangeStart = new Date(now.getFullYear(), 0, 1); break;
-    default: rangeStart = new Date(now); rangeStart.setDate(rangeStart.getDate() - 7);
+  let rangeEnd: Date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+
+  if (dateRange === "custom" && customDate) {
+    rangeStart = new Date(customDate.getFullYear(), customDate.getMonth(), customDate.getDate());
+    rangeEnd = new Date(rangeStart); rangeEnd.setDate(rangeEnd.getDate() + 1);
+  } else {
+    switch (dateRange) {
+      case "today": rangeStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()); break;
+      case "month": rangeStart = new Date(now.getFullYear(), now.getMonth(), 1); break;
+      case "year": rangeStart = new Date(now.getFullYear(), 0, 1); break;
+      default: rangeStart = new Date(now); rangeStart.setDate(rangeStart.getDate() - 7);
+    }
   }
 
-  const filteredTx = transactions.filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= rangeStart);
+  const filteredTx = transactions.filter(t => t.amount > 0 && t.status === "completed" && new Date(t.created_at) >= rangeStart && new Date(t.created_at) < rangeEnd);
   const totalRevenue = filteredTx.reduce((s, t) => s + t.amount, 0);
   const totalTxCount = filteredTx.length;
   const avgOrder = totalTxCount > 0 ? totalRevenue / totalTxCount : 0;
@@ -102,10 +114,10 @@ const Reports = () => {
           <h1 className="text-2xl font-bold text-foreground">Reports & Analytics</h1>
           <p className="text-muted-foreground">Insights into your business performance</p>
         </div>
-        <div className="flex gap-3">
-          <Select value={dateRange} onValueChange={setDateRange}>
+        <div className="flex gap-3 flex-wrap">
+          <Select value={dateRange} onValueChange={(v) => { setDateRange(v); if (v !== "custom") setCustomDate(undefined); }}>
             <SelectTrigger className="w-[180px]">
-              <Calendar className="w-4 h-4 mr-2" />
+              <CalendarIcon className="w-4 h-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="bg-popover border border-border">
@@ -113,8 +125,29 @@ const Reports = () => {
               <SelectItem value="week">This Week</SelectItem>
               <SelectItem value="month">This Month</SelectItem>
               <SelectItem value="year">This Year</SelectItem>
+              <SelectItem value="custom">Custom Day</SelectItem>
             </SelectContent>
           </Select>
+          {dateRange === "custom" && (
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("w-[180px] justify-start text-left font-normal", !customDate && "text-muted-foreground")}>
+                  <CalendarIcon className="w-4 h-4 mr-2" />
+                  {customDate ? format(customDate, "PPP") : "Pick a date"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={customDate}
+                  onSelect={setCustomDate}
+                  disabled={(date) => date > new Date()}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
           <Button onClick={() => handleExport('csv')} variant="outline">
             <Download className="w-4 h-4 mr-2" />
             Export
