@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -10,19 +10,44 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "theme";
 
 const Settings = () => {
   const isMobile = useIsMobile();
   const { theme, toggleTheme } = useTheme();
+  const { user, userProfile, refreshProfile } = useAuth();
+  const { toast } = useToast();
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
-  
-  const [businessInfo, setBusinessInfo] = useState({ name: "", registrationNumber: "", email: "", phone: "+267 ", address: "" });
+  const [saving, setSaving] = useState(false);
+
+  const [businessInfo, setBusinessInfo] = useState({
+    name: "",
+    registrationNumber: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
   const [storeSettings, setStoreSettings] = useState({ storeName: "Main Branch", operatingHours: "08:00 - 18:00", currency: "BWP", timezone: "Africa/Gaborone" });
   const [taxSettings, setTaxSettings] = useState({ vatEnabled: true, vatRate: "15", vatNumber: "4123456789", pricesIncludeVat: true });
   const [receiptSettings, setReceiptSettings] = useState({ showLogo: true, footerMessage: "Thank you for your business!", includeVatBreakdown: true, emailReceipts: true });
   const [notifications, setNotifications] = useState({ dailySummary: true, lowStock: true, newSale: false, payoutComplete: true });
+
+  // Pre-fill business info from saved profile
+  useEffect(() => {
+    if (userProfile) {
+      setBusinessInfo({
+        name: userProfile.business_name || "",
+        registrationNumber: "",
+        email: userProfile.email || "",
+        phone: userProfile.phone || "",
+        address: "",
+      });
+    }
+  }, [userProfile]);
 
   if (isMobile) { return <MobileDashboardHome />; }
 
@@ -35,6 +60,30 @@ const Settings = () => {
     { id: "notifications" as const, label: "Notifications", icon: Bell },
     { id: "theme" as const, label: "Appearance", icon: Palette },
   ];
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    try {
+      if (activeSection === "business") {
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            business_name: businessInfo.name || null,
+            email: businessInfo.email || null,
+            phone: businessInfo.phone || null,
+          })
+          .eq("user_id", user.id);
+        if (error) throw error;
+        await refreshProfile();
+      }
+      toast({ title: "Saved", description: "Settings updated successfully." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const renderContent = () => {
     switch (activeSection) {
@@ -155,7 +204,14 @@ const Settings = () => {
           <h1 className="text-2xl font-bold text-foreground">Settings</h1>
           <p className="text-muted-foreground">Manage your business preferences</p>
         </div>
-        <Button className="bg-primary hover:bg-primary/90 text-primary-foreground"><Save className="w-4 h-4 mr-2" /> Save Changes</Button>
+        <Button
+          onClick={handleSave}
+          disabled={saving}
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
+        >
+          <Save className="w-4 h-4 mr-2" />
+          {saving ? "Saving..." : "Save Changes"}
+        </Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">

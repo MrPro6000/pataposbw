@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
+import { supabase } from "@/integrations/supabase/client";
 
 type SettingsSection = 
   | "business" 
@@ -39,18 +40,22 @@ interface MobileSettingsSheetProps {
   onClose: () => void;
   section: SettingsSection;
   title: string;
+  profile?: { full_name: string | null; business_name: string | null; email?: string | null; phone?: string | null } | null;
+  userId?: string;
+  onProfileUpdated?: () => void;
 }
 
-const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSheetProps) => {
+const MobileSettingsSheet = ({ open, onClose, section, title, profile, userId, onProfileUpdated }: MobileSettingsSheetProps) => {
   const { toast } = useToast();
   const { theme, toggleTheme } = useTheme();
-  // Business settings state
+  const [saving, setSaving] = useState(false);
+  // Business settings state — pre-filled from real profile
   const [businessInfo, setBusinessInfo] = useState({
-    name: "Pata Business (Pty) Ltd",
-    registrationNumber: "2025/123456/07",
-    email: "info@patabusiness.com",
-    phone: "+267 71 234 5678",
-    address: "Plot 123, Main Mall, Gaborone",
+    name: profile?.business_name || "",
+    registrationNumber: "",
+    email: (profile as any)?.email || "",
+    phone: (profile as any)?.phone || "",
+    address: "",
   });
 
   // Store settings state
@@ -94,12 +99,34 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
     cash: true,
   });
 
-  const handleSave = () => {
-    toast({
-      title: "Settings Saved",
-      description: `${title} settings have been updated`,
-    });
-    onClose();
+  const handleSave = async () => {
+    if (section === "business" && userId) {
+      setSaving(true);
+      try {
+        const { error } = await supabase
+          .from("profiles")
+          .update({
+            business_name: businessInfo.name || null,
+            email: businessInfo.email || null,
+            phone: businessInfo.phone || null,
+          })
+          .eq("user_id", userId);
+        if (error) throw error;
+        onProfileUpdated?.();
+        toast({ title: "Saved", description: "Business profile updated successfully." });
+        onClose();
+      } catch (err: any) {
+        toast({ title: "Error", description: err.message, variant: "destructive" });
+      } finally {
+        setSaving(false);
+      }
+    } else {
+      toast({
+        title: "Settings Saved",
+        description: `${title} settings have been updated`,
+      });
+      onClose();
+    }
   };
 
   const renderContent = () => {
@@ -562,9 +589,10 @@ const MobileSettingsSheet = ({ open, onClose, section, title }: MobileSettingsSh
           <div className="absolute bottom-0 left-0 right-0 p-5 bg-background border-t border-border">
             <Button
               onClick={handleSave}
+              disabled={saving}
               className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
             >
-              Save Changes
+              {saving ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         )}
