@@ -75,6 +75,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   };
 
   // Form data
+  const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [registrationNumber, setRegistrationNumber] = useState("");
@@ -180,10 +181,10 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
 
   const handleNext = () => {
     if (currentStep === "business") {
-      if (!businessName.trim() || !businessType) {
+      if (!fullName.trim() || !businessName.trim() || !businessType) {
         toast({
           title: "Required fields",
-          description: "Please enter your business name and select a type.",
+          description: "Please enter your name, business name, and select a type.",
           variant: "destructive",
         });
         return;
@@ -269,6 +270,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       const { error } = await supabase
         .from("profiles")
         .update({
+          full_name: fullName.trim() || undefined,
           business_name: businessData.businessName,
           phone: businessData.contactPhone ? `+267${businessData.contactPhone}` : undefined,
           email: businessData.contactEmail || undefined,
@@ -395,6 +397,17 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
               </div>
 
               <div className="space-y-4">
+                <div>
+                  <Label htmlFor="fullName">Your Full Name *</Label>
+                  <Input
+                    id="fullName"
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="e.g., Kabo Mosweu"
+                    className="mt-2"
+                  />
+                </div>
+
                 <div>
                   <Label htmlFor="businessName">Business Name *</Label>
                   <Input
@@ -783,61 +796,58 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </div>
       </main>
 
-      {/* Fixed footer — locked to the same position on every step, never moves */}
-      <div className="fixed bottom-0 left-0 right-0 border-t border-border bg-background px-4 pt-3 pb-[max(env(safe-area-inset-bottom),16px)] z-20">
-        <div className="max-w-md mx-auto flex gap-3">
-          {currentStep !== "business" && (
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-base"
-              disabled={loading}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          )}
-          {currentStep === "logo" && !logoUrl && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                if (!termsAccepted) {
-                  toast({
-                    title: "Terms Required",
-                    description: "You must accept the Terms and Conditions to continue.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                handleSubmit();
-              }}
-              className="text-muted-foreground h-12"
-              disabled={loading}
-            >
-              Skip Logo
-            </Button>
-          )}
-          <Button
-            onClick={handleNext}
-            className="flex-1 h-12 text-base font-semibold"
-            disabled={loading}
-          >
-            {loading ? (
-              "Saving..."
-            ) : currentStep === "logo" ? (
-              <>
-                Complete Setup
-                <CheckCircle className="w-4 h-4 ml-2" />
-              </>
-            ) : (
-              <>
-                Continue
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </>
-            )}
-          </Button>
-        </div>
-      </div>
+      {/* Floating navigation — Back pill on left, Continue FAB on right */}
+      {currentStep !== "business" && (
+        <button
+          onClick={handleBack}
+          disabled={loading}
+          className="fixed bottom-[max(env(safe-area-inset-bottom,24px),24px)] left-5 z-30 flex items-center gap-1.5 bg-background/90 backdrop-blur border border-border text-foreground shadow-lg rounded-full px-4 h-12 text-sm font-medium active:scale-95 transition-transform"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back
+        </button>
+      )}
+
+      {currentStep === "logo" && !logoUrl && (
+        <button
+          onClick={() => {
+            if (!termsAccepted) {
+              toast({
+                title: "Terms Required",
+                description: "You must accept the Terms and Conditions to continue.",
+                variant: "destructive",
+              });
+              return;
+            }
+            handleSubmit();
+          }}
+          disabled={loading}
+          className="fixed bottom-[max(env(safe-area-inset-bottom,24px),24px)] left-1/2 -translate-x-1/2 z-30 bg-background/90 backdrop-blur border border-border text-muted-foreground shadow-lg rounded-full px-4 h-12 text-sm font-medium active:scale-95 transition-transform"
+        >
+          Skip Logo
+        </button>
+      )}
+
+      {/* Continue / Complete — floating FAB, bottom-right */}
+      <button
+        onClick={handleNext}
+        disabled={loading}
+        className="fixed bottom-[max(env(safe-area-inset-bottom,24px),24px)] right-5 z-30 flex items-center gap-2 bg-primary text-primary-foreground shadow-xl rounded-full px-5 h-12 text-sm font-semibold active:scale-95 transition-transform"
+      >
+        {loading ? (
+          "Saving..."
+        ) : currentStep === "logo" ? (
+          <>
+            Complete Setup
+            <CheckCircle className="w-4 h-4" />
+          </>
+        ) : (
+          <>
+            Continue
+            <ArrowRight className="w-4 h-4" />
+          </>
+        )}
+      </button>
     </div>
   );
 };

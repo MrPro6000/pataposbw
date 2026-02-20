@@ -19,11 +19,65 @@ const AIChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  // Draggable FAB
+  const [fabPos, setFabPos] = useState<{ x: number; y: number } | null>(null);
+  const dragging = useRef(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  // ── Drag logic ──────────────────────────────────────────────────────────────
+  const startLongPress = useCallback((clientX: number, clientY: number) => {
+    longPressTimer.current = setTimeout(() => {
+      dragging.current = true;
+      setIsDragging(true);
+      const rect = fabRef.current?.getBoundingClientRect();
+      if (rect) {
+        dragOffset.current = { x: clientX - rect.left, y: clientY - rect.top };
+      }
+    }, 500);
+  }, []);
+
+  const cancelLongPress = useCallback(() => {
+    if (longPressTimer.current) clearTimeout(longPressTimer.current);
+  }, []);
+
+  const onPointerMove = useCallback((e: PointerEvent) => {
+    if (!dragging.current) return;
+    const x = e.clientX - dragOffset.current.x;
+    const y = e.clientY - dragOffset.current.y;
+    const size = 56;
+    setFabPos({
+      x: Math.max(0, Math.min(window.innerWidth - size, x)),
+      y: Math.max(0, Math.min(window.innerHeight - size, y)),
+    });
+  }, []);
+
+  const onPointerUp = useCallback(() => {
+    if (dragging.current) {
+      dragging.current = false;
+      setIsDragging(false);
+    }
+    cancelLongPress();
+  }, [cancelLongPress]);
+
+  useEffect(() => {
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+  }, [onPointerMove, onPointerUp]);
+  // ────────────────────────────────────────────────────────────────────────────
+
 
   const sendMessage = useCallback(async () => {
     const text = input.trim();
@@ -107,13 +161,22 @@ const AIChatbot = () => {
     }
   }, [input, isLoading, messages]);
 
+  const fabStyle = fabPos
+    ? { position: "fixed" as const, left: fabPos.x, top: fabPos.y, bottom: "auto", right: "auto" }
+    : { position: "fixed" as const, bottom: "6rem", right: "1.5rem" };
+
   return (
     <>
       {/* Floating Button */}
       {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 md:bottom-6 right-6 z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center hover:scale-105 transition-transform"
+          ref={fabRef}
+          onClick={() => { if (!isDragging) setIsOpen(true); }}
+          onPointerDown={(e) => startLongPress(e.clientX, e.clientY)}
+          onPointerUp={cancelLongPress}
+          onPointerCancel={cancelLongPress}
+          style={fabStyle}
+          className={`z-50 w-14 h-14 bg-primary text-primary-foreground rounded-full shadow-lg flex items-center justify-center transition-transform ${isDragging ? "scale-110 cursor-grabbing" : "hover:scale-105 cursor-pointer"}`}
           aria-label="Open chat"
         >
           <MessageSquare className="w-6 h-6" />
