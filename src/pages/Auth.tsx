@@ -24,7 +24,6 @@ type AuthStep = "credentials" | "phone" | "otp";
 const Auth = ({ mode }: AuthProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [fullName, setFullName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState<AuthStep>("credentials");
@@ -161,13 +160,6 @@ const Auth = ({ mode }: AuthProps) => {
           throw new Error(error);
         }
       } else if (newUser) {
-        // Save the full name to the profile
-        if (fullName.trim()) {
-          await supabase
-            .from("profiles")
-            .update({ full_name: fullName.trim(), phone: `+267${phoneNumber}` })
-            .eq("user_id", newUser.id);
-        }
         toast({
           title: "Account created!",
           description: "Please check your email to verify your account, then complete KYC verification.",
@@ -207,10 +199,6 @@ const Auth = ({ mode }: AuthProps) => {
     }
 
     if (mode === "signup") {
-      if (!fullName.trim()) {
-        toast({ title: "Error", description: "Please enter your full name", variant: "destructive" });
-        return;
-      }
       setStep("phone");
       return;
     }
@@ -397,20 +385,6 @@ const Auth = ({ mode }: AuthProps) => {
                   </p>
 
                   <form onSubmit={handleSubmit} className="space-y-4">
-                    {mode === "signup" && (
-                      <div>
-                        <label className="block text-sm font-medium text-foreground mb-1.5">
-                          Full Name
-                        </label>
-                        <input
-                          type="text"
-                          value={fullName}
-                          onChange={(e) => setFullName(e.target.value)}
-                          className="w-full px-4 py-3 border border-input bg-muted text-foreground placeholder:text-muted-foreground rounded-xl focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
-                          placeholder="e.g. Thabo Molefe"
-                        />
-                      </div>
-                    )}
                     <div>
                       <label className="block text-sm font-medium text-foreground mb-1.5">
                         Email
