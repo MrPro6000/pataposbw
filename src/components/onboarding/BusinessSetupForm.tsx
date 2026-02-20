@@ -377,9 +377,9 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         </p>
       </div>
 
-      {/* Main Content — scrollable, takes remaining height above the sticky footer */}
+      {/* Main Content — fully scrollable, Continue button is inline at the bottom of content */}
       <main className="flex-1 overflow-y-auto overscroll-contain">
-        <div className="max-w-md mx-auto px-4 py-6 pb-4">
+        <div className="max-w-md mx-auto px-4 py-6 pb-8">
           {currentStep === "business" && (
             <div className="space-y-6">
               <div className="text-center mb-8">
@@ -780,64 +780,61 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
               </div>
             </div>
           )}
+          {/* Inline navigation buttons — scroll down to reach them */}
+          <div className="flex gap-3 mt-8 pb-[env(safe-area-inset-bottom,16px)]">
+            {currentStep !== "business" && (
+              <Button
+                variant="outline"
+                onClick={handleBack}
+                className="flex-1 h-12 text-base"
+                disabled={loading}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Back
+              </Button>
+            )}
+            {currentStep === "logo" && !logoUrl && (
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  if (!termsAccepted) {
+                    toast({
+                      title: "Terms Required",
+                      description: "You must accept the Terms and Conditions to continue.",
+                      variant: "destructive",
+                    });
+                    return;
+                  }
+                  handleSubmit();
+                }}
+                className="text-muted-foreground h-12"
+                disabled={loading}
+              >
+                Skip Logo
+              </Button>
+            )}
+            <Button
+              onClick={handleNext}
+              className="flex-1 h-12 text-base font-semibold"
+              disabled={loading}
+            >
+              {loading ? (
+                "Saving..."
+              ) : currentStep === "logo" ? (
+                <>
+                  Complete Setup
+                  <CheckCircle className="w-4 h-4 ml-2" />
+                </>
+              ) : (
+                <>
+                  Continue
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </main>
-
-      {/* Floating sticky footer — always visible above keyboard/home bar */}
-      <footer className="shrink-0 border-t border-border bg-background px-4 pt-3 pb-[env(safe-area-inset-bottom,16px)] z-20">
-        <div className="max-w-md mx-auto flex gap-3 pb-2">
-          {currentStep !== "business" && (
-            <Button
-              variant="outline"
-              onClick={handleBack}
-              className="flex-1 h-12 text-base"
-              disabled={loading}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          )}
-          {currentStep === "logo" && !logoUrl && (
-            <Button
-              variant="ghost"
-              onClick={() => {
-                if (!termsAccepted) {
-                  toast({
-                    title: "Terms Required",
-                    description: "You must accept the Terms and Conditions to continue.",
-                    variant: "destructive",
-                  });
-                  return;
-                }
-                handleSubmit();
-              }}
-              className="text-muted-foreground h-12"
-              disabled={loading}
-            >
-              Skip Logo
-            </Button>
-          )}
-          <Button
-            onClick={handleNext}
-            className="flex-1 h-12 text-base font-semibold"
-            disabled={loading}
-          >
-            {loading ? (
-              "Saving..."
-            ) : currentStep === "logo" ? (
-              <>
-                Complete Setup
-                <CheckCircle className="w-4 h-4 ml-2" />
-              </>
-            ) : (
-              <>
-                Continue
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </>
-            )}
-          </Button>
-        </div>
-      </footer>
     </div>
   );
 };
