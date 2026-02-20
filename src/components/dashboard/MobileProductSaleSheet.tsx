@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Users } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,6 @@ const utilityServices = [
   { id: "electricity", label: "Electricity", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
   { id: "water", label: "Water Bill", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10" },
   { id: "insurance", label: "Insurance", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" },
-  { id: "union", label: "Union Membership", icon: Users, color: "text-indigo-500", bg: "bg-indigo-500/10" },
 ];
 
 // Airtime providers in Botswana
@@ -69,21 +68,7 @@ const airtimeProviders = [
   { id: "btc", name: "BTC", color: "bg-blue-700" },
 ];
 
-// Unions in Botswana
-const botswanaUnions = [
-  "BTU (Botswana Teachers Union)",
-  "BOFEPUSU (Botswana Federation of Public Sector Unions)",
-  "BHW (Botswana Health Workers Union)",
-  "BOPEU (Botswana Public Employees Union)",
-  "BNMUWD (Botswana Nurses, Midwives & Allied Health Workers)",
-  "BAM (Botswana Agriculture & Marketing Union)",
-  "BLLAHWU (Botswana Land Labour & Allied Health Workers Union)",
-  "Other Union",
-];
-
-const membershipPeriods = ["Monthly", "Quarterly", "Bi-Annual", "Annual"];
-
-  type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "utility-form" | "union-form" | "product-form" | "devices-list" | "cart" | "payment";
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -106,9 +91,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [utilityAmount, setUtilityAmount] = useState("");
   const [utilityRef, setUtilityRef] = useState("");
   const [utilityCustomer, setUtilityCustomer] = useState("");
-
-  // Union Membership state
-  const [unionForm, setUnionForm] = useState({ union: "", memberName: "", memberId: "", period: "Monthly", amount: "", customUnion: "" });
 
   // Only show user's own products from DB
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
@@ -187,16 +169,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
-  const handleAddUnion = () => {
-    if (!unionForm.union || !unionForm.amount) return;
-    const id = `union-${Date.now()}`;
-    const unionName = unionForm.union === "Other Union" && unionForm.customUnion ? unionForm.customUnion : unionForm.union;
-    const name = `Union Membership — ${unionName}${unionForm.memberName ? ` (${unionForm.memberName})` : ""}${unionForm.memberId ? ` #${unionForm.memberId}` : ""} • ${unionForm.period}`;
-    addToCart({ id, name, price: parseFloat(unionForm.amount), category: "Services" });
-    setUnionForm({ union: "", memberName: "", memberId: "", period: "Monthly", amount: "", customUnion: "" });
-    setStep("products");
-  };
-
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
     const id = `product-${Date.now()}`;
@@ -230,7 +202,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "services-list": return "Services";
       case "airtime-form": return "Buy Airtime";
       case "utility-form": return activeUtility?.label ?? "Utility Payment";
-      case "union-form": return "Union Membership";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
@@ -341,7 +312,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       key={svc.id}
                       onClick={() => {
                         if (svc.id === "airtime") { setStep("airtime-form"); }
-                        else if (svc.id === "union") { setStep("union-form"); }
                         else { setActiveUtility(svc); setStep("utility-form"); }
                       }}
                       className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
@@ -430,60 +400,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
                 <Button onClick={handleAddUtility} disabled={!utilityAmount} className="flex-1 h-12">Add to Cart</Button>
-              </div>
-            </div>
-          )}
-
-          {/* UNION MEMBERSHIP FORM */}
-          {step === "union-form" && (
-            <div className="p-4 space-y-4">
-              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
-                <ArrowLeft className="w-4 h-4 mr-1" /> Back
-              </Button>
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-indigo-500/10 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-indigo-500" />
-                </div>
-                <div>
-                  <p className="font-semibold text-foreground">Union Membership</p>
-                  <p className="text-xs text-muted-foreground">Process union subscription payment</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Select Union *</Label>
-                <Select value={unionForm.union} onValueChange={val => setUnionForm({ ...unionForm, union: val })}>
-                  <SelectTrigger className="h-12"><SelectValue placeholder="Choose union" /></SelectTrigger>
-                  <SelectContent>{botswanaUnions.map(u => <SelectItem key={u} value={u}>{u}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              {unionForm.union === "Other Union" && (
-                <div className="space-y-2">
-                  <Label>Union Name *</Label>
-                  <Input value={unionForm.customUnion} onChange={e => setUnionForm({ ...unionForm, customUnion: e.target.value })} placeholder="Enter union name" />
-                </div>
-              )}
-              <div className="space-y-2">
-                <Label>Member Name (optional)</Label>
-                <Input value={unionForm.memberName} onChange={e => setUnionForm({ ...unionForm, memberName: e.target.value })} placeholder="e.g. Kabo Moeng" />
-              </div>
-              <div className="space-y-2">
-                <Label>Member ID / Staff No. (optional)</Label>
-                <Input value={unionForm.memberId} onChange={e => setUnionForm({ ...unionForm, memberId: e.target.value })} placeholder="e.g. 12345" />
-              </div>
-              <div className="space-y-2">
-                <Label>Membership Period *</Label>
-                <Select value={unionForm.period} onValueChange={val => setUnionForm({ ...unionForm, period: val })}>
-                  <SelectTrigger className="h-12"><SelectValue /></SelectTrigger>
-                  <SelectContent>{membershipPeriods.map(p => <SelectItem key={p} value={p}>{p}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Amount (P) *</Label>
-                <Input type="number" inputMode="numeric" value={unionForm.amount} onChange={e => setUnionForm({ ...unionForm, amount: e.target.value })} placeholder="0.00" />
-              </div>
-              <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddUnion} disabled={!unionForm.union || !unionForm.amount || (unionForm.union === "Other Union" && !unionForm.customUnion)} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}
