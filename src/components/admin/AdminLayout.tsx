@@ -17,6 +17,7 @@ import {
   UserCheck,
   UsersRound,
   MessageSquare,
+  Wallet,
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -35,6 +36,7 @@ const allNavItems: NavItem[] = [
   { label: "KYC Approvals", path: "/admin/kyc", icon: UserCheck, roles: ["admin", "support"] },
   { label: "Users", path: "/admin/users", icon: Users, roles: ["admin", "cto", "support"] },
   { label: "Team", path: "/admin/team", icon: UsersRound, roles: ["admin"] },
+  { label: "Loan Applications", path: "/admin/loans", icon: Wallet, roles: ["admin", "finance", "support"] },
   { label: "AML Monitoring", path: "/admin/aml", icon: AlertTriangle, roles: ["admin", "finance"] },
   { label: "Analytics", path: "/admin/analytics", icon: BarChart3, roles: ["admin", "cto", "developer", "finance"] },
   { label: "Live Chat", path: "/admin/live-chat", icon: MessageSquare, roles: ["admin", "support"] },

@@ -50,6 +50,7 @@ import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminLiveChat from "./pages/admin/AdminLiveChat";
+import AdminLoans from "./pages/admin/AdminLoans";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +104,7 @@ const AppContent = () => {
       <Route path="/admin/faqs" element={<AdminFAQs />} />
       <Route path="/admin/notifications" element={<AdminNotifications />} />
       <Route path="/admin/analytics" element={<AdminAnalytics />} />
+      <Route path="/admin/loans" element={<AdminLoans />} />
       
         <Route path="*" element={<NotFound />} />
       </Routes>
