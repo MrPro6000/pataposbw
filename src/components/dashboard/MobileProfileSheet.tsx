@@ -76,8 +76,21 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
 
     setUploading(true);
     try {
+      // Delete old avatar files first (clean up storage)
+      const { data: existingFiles } = await supabase.storage
+        .from("avatars")
+        .list(userId);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage
+            .from("avatars")
+            .remove(avatarFiles.map(f => `${userId}/${f.name}`));
+        }
+      }
+
       const ext = file.name.split(".").pop();
-      const path = `${userId}/avatar.${ext}`;
+      const path = `${userId}/avatar_${Date.now()}.${ext}`;
 
       const { error: uploadError } = await supabase.storage
         .from("avatars")
@@ -91,15 +104,17 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
 
       const urlWithBust = `${publicUrl}?t=${Date.now()}`;
       setAvatarUrl(urlWithBust);
-      
-      await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", userId);
 
+      // Save the clean URL (without cache-bust) to the DB
+      const { error: updateError } = await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", userId);
+      if (updateError) throw updateError;
+
+      onProfileUpdated?.();
       toast({ title: "Photo uploaded" });
     } catch (err: any) {
       toast({ title: "Upload failed", description: err.message, variant: "destructive" });
     } finally {
       setUploading(false);
-      // Reset input so same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
@@ -108,8 +123,24 @@ const MobileProfileSheet = ({ open, onClose, profile, userEmail, userId, onProfi
     if (!userId) return;
     setUploading(true);
     try {
-      await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", userId);
+      // Remove files from storage
+      const { data: existingFiles } = await supabase.storage
+        .from("avatars")
+        .list(userId);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage
+            .from("avatars")
+            .remove(avatarFiles.map(f => `${userId}/${f.name}`));
+        }
+      }
+
+      const { error } = await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", userId);
+      if (error) throw error;
+
       setAvatarUrl("");
+      onProfileUpdated?.();
       toast({ title: "Photo removed" });
     } catch (err: any) {
       toast({ title: "Error", description: err.message, variant: "destructive" });
