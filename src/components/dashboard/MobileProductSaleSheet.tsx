@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone } from "lucide-react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -55,6 +55,7 @@ const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 // Utility service types with their icons and colors
 const utilityServices = [
   { id: "airtime", label: "Airtime", icon: Phone, color: "text-green-500", bg: "bg-green-500/10" },
+  { id: "wifi", label: "WiFi", icon: Wifi, color: "text-indigo-500", bg: "bg-indigo-500/10" },
   { id: "dstv", label: "DSTV", icon: Tv, color: "text-blue-500", bg: "bg-blue-500/10" },
   { id: "electricity", label: "Electricity", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
   { id: "water", label: "Water Bill", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10" },
@@ -68,7 +69,7 @@ const airtimeProviders = [
   { id: "btc", name: "BTC", color: "bg-blue-700" },
 ];
 
-type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -85,6 +86,11 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [airtimeProvider, setAirtimeProvider] = useState("");
   const [airtimeAmount, setAirtimeAmount] = useState("");
   const [airtimePhone, setAirtimePhone] = useState("");
+
+  // WiFi subscription state
+  const [wifiProvider, setWifiProvider] = useState("");
+  const [wifiPackage, setWifiPackage] = useState("");
+  const [wifiPhone, setWifiPhone] = useState("");
 
   // Utility (DSTV, Electricity, Water, Insurance) state
   const [activeUtility, setActiveUtility] = useState<typeof utilityServices[0] | null>(null);
@@ -160,6 +166,39 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const wifiPackages: Record<string, { name: string; price: number }[]> = {
+    orange: [
+      { name: "Daily 1GB", price: 10 },
+      { name: "Weekly 5GB", price: 45 },
+      { name: "Monthly 20GB", price: 150 },
+      { name: "Monthly 50GB", price: 300 },
+    ],
+    mascom: [
+      { name: "Daily 1GB", price: 12 },
+      { name: "Weekly 5GB", price: 50 },
+      { name: "Monthly 20GB", price: 160 },
+      { name: "Monthly 50GB", price: 320 },
+    ],
+    btc: [
+      { name: "Daily 1GB", price: 10 },
+      { name: "Weekly 5GB", price: 40 },
+      { name: "Monthly 20GB", price: 140 },
+      { name: "Monthly 50GB", price: 280 },
+    ],
+  };
+
+  const handleAddWifi = () => {
+    if (!wifiProvider || !wifiPackage) return;
+    const provider = airtimeProviders.find(p => p.id === wifiProvider);
+    const pkg = wifiPackages[wifiProvider]?.find(p => p.name === wifiPackage);
+    if (!pkg) return;
+    const id = `wifi-${Date.now()}`;
+    const name = `WiFi — ${provider?.name} ${pkg.name}${wifiPhone ? ` (${wifiPhone})` : ""}`;
+    addToCart({ id, name, price: pkg.price, category: "Services" });
+    setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
+    setStep("products");
+  };
+
   const handleAddUtility = () => {
     if (!activeUtility || !utilityAmount) return;
     const id = `utility-${Date.now()}`;
@@ -188,6 +227,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
     setProductForm({ productName: "", price: "", quantity: "1" });
     setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     onClose();
   };
@@ -201,6 +241,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "service-form": return "Add Service";
       case "services-list": return "Services";
       case "airtime-form": return "Buy Airtime";
+      case "wifi-form": return "WiFi Subscription";
       case "utility-form": return activeUtility?.label ?? "Utility Payment";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
@@ -312,6 +353,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       key={svc.id}
                       onClick={() => {
                         if (svc.id === "airtime") { setStep("airtime-form"); }
+                        else if (svc.id === "wifi") { setStep("wifi-form"); }
                         else { setActiveUtility(svc); setStep("utility-form"); }
                       }}
                       className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
@@ -366,6 +408,54 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
                 <Button onClick={handleAddAirtime} disabled={!airtimeProvider || !airtimeAmount} className="flex-1 h-12">Add to Cart</Button>
+              </div>
+            </div>
+          )}
+
+          {/* WIFI FORM */}
+          {step === "wifi-form" && (
+            <div className="p-4 space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="space-y-2">
+                <Label>Select Provider *</Label>
+                <div className="grid grid-cols-3 gap-2 mt-2">
+                  {airtimeProviders.map(p => (
+                    <button
+                      key={p.id}
+                      onClick={() => { setWifiProvider(p.id); setWifiPackage(""); }}
+                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${wifiProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}
+                    >
+                      {p.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {wifiProvider && (
+                <div className="space-y-2">
+                  <Label>Select Package *</Label>
+                  <div className="space-y-2">
+                    {wifiPackages[wifiProvider]?.map(pkg => (
+                      <button
+                        key={pkg.name}
+                        onClick={() => setWifiPackage(pkg.name)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${wifiPackage === pkg.name ? "border-primary bg-primary/5" : "border-border bg-card"}`}
+                      >
+                        <span className="font-medium text-foreground text-sm">{pkg.name}</span>
+                        <span className="font-bold text-foreground">P{pkg.price.toFixed(2)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label>Phone Number (optional)</Label>
+                <Input type="tel" inputMode="numeric" value={wifiPhone} onChange={e => setWifiPhone(e.target.value)} placeholder="e.g. 71234567" />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
+                <Button onClick={handleAddWifi} disabled={!wifiProvider || !wifiPackage} className="flex-1 h-12">Add to Cart</Button>
               </div>
             </div>
           )}

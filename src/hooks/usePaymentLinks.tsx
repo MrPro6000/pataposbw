@@ -58,7 +58,8 @@ export const usePaymentLinks = () => {
         .select().single();
       if (error) return { error: error.message, data: null };
       // Generate link URL using the record ID
-      const linkUrl = `${window.location.origin}/pay/${data.id}`;
+      const baseUrl = import.meta.env.VITE_CUSTOM_DOMAIN || window.location.origin;
+      const linkUrl = `${baseUrl}/pay/${data.id}`;
       await supabase.from("payment_links").update({ link_url: linkUrl }).eq("id", data.id);
       const finalData = { ...data, amount: Number(data.amount), link_url: linkUrl };
       setPaymentLinks(prev => [finalData, ...prev]);

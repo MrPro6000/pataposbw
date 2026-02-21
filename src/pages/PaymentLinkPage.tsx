@@ -469,7 +469,7 @@ const PaymentLinkPage = () => {
                 <div className="border-t-2 border-dashed border-border mx-4" />
               </div>
               <p className="text-center text-xs text-muted-foreground py-3 pb-5">
-                Thank you for using Pata · pataposbw.lovable.app
+                Thank you for using Pata · patapos.co.bw
               </p>
             </div>
 
