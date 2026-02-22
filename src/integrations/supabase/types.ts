@@ -434,6 +434,7 @@ export type Database = {
           customer_name: string
           customer_phone: string | null
           description: string | null
+          expires_at: string | null
           id: string
           link_url: string | null
           paid_at: string | null
@@ -447,6 +448,7 @@ export type Database = {
           customer_name: string
           customer_phone?: string | null
           description?: string | null
+          expires_at?: string | null
           id?: string
           link_url?: string | null
           paid_at?: string | null
@@ -460,6 +462,7 @@ export type Database = {
           customer_name?: string
           customer_phone?: string | null
           description?: string | null
+          expires_at?: string | null
           id?: string
           link_url?: string | null
           paid_at?: string | null
@@ -552,6 +555,89 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      staff_members: {
+        Row: {
+          created_at: string
+          email: string | null
+          id: string
+          last_paid_at: string | null
+          name: string
+          pay_frequency: string
+          phone: string | null
+          role: string
+          salary: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_paid_at?: string | null
+          name: string
+          pay_frequency?: string
+          phone?: string | null
+          role?: string
+          salary?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          id?: string
+          last_paid_at?: string | null
+          name?: string
+          pay_frequency?: string
+          phone?: string | null
+          role?: string
+          salary?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      staff_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          payment_method: string
+          staff_member_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          payment_method?: string
+          staff_member_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          payment_method?: string
+          staff_member_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_payments_staff_member_id_fkey"
+            columns: ["staff_member_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       support_tickets: {
         Row: {
@@ -680,6 +766,51 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vouchers: {
+        Row: {
+          amount: number
+          code: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          recipient_name: string | null
+          recipient_phone: string | null
+          redeemed_at: string | null
+          redeemed_by: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          code: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          code?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          recipient_name?: string | null
+          recipient_phone?: string | null
+          redeemed_at?: string | null
+          redeemed_by?: string | null
+          status?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

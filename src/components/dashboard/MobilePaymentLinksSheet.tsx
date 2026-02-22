@@ -173,8 +173,12 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                         <div className="flex items-start justify-between mb-2">
                           <div>
                             <p className="font-medium text-foreground">{link.customer_name}</p>
-                            <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-muted-foreground">
                               {link.description || "Payment Link"} • {format(new Date(link.created_at), "MMM d, h:mm a")}
+                            </p>
+                            <p className="text-xs text-yellow-600 dark:text-yellow-400">
+                              <Clock className="w-3 h-3 inline mr-0.5" />
+                              Expires {format(new Date(new Date(link.created_at).getTime() + 24 * 60 * 60 * 1000), "MMM d, h:mm a")}
                             </p>
                           </div>
                           <div className="text-right">

@@ -57,6 +57,16 @@ Deno.serve(async (req) => {
       });
     }
 
+    // Check expiry
+    if (link.expires_at && new Date(link.expires_at) < new Date()) {
+      // Mark as expired
+      await supabase.from("payment_links").update({ status: "expired" }).eq("id", payment_link_id);
+      return new Response(JSON.stringify({ error: "Payment link has expired" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // Update the payment link to paid
     const { error: updateError } = await supabase
       .from("payment_links")
