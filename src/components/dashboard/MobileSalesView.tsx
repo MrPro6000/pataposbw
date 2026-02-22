@@ -12,7 +12,8 @@ import {
   CheckCircle,
   Globe,
   Package,
-  ShoppingBag
+  ShoppingBag,
+  Ticket
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobilePaymentSheet from "./MobilePaymentSheet";
@@ -23,6 +24,7 @@ import MobileProfileSheet from "./MobileProfileSheet";
 import MobileProductSaleSheet from "./MobileProductSaleSheet";
 import MobileInvoiceSheet from "./MobileInvoiceSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
+import MobileVoucherSheet from "./MobileVoucherSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvoices } from "@/hooks/useInvoices";
@@ -68,6 +70,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [productSaleOpen, setProductSaleOpen] = useState(false);
+  const [voucherOpen, setVoucherOpen] = useState(false);
   const [invoiceSheetOpen, setInvoiceSheetOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
   const { transactions, last7DaysIncome, balance } = useTransactions();
@@ -260,6 +263,22 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         </div>
       </div>
 
+      {/* Vouchers */}
+      <div className="px-5 py-2">
+        <button onClick={() => setVoucherOpen(true)}
+          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
+              <Ticket className="w-5 h-5 text-muted-foreground" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Vouchers</p>
+              <p className="text-sm text-muted-foreground">Create & manage money vouchers</p>
+            </div>
+          </div>
+        </button>
+      </div>
+
       {/* Payment Gateway */}
       <div className="px-5 py-2">
         <button onClick={() => setPaymentGatewayOpen(true)}
@@ -284,6 +303,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobileProductSaleSheet open={productSaleOpen} onClose={() => setProductSaleOpen(false)} />
       <MobileInvoiceSheet open={invoiceSheetOpen} onClose={() => setInvoiceSheetOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
+      <MobileVoucherSheet open={voucherOpen} onClose={() => setVoucherOpen(false)} />
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>

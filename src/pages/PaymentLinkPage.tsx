@@ -71,11 +71,15 @@ const PaymentLinkPage = () => {
         return;
       }
 
+      // Check expiry
+      const expiresAt = (data as any).expires_at;
+      const isExpired = expiresAt && new Date(expiresAt) < new Date();
+
       setLink(data as PaymentLink);
 
       if (data.status === "paid" || data.status === "completed") {
         setView("success");
-      } else if (data.status !== "pending") {
+      } else if (data.status !== "pending" || isExpired) {
         setView("expired");
       }
 
