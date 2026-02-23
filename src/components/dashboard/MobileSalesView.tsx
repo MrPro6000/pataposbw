@@ -154,10 +154,13 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           <QuickActionButton icon={Link2} label="Payment Link" variant="light" onClick={() => setPaymentLinksOpen(true)} />
           <QuickActionButton icon={FileText} label="New invoice" variant="light" onClick={() => setInvoiceSheetOpen(true)} />
         </div>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 mb-3">
           <QuickActionButton icon={Banknote} label="Cash" variant="light" onClick={() => handleQuickAction('cash')} />
           <QuickActionButton icon={Smartphone} label="Mobile Money" variant="light" onClick={() => handleQuickAction('mobile-money')} />
           <QuickActionButton icon={Wallet} label="Wallet" variant="light" onClick={() => setWalletOpen(true)} />
+        </div>
+        <div className="grid grid-cols-3 gap-3">
+          <QuickActionButton icon={Ticket} label="Voucher" variant="light" onClick={() => setVoucherOpen(true)} />
         </div>
       </div>
 
@@ -261,22 +264,6 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
             <p className="text-sm text-muted-foreground mt-4">Configure & share</p>
           </button>
         </div>
-      </div>
-
-      {/* Vouchers */}
-      <div className="px-5 py-2">
-        <button onClick={() => setVoucherOpen(true)}
-          className="w-full bg-card rounded-2xl p-5 active:scale-98 transition-transform text-left">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">
-              <Ticket className="w-5 h-5 text-muted-foreground" />
-            </div>
-            <div>
-              <p className="font-semibold text-foreground">Vouchers</p>
-              <p className="text-sm text-muted-foreground">Create & manage money vouchers</p>
-            </div>
-          </div>
-        </button>
       </div>
 
       {/* Payment Gateway */}
