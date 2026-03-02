@@ -78,16 +78,16 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-sm md:text-lg text-foreground/80 mb-6 md:mb-8 max-w-lg leading-relaxed">
+                <p className="text-xs md:text-lg text-foreground/80 mb-6 md:mb-8 max-w-[280px] md:max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
               </AnimatedSection>
 
               <AnimatedSection delay={0.3}>
-                <div className="flex items-center gap-4">
-                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden active:scale-95 transition-transform">
-                    <span className="relative z-10 flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
+                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden active:scale-95 transition-transform text-center">
+                    <span className="relative z-10 flex items-center justify-center gap-2">
                       Start accepting payments
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                     </span>
@@ -95,7 +95,7 @@ const Home = () => {
                   </Link>
                   <Link
                     to="/products"
-                    className="pata-btn-outline-dark group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center gap-2"
+                    className="pata-btn-outline-dark group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-2 text-center"
                   >
                     Explore products
                     <ArrowRight className="w-4 h-4 group-hover/btn2:translate-x-1 transition-transform duration-300" />
