@@ -51,7 +51,17 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-4 md:px-20 min-h-[calc(100svh-4rem)] md:min-h-0 md:py-14 flex flex-col justify-center overflow-hidden relative">
+      <section className="px-4 md:px-20 min-h-[100svh] md:min-h-0 md:py-14 flex flex-col justify-end pb-12 md:pb-0 md:justify-center overflow-hidden relative">
+        {/* Mobile background image */}
+        <div className="absolute inset-0 lg:hidden z-0">
+          <img 
+            src={pataAppPreview} 
+            alt="" 
+            className="w-full h-full object-cover object-top opacity-15 dark:opacity-10" 
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+        </div>
+
         {/* Floating particles */}
         <FloatingParticle delay={0} size={6} x="10%" y="20%" />
         <FloatingParticle delay={1} size={4} x="80%" y="15%" />
@@ -59,7 +69,7 @@ const Home = () => {
         <FloatingParticle delay={1.5} size={5} x="20%" y="80%" />
         <FloatingParticle delay={2} size={3} x="50%" y="10%" />
 
-        <div className="max-w-7xl mx-auto relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
