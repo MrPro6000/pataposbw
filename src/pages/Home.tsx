@@ -66,7 +66,7 @@ const Home = () => {
               <AnimatedSection delay={0}>
                 <div className="flex items-center gap-2 mb-6 group cursor-default">
                   <Star className="w-4 h-4 text-primary animate-[spin_4s_linear_infinite]" />
-                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                  <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-300">
                     Payments made easier, no hassle, no contracts.
                   </span>
                 </div>
@@ -78,7 +78,7 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
+                <p className="text-lg text-foreground/70 mb-8 max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
@@ -107,7 +107,7 @@ const Home = () => {
             {/* Right Content - App Preview */}
             <AnimatedSection delay={0.2} className="flex justify-center">
               <div className="max-w-md w-full relative group">
-                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-400/10 to-primary/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-400/10 to-primary/20 rounded-3xl blur-2xl opacity-100 group-hover:opacity-100 transition-opacity duration-700" />
                 <img 
                   src={pataAppPreview} 
                   alt="Pata App - POS and Payments" 
