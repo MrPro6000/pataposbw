@@ -66,7 +66,7 @@ const Home = () => {
               <AnimatedSection delay={0}>
                 <div className="flex items-center gap-1.5 mb-1 md:mb-3 group cursor-default">
                   <Star className="w-2.5 h-2.5 md:w-4 md:h-4 text-primary animate-[spin_4s_linear_infinite]" />
-                  <span className="text-foreground/90 text-[9px] md:text-sm group-hover:text-foreground transition-colors duration-300">
+                  <span className="text-foreground/90 text-[11px] md:text-sm group-hover:text-foreground transition-colors duration-300">
                     Payments made easier, no hassle, no contracts.
                   </span>
                 </div>
@@ -78,7 +78,7 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-[10px] md:text-lg text-foreground/80 mb-4 md:mb-8 max-w-[240px] md:max-w-lg leading-relaxed">
+                <p className="text-xs md:text-lg text-foreground/80 mb-4 md:mb-8 max-w-[260px] md:max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
@@ -86,7 +86,7 @@ const Home = () => {
 
               <AnimatedSection delay={0.3}>
                 <div className="flex flex-row items-center gap-2 sm:gap-3">
-                  <Link to="/signup" className="pata-btn-cyan !py-1.5 !px-3.5 !text-[10px] sm:!py-3 sm:!px-6 sm:!text-sm group/btn relative overflow-hidden active:scale-95 transition-transform text-center">
+                  <Link to="/signup" className="pata-btn-cyan !py-2 !px-4 !text-[11px] sm:!py-3 sm:!px-6 sm:!text-sm group/btn relative overflow-hidden active:scale-95 transition-transform text-center">
                     <span className="relative z-10 flex items-center justify-center gap-1.5">
                       Start accepting payments
                       <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
@@ -95,7 +95,7 @@ const Home = () => {
                   </Link>
                   <Link
                     to="/products"
-                    className="pata-btn-outline-dark !py-1.5 !px-3.5 !text-[10px] sm:!py-2.5 sm:!px-6 sm:!text-sm group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-1.5 text-center"
+                    className="pata-btn-outline-dark !py-2 !px-4 !text-[11px] sm:!py-2.5 sm:!px-6 sm:!text-sm group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-1.5 text-center"
                   >
                     Explore products
                     <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover/btn2:translate-x-1 transition-transform duration-300" />
