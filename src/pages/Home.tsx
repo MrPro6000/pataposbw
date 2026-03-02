@@ -51,7 +51,7 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-5 md:px-20 py-4 md:py-14 overflow-hidden relative">
+      <section className="px-5 md:px-20 min-h-[calc(100svh-4rem)] md:min-h-0 md:py-14 flex flex-col justify-center overflow-hidden relative">
         {/* Floating particles */}
         <FloatingParticle delay={0} size={6} x="10%" y="20%" />
         <FloatingParticle delay={1} size={4} x="80%" y="15%" />
@@ -105,7 +105,7 @@ const Home = () => {
             </div>
 
             {/* Right Content - App Preview */}
-            <AnimatedSection delay={0.2} className="flex justify-center">
+            <AnimatedSection delay={0.2} className="hidden lg:flex justify-center">
               <div className="max-w-md w-full relative group">
                 <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-400/10 to-primary/20 rounded-3xl blur-2xl opacity-100 group-hover:opacity-100 transition-opacity duration-700" />
                 <img 
