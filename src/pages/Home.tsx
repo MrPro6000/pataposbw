@@ -154,20 +154,20 @@ const Home = () => {
                 tagline: "Sell online seamlessly",
               },
               {
-                title: "Mukuru Transfer",
-                icon: ArrowRight,
-                description:
-                  "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
-                link: "/products",
-                tagline: "Connect globally",
-              },
-              {
                 title: "Mobile Money",
                 icon: Phone,
                 description:
                   "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
                 link: "/online-payments",
                 tagline: "Pay with mobile",
+              },
+              {
+                title: "Mukuru Transfer",
+                icon: ArrowRight,
+                description:
+                  "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
+                link: "/products",
+                tagline: "Connect globally",
               },
             ].map((feature, i) => (
               <AnimatedSection key={feature.title} delay={0.1 * i}>
