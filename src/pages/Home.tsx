@@ -51,7 +51,7 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-5 md:px-20 min-h-[calc(100svh-4rem)] md:min-h-0 md:py-14 flex flex-col justify-center overflow-hidden relative">
+      <section className="px-4 md:px-20 min-h-[calc(100svh-4rem)] md:min-h-0 md:py-14 flex flex-col justify-center overflow-hidden relative">
         {/* Floating particles */}
         <FloatingParticle delay={0} size={6} x="10%" y="20%" />
         <FloatingParticle delay={1} size={4} x="80%" y="15%" />
@@ -73,12 +73,12 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.1}>
-                <h1 className="pata-hero-title text-foreground mb-0 hero-text-shimmer">YOUR BUSINESS,</h1>
-                <h1 className="pata-hero-title pata-hero-gradient mb-3 md:mb-4 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
+                <h1 className="pata-hero-title text-foreground mb-0 hero-text-shimmer text-[3.5rem] md:text-5xl lg:text-6xl">YOUR BUSINESS,</h1>
+                <h1 className="pata-hero-title pata-hero-gradient mb-3 md:mb-4 hero-text-shimmer text-[3.5rem] md:text-5xl lg:text-6xl" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-[10px] md:text-lg text-foreground/80 mb-4 md:mb-8 max-w-[240px] md:max-w-lg leading-relaxed">
+                <p className="text-[11px] md:text-lg text-foreground/80 mb-4 md:mb-8 max-w-full md:max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
