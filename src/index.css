@@ -205,11 +205,11 @@ body {
   /* Hero text gradient - PATA brand */
   .pata-hero-title {
     font-family: 'Anton', sans-serif;
-    @apply text-6xl md:text-7xl lg:text-8xl leading-none tracking-tight uppercase;
+    @apply text-7xl md:text-8xl lg:text-9xl leading-none tracking-tight uppercase;
   }
 
   .pata-hero-gradient {
-    background: linear-gradient(180deg, hsl(var(--primary)) 0%, hsl(var(--info)) 60%, hsl(var(--muted-foreground)) 100%);
+    background: linear-gradient(180deg, hsl(var(--pata-dark)) 0%, hsl(var(--primary)) 40%, hsl(var(--info)) 70%, hsl(var(--pata-white)) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
