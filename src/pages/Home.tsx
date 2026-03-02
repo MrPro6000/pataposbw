@@ -51,7 +51,7 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-4 md:px-20 min-h-[100svh] md:min-h-0 md:py-14 flex flex-col justify-end pb-12 md:pb-0 md:justify-center overflow-hidden relative">
+      <section className="px-4 md:px-20 min-h-[100svh] md:min-h-0 md:py-14 flex flex-col justify-center overflow-hidden relative">
         {/* Mobile background image */}
         <div className="absolute inset-0 lg:hidden z-0">
           <img 
