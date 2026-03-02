@@ -205,7 +205,7 @@ body {
   /* Hero text gradient - PATA brand */
   .pata-hero-title {
     font-family: 'Anton', sans-serif;
-    @apply text-5xl md:text-5xl lg:text-6xl leading-none tracking-tight uppercase;
+    @apply text-[2.75rem] md:text-5xl lg:text-6xl leading-[0.95] tracking-tight uppercase;
   }
 
   .pata-hero-gradient {

@@ -64,9 +64,9 @@ const Home = () => {
             {/* Left Content */}
             <div>
               <AnimatedSection delay={0}>
-                <div className="flex items-center gap-2 mb-3 group cursor-default">
-                  <Star className="w-4 h-4 text-primary animate-[spin_4s_linear_infinite]" />
-                  <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-300">
+                <div className="flex items-center gap-2 mb-2 md:mb-3 group cursor-default">
+                  <Star className="w-3 h-3 md:w-4 md:h-4 text-primary animate-[spin_4s_linear_infinite]" />
+                  <span className="text-foreground/90 text-xs md:text-sm group-hover:text-foreground transition-colors duration-300">
                     Payments made easier, no hassle, no contracts.
                   </span>
                 </div>
@@ -78,7 +78,7 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-lg text-foreground/80 mb-8 max-w-lg leading-relaxed">
+                <p className="text-sm md:text-lg text-foreground/80 mb-6 md:mb-8 max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
