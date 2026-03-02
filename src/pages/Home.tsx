@@ -64,17 +64,17 @@ const Home = () => {
             {/* Left Content */}
             <div>
               <AnimatedSection delay={0}>
-                <div className="flex items-center gap-2 mb-2 md:mb-3 group cursor-default">
-                  <Star className="w-3 h-3 md:w-4 md:h-4 text-primary animate-[spin_4s_linear_infinite]" />
-                  <span className="text-foreground/90 text-xs md:text-sm group-hover:text-foreground transition-colors duration-300">
+                <div className="flex items-center gap-1.5 mb-1 md:mb-3 group cursor-default">
+                  <Star className="w-2.5 h-2.5 md:w-4 md:h-4 text-primary animate-[spin_4s_linear_infinite]" />
+                  <span className="text-foreground/90 text-[10px] md:text-sm group-hover:text-foreground transition-colors duration-300">
                     Payments made easier, no hassle, no contracts.
                   </span>
                 </div>
               </AnimatedSection>
 
               <AnimatedSection delay={0.1}>
-                <h1 className="pata-hero-title text-foreground mb-1 hero-text-shimmer">YOUR BUSINESS,</h1>
-                <h1 className="pata-hero-title pata-hero-gradient mb-4 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
+                <h1 className="pata-hero-title text-foreground mb-0 hero-text-shimmer">YOUR BUSINESS,</h1>
+                <h1 className="pata-hero-title pata-hero-gradient mb-3 md:mb-4 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
@@ -85,20 +85,20 @@ const Home = () => {
               </AnimatedSection>
 
               <AnimatedSection delay={0.3}>
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
-                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden active:scale-95 transition-transform text-center">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+                  <Link to="/signup" className="pata-btn-cyan !py-2.5 !px-5 !text-xs sm:!py-3.5 sm:!px-6 sm:!text-sm group/btn relative overflow-hidden active:scale-95 transition-transform text-center">
                     <span className="relative z-10 flex items-center justify-center gap-2">
                       Start accepting payments
-                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                      <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
                     </span>
                     <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-400 to-primary bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                   </Link>
                   <Link
                     to="/products"
-                    className="pata-btn-outline-dark group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-2 text-center"
+                    className="pata-btn-outline-dark !py-2 !px-5 !text-xs sm:!py-2.5 sm:!px-6 sm:!text-sm group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-2 text-center"
                   >
                     Explore products
-                    <ArrowRight className="w-4 h-4 group-hover/btn2:translate-x-1 transition-transform duration-300" />
+                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn2:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </div>
               </AnimatedSection>
