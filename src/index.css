@@ -233,3 +233,23 @@ body {
     @apply text-red-600 bg-red-500/10 dark:text-red-400 dark:bg-red-500/20;
   }
 }
+
+/* Homepage animations */
+@keyframes float {
+  0% { transform: translateY(0px) scale(1); opacity: 0.4; }
+  100% { transform: translateY(-20px) scale(1.2); opacity: 0.8; }
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.hero-text-shimmer {
+  animation: heroShimmer 3s ease-in-out infinite;
+}
+
+@keyframes heroShimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.85; }
+}

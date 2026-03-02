@@ -1,9 +1,10 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
+import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone, Sparkles, Shield, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useEffect, useState } from "react";
 
 // App preview image
 import pataAppPreview from "@/assets/pata-app-preview.png";
@@ -25,6 +26,47 @@ const AnimatedSection = ({ children, className = "", delay = 0 }: { children: Re
   );
 };
 
+const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
+  const { ref, isVisible } = useScrollAnimation(0.3);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    if (!isVisible) return;
+    let start = 0;
+    const duration = 2000;
+    const step = Math.ceil(target / (duration / 16));
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, 16);
+    return () => clearInterval(timer);
+  }, [isVisible, target]);
+
+  return (
+    <span ref={ref} className="tabular-nums">
+      {count.toLocaleString()}{suffix}
+    </span>
+  );
+};
+
+const FloatingParticle = ({ delay, size, x, y }: { delay: number; size: number; x: string; y: string }) => (
+  <div
+    className="absolute rounded-full bg-primary/20 pointer-events-none"
+    style={{
+      width: size,
+      height: size,
+      left: x,
+      top: y,
+      animation: `float ${3 + delay}s ease-in-out ${delay}s infinite alternate`,
+    }}
+  />
+);
+
 const Home = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
@@ -34,25 +76,34 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-5 md:px-20 py-8 md:py-20 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+      <section className="px-5 md:px-20 py-8 md:py-20 overflow-hidden relative">
+        {/* Floating particles */}
+        <FloatingParticle delay={0} size={6} x="10%" y="20%" />
+        <FloatingParticle delay={1} size={4} x="80%" y="15%" />
+        <FloatingParticle delay={0.5} size={8} x="70%" y="70%" />
+        <FloatingParticle delay={1.5} size={5} x="20%" y="80%" />
+        <FloatingParticle delay={2} size={3} x="50%" y="10%" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Content */}
             <div>
               <AnimatedSection delay={0}>
-                <div className="flex items-center gap-2 mb-6">
-                  <Star className="w-4 h-4 text-primary" />
-                  <span className="text-muted-foreground">Payments made easier, no hassle, no contracts.</span>
+                <div className="flex items-center gap-2 mb-6 group cursor-default">
+                  <Star className="w-4 h-4 text-primary animate-[spin_4s_linear_infinite]" />
+                  <span className="text-muted-foreground group-hover:text-foreground transition-colors duration-300">
+                    Payments made easier, no hassle, no contracts.
+                  </span>
                 </div>
               </AnimatedSection>
 
               <AnimatedSection delay={0.1}>
-                <h1 className="pata-hero-title text-foreground mb-2">YOUR BUSINESS,</h1>
-                <h1 className="pata-hero-title pata-hero-gradient mb-6">YOUR POCKET</h1>
+                <h1 className="pata-hero-title text-foreground mb-2 hero-text-shimmer">YOUR BUSINESS,</h1>
+                <h1 className="pata-hero-title pata-hero-gradient mb-6 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-lg text-muted-foreground mb-8 max-w-lg">
+                <p className="text-lg text-muted-foreground mb-8 max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
@@ -60,13 +111,16 @@ const Home = () => {
 
               <AnimatedSection delay={0.3}>
                 <div className="flex items-center gap-4">
-                  <Link to="/signup" className="pata-btn-cyan">
-                    Start accepting payments
-                    <ArrowRight className="w-4 h-4" />
+                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden">
+                    <span className="relative z-10 flex items-center gap-2">
+                      Start accepting payments
+                      <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
+                    </span>
+                    <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-400 to-primary bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                   </Link>
                   <Link
                     to="/products"
-                    className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide"
+                    className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide story-link"
                   >
                     Explore products
                   </Link>
@@ -76,11 +130,38 @@ const Home = () => {
 
             {/* Right Content - App Preview */}
             <AnimatedSection delay={0.2} className="flex justify-center">
-              <div className="max-w-md w-full">
-                <img src={pataAppPreview} alt="Pata App - POS and Payments" className="w-full h-auto rounded-2xl" />
+              <div className="max-w-md w-full relative group">
+                <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 via-blue-400/10 to-primary/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                <img 
+                  src={pataAppPreview} 
+                  alt="Pata App - POS and Payments" 
+                  className="w-full h-auto rounded-2xl relative z-10 transition-transform duration-500 group-hover:scale-[1.02]" 
+                />
               </div>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* Stats Bar */}
+      <section className="px-5 md:px-20 py-8 border-y border-border/50 bg-card/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { value: 5000, suffix: "+", label: "Active Merchants", icon: Sparkles },
+            { value: 99, suffix: "%", label: "Uptime", icon: Shield },
+            { value: 24, suffix: "hr", label: "Funding Speed", icon: Zap },
+            { value: 15, suffix: "+", label: "Payment Methods", icon: CreditCard },
+          ].map((stat, i) => (
+            <AnimatedSection key={stat.label} delay={0.1 * i}>
+              <div className="group cursor-default">
+                <stat.icon className="w-5 h-5 text-primary mx-auto mb-2 group-hover:scale-125 transition-transform duration-300" />
+                <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
+                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+                </div>
+                <p className="text-muted-foreground text-sm">{stat.label}</p>
+              </div>
+            </AnimatedSection>
+          ))}
         </div>
       </section>
 
@@ -101,8 +182,7 @@ const Home = () => {
               {
                 title: "PataPOS",
                 icon: Smartphone,
-                description:
-                  "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
+                description: "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
                 extra: "Download the Pata App and turn your smartphone into a business.",
                 link: "/products",
                 tagline: "Your store in your pocket",
@@ -111,32 +191,28 @@ const Home = () => {
               {
                 title: "Card Payments",
                 icon: CreditCard,
-                description:
-                  "Accept tap, chip, and swipe payments from all major cards and mobile wallets with real-time confirmation.",
+                description: "Accept tap, chip, and swipe payments from all major cards and mobile wallets with real-time confirmation.",
                 link: "/card-machines",
                 tagline: "Every card, everywhere",
               },
               {
                 title: "Payment Gateway",
                 icon: Globe,
-                description:
-                  "Connect to your website or WhatsApp. Create payment links and accept online payments in minutes.",
+                description: "Connect to your website or WhatsApp. Create payment links and accept online payments in minutes.",
                 link: "/online-payments",
                 tagline: "Sell online seamlessly",
               },
               {
                 title: "Mobile Money",
                 icon: Phone,
-                description:
-                  "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
+                description: "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
                 link: "/online-payments",
                 tagline: "Pay with mobile",
               },
               {
                 title: "Mukuru Transfer",
                 icon: ArrowRight,
-                description:
-                  "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
+                description: "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
                 link: "/products",
                 tagline: "Connect globally",
               },
@@ -144,35 +220,32 @@ const Home = () => {
               <AnimatedSection key={feature.title} delay={0.1 * i}>
                 <Link
                   to={feature.link}
-                  className="bg-card rounded-2xl p-6 hover:bg-card/80 transition-all group border border-border block hover:-translate-y-1 hover:shadow-lg duration-300"
+                  className="bg-card rounded-2xl p-6 hover:bg-card/80 transition-all group border border-border block hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/5 duration-300 relative overflow-hidden"
                 >
-                  <div className="w-12 h-12 bg-primary/20 rounded-xl mb-4 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <feature.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <p className="text-muted-foreground text-sm mb-2">{feature.tagline}</p>
-                  <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
-                  {feature.extra && <p className="text-primary text-sm mb-4">{feature.extra}</p>}
-                  {"showDownload" in feature && feature.showDownload && (
-                    <div className="flex gap-2 mb-4">
-                      <a
-                        href="#"
-                        className="text-xs bg-muted px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        Android App
-                      </a>
-                      <a
-                        href="#"
-                        className="text-xs bg-muted px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        iOS App
-                      </a>
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/0 to-primary/0 group-hover:from-primary/5 group-hover:to-transparent transition-all duration-500" />
+                  <div className="relative z-10">
+                    <div className="w-12 h-12 bg-primary/20 rounded-xl mb-4 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/30 group-hover:rotate-3 transition-all duration-300">
+                      <feature.icon className="w-6 h-6 text-primary" />
                     </div>
-                  )}
-                  <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
-                    Learn more
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
+                    <p className="text-muted-foreground text-sm mb-2">{feature.tagline}</p>
+                    <h3 className="text-xl font-semibold text-foreground mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-4">{feature.description}</p>
+                    {feature.extra && <p className="text-primary text-sm mb-4">{feature.extra}</p>}
+                    {"showDownload" in feature && feature.showDownload && (
+                      <div className="flex gap-2 mb-4">
+                        <a href="#" className="text-xs bg-muted px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all duration-200">
+                          Android App
+                        </a>
+                        <a href="#" className="text-xs bg-muted px-3 py-1.5 rounded-full text-muted-foreground hover:text-foreground hover:bg-primary/10 transition-all duration-200">
+                          iOS App
+                        </a>
+                      </div>
+                    )}
+                    <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all text-sm">
+                      Learn more
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                    </span>
+                  </div>
                 </Link>
               </AnimatedSection>
             ))}
@@ -187,37 +260,40 @@ const Home = () => {
             <AnimatedSection delay={0}>
               <Link
                 to="/capital"
-                className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-all group border border-primary/20 block hover:-translate-y-1 hover:shadow-xl duration-300"
+                className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-all group border border-primary/20 block hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 duration-300 relative overflow-hidden"
               >
-                <p className="text-muted-foreground text-sm mb-2">
-                  Funding that flows with you
-                </p>
-                <h3 className="text-2xl font-bold text-foreground mb-3">Pata Capital</h3>
-                <p className="text-muted-foreground mb-4">
-                  Access business funding in 24 hours. No paperwork, flexible repayment that adjusts with your sales.
-                </p>
-                <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
-                  Check your offer
-                  <ArrowRight className="w-4 h-4" />
-                </span>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
+                <div className="relative z-10">
+                  <p className="text-muted-foreground text-sm mb-2">Funding that flows with you</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Pata Capital</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Access business funding in 24 hours. No paperwork, flexible repayment that adjusts with your sales.
+                  </p>
+                  <span className="text-primary font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Check your offer
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </div>
               </Link>
             </AnimatedSection>
 
             <AnimatedSection delay={0.15}>
               <Link
                 to="/products"
-                className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-all group border border-info/20 block hover:-translate-y-1 hover:shadow-xl duration-300"
+                className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-all group border border-info/20 block hover:-translate-y-2 hover:shadow-xl hover:shadow-info/10 duration-300 relative overflow-hidden"
               >
-                <p className="text-muted-foreground text-sm mb-2">Send money across borders</p>
-                <h3 className="text-2xl font-bold text-foreground mb-3">Mukuru Transfer</h3>
-                <p className="text-muted-foreground mb-4">
-                  Fast, secure international money transfers via Mukuru. Send and receive across borders at competitive
-                  rates.
-                </p>
-                <span className="text-info font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
-                  Learn more
-                  <ArrowRight className="w-4 h-4" />
-                </span>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-info/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
+                <div className="relative z-10">
+                  <p className="text-muted-foreground text-sm mb-2">Send money across borders</p>
+                  <h3 className="text-2xl font-bold text-foreground mb-3">Mukuru Transfer</h3>
+                  <p className="text-muted-foreground mb-4">
+                    Fast, secure international money transfers via Mukuru. Send and receive across borders at competitive rates.
+                  </p>
+                  <span className="text-info font-medium flex items-center gap-2 group-hover:gap-3 transition-all">
+                    Learn more
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
+                  </span>
+                </div>
               </Link>
             </AnimatedSection>
           </div>
