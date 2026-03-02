@@ -1,10 +1,10 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone, Sparkles, Shield, Zap } from "lucide-react";
+import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
-import { useEffect, useState } from "react";
+
 
 // App preview image
 import pataAppPreview from "@/assets/pata-app-preview.png";
@@ -26,33 +26,8 @@ const AnimatedSection = ({ children, className = "", delay = 0 }: { children: Re
   );
 };
 
-const AnimatedCounter = ({ target, suffix = "" }: { target: number; suffix?: string }) => {
-  const { ref, isVisible } = useScrollAnimation(0.3);
-  const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    if (!isVisible) return;
-    let start = 0;
-    const duration = 2000;
-    const step = Math.ceil(target / (duration / 16));
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, 16);
-    return () => clearInterval(timer);
-  }, [isVisible, target]);
 
-  return (
-    <span ref={ref} className="tabular-nums">
-      {count.toLocaleString()}{suffix}
-    </span>
-  );
-};
 
 const FloatingParticle = ({ delay, size, x, y }: { delay: number; size: number; x: string; y: string }) => (
   <div
@@ -111,7 +86,7 @@ const Home = () => {
 
               <AnimatedSection delay={0.3}>
                 <div className="flex items-center gap-4">
-                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden">
+                  <Link to="/signup" className="pata-btn-cyan group/btn relative overflow-hidden active:scale-95 transition-transform">
                     <span className="relative z-10 flex items-center gap-2">
                       Start accepting payments
                       <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform duration-300" />
@@ -120,9 +95,10 @@ const Home = () => {
                   </Link>
                   <Link
                     to="/products"
-                    className="text-foreground font-semibold hover:opacity-80 transition-opacity uppercase text-sm tracking-wide story-link"
+                    className="pata-btn-outline-dark group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center gap-2"
                   >
                     Explore products
+                    <ArrowRight className="w-4 h-4 group-hover/btn2:translate-x-1 transition-transform duration-300" />
                   </Link>
                 </div>
               </AnimatedSection>
@@ -143,27 +119,6 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats Bar */}
-      <section className="px-5 md:px-20 py-8 border-y border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          {[
-            { value: 5000, suffix: "+", label: "Active Merchants", icon: Sparkles },
-            { value: 99, suffix: "%", label: "Uptime", icon: Shield },
-            { value: 24, suffix: "hr", label: "Funding Speed", icon: Zap },
-            { value: 15, suffix: "+", label: "Payment Methods", icon: CreditCard },
-          ].map((stat, i) => (
-            <AnimatedSection key={stat.label} delay={0.1 * i}>
-              <div className="group cursor-default">
-                <stat.icon className="w-5 h-5 text-primary mx-auto mb-2 group-hover:scale-125 transition-transform duration-300" />
-                <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-                  <AnimatedCounter target={stat.value} suffix={stat.suffix} />
-                </div>
-                <p className="text-muted-foreground text-sm">{stat.label}</p>
-              </div>
-            </AnimatedSection>
-          ))}
-        </div>
-      </section>
 
       {/* Features Section */}
       <section className="px-5 md:px-20 py-12 md:py-20 bg-secondary overflow-hidden">
