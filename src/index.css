@@ -209,7 +209,7 @@ body {
   }
 
   .pata-hero-gradient {
-    background: linear-gradient(180deg, hsl(var(--pata-dark)) 0%, hsl(var(--primary)) 40%, hsl(var(--info)) 70%, hsl(var(--pata-white)) 100%);
+    background: linear-gradient(180deg, hsl(217 91% 35%) 0%, hsl(var(--primary)) 45%, hsl(var(--info)) 80%, hsl(var(--pata-white) / 0.85) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
