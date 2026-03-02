@@ -5,12 +5,8 @@ import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
-// Device images
-import pataPro from "@/assets/devices/pata-pro.jpeg";
-import pataDiamond from "@/assets/devices/pata-diamond.jpeg";
-import pataPlatinum from "@/assets/devices/pata-platinum.jpeg";
-import goPata from "@/assets/devices/go-pata.jpeg";
-import pata3dLogo from "@/assets/pata-3d-logo.jpg";
+// App preview image
+import pataAppPreview from "@/assets/pata-app-preview.png";
 
 const AnimatedSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const { ref, isVisible } = useScrollAnimation(0.1);
@@ -78,37 +74,12 @@ const Home = () => {
               </AnimatedSection>
             </div>
 
-            {/* Right Content - Image Grid */}
-            <div className="relative grid grid-cols-2 gap-3 max-w-full overflow-hidden">
-              <div className="space-y-3">
-                <AnimatedSection delay={0.15}>
-                  <div className="bg-muted rounded-2xl aspect-video overflow-hidden hover-scale">
-                    <img src={pataPro} alt="Pata Pro POS Display" className="w-full h-full object-cover" />
-                  </div>
-                </AnimatedSection>
-                <AnimatedSection delay={0.3}>
-                  <div className="bg-muted rounded-2xl aspect-square overflow-hidden hover-scale">
-                    <img src={pataDiamond} alt="Pata Diamond Card Machine" className="w-full h-full object-cover" />
-                  </div>
-                </AnimatedSection>
+            {/* Right Content - App Preview */}
+            <AnimatedSection delay={0.2} className="flex justify-center">
+              <div className="max-w-md w-full">
+                <img src={pataAppPreview} alt="Pata App - POS and Payments" className="w-full h-auto rounded-2xl" />
               </div>
-              <div className="space-y-3 pt-8">
-                <AnimatedSection delay={0.25}>
-                  <div className="bg-muted rounded-2xl aspect-square overflow-hidden hover-scale">
-                    <img src={pataPlatinum} alt="Pata Platinum Card Machine" className="w-full h-full object-cover" />
-                  </div>
-                </AnimatedSection>
-                <AnimatedSection delay={0.4}>
-                  <div className="bg-muted rounded-2xl aspect-video overflow-hidden hover-scale">
-                    <img
-                      src={pata3dLogo}
-                      alt="Pata - POS, Payment Gateway, Wallet"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </AnimatedSection>
-              </div>
-            </div>
+            </AnimatedSection>
           </div>
         </div>
       </section>
