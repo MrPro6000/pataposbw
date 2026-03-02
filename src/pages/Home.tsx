@@ -51,7 +51,7 @@ const Home = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-5 md:px-20 py-8 md:py-20 overflow-hidden relative">
+      <section className="px-5 md:px-20 py-4 md:py-14 overflow-hidden relative">
         {/* Floating particles */}
         <FloatingParticle delay={0} size={6} x="10%" y="20%" />
         <FloatingParticle delay={1} size={4} x="80%" y="15%" />
@@ -64,21 +64,21 @@ const Home = () => {
             {/* Left Content */}
             <div>
               <AnimatedSection delay={0}>
-                <div className="flex items-center gap-2 mb-6 group cursor-default">
+                <div className="flex items-center gap-2 mb-3 group cursor-default">
                   <Star className="w-4 h-4 text-primary animate-[spin_4s_linear_infinite]" />
-                  <span className="text-foreground/80 group-hover:text-foreground transition-colors duration-300">
+                  <span className="text-foreground/90 group-hover:text-foreground transition-colors duration-300">
                     Payments made easier, no hassle, no contracts.
                   </span>
                 </div>
               </AnimatedSection>
 
               <AnimatedSection delay={0.1}>
-                <h1 className="pata-hero-title text-foreground mb-2 hero-text-shimmer">YOUR BUSINESS,</h1>
-                <h1 className="pata-hero-title pata-hero-gradient mb-6 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
+                <h1 className="pata-hero-title text-foreground mb-1 hero-text-shimmer">YOUR BUSINESS,</h1>
+                <h1 className="pata-hero-title pata-hero-gradient mb-4 hero-text-shimmer" style={{ animationDelay: '0.3s' }}>YOUR POCKET</h1>
               </AnimatedSection>
 
               <AnimatedSection delay={0.2}>
-                <p className="text-lg text-foreground/70 mb-8 max-w-lg leading-relaxed">
+                <p className="text-lg text-foreground/80 mb-8 max-w-lg leading-relaxed">
                   Turn your phone into a complete payment terminal. Accept card payments, scan & pay, send money
                   worldwide, and manage your entire business—all from your pocket.
                 </p>
