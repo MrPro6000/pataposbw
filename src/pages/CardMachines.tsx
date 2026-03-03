@@ -1,6 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import pataHeroImg from "@/assets/pata-app-preview.png";
+import pataHeroImg from "@/assets/pata-pos-hero.png";
 import ContactSalesDialog from "@/components/ContactSalesDialog";
 import { ArrowDown, Star, Check, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
