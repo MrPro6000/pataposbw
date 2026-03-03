@@ -382,7 +382,25 @@ const Sales = () => {
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setPaymentLinkDialogOpen(true)}
+          >
+            <Link2 className="w-5 h-5" />
+            <span className="text-xs">Payment Link</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => { setVoucherDialogOpen(true); setCreatedVoucherCode(null); setVoucherForm({ amount: "", recipientName: "", recipientPhone: "" }); }}
+          >
+            <Ticket className="w-5 h-5" />
+            <span className="text-xs">Voucher</span>
+          </Button>
+
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -413,15 +431,6 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => setPaymentLinkDialogOpen(true)}
-          >
-            <Link2 className="w-5 h-5" />
-            <span className="text-xs">Payment Link</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentFlow("cash")}
           >
             <Banknote className="w-5 h-5" />
@@ -442,17 +451,8 @@ const Sales = () => {
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentFlow("wallet")}
           >
-          <Wallet className="w-5 h-5" />
+            <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => { setVoucherDialogOpen(true); setCreatedVoucherCode(null); setVoucherForm({ amount: "", recipientName: "", recipientPhone: "" }); }}
-          >
-            <Ticket className="w-5 h-5" />
-            <span className="text-xs">Voucher</span>
           </Button>
       </div>
 
