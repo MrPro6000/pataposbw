@@ -31,6 +31,7 @@ import {
   X,
   ChevronRight,
   Package,
+  Ticket,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
+import { useVouchers } from "@/hooks/useVouchers";
+import { format } from "date-fns";
 
 const paymentTypeLabels: Record<string, string> = {
   card: "Card",
@@ -79,10 +82,15 @@ const Sales = () => {
   const { toast } = useToast();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
+  const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
+  const [voucherForm, setVoucherForm] = useState({ amount: "", recipientName: "", recipientPhone: "" });
+  const [voucherCreating, setVoucherCreating] = useState(false);
+  const [createdVoucherCode, setCreatedVoucherCode] = useState<string | null>(null);
 
   const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
   const { invoices: dbInvoices, createInvoice } = useInvoices();
+  const { vouchers, createVoucher } = useVouchers();
 
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
@@ -434,8 +442,17 @@ const Sales = () => {
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentFlow("wallet")}
           >
-            <Wallet className="w-5 h-5" />
+          <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => { setVoucherDialogOpen(true); setCreatedVoucherCode(null); setVoucherForm({ amount: "", recipientName: "", recipientPhone: "" }); }}
+          >
+            <Ticket className="w-5 h-5" />
+            <span className="text-xs">Voucher</span>
           </Button>
       </div>
 
@@ -1015,6 +1032,97 @@ const Sales = () => {
 
       <SellProductsDialog open={sellProductsOpen} onClose={() => setSellProductsOpen(false)} />
       <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
+
+      {/* Voucher Dialog */}
+      <Dialog open={voucherDialogOpen} onOpenChange={setVoucherDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <Ticket className="w-5 h-5 text-primary-foreground" />
+              </div>
+              {createdVoucherCode ? "Voucher Created!" : "Create Voucher"}
+            </DialogTitle>
+          </DialogHeader>
+
+          {createdVoucherCode ? (
+            <div className="space-y-5">
+              <div className="flex flex-col items-center py-4">
+                <div className="w-14 h-14 bg-green-500/20 rounded-full flex items-center justify-center mb-3">
+                  <CheckCircle className="w-7 h-7 text-green-500" />
+                </div>
+                <p className="text-lg font-bold text-foreground">P{parseFloat(voucherForm.amount).toFixed(2)}</p>
+              </div>
+              <div className="bg-muted rounded-xl p-4 text-center">
+                <p className="text-xs text-muted-foreground mb-2">Voucher Code</p>
+                <p className="text-2xl font-bold font-mono text-foreground tracking-wider">{createdVoucherCode}</p>
+              </div>
+              <Button onClick={() => { navigator.clipboard.writeText(createdVoucherCode); toast({ title: "Copied!" }); }} className="w-full h-12">
+                <Copy className="w-4 h-4 mr-2" /> Copy Code
+              </Button>
+              <Button variant="outline" onClick={() => setVoucherDialogOpen(false)} className="w-full h-12">Done</Button>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <Label>Voucher Amount (P) *</Label>
+                <Input type="number" placeholder="0.00" value={voucherForm.amount}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, amount: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Recipient Name (optional)</Label>
+                <Input placeholder="Who is this for?" value={voucherForm.recipientName}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, recipientName: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Recipient Phone (optional)</Label>
+                <Input type="tel" placeholder="+267 71 234 5678" value={voucherForm.recipientPhone}
+                  onChange={(e) => setVoucherForm({ ...voucherForm, recipientPhone: e.target.value })} />
+              </div>
+              <Button
+                disabled={voucherCreating || !voucherForm.amount}
+                onClick={async () => {
+                  setVoucherCreating(true);
+                  const res = await createVoucher({
+                    amount: parseFloat(voucherForm.amount),
+                    recipient_name: voucherForm.recipientName || undefined,
+                    recipient_phone: voucherForm.recipientPhone || undefined,
+                  });
+                  setVoucherCreating(false);
+                  if (res.error) { toast({ title: "Error", description: res.error, variant: "destructive" }); return; }
+                  setCreatedVoucherCode(res.data?.code || "");
+                  toast({ title: "Voucher Created", description: `P${parseFloat(voucherForm.amount).toFixed(2)} voucher generated` });
+                }}
+                className="w-full h-12 font-semibold"
+              >
+                {voucherCreating ? "Creating..." : "Create Voucher"}
+              </Button>
+            </div>
+          )}
+
+          {/* Existing Vouchers */}
+          {!createdVoucherCode && vouchers.length > 0 && (
+            <div className="border-t border-border pt-4 mt-2">
+              <p className="text-sm font-medium text-muted-foreground mb-3">Recent Vouchers</p>
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {vouchers.slice(0, 5).map((v) => (
+                  <div key={v.id} className="flex items-center justify-between p-3 bg-muted rounded-xl">
+                    <div>
+                      <p className="font-mono text-sm font-bold text-foreground">{v.code}</p>
+                      <p className="text-xs text-muted-foreground">{v.recipient_name || "No recipient"} • {format(new Date(v.created_at), "MMM d")}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-semibold text-sm text-foreground">P{v.amount.toFixed(2)}</p>
+                      <span className={`text-xs font-medium capitalize ${v.status === "active" ? "text-green-500" : v.status === "redeemed" ? "text-blue-500" : "text-red-500"}`}>{v.status}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </DashboardLayout>
   );
 };
