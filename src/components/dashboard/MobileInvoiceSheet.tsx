@@ -80,7 +80,7 @@ const MobileInvoiceSheet = ({ open, onClose }: MobileInvoiceSheetProps) => {
   };
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) { setView("list"); onClose(); } }}>
+    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) { setView("list"); onClose(); } }} dismissible={false}>
       <DrawerContent className="bg-background max-h-[90vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">

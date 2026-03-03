@@ -3,8 +3,9 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon } from "lucide-react";
+import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, LayoutGrid } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -14,7 +15,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 
-type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "theme";
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "theme" | "dashboard";
 
 const Settings = () => {
   const isMobile = useIsMobile();
@@ -35,6 +36,27 @@ const Settings = () => {
   const [taxSettings, setTaxSettings] = useState({ vatEnabled: true, vatRate: "15", vatNumber: "4123456789", pricesIncludeVat: true });
   const [receiptSettings, setReceiptSettings] = useState({ showLogo: true, footerMessage: "Thank you for your business!", includeVatBreakdown: true, emailReceipts: true });
   const [notifications, setNotifications] = useState({ dailySummary: true, lowStock: true, newSale: false, payoutComplete: true });
+
+  // Dashboard preferences
+  const [dashPrefs, setDashPrefs] = useState({
+    show_sell_products: true, show_transport: true, show_mobile_money: true,
+    show_council_payments: true, show_devices: true, show_reports: true,
+    show_staff: true, show_customers: true, show_vouchers: true,
+    show_payment_links: true, show_invoices: true, show_capital: true, show_mukuru: true,
+  });
+
+  // Load dashboard preferences
+  useEffect(() => {
+    if (user) {
+      supabase.from("dashboard_preferences").select("*").eq("user_id", user.id).single()
+        .then(({ data }) => {
+          if (data) {
+            const { id, user_id, created_at, updated_at, ...prefs } = data;
+            setDashPrefs(prefs as typeof dashPrefs);
+          }
+        });
+    }
+  }, [user]);
 
   // Pre-fill business info from saved profile
   useEffect(() => {
@@ -59,6 +81,7 @@ const Settings = () => {
     { id: "receipts" as const, label: "Receipts", icon: Receipt },
     { id: "notifications" as const, label: "Notifications", icon: Bell },
     { id: "theme" as const, label: "Appearance", icon: Palette },
+    { id: "dashboard" as const, label: "Dashboard", icon: LayoutGrid },
   ];
 
   const handleSave = async () => {
@@ -76,6 +99,11 @@ const Settings = () => {
           .eq("user_id", user.id);
         if (error) throw error;
         await refreshProfile();
+      } else if (activeSection === "dashboard") {
+        const { error } = await supabase
+          .from("dashboard_preferences")
+          .upsert({ user_id: user.id, ...dashPrefs }, { onConflict: "user_id" });
+        if (error) throw error;
       }
       toast({ title: "Saved", description: "Settings updated successfully." });
     } catch (err: any) {
@@ -191,6 +219,36 @@ const Settings = () => {
               </div>
               <Switch checked={theme === "dark"} onCheckedChange={toggleTheme} />
             </div>
+          </div>
+        );
+      case "dashboard":
+        return (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground mb-4">Choose which features appear on your dashboard.</p>
+            {([
+              { key: "show_sell_products", label: "Sell Products", desc: "POS, food, beverages, retail" },
+              { key: "show_transport", label: "Transport", desc: "Combi, taxi, bus fares" },
+              { key: "show_mobile_money", label: "Mobile Money", desc: "Orange, Smega, MyZaka" },
+              { key: "show_council_payments", label: "Council Payments", desc: "Rates, levies, licences" },
+              { key: "show_devices", label: "Pata Devices", desc: "Card machines & terminals" },
+              { key: "show_reports", label: "Reports", desc: "Sales analytics & insights" },
+              { key: "show_staff", label: "Staff Management", desc: "Payroll & team" },
+              { key: "show_customers", label: "Customers", desc: "Customer directory" },
+              { key: "show_vouchers", label: "Vouchers", desc: "Create & manage vouchers" },
+              { key: "show_payment_links", label: "Payment Links", desc: "Share payment links" },
+              { key: "show_invoices", label: "Invoices", desc: "Create & send invoices" },
+              { key: "show_capital", label: "Pata Capital", desc: "Business loans & funding" },
+              { key: "show_mukuru", label: "Mukuru Transfer", desc: "International transfers" },
+            ] as { key: keyof typeof dashPrefs; label: string; desc: string }[]).map(item => (
+              <button key={item.key} onClick={() => setDashPrefs(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${dashPrefs[item.key] ? "bg-primary/10 border-primary" : "bg-muted border-border"}`}>
+                <div className="text-left">
+                  <p className={`font-medium text-sm ${dashPrefs[item.key] ? "text-primary" : "text-foreground"}`}>{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+                <Checkbox checked={dashPrefs[item.key]} className="pointer-events-none" />
+              </button>
+            ))}
           </div>
         );
       default: return null;

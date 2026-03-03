@@ -10,7 +10,8 @@ import {
   HelpCircle,
   LogOut,
   ChevronRight,
-  Palette
+  Palette,
+  LayoutGrid
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileSettingsSheet from "./MobileSettingsSheet";
@@ -26,7 +27,7 @@ interface MobileSettingsViewProps {
   onProfileUpdated?: () => void;
 }
 
-type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support" | "theme";
+type SettingsSection = "business" | "store" | "payments" | "tax" | "receipts" | "notifications" | "support" | "theme" | "dashboard";
 
 const MobileSettingsView = ({ profile, userEmail, userId, onProfileUpdated }: MobileSettingsViewProps) => {
   const navigate = useNavigate();
@@ -85,6 +86,7 @@ const MobileSettingsView = ({ profile, userEmail, userId, onProfileUpdated }: Mo
     {
       title: "Preferences",
       items: [
+        { id: "dashboard" as const, label: "Dashboard", icon: LayoutGrid, description: "Choose what features to show" },
         { id: "theme" as const, label: "Appearance", icon: Palette, description: "Theme and colors" },
         { id: "notifications" as const, label: "Notifications", icon: Bell, description: "Alerts and summaries" },
         { id: "support" as const, label: "Help & Support", icon: HelpCircle, description: "FAQs and contact" },

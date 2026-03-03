@@ -29,7 +29,8 @@ import {
   Briefcase,
   Clock,
   CreditCard,
-  Banknote
+  Banknote,
+  LayoutGrid
 } from "lucide-react";
 
 interface BusinessSetupFormProps {
@@ -37,7 +38,7 @@ interface BusinessSetupFormProps {
   onComplete: () => void;
 }
 
-type SetupStep = "business" | "address" | "operations" | "banking" | "logo" | "complete";
+type SetupStep = "business" | "address" | "operations" | "banking" | "personalize" | "logo" | "complete";
 
 const businessTypes = [
   "Retail Store",
@@ -102,11 +103,29 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
   // Terms
   const [termsAccepted, setTermsAccepted] = useState(false);
 
+  // Dashboard personalization
+  const [dashPrefs, setDashPrefs] = useState({
+    show_sell_products: true,
+    show_transport: true,
+    show_mobile_money: true,
+    show_council_payments: true,
+    show_devices: true,
+    show_reports: true,
+    show_staff: true,
+    show_customers: true,
+    show_vouchers: true,
+    show_payment_links: true,
+    show_invoices: true,
+    show_capital: true,
+    show_mukuru: true,
+  });
+
   const steps = [
     { key: "business", label: "Business Info", icon: Building2 },
     { key: "address", label: "Location", icon: MapPin },
     { key: "operations", label: "Operations", icon: Clock },
     { key: "banking", label: "Banking", icon: Banknote },
+    { key: "personalize", label: "Dashboard", icon: LayoutGrid },
     { key: "logo", label: "Branding", icon: Upload },
   ];
 
@@ -211,6 +230,8 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         });
         return;
       }
+      setCurrentStep("personalize");
+    } else if (currentStep === "personalize") {
       setCurrentStep("logo");
     } else if (currentStep === "logo") {
       if (!termsAccepted) {
@@ -232,8 +253,10 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
       setCurrentStep("address");
     } else if (currentStep === "banking") {
       setCurrentStep("operations");
-    } else if (currentStep === "logo") {
+    } else if (currentStep === "personalize") {
       setCurrentStep("banking");
+    } else if (currentStep === "logo") {
+      setCurrentStep("personalize");
     }
   };
 
@@ -279,6 +302,11 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
         .eq("user_id", userId);
 
       if (error) throw new Error(error.message);
+
+      // Save dashboard preferences
+      await supabase
+        .from("dashboard_preferences")
+        .upsert({ user_id: userId, ...dashPrefs }, { onConflict: "user_id" });
 
       toast({
         title: "Business setup complete!",
@@ -349,7 +377,7 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                   disabled={!isClickable}
                   onClick={() => {
                     if (isClickable) {
-                      const stepKeys: SetupStep[] = ["business", "address", "operations", "banking", "logo"];
+                      const stepKeys: SetupStep[] = ["business", "address", "operations", "banking", "personalize", "logo"];
                       setCurrentStep(stepKeys[index]);
                     }
                   }}
@@ -702,6 +730,56 @@ const BusinessSetupForm = ({ userId, onComplete }: BusinessSetupFormProps) => {
                     You can add your bank account from Settings anytime.
                   </p>
                 )}
+              </div>
+            </div>
+          )}
+
+          {currentStep === "personalize" && (
+            <div className="space-y-6">
+              <div className="text-center mb-8">
+                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <LayoutGrid className="w-8 h-8 text-primary" />
+                </div>
+                <h1 className="text-2xl font-bold text-foreground mb-2">
+                  Personalise your dashboard
+                </h1>
+                <p className="text-muted-foreground">
+                  Choose the features you need. You can change these later in Settings.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {([
+                  { key: "show_sell_products", label: "Sell Products", desc: "POS, food, beverages, retail" },
+                  { key: "show_transport", label: "Transport", desc: "Combi, taxi, bus fares" },
+                  { key: "show_mobile_money", label: "Mobile Money", desc: "Orange, Smega, MyZaka" },
+                  { key: "show_council_payments", label: "Council Payments", desc: "Rates, levies, licences" },
+                  { key: "show_devices", label: "Pata Devices", desc: "Card machines & terminals" },
+                  { key: "show_reports", label: "Reports", desc: "Sales analytics & insights" },
+                  { key: "show_staff", label: "Staff Management", desc: "Payroll & team management" },
+                  { key: "show_customers", label: "Customers", desc: "Customer directory & CRM" },
+                  { key: "show_vouchers", label: "Vouchers", desc: "Create & manage vouchers" },
+                  { key: "show_payment_links", label: "Payment Links", desc: "Share payment links" },
+                  { key: "show_invoices", label: "Invoices", desc: "Create & send invoices" },
+                  { key: "show_capital", label: "Pata Capital", desc: "Business loans & funding" },
+                  { key: "show_mukuru", label: "Mukuru Transfer", desc: "International money transfers" },
+                ] as { key: keyof typeof dashPrefs; label: string; desc: string }[]).map(item => (
+                  <button
+                    key={item.key}
+                    onClick={() => setDashPrefs(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                    className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                      dashPrefs[item.key]
+                        ? "bg-primary/10 border-primary"
+                        : "bg-muted border-border"
+                    }`}
+                  >
+                    <div className="text-left">
+                      <p className={`font-medium text-sm ${dashPrefs[item.key] ? "text-primary" : "text-foreground"}`}>{item.label}</p>
+                      <p className="text-xs text-muted-foreground">{item.desc}</p>
+                    </div>
+                    <Checkbox checked={dashPrefs[item.key]} className="pointer-events-none" />
+                  </button>
+                ))}
               </div>
             </div>
           )}

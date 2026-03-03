@@ -135,7 +135,7 @@ const MobileLoanRepaymentSheet = ({ open, onClose }: MobileLoanRepaymentSheetPro
   };
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) reset(); }}>
+    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) reset(); }} dismissible={false}>
       <DrawerContent className="bg-background max-h-[92vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
