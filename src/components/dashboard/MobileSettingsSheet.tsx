@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { X, ChevronLeft, Sun, Moon, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { useTheme } from "@/contexts/ThemeContext";
 import { supabase } from "@/integrations/supabase/client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type SettingsSection = 
   | "business" 
@@ -33,6 +34,7 @@ type SettingsSection =
   | "support"
   | "devices"
   | "customers"
+  | "dashboard"
   | "theme";
 
 interface MobileSettingsSheetProps {
@@ -99,6 +101,42 @@ const MobileSettingsSheet = ({ open, onClose, section, title, profile, userId, o
     cash: true,
   });
 
+  // Dashboard preferences state
+  const [dashPrefs, setDashPrefs] = useState({
+    show_sell_products: true,
+    show_transport: true,
+    show_mobile_money: true,
+    show_council_payments: true,
+    show_devices: true,
+    show_reports: true,
+    show_staff: true,
+    show_customers: true,
+    show_vouchers: true,
+    show_payment_links: true,
+    show_invoices: true,
+    show_capital: true,
+    show_mukuru: true,
+  });
+  const [dashPrefsLoaded, setDashPrefsLoaded] = useState(false);
+
+  // Load dashboard prefs when section is dashboard
+  useEffect(() => {
+    if (section === "dashboard" && userId && !dashPrefsLoaded) {
+      supabase
+        .from("dashboard_preferences")
+        .select("*")
+        .eq("user_id", userId)
+        .single()
+        .then(({ data }) => {
+          if (data) {
+            const { id, user_id, created_at, updated_at, ...prefs } = data;
+            setDashPrefs(prefs as typeof dashPrefs);
+          }
+          setDashPrefsLoaded(true);
+        });
+    }
+  }, [section, userId, dashPrefsLoaded]);
+
   const handleSave = async () => {
     if (section === "business" && userId) {
       setSaving(true);
@@ -114,6 +152,20 @@ const MobileSettingsSheet = ({ open, onClose, section, title, profile, userId, o
         if (error) throw error;
         onProfileUpdated?.();
         toast({ title: "Saved", description: "Business profile updated successfully." });
+        onClose();
+      } catch (err: any) {
+        toast({ title: "Error", description: err.message, variant: "destructive" });
+      } finally {
+        setSaving(false);
+      }
+    } else if (section === "dashboard" && userId) {
+      setSaving(true);
+      try {
+        const { error } = await supabase
+          .from("dashboard_preferences")
+          .upsert({ user_id: userId, ...dashPrefs }, { onConflict: "user_id" });
+        if (error) throw error;
+        toast({ title: "Saved", description: "Dashboard preferences updated." });
         onClose();
       } catch (err: any) {
         toast({ title: "Error", description: err.message, variant: "destructive" });
@@ -513,6 +565,44 @@ const MobileSettingsSheet = ({ open, onClose, section, title, profile, userId, o
             <Button className="w-full">
               + Add Customer
             </Button>
+          </div>
+        );
+
+      case "dashboard":
+        return (
+          <div className="space-y-3">
+            <p className="text-sm text-muted-foreground mb-4">Choose which features appear on your dashboard. You can toggle them on or off anytime.</p>
+            {([
+              { key: "show_sell_products", label: "Sell Products", desc: "POS, food, beverages, retail" },
+              { key: "show_transport", label: "Transport", desc: "Combi, taxi, bus fares" },
+              { key: "show_mobile_money", label: "Mobile Money", desc: "Orange, Smega, MyZaka" },
+              { key: "show_council_payments", label: "Council Payments", desc: "Rates, levies, licences" },
+              { key: "show_devices", label: "Pata Devices", desc: "Card machines & terminals" },
+              { key: "show_reports", label: "Reports", desc: "Sales analytics & insights" },
+              { key: "show_staff", label: "Staff Management", desc: "Payroll & team" },
+              { key: "show_customers", label: "Customers", desc: "Customer directory" },
+              { key: "show_vouchers", label: "Vouchers", desc: "Create & manage vouchers" },
+              { key: "show_payment_links", label: "Payment Links", desc: "Share payment links" },
+              { key: "show_invoices", label: "Invoices", desc: "Create & send invoices" },
+              { key: "show_capital", label: "Pata Capital", desc: "Business loans & funding" },
+              { key: "show_mukuru", label: "Mukuru Transfer", desc: "International transfers" },
+            ] as { key: keyof typeof dashPrefs; label: string; desc: string }[]).map(item => (
+              <button
+                key={item.key}
+                onClick={() => setDashPrefs(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+                className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                  dashPrefs[item.key]
+                    ? "bg-primary/10 border-primary"
+                    : "bg-muted border-border"
+                }`}
+              >
+                <div className="text-left">
+                  <p className={`font-medium text-sm ${dashPrefs[item.key] ? "text-primary" : "text-foreground"}`}>{item.label}</p>
+                  <p className="text-xs text-muted-foreground">{item.desc}</p>
+                </div>
+                <Checkbox checked={dashPrefs[item.key]} className="pointer-events-none" />
+              </button>
+            ))}
           </div>
         );
 

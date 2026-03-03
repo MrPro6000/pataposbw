@@ -152,8 +152,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       `}>
         {/* Logo */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/10">
-          <div className="flex items-center gap-3">
-            <PataLogo className="h-5 text-white" />
+        <div className="flex items-center gap-3">
+            <Link to="/" className="hover:opacity-80 transition-opacity">
+              <PataLogo className="h-5 text-white" />
+            </Link>
             <span className="text-red-500 text-xs font-bold px-2 py-0.5 bg-red-500/20 rounded">{getRoleBadge()}</span>
           </div>
           <button 
@@ -205,10 +207,10 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
           >
             <Menu className="w-6 h-6" />
           </button>
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <PataLogo className="h-4 text-white" />
             <span className="text-red-500 text-xs font-bold">{getRoleBadge()}</span>
-          </div>
+          </Link>
           <div className="w-10" />
         </header>
 

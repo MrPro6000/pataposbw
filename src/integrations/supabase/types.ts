@@ -118,6 +118,66 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          show_capital: boolean
+          show_council_payments: boolean
+          show_customers: boolean
+          show_devices: boolean
+          show_invoices: boolean
+          show_mobile_money: boolean
+          show_mukuru: boolean
+          show_payment_links: boolean
+          show_reports: boolean
+          show_sell_products: boolean
+          show_staff: boolean
+          show_transport: boolean
+          show_vouchers: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          show_capital?: boolean
+          show_council_payments?: boolean
+          show_customers?: boolean
+          show_devices?: boolean
+          show_invoices?: boolean
+          show_mobile_money?: boolean
+          show_mukuru?: boolean
+          show_payment_links?: boolean
+          show_reports?: boolean
+          show_sell_products?: boolean
+          show_staff?: boolean
+          show_transport?: boolean
+          show_vouchers?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          show_capital?: boolean
+          show_council_payments?: boolean
+          show_customers?: boolean
+          show_devices?: boolean
+          show_invoices?: boolean
+          show_mobile_money?: boolean
+          show_mukuru?: boolean
+          show_payment_links?: boolean
+          show_reports?: boolean
+          show_sell_products?: boolean
+          show_staff?: boolean
+          show_transport?: boolean
+          show_vouchers?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       faqs: {
         Row: {
           answer: string

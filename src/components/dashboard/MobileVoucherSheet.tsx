@@ -87,7 +87,7 @@ const MobileVoucherSheet = ({ open, onClose }: MobileVoucherSheetProps) => {
   };
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) { resetForm(); onClose(); } }}>
+    <Drawer open={open} onOpenChange={(isOpen) => { if (!isOpen) { resetForm(); onClose(); } }} dismissible={false}>
       <DrawerContent className="bg-background max-h-[90vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">

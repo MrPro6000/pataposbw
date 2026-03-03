@@ -60,6 +60,7 @@ const utilityServices = [
   { id: "electricity", label: "Electricity", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
   { id: "water", label: "Water Bill", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10" },
   { id: "insurance", label: "Insurance", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" },
+  { id: "council", label: "Council Payment", icon: FileText, color: "text-emerald-600", bg: "bg-emerald-500/10" },
 ];
 
 // Airtime providers in Botswana
@@ -251,7 +252,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   };
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
+    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()} dismissible={false}>
       <DrawerContent className="bg-background h-[95vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">

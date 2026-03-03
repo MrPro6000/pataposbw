@@ -178,7 +178,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
   ];
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
+    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && handleClose()} dismissible={false}>
       <DrawerContent className="bg-background h-[95vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
