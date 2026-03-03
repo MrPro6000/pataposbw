@@ -205,14 +205,10 @@ const Home = () => {
               </AnimatedSection>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* Additional Services */}
-      <section className="px-5 md:px-20 py-12 md:py-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <AnimatedSection delay={0}>
+          {/* Pata Capital & Mukuru Transfer */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mt-8">
+            <AnimatedSection delay={0.5}>
               <Link
                 to="/capital"
                 className="bg-gradient-to-br from-primary/10 to-primary/5 dark:from-primary/20 dark:to-primary/10 rounded-2xl p-8 hover:from-primary/20 transition-all group border border-primary/20 block hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/10 duration-300 relative overflow-hidden"
@@ -232,7 +228,7 @@ const Home = () => {
               </Link>
             </AnimatedSection>
 
-            <AnimatedSection delay={0.15}>
+            <AnimatedSection delay={0.6}>
               <Link
                 to="/products"
                 className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-all group border border-info/20 block hover:-translate-y-2 hover:shadow-xl hover:shadow-info/10 duration-300 relative overflow-hidden"
