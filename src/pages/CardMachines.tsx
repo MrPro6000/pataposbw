@@ -1,5 +1,6 @@
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
+import pataHeroImg from "@/assets/pata-app-preview.png";
 import ContactSalesDialog from "@/components/ContactSalesDialog";
 import { ArrowDown, Star, Check, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -104,18 +105,12 @@ const CardMachines = () => {
               </div>
             </div>
 
-            {/* Device Preview */}
             <div className="relative">
-              <div className="bg-primary rounded-3xl p-6 aspect-[4/3] flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-primary-foreground font-bold text-lg mb-2">PATA</div>
-                  <div className="bg-card rounded-xl p-4 shadow-lg">
-                    <div className="text-foreground font-medium">The Nails Café</div>
-                    <div className="text-muted-foreground text-sm">Payment approved</div>
-                    <div className="text-primary text-2xl font-bold mt-2">P100.00</div>
-                  </div>
-                </div>
-              </div>
+              <img 
+                src={pataHeroImg} 
+                alt="Pata POS payment terminal in use" 
+                className="w-full h-auto rounded-3xl object-cover aspect-[4/3]" 
+              />
             </div>
           </div>
         </div>
