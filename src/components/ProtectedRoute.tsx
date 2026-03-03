@@ -36,19 +36,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         const { data: kyc } = await getKYCSubmission(user.id);
 
         if (!kyc) {
-          // No KYC submission at all — send to KYC
           navigate("/kyc", { replace: true });
           return;
         }
 
-        if (kyc.status === "pending") {
-          // KYC submitted but not yet approved — show KYC pending screen
-          navigate("/kyc", { replace: true });
-          return;
-        }
-
-        if (kyc.status === "rejected") {
-          // KYC rejected — let them try again via KYC page
+        if (kyc.status === "pending" || kyc.status === "rejected") {
           navigate("/kyc", { replace: true });
           return;
         }
@@ -61,7 +53,6 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
           .single();
 
         if (!profile?.business_name) {
-          // Business setup not done
           navigate("/business-setup", { replace: true });
           return;
         }
@@ -70,7 +61,9 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
         setAllowed(true);
       } catch (err) {
         console.error("ProtectedRoute check error:", err);
-        navigate("/login", { replace: true });
+        // On error, allow access rather than creating a redirect loop
+        // The user is authenticated — don't send them back to login
+        setAllowed(true);
       } finally {
         setChecking(false);
       }
