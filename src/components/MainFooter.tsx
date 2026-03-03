@@ -67,9 +67,12 @@ const MainFooter = ({ theme: propTheme }: MainFooterProps) => {
                 <Youtube className="w-5 h-5" />
               </a>
             </div>
-            <div className="flex items-center gap-2 mt-4">
-              <span className="text-2xl" role="img" aria-label="Botswana flag">🇧🇼</span>
-              <span className="text-sm text-muted-foreground">Made in Botswana</span>
+            <div className="flex flex-col gap-1 mt-4">
+              <div className="flex items-center gap-2">
+                <span className="text-2xl" role="img" aria-label="Botswana flag">🇧🇼</span>
+                <span className="text-sm text-muted-foreground">Made in Botswana</span>
+              </div>
+              <span className="text-xs text-muted-foreground ml-8">Powered by Paa Capital</span>
             </div>
           </div>
 
