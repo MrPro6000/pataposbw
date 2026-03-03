@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import PataLogo from "@/components/PataLogo";
 import { useAuth } from "@/hooks/useAuth";
+import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 import { 
   LayoutGrid,
   CreditCard, 
@@ -25,55 +26,16 @@ interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
+interface NavItem {
+  label: string;
+  path: string;
+}
+
 interface NavSection {
   label: string;
   icon: React.ElementType;
-  items: { label: string; path: string }[];
+  items: NavItem[];
 }
-
-const navSections: NavSection[] = [
-  {
-    label: "Sales",
-    icon: CreditCard,
-    items: [
-      { label: "Transactions", path: "/dashboard/sales" },
-      { label: "Products", path: "/dashboard/products" },
-      { label: "Customers", path: "/dashboard/customers" },
-    ]
-  },
-  {
-    label: "Money",
-    icon: Wallet,
-    items: [
-      { label: "Payouts", path: "/dashboard/payouts" },
-      { label: "Reports", path: "/dashboard/reports" },
-    ]
-  },
-  {
-    label: "Transport",
-    icon: Bus,
-    items: [
-      { label: "Enter Fare", path: "/dashboard/transport" },
-    ]
-  },
-  {
-    label: "Manage",
-    icon: Settings,
-    items: [
-      { label: "Devices", path: "/dashboard/devices" },
-      { label: "Staff", path: "/dashboard/staff" },
-      { label: "Settings", path: "/dashboard/settings" },
-      { label: "Support", path: "/dashboard/support" },
-    ]
-  },
-  {
-    label: "Hub",
-    icon: LayoutGrid,
-    items: [
-      { label: "Dashboard", path: "/dashboard/hub" },
-    ]
-  },
-];
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -81,6 +43,52 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { userProfile, user } = useAuth();
+  const { preferences } = useDashboardPreferences();
+
+  // Build nav sections dynamically based on preferences
+  const navSections: NavSection[] = [
+    {
+      label: "Sales",
+      icon: CreditCard,
+      items: [
+        { label: "Transactions", path: "/dashboard/sales" },
+        ...(preferences.show_sell_products ? [{ label: "Products", path: "/dashboard/products" }] : []),
+        ...(preferences.show_customers ? [{ label: "Customers", path: "/dashboard/customers" }] : []),
+      ]
+    },
+    {
+      label: "Money",
+      icon: Wallet,
+      items: [
+        { label: "Payouts", path: "/dashboard/payouts" },
+        ...(preferences.show_reports ? [{ label: "Reports", path: "/dashboard/reports" }] : []),
+      ]
+    },
+    ...(preferences.show_transport ? [{
+      label: "Transport",
+      icon: Bus,
+      items: [
+        { label: "Enter Fare", path: "/dashboard/transport" },
+      ]
+    }] : []),
+    {
+      label: "Manage",
+      icon: Settings,
+      items: [
+        ...(preferences.show_devices ? [{ label: "Devices", path: "/dashboard/devices" }] : []),
+        ...(preferences.show_staff ? [{ label: "Staff", path: "/dashboard/staff" }] : []),
+        { label: "Settings", path: "/dashboard/settings" },
+        { label: "Support", path: "/dashboard/support" },
+      ]
+    },
+    {
+      label: "Hub",
+      icon: LayoutGrid,
+      items: [
+        { label: "Dashboard", path: "/dashboard/hub" },
+      ]
+    },
+  ];
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -112,7 +120,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         />
       )}
 
-      {/* Sidebar - Pata style: theme-aware bg, clean design */}
+      {/* Sidebar */}
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
         w-56 bg-background border-r border-border

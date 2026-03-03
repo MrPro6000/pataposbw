@@ -6,17 +6,21 @@ import {
   Bus,
   Settings
 } from "lucide-react";
+import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
 
 const MobileBottomNav = () => {
   const location = useLocation();
+  const { preferences } = useDashboardPreferences();
   
-  const navItems = [
-    { icon: CreditCard, label: "Sales", path: "/dashboard/sales" },
-    { icon: Wallet, label: "Money", path: "/dashboard/payouts" },
-    { icon: Bus, label: "Transport", path: "/dashboard/transport" },
-    { icon: Settings, label: "Manage", path: "/dashboard/settings" },
-    { icon: LayoutGrid, label: "Hub", path: "/dashboard/hub" },
+  const allNavItems = [
+    { icon: CreditCard, label: "Sales", path: "/dashboard/sales", show: true },
+    { icon: Wallet, label: "Money", path: "/dashboard/payouts", show: true },
+    { icon: Bus, label: "Transport", path: "/dashboard/transport", show: preferences.show_transport },
+    { icon: Settings, label: "Manage", path: "/dashboard/settings", show: true },
+    { icon: LayoutGrid, label: "Hub", path: "/dashboard/hub", show: true },
   ];
+
+  const navItems = allNavItems.filter(item => item.show);
 
   const isActive = (path: string) => {
     if (path === "/dashboard/hub") return location.pathname === "/dashboard/hub";
