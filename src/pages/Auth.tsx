@@ -66,11 +66,25 @@ const Auth = ({ mode }: AuthProps) => {
         // Check KYC status
         const { data: kyc } = await getKYCSubmission(user.id);
         
-        if (!kyc || kyc.status === "pending") {
+        if (!kyc || kyc.status === "pending" || kyc.status === "rejected") {
           navigate("/kyc");
-        } else {
-          navigate("/dashboard/sales");
+          return;
         }
+
+        // KYC approved — check business setup
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("business_name")
+          .eq("user_id", user.id)
+          .single();
+
+        if (!profile?.business_name) {
+          navigate("/business-setup");
+          return;
+        }
+
+        // All checks pass — go to dashboard
+        navigate("/dashboard");
       }
     };
 
