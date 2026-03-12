@@ -101,15 +101,20 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   };
 
   const handleAddBank = () => {
-    if (!form.bankName || !form.accountNumber) {
-      toast.error("Please fill in bank name and account number");
+    if (!form.bankName) {
+      toast.error("Please enter a bank name");
+      return;
+    }
+    const digits = form.accountNumber.replace(/\D/g, "");
+    if (digits.length < 8 || digits.length > 13) {
+      toast.error("Account number must be 8-13 digits");
       return;
     }
     const newAccount: ConnectedAccount = {
       id: crypto.randomUUID(),
       type: "bank",
       name: form.bankName,
-      details: `•••• ${form.accountNumber.slice(-4)}`,
+      details: `•••• ${digits.slice(-4)}`,
       bankName: form.bankName,
       branchCode: form.branchCode,
       accountHolder: form.accountHolder,
