@@ -146,6 +146,17 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [utilityRef, setUtilityRef] = useState("");
   const [utilityCustomer, setUtilityCustomer] = useState("");
 
+  // Council payment state
+  const [selectedCouncil, setSelectedCouncil] = useState("");
+  const [councilOther, setCouncilOther] = useState("");
+  const [councilService, setCouncilService] = useState("");
+  const [councilAmount, setCouncilAmount] = useState("");
+  const [councilRef, setCouncilRef] = useState("");
+
+  // Electricity token state
+  const [electricityToken, setElectricityToken] = useState("");
+  const [tokenCopied, setTokenCopied] = useState(false);
+
   // Only show user's own products from DB
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
   const categories = [...baseCategories, ...Array.from(new Set(dbProducts.map(p => p.category))).filter(c => !baseCategories.includes(c))];
