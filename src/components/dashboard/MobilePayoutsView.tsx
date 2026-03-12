@@ -32,7 +32,7 @@ const MobilePayoutsView = () => {
   const [selectedAccount, setSelectedAccount] = useState<ConnectedAccount | null>(null);
   const [payoutAmount, setPayoutAmount] = useState("");
 
-  const connectedAccounts = getConnectedAccounts();
+  const { accounts: connectedAccounts } = useConnectedAccounts();
 
   const payoutsFromDB: Payout[] = transactions.map(tx => ({
     id: tx.id,

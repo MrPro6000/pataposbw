@@ -23,7 +23,7 @@ const MobileVoucherSheet = ({ open, onClose }: MobileVoucherSheetProps) => {
   const [createdVoucher, setCreatedVoucher] = useState<{ code: string; amount: number; recipientPhone: string } | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<ConnectedAccount | null>(null);
 
-  const accounts = getConnectedAccounts();
+  const { accounts } = useConnectedAccounts();
 
   const handleProceedToAccount = () => {
     if (!form.amount) { toast({ title: "Enter an amount", variant: "destructive" }); return; }
