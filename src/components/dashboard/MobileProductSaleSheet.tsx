@@ -331,6 +331,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "airtime-form": return "Buy Airtime";
       case "wifi-form": return "WiFi Subscription";
       case "utility-form": return activeUtility?.label ?? "Utility Payment";
+      case "council-form": return "Council Payment";
+      case "electricity-token": return "Electricity Token";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
