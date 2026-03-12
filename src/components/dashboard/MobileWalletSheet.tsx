@@ -153,17 +153,12 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   };
 
   const handleSetDefault = (id: string) => {
-    const updated = accounts.map(a => ({ ...a, isDefault: a.id === id }));
-    syncAccounts(updated);
+    setDefault(id);
     toast.success("Default account updated");
   };
 
   const handleRemove = (id: string) => {
-    const updated = accounts.filter(a => a.id !== id);
-    if (updated.length > 0 && !updated.some(a => a.isDefault)) {
-      updated[0].isDefault = true;
-    }
-    syncAccounts(updated);
+    removeAccount(id);
     toast.success("Account removed");
   };
 
