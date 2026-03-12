@@ -55,7 +55,7 @@ const Payouts = () => {
   const handleAddBank = () => {
     if (!form.bankName || !form.accountNumber) { toast.error("Fill in bank name and account number"); return; }
     syncAccounts([...accounts, { id: crypto.randomUUID(), type: "bank", name: form.bankName, details: `•••• ${form.accountNumber.slice(-4)}`, bankName: form.bankName, branchCode: form.branchCode, accountHolder: form.accountHolder, isDefault: accounts.length === 0 }]);
-    toast.success("Bank account connected"); setAddAccountType(""); setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", phoneNumber: "" });
+    toast.success("Bank account connected"); setAddAccountType(""); setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   };
 
   const handleAddMobile = () => {
