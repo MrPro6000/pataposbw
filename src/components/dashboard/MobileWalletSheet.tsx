@@ -54,10 +54,6 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositAccount, setDepositAccount] = useState<ConnectedAccount | null>(null);
 
-  const syncAccounts = (updated: ConnectedAccount[]) => {
-    setAccounts(updated);
-    setConnectedAccounts(updated);
-  };
 
   const resetForm = () => {
     setView("main");
