@@ -705,13 +705,32 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                 {selectedCouncil === "Other" && (
                   <div className="space-y-2"><Label>Council Name *</Label><Input value={councilOther} onChange={e => setCouncilOther(e.target.value)} placeholder="Enter council name" /></div>
                 )}
-                <div className="space-y-2"><Label>Service / Purpose *</Label><Input value={councilService} onChange={e => setCouncilService(e.target.value)} placeholder="e.g. Rates, Licence Fee" /></div>
+                <div className="space-y-2">
+                  <Label>Service / Payment Type *</Label>
+                  <Select value={councilService} onValueChange={v => { setCouncilService(v); if (v !== "Other") setCouncilServiceOther(""); }}>
+                    <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Rates">Rates</SelectItem>
+                      <SelectItem value="Levy">Levy</SelectItem>
+                      <SelectItem value="Licence Fee">Licence Fee</SelectItem>
+                      <SelectItem value="Trading Licence">Trading Licence</SelectItem>
+                      <SelectItem value="Building Permit">Building Permit</SelectItem>
+                      <SelectItem value="Water Bill">Water Bill</SelectItem>
+                      <SelectItem value="Refuse Collection">Refuse Collection</SelectItem>
+                      <SelectItem value="Plot Rent">Plot Rent</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {councilService === "Other" && (
+                  <div className="space-y-2"><Label>Service Description *</Label><Input value={councilServiceOther} onChange={e => setCouncilServiceOther(e.target.value)} placeholder="Enter payment type" /></div>
+                )}
                 <div className="space-y-2"><Label>Reference Number</Label><Input value={councilRef} onChange={e => setCouncilRef(e.target.value)} placeholder="e.g. Account/Ref" /></div>
                 <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" /></div>
                 <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" onClick={handleAddCouncilPayment} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}>Add to Cart</Button>
-                  <Button onClick={handlePayCouncilNow} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}>Pay Now</Button>
+                  <Button variant="outline" onClick={handleAddCouncilPayment} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}>Add to Cart</Button>
+                  <Button onClick={handlePayCouncilNow} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}>Pay Now</Button>
                 </div>
               </div>
             )}
