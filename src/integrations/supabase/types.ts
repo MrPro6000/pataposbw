@@ -931,6 +931,16 @@ export type Database = {
         }
         Returns: boolean
       }
+      update_own_profile: {
+        Args: {
+          _avatar_url?: string
+          _business_name?: string
+          _email?: string
+          _full_name?: string
+          _phone?: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       account_status: "active" | "suspended" | "frozen"
