@@ -315,6 +315,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setElectricityToken(""); setTokenCopied(false);
     onClose();
   };
 
