@@ -67,10 +67,24 @@ const Payouts = () => {
     toast.success(`${provider?.name} connected`); setAddAccountType(""); setSelectedProvider(""); setForm({ ...form, phoneNumber: "" });
   };
 
+  const formatCardNumber = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+  const formatExpiry = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+    if (digits.length > 2) return digits.slice(0, 2) + "/" + digits.slice(2);
+    return digits;
+  };
+
   const handleAddCard = () => {
-    if (!form.cardNumber) { toast.error("Enter card number"); return; }
-    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "card", name: "Debit/Credit Card", details: `•••• ${form.cardNumber.slice(-4)}`, isDefault: accounts.length === 0 }]);
-    toast.success("Card connected"); setAddAccountType(""); setForm({ ...form, cardNumber: "" });
+    const digits = form.cardNumber.replace(/\D/g, "");
+    if (digits.length < 13 || digits.length > 16) { toast.error("Card number must be 13-16 digits"); return; }
+    if (!form.cardExpiry || !/^\d{2}\/\d{2}$/.test(form.cardExpiry)) { toast.error("Enter a valid expiry date (MM/YY)"); return; }
+    if (!form.cardCvv || !/^\d{3,4}$/.test(form.cardCvv)) { toast.error("Enter a valid CVV (3 or 4 digits)"); return; }
+    if (!form.cardHolder.trim()) { toast.error("Enter the cardholder name"); return; }
+    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "card", name: form.cardHolder.trim(), details: `•••• ${digits.slice(-4)}`, isDefault: accounts.length === 0 }]);
+    toast.success("Card connected"); setAddAccountType(""); setForm({ ...form, cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "" });
   };
 
   const handleRemoveAccount = (id: string) => {
