@@ -14,23 +14,14 @@ import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
+
+// Re-export for backward compatibility
+export type { ConnectedAccount } from "@/hooks/useConnectedAccounts";
 
 interface MobileWalletSheetProps {
   open: boolean;
   onClose: () => void;
-}
-
-export interface ConnectedAccount {
-  id: string;
-  type: "bank" | "mobile_money" | "card";
-  name: string;
-  details: string;
-  bankName?: string;
-  branchCode?: string;
-  accountHolder?: string;
-  provider?: string;
-  providerImg?: string;
-  isDefault: boolean;
 }
 
 const mobileMoneyProviders = [
@@ -39,31 +30,12 @@ const mobileMoneyProviders = [
   { id: "myzaka", name: "MyZaka", img: myzakaImg },
 ];
 
-// Shared state for connected accounts (in production this would be in DB)
-let sharedAccounts: ConnectedAccount[] = [
-  {
-    id: "default-fnb",
-    type: "bank",
-    name: "First National Bank",
-    details: "•••• 4532",
-    bankName: "First National Bank",
-    branchCode: "250655",
-    accountHolder: "Pata Business (Pty) Ltd",
-    isDefault: true,
-  },
-];
-
-export const getConnectedAccounts = () => sharedAccounts;
-export const setConnectedAccounts = (accounts: ConnectedAccount[]) => {
-  sharedAccounts = accounts;
-};
-
 type WalletView = "main" | "add_type" | "add_bank" | "add_mobile" | "add_card" | "provider_select"
   | "deposit_select" | "deposit_confirm" | "deposit_processing" | "deposit_success";
 
 const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   const { balance, addTransaction } = useTransactions();
-  const [accounts, setAccounts] = useState<ConnectedAccount[]>(sharedAccounts);
+  const { accounts, addAccount, removeAccount, setDefault } = useConnectedAccounts();
   const [view, setView] = useState<WalletView>("main");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [form, setForm] = useState({
@@ -82,10 +54,6 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositAccount, setDepositAccount] = useState<ConnectedAccount | null>(null);
 
-  const syncAccounts = (updated: ConnectedAccount[]) => {
-    setAccounts(updated);
-    setConnectedAccounts(updated);
-  };
 
   const resetForm = () => {
     setView("main");
@@ -100,7 +68,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     onClose();
   };
 
-  const handleAddBank = () => {
+  const handleAddBank = async () => {
     if (!form.bankName) {
       toast.error("Please enter a bank name");
       return;
@@ -110,8 +78,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       toast.error("Account number must be 8-13 digits");
       return;
     }
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "bank",
       name: form.bankName,
       details: `•••• ${digits.slice(-4)}`,
@@ -119,13 +86,12 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       branchCode: form.branchCode,
       accountHolder: form.accountHolder,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success("Bank account connected");
     resetForm();
   };
 
-  const handleAddMobile = () => {
+  const handleAddMobile = async () => {
     if (!form.phoneNumber) {
       toast.error("Please enter phone number");
       return;
@@ -136,16 +102,13 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       return;
     }
     const provider = mobileMoneyProviders.find(p => p.id === selectedProvider);
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "mobile_money",
       name: provider?.name || "Mobile Money",
       details: form.phoneNumber,
       provider: selectedProvider,
-      providerImg: provider?.img,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success(`${provider?.name} connected`);
     resetForm();
   };
@@ -161,7 +124,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     return digits;
   };
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     const digits = form.cardNumber.replace(/\D/g, "");
     if (digits.length < 13 || digits.length > 16) {
       toast.error("Card number must be 13-16 digits");
@@ -179,30 +142,23 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       toast.error("Enter the cardholder name");
       return;
     }
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "card",
       name: form.cardHolder.trim(),
       details: `•••• ${digits.slice(-4)}`,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success("Card connected");
     resetForm();
   };
 
   const handleSetDefault = (id: string) => {
-    const updated = accounts.map(a => ({ ...a, isDefault: a.id === id }));
-    syncAccounts(updated);
+    setDefault(id);
     toast.success("Default account updated");
   };
 
   const handleRemove = (id: string) => {
-    const updated = accounts.filter(a => a.id !== id);
-    if (updated.length > 0 && !updated.some(a => a.isDefault)) {
-      updated[0].isDefault = true;
-    }
-    syncAccounts(updated);
+    removeAccount(id);
     toast.success("Account removed");
   };
 
