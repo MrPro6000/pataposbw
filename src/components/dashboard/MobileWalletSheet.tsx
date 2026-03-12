@@ -90,7 +90,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   const resetForm = () => {
     setView("main");
     setSelectedProvider("");
-    setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", phoneNumber: "" });
+    setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   };
 
   const handleClose = () => {
