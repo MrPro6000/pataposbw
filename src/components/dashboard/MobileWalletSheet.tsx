@@ -405,7 +405,24 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
 
         {view === "add_card" && (
           <div className="space-y-4 py-4">
-            <div className="space-y-2"><Label>Card Number</Label><Input value={form.cardNumber} onChange={(e) => setForm({ ...form, cardNumber: e.target.value })} placeholder="4242 4242 4242 4242" maxLength={19} /></div>
+            <div className="space-y-2">
+              <Label>Card Number</Label>
+              <Input value={form.cardNumber} onChange={(e) => setForm({ ...form, cardNumber: formatCardNumber(e.target.value) })} placeholder="4242 4242 4242 4242" maxLength={19} inputMode="numeric" />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label>Expiry Date</Label>
+                <Input value={form.cardExpiry} onChange={(e) => setForm({ ...form, cardExpiry: formatExpiry(e.target.value) })} placeholder="MM/YY" maxLength={5} inputMode="numeric" />
+              </div>
+              <div className="space-y-2">
+                <Label>CVV</Label>
+                <Input value={form.cardCvv} onChange={(e) => setForm({ ...form, cardCvv: e.target.value.replace(/\D/g, "").slice(0, 4) })} placeholder="123" maxLength={4} inputMode="numeric" type="password" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Cardholder Name</Label>
+              <Input value={form.cardHolder} onChange={(e) => setForm({ ...form, cardHolder: e.target.value })} placeholder="Name on card" />
+            </div>
             <Button onClick={handleAddCard} className="w-full">Connect Card</Button>
             <Button variant="outline" onClick={() => setView("add_type")} className="w-full">Back</Button>
           </div>
