@@ -50,22 +50,20 @@ const Payouts = () => {
 
   if (isMobile) return <MobileDashboardHome />;
 
-  const syncAccounts = (updated: ConnectedAccount[]) => { setAccounts(updated); setConnectedAccounts(updated); };
-
-  const handleAddBank = () => {
+  const handleAddBank = async () => {
     if (!form.bankName) { toast.error("Enter a bank name"); return; }
     const digits = form.accountNumber.replace(/\D/g, "");
     if (digits.length < 8 || digits.length > 13) { toast.error("Account number must be 8-13 digits"); return; }
-    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "bank", name: form.bankName, details: `•••• ${digits.slice(-4)}`, bankName: form.bankName, branchCode: form.branchCode, accountHolder: form.accountHolder, isDefault: accounts.length === 0 }]);
+    await addAccountToDb({ type: "bank", name: form.bankName, details: `•••• ${digits.slice(-4)}`, bankName: form.bankName, branchCode: form.branchCode, accountHolder: form.accountHolder, isDefault: accounts.length === 0 });
     toast.success("Bank account connected"); setAddAccountType(""); setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   };
 
-  const handleAddMobile = () => {
+  const handleAddMobile = async () => {
     if (!form.phoneNumber) { toast.error("Enter phone number"); return; }
     const digits = form.phoneNumber.replace(/\D/g, "").replace(/^267/, "");
     if (!/^7\d{7}$/.test(digits)) { toast.error("Invalid Botswana mobile number. Must start with 7 and be 8 digits."); return; }
     const provider = mobileMoneyProviders.find(p => p.id === selectedProvider);
-    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "mobile_money", name: provider?.name || "Mobile Money", details: form.phoneNumber, provider: selectedProvider, providerImg: provider?.img, isDefault: accounts.length === 0 }]);
+    await addAccountToDb({ type: "mobile_money", name: provider?.name || "Mobile Money", details: form.phoneNumber, provider: selectedProvider, isDefault: accounts.length === 0 });
     toast.success(`${provider?.name} connected`); setAddAccountType(""); setSelectedProvider(""); setForm({ ...form, phoneNumber: "" });
   };
 
@@ -79,23 +77,22 @@ const Payouts = () => {
     return digits;
   };
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     const digits = form.cardNumber.replace(/\D/g, "");
     if (digits.length < 13 || digits.length > 16) { toast.error("Card number must be 13-16 digits"); return; }
     if (!form.cardExpiry || !/^\d{2}\/\d{2}$/.test(form.cardExpiry)) { toast.error("Enter a valid expiry date (MM/YY)"); return; }
     if (!form.cardCvv || !/^\d{3,4}$/.test(form.cardCvv)) { toast.error("Enter a valid CVV (3 or 4 digits)"); return; }
     if (!form.cardHolder.trim()) { toast.error("Enter the cardholder name"); return; }
-    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "card", name: form.cardHolder.trim(), details: `•••• ${digits.slice(-4)}`, isDefault: accounts.length === 0 }]);
+    await addAccountToDb({ type: "card", name: form.cardHolder.trim(), details: `•••• ${digits.slice(-4)}`, isDefault: accounts.length === 0 });
     toast.success("Card connected"); setAddAccountType(""); setForm({ ...form, cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "" });
   };
 
   const handleRemoveAccount = (id: string) => {
-    const updated = accounts.filter(a => a.id !== id);
-    if (updated.length > 0 && !updated.some(a => a.isDefault)) updated[0].isDefault = true;
-    syncAccounts(updated); toast.success("Account removed");
+    removeAccountFromDb(id);
+    toast.success("Account removed");
   };
 
-  const handleSetDefault = (id: string) => { syncAccounts(accounts.map(a => ({ ...a, isDefault: a.id === id }))); toast.success("Default updated"); };
+  const handleSetDefault = (id: string) => { setDefaultAccount(id); toast.success("Default updated"); };
 
   const getAccountIcon = (type: string) => {
     switch (type) { case "bank": return <Building2 className="w-5 h-5 text-muted-foreground" />; case "mobile_money": return <Smartphone className="w-5 h-5 text-muted-foreground" />; case "card": return <CreditCard className="w-5 h-5 text-muted-foreground" />; default: return <Wallet className="w-5 h-5 text-muted-foreground" />; }
