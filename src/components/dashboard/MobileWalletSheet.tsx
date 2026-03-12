@@ -124,7 +124,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     return digits;
   };
 
-  const handleAddCard = () => {
+  const handleAddCard = async () => {
     const digits = form.cardNumber.replace(/\D/g, "");
     if (digits.length < 13 || digits.length > 16) {
       toast.error("Card number must be 13-16 digits");
@@ -142,14 +142,12 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       toast.error("Enter the cardholder name");
       return;
     }
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "card",
       name: form.cardHolder.trim(),
       details: `•••• ${digits.slice(-4)}`,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success("Card connected");
     resetForm();
   };
