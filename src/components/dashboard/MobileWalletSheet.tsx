@@ -14,23 +14,14 @@ import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
 import { useTransactions } from "@/hooks/useTransactions";
+import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
+
+// Re-export for backward compatibility
+export type { ConnectedAccount } from "@/hooks/useConnectedAccounts";
 
 interface MobileWalletSheetProps {
   open: boolean;
   onClose: () => void;
-}
-
-export interface ConnectedAccount {
-  id: string;
-  type: "bank" | "mobile_money" | "card";
-  name: string;
-  details: string;
-  bankName?: string;
-  branchCode?: string;
-  accountHolder?: string;
-  provider?: string;
-  providerImg?: string;
-  isDefault: boolean;
 }
 
 const mobileMoneyProviders = [
@@ -39,31 +30,12 @@ const mobileMoneyProviders = [
   { id: "myzaka", name: "MyZaka", img: myzakaImg },
 ];
 
-// Shared state for connected accounts (in production this would be in DB)
-let sharedAccounts: ConnectedAccount[] = [
-  {
-    id: "default-fnb",
-    type: "bank",
-    name: "First National Bank",
-    details: "•••• 4532",
-    bankName: "First National Bank",
-    branchCode: "250655",
-    accountHolder: "Pata Business (Pty) Ltd",
-    isDefault: true,
-  },
-];
-
-export const getConnectedAccounts = () => sharedAccounts;
-export const setConnectedAccounts = (accounts: ConnectedAccount[]) => {
-  sharedAccounts = accounts;
-};
-
 type WalletView = "main" | "add_type" | "add_bank" | "add_mobile" | "add_card" | "provider_select"
   | "deposit_select" | "deposit_confirm" | "deposit_processing" | "deposit_success";
 
 const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   const { balance, addTransaction } = useTransactions();
-  const [accounts, setAccounts] = useState<ConnectedAccount[]>(sharedAccounts);
+  const { accounts, addAccount, removeAccount, setDefault } = useConnectedAccounts();
   const [view, setView] = useState<WalletView>("main");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [form, setForm] = useState({
