@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle } from "lucide-react";
+import { useState, useCallback, useEffect } from "react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -39,8 +39,6 @@ interface MobileProductSaleSheetProps {
   onClose: () => void;
 }
 
-// No default products - merchants add their own
-
 const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
   id: d.id,
   name: d.name,
@@ -52,7 +50,6 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
 const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
-// Utility service types with their icons and colors
 const utilityServices = [
   { id: "airtime", label: "Airtime", icon: Phone, color: "text-green-500", bg: "bg-green-500/10" },
   { id: "wifi", label: "WiFi", icon: Wifi, color: "text-indigo-500", bg: "bg-indigo-500/10" },
@@ -63,51 +60,26 @@ const utilityServices = [
   { id: "council", label: "Council Payment", icon: FileText, color: "text-emerald-600", bg: "bg-emerald-500/10" },
 ];
 
-// Airtime providers in Botswana
 const airtimeProviders = [
   { id: "orange", name: "Orange", color: "bg-orange-500" },
   { id: "mascom", name: "Mascom", color: "bg-red-600" },
   { id: "btc", name: "BTC", color: "bg-blue-700" },
 ];
 
-// All councils/city councils in Botswana
 const botswanaCouncils = [
-  "Gaborone City Council",
-  "Francistown City Council",
-  "Lobatse Town Council",
-  "Selebi-Phikwe Town Council",
-  "Jwaneng Town Council",
-  "Sowa Town Council",
-  "Orapa Town Council",
-  "Central District Council",
-  "Ghanzi District Council",
-  "Kgalagadi District Council",
-  "Kgatleng District Council",
-  "Kweneng District Council",
-  "North-East District Council",
-  "North-West District Council",
-  "South-East District Council",
-  "Southern District Council",
-  "Chobe District Council",
-  "Maun Administrative Authority",
-  "Kasane Township Authority",
-  "Letlhakane Sub-District Council",
-  "Bobonong Sub-District Council",
-  "Tutume Sub-District Council",
-  "Tonota Sub-District Council",
-  "Serowe Sub-District Council",
-  "Palapye Sub-District Council",
-  "Mochudi Sub-District Council",
-  "Molepolole Sub-District Council",
-  "Kanye Sub-District Council",
-  "Ramotswa Sub-District Council",
-  "Mahalapye Sub-District Council",
-  "Tlokweng Sub-District Council",
-  "Mogoditshane Sub-District Council",
-  "Goodhope Sub-District Council",
+  "Gaborone City Council", "Francistown City Council", "Lobatse Town Council",
+  "Selebi-Phikwe Town Council", "Jwaneng Town Council", "Sowa Town Council",
+  "Orapa Town Council", "Central District Council", "Ghanzi District Council",
+  "Kgalagadi District Council", "Kgatleng District Council", "Kweneng District Council",
+  "North-East District Council", "North-West District Council", "South-East District Council",
+  "Southern District Council", "Chobe District Council", "Maun Administrative Authority",
+  "Kasane Township Authority", "Letlhakane Sub-District Council", "Bobonong Sub-District Council",
+  "Tutume Sub-District Council", "Tonota Sub-District Council", "Serowe Sub-District Council",
+  "Palapye Sub-District Council", "Mochudi Sub-District Council", "Molepolole Sub-District Council",
+  "Kanye Sub-District Council", "Ramotswa Sub-District Council", "Mahalapye Sub-District Council",
+  "Tlokweng Sub-District Council", "Mogoditshane Sub-District Council", "Goodhope Sub-District Council",
 ];
 
-/** Generate a 20-digit BPC-style electricity prepaid token */
 const generateElectricityToken = (): string => {
   let token = "";
   for (let i = 0; i < 20; i++) {
@@ -117,18 +89,55 @@ const generateElectricityToken = (): string => {
   return token;
 };
 
-type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "council-form" | "electricity-token" | "product-form" | "devices-list" | "cart" | "payment";
+// Payment sources for instant service checkout
+const paymentSources = [
+  { id: "wallet", label: "Wallet Balance", icon: Wallet, color: "text-primary", bg: "bg-primary/10" },
+  { id: "orange_money", label: "Orange Money", icon: Smartphone, color: "text-orange-500", bg: "bg-orange-500/10" },
+  { id: "myzaka", label: "MyZaka", icon: Smartphone, color: "text-blue-600", bg: "bg-blue-600/10" },
+  { id: "smega", label: "Smega", icon: Smartphone, color: "text-green-600", bg: "bg-green-600/10" },
+];
+
+/** Inline payment source selector */
+const PaymentSourceSelector = ({ selected, onSelect }: { selected: string; onSelect: (id: string) => void }) => (
+  <div className="space-y-2">
+    <Label>Pay From *</Label>
+    <div className="grid grid-cols-2 gap-2">
+      {paymentSources.map(src => {
+        const Icon = src.icon;
+        return (
+          <button
+            key={src.id}
+            onClick={() => onSelect(src.id)}
+            className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
+              selected === src.id ? "border-primary bg-primary/5" : "border-border bg-card"
+            }`}
+          >
+            <div className={`w-8 h-8 ${src.bg} rounded-lg flex items-center justify-center`}>
+              <Icon className={`w-4 h-4 ${src.color}`} />
+            </div>
+            <span className="text-sm font-medium text-foreground">{src.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+);
+
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "council-form" | "electricity-form" | "electricity-token" | "service-processing" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { addTransaction } = useTransactions();
+  const { addTransaction, balance } = useTransactions();
   const { products: dbProducts } = useProducts();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
+
+  // Payment source for instant service payments
+  const [paymentSource, setPaymentSource] = useState("wallet");
 
   // Airtime state
   const [airtimeProvider, setAirtimeProvider] = useState("");
@@ -140,7 +149,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [wifiPackage, setWifiPackage] = useState("");
   const [wifiPhone, setWifiPhone] = useState("");
 
-  // Utility (DSTV, Electricity, Water, Insurance) state
+  // Utility (DSTV, Water, Insurance) state
   const [activeUtility, setActiveUtility] = useState<typeof utilityServices[0] | null>(null);
   const [utilityAmount, setUtilityAmount] = useState("");
   const [utilityRef, setUtilityRef] = useState("");
@@ -153,11 +162,20 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
 
+  // Electricity form state (separate from utility)
+  const [elecAmount, setElecAmount] = useState("");
+  const [elecMeter, setElecMeter] = useState("");
+  const [elecCustomer, setElecCustomer] = useState("");
+
   // Electricity token state
   const [electricityToken, setElectricityToken] = useState("");
   const [tokenCopied, setTokenCopied] = useState(false);
 
-  // Only show user's own products from DB
+  // Service processing state
+  const [processingLabel, setProcessingLabel] = useState("");
+  const [processingDone, setProcessingDone] = useState(false);
+  const [afterProcessingStep, setAfterProcessingStep] = useState<Step>("products");
+
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
   const categories = [...baseCategories, ...Array.from(new Set(dbProducts.map(p => p.category))).filter(c => !baseCategories.includes(c))];
 
@@ -198,6 +216,27 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setCart(cart.filter(item => item.id !== productId));
   };
 
+  // ── Instant service payment helper ──
+  const processServicePayment = async (description: string, amount: number, nextStep: Step) => {
+    const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+    setProcessingLabel(description);
+    setProcessingDone(false);
+    setAfterProcessingStep(nextStep);
+    setStep("service-processing");
+
+    // Record the transaction
+    await addTransaction({
+      type: "sale",
+      payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
+      amount,
+      description: `${description} • ${sourceLabel}`,
+      status: "completed",
+    });
+
+    // Simulate processing delay
+    setTimeout(() => setProcessingDone(true), 2000);
+  };
+
   const handleAddTransport = () => {
     if (!transportForm.customerName || !transportForm.to || !transportForm.fare) return;
     const id = `transport-${Date.now()}`;
@@ -215,6 +254,11 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const handlePayServiceNow = (description: string, amount: number) => {
+    processServicePayment(description, amount, "products");
+  };
+
+  // ── Airtime ──
   const handleAddAirtime = () => {
     if (!airtimeProvider || !airtimeAmount) return;
     const provider = airtimeProviders.find(p => p.id === airtimeProvider);
@@ -225,24 +269,28 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const handlePayAirtimeNow = () => {
+    if (!airtimeProvider || !airtimeAmount) return;
+    const provider = airtimeProviders.find(p => p.id === airtimeProvider);
+    const desc = `Airtime — ${provider?.name}${airtimePhone ? ` (${airtimePhone})` : ""}`;
+    const amt = parseFloat(airtimeAmount);
+    setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── WiFi ──
   const wifiPackages: Record<string, { name: string; price: number }[]> = {
     orange: [
-      { name: "Daily 1GB", price: 10 },
-      { name: "Weekly 5GB", price: 45 },
-      { name: "Monthly 20GB", price: 150 },
-      { name: "Monthly 50GB", price: 300 },
+      { name: "Daily 1GB", price: 10 }, { name: "Weekly 5GB", price: 45 },
+      { name: "Monthly 20GB", price: 150 }, { name: "Monthly 50GB", price: 300 },
     ],
     mascom: [
-      { name: "Daily 1GB", price: 12 },
-      { name: "Weekly 5GB", price: 50 },
-      { name: "Monthly 20GB", price: 160 },
-      { name: "Monthly 50GB", price: 320 },
+      { name: "Daily 1GB", price: 12 }, { name: "Weekly 5GB", price: 50 },
+      { name: "Monthly 20GB", price: 160 }, { name: "Monthly 50GB", price: 320 },
     ],
     btc: [
-      { name: "Daily 1GB", price: 10 },
-      { name: "Weekly 5GB", price: 40 },
-      { name: "Monthly 20GB", price: 140 },
-      { name: "Monthly 50GB", price: 280 },
+      { name: "Daily 1GB", price: 10 }, { name: "Weekly 5GB", price: 40 },
+      { name: "Monthly 20GB", price: 140 }, { name: "Monthly 50GB", price: 280 },
     ],
   };
 
@@ -258,26 +306,35 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setStep("products");
   };
 
+  const handlePayWifiNow = () => {
+    if (!wifiProvider || !wifiPackage) return;
+    const provider = airtimeProviders.find(p => p.id === wifiProvider);
+    const pkg = wifiPackages[wifiProvider]?.find(p => p.name === wifiPackage);
+    if (!pkg) return;
+    const desc = `WiFi — ${provider?.name} ${pkg.name}${wifiPhone ? ` (${wifiPhone})` : ""}`;
+    setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
+    processServicePayment(desc, pkg.price, "products");
+  };
+
+  // ── Utility (DSTV, Water, Insurance — NOT electricity) ──
   const handleAddUtility = () => {
     if (!activeUtility || !utilityAmount) return;
-    const isElectricity = activeUtility.id === "electricity";
     const id = `utility-${Date.now()}`;
     const name = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
     addToCart({ id, name, price: parseFloat(utilityAmount), category: "Services" });
-    
-    if (isElectricity) {
-      // Generate token and show it
-      const token = generateElectricityToken();
-      setElectricityToken(token);
-      setTokenCopied(false);
-      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
-      setStep("electricity-token");
-    } else {
-      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
-      setStep("products");
-    }
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    setStep("products");
   };
 
+  const handlePayUtilityNow = () => {
+    if (!activeUtility || !utilityAmount) return;
+    const desc = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
+    const amt = parseFloat(utilityAmount);
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── Council ──
   const handleAddCouncilPayment = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
     if (!council || !councilService || !councilAmount) return;
@@ -286,6 +343,44 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
     setStep("products");
+  };
+
+  const handlePayCouncilNow = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    if (!council || !councilService || !councilAmount) return;
+    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const amt = parseFloat(councilAmount);
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── Electricity (pay first, then token) ──
+  const handlePayElectricity = async () => {
+    if (!elecAmount || !elecMeter) return;
+    const amt = parseFloat(elecAmount);
+    const desc = `Electricity — Meter: ${elecMeter}${elecCustomer ? ` (${elecCustomer})` : ""}`;
+    const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    setProcessingLabel(desc);
+    setProcessingDone(false);
+    setAfterProcessingStep("electricity-token");
+    setStep("service-processing");
+
+    await addTransaction({
+      type: "sale",
+      payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
+      amount: amt,
+      description: `${desc} • ${sourceLabel}`,
+      status: "completed",
+    });
+
+    // Generate token after payment processes
+    const token = generateElectricityToken();
+    setElectricityToken(token);
+    setTokenCopied(false);
+    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+
+    setTimeout(() => setProcessingDone(true), 2500);
   };
 
   const handleCopyToken = useCallback(() => {
@@ -316,7 +411,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setElecAmount(""); setElecMeter(""); setElecCustomer("");
     setElectricityToken(""); setTokenCopied(false);
+    setPaymentSource("wallet");
     onClose();
   };
 
@@ -332,7 +429,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "wifi-form": return "WiFi Subscription";
       case "utility-form": return activeUtility?.label ?? "Utility Payment";
       case "council-form": return "Council Payment";
+      case "electricity-form": return "Buy Electricity";
       case "electricity-token": return "Electricity Token";
+      case "service-processing": return "Processing...";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
@@ -442,9 +541,10 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     <button
                       key={svc.id}
                       onClick={() => {
-                        if (svc.id === "airtime") { setStep("airtime-form"); }
-                        else if (svc.id === "wifi") { setStep("wifi-form"); }
-                        else if (svc.id === "council") { setStep("council-form"); }
+                        if (svc.id === "airtime") setStep("airtime-form");
+                        else if (svc.id === "wifi") setStep("wifi-form");
+                        else if (svc.id === "council") setStep("council-form");
+                        else if (svc.id === "electricity") setStep("electricity-form");
                         else { setActiveUtility(svc); setStep("utility-form"); }
                       }}
                       className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
@@ -457,7 +557,6 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                     </button>
                   );
                 })}
-                {/* Custom service tile */}
                 <button onClick={() => setStep("service-form")} className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border">
                   <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
                   <p className="font-medium text-foreground text-sm">Custom Service</p>
@@ -478,11 +577,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Select Provider *</Label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   {airtimeProviders.map(p => (
-                    <button
-                      key={p.id}
-                      onClick={() => setAirtimeProvider(p.id)}
-                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${airtimeProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}
-                    >
+                    <button key={p.id} onClick={() => setAirtimeProvider(p.id)}
+                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${airtimeProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}>
                       {p.name}
                     </button>
                   ))}
@@ -496,9 +592,14 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Phone Number (optional)</Label>
                 <Input type="tel" inputMode="numeric" value={airtimePhone} onChange={e => setAirtimePhone(e.target.value)} placeholder="e.g. 71234567" />
               </div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddAirtime} disabled={!airtimeProvider || !airtimeAmount} className="flex-1 h-12">Add to Cart</Button>
+                <Button variant="outline" onClick={handleAddAirtime} disabled={!airtimeProvider || !airtimeAmount} className="flex-1 h-12">
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
+                </Button>
+                <Button onClick={handlePayAirtimeNow} disabled={!airtimeProvider || !airtimeAmount} className="flex-1 h-12">
+                  Pay Now
+                </Button>
               </div>
             </div>
           )}
@@ -513,11 +614,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Select Provider *</Label>
                 <div className="grid grid-cols-3 gap-2 mt-2">
                   {airtimeProviders.map(p => (
-                    <button
-                      key={p.id}
-                      onClick={() => { setWifiProvider(p.id); setWifiPackage(""); }}
-                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${wifiProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}
-                    >
+                    <button key={p.id} onClick={() => { setWifiProvider(p.id); setWifiPackage(""); }}
+                      className={`py-3 px-2 rounded-xl text-sm font-semibold border transition-all text-white ${p.color} ${wifiProvider === p.id ? "ring-2 ring-offset-2 ring-foreground scale-95" : "opacity-80"}`}>
                       {p.name}
                     </button>
                   ))}
@@ -528,11 +626,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   <Label>Select Package *</Label>
                   <div className="space-y-2">
                     {wifiPackages[wifiProvider]?.map(pkg => (
-                      <button
-                        key={pkg.name}
-                        onClick={() => setWifiPackage(pkg.name)}
-                        className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${wifiPackage === pkg.name ? "border-primary bg-primary/5" : "border-border bg-card"}`}
-                      >
+                      <button key={pkg.name} onClick={() => setWifiPackage(pkg.name)}
+                        className={`w-full flex items-center justify-between p-3 rounded-xl border-2 transition-all ${wifiPackage === pkg.name ? "border-primary bg-primary/5" : "border-border bg-card"}`}>
                         <span className="font-medium text-foreground text-sm">{pkg.name}</span>
                         <span className="font-bold text-foreground">P{pkg.price.toFixed(2)}</span>
                       </button>
@@ -544,14 +639,19 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Phone Number (optional)</Label>
                 <Input type="tel" inputMode="numeric" value={wifiPhone} onChange={e => setWifiPhone(e.target.value)} placeholder="e.g. 71234567" />
               </div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddWifi} disabled={!wifiProvider || !wifiPackage} className="flex-1 h-12">Add to Cart</Button>
+                <Button variant="outline" onClick={handleAddWifi} disabled={!wifiProvider || !wifiPackage} className="flex-1 h-12">
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
+                </Button>
+                <Button onClick={handlePayWifiNow} disabled={!wifiProvider || !wifiPackage} className="flex-1 h-12">
+                  Pay Now
+                </Button>
               </div>
             </div>
           )}
 
-          {/* UTILITY FORM (DSTV / Electricity / Water / Insurance) */}
+          {/* UTILITY FORM (DSTV / Water / Insurance — NOT electricity) */}
           {step === "utility-form" && activeUtility && (
             <div className="p-4 space-y-4">
               <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
@@ -578,9 +678,54 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Customer Name (optional)</Label>
                 <Input value={utilityCustomer} onChange={e => setUtilityCustomer(e.target.value)} placeholder="e.g. John Moeng" />
               </div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddUtility} disabled={!utilityAmount} className="flex-1 h-12">Add to Cart</Button>
+                <Button variant="outline" onClick={handleAddUtility} disabled={!utilityAmount} className="flex-1 h-12">
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
+                </Button>
+                <Button onClick={handlePayUtilityNow} disabled={!utilityAmount} className="flex-1 h-12">
+                  Pay Now
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ELECTRICITY FORM — pay first, then get token */}
+          {step === "electricity-form" && (
+            <div className="p-4 space-y-4">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                  <Zap className="w-6 h-6 text-yellow-500" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Buy Electricity</p>
+                  <p className="text-xs text-muted-foreground">Pay to receive your prepaid token</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input type="number" inputMode="numeric" value={elecAmount} onChange={e => setElecAmount(e.target.value)} placeholder="e.g. 100.00" />
+              </div>
+              <div className="space-y-2">
+                <Label>Meter Number *</Label>
+                <Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" inputMode="numeric" />
+              </div>
+              <div className="space-y-2">
+                <Label>Customer Name (optional)</Label>
+                <Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Moeng" />
+              </div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+              <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full h-14 text-lg font-semibold">
+                <Zap className="w-5 h-5 mr-2" />
+                Pay P{elecAmount || "0"} & Get Token
+              </Button>
+              <div className="bg-muted rounded-xl p-3">
+                <p className="text-xs text-muted-foreground text-center">
+                  🇧🇼 BPC Prepaid • Your 20-digit token will be generated after successful payment.
+                </p>
               </div>
             </div>
           )}
@@ -643,16 +788,50 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Reference Number (optional)</Label>
                 <Input value={councilRef} onChange={e => setCouncilRef(e.target.value)} placeholder="e.g. account or reference number" />
               </div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
-                <Button 
-                  onClick={handleAddCouncilPayment} 
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount} 
-                  className="flex-1 h-12"
-                >
-                  Add to Cart
+                <Button variant="outline" onClick={handleAddCouncilPayment}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  className="flex-1 h-12">
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
+                </Button>
+                <Button onClick={handlePayCouncilNow}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  className="flex-1 h-12">
+                  Pay Now
                 </Button>
               </div>
+            </div>
+          )}
+
+          {/* SERVICE PROCESSING ANIMATION */}
+          {step === "service-processing" && (
+            <div className="p-4 flex flex-col items-center justify-center py-16 space-y-6">
+              {!processingDone ? (
+                <>
+                  <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center animate-pulse">
+                    <Loader2 className="w-10 h-10 text-primary animate-spin" />
+                  </div>
+                  <div className="text-center space-y-2">
+                    <p className="text-lg font-bold text-foreground">Processing Payment</p>
+                    <p className="text-sm text-muted-foreground max-w-xs">{processingLabel}</p>
+                    <p className="text-xs text-muted-foreground">Please wait...</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-10 h-10 text-green-500" />
+                  </div>
+                  <div className="text-center space-y-2">
+                    <p className="text-lg font-bold text-foreground">Payment Successful!</p>
+                    <p className="text-sm text-muted-foreground max-w-xs">{processingLabel}</p>
+                  </div>
+                  <Button onClick={() => setStep(afterProcessingStep)} className="w-full h-12 mt-4">
+                    {afterProcessingStep === "electricity-token" ? "View Your Token" : "Done"}
+                  </Button>
+                </>
+              )}
             </div>
           )}
 
@@ -671,11 +850,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
                 </div>
 
-                <Button 
-                  variant="outline" 
-                  onClick={handleCopyToken} 
-                  className="w-full h-12 gap-2"
-                >
+                <Button variant="outline" onClick={handleCopyToken} className="w-full h-12 gap-2">
                   {tokenCopied ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
                   {tokenCopied ? "Copied!" : "Copy Token"}
                 </Button>
@@ -688,11 +863,10 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </div>
 
               <Button onClick={() => setStep("products")} className="w-full h-12">
-                Continue Shopping
+                Done
               </Button>
             </div>
           )}
-
 
           {step === "transport-form" && (
             <div className="p-4 space-y-4">
@@ -720,9 +894,20 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <div className="space-y-2"><Label>Service Name</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee, Levy Payment" /></div>
               <div className="space-y-2"><Label>Customer Name (optional)</Label><Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Gaborone City Council" /></div>
               <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
+              <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
-                <Button variant="outline" onClick={() => setStep("products")} className="flex-1 h-12">Cancel</Button>
-                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">Add to Cart</Button>
+                <Button variant="outline" onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">
+                  <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
+                </Button>
+                <Button onClick={() => {
+                  if (!serviceForm.serviceName || !serviceForm.amount) return;
+                  const desc = `${serviceForm.serviceName}${serviceForm.customerName ? ` — ${serviceForm.customerName}` : ""}`;
+                  const amt = parseFloat(serviceForm.amount);
+                  setServiceForm({ serviceName: "", amount: "", customerName: "" });
+                  handlePayServiceNow(desc, amt);
+                }} disabled={!serviceForm.serviceName || !serviceForm.amount} className="flex-1 h-12">
+                  Pay Now
+                </Button>
               </div>
             </div>
           )}
