@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { getConnectedAccounts, setConnectedAccounts, type ConnectedAccount } from "@/components/dashboard/MobileWalletSheet";
+import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
