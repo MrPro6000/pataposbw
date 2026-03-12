@@ -585,7 +585,115 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
             </div>
           )}
 
-          {/* TRANSPORT FORM */}
+          {/* COUNCIL PAYMENT FORM */}
+          {step === "council-form" && (
+            <div className="p-4 space-y-4 overflow-y-auto">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Council Payment</p>
+                  <p className="text-xs text-muted-foreground">Pay rates, levies, licences</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Select Council *</Label>
+                <Select value={selectedCouncil} onValueChange={setSelectedCouncil}>
+                  <SelectTrigger><SelectValue placeholder="Choose your council" /></SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {botswanaCouncils.map(c => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                    <SelectItem value="Other">Other (type below)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedCouncil === "Other" && (
+                <div className="space-y-2">
+                  <Label>Council Name *</Label>
+                  <Input value={councilOther} onChange={e => setCouncilOther(e.target.value)} placeholder="Type your council name" />
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label>Service / Payment Type *</Label>
+                <Select value={councilService} onValueChange={setCouncilService}>
+                  <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Rates">Rates</SelectItem>
+                    <SelectItem value="Levy">Levy</SelectItem>
+                    <SelectItem value="Licence Fee">Licence Fee</SelectItem>
+                    <SelectItem value="Trading Licence">Trading Licence</SelectItem>
+                    <SelectItem value="Building Permit">Building Permit</SelectItem>
+                    <SelectItem value="Water Bill">Water Bill</SelectItem>
+                    <SelectItem value="Refuse Collection">Refuse Collection</SelectItem>
+                    <SelectItem value="Plot Rent">Plot Rent</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <Label>Reference Number (optional)</Label>
+                <Input value={councilRef} onChange={e => setCouncilRef(e.target.value)} placeholder="e.g. account or reference number" />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
+                <Button 
+                  onClick={handleAddCouncilPayment} 
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount} 
+                  className="flex-1 h-12"
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ELECTRICITY TOKEN DISPLAY */}
+          {step === "electricity-token" && (
+            <div className="p-4 space-y-6">
+              <div className="flex flex-col items-center justify-center py-6 space-y-4">
+                <div className="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                  <Zap className="w-10 h-10 text-yellow-500" />
+                </div>
+                <p className="text-lg font-bold text-foreground">Electricity Token Generated</p>
+                <p className="text-sm text-muted-foreground text-center">Enter this token into your prepaid meter to load electricity units.</p>
+                
+                <div className="w-full bg-muted border-2 border-yellow-500/30 rounded-2xl p-5 text-center">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-semibold">Prepaid Token</p>
+                  <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  onClick={handleCopyToken} 
+                  className="w-full h-12 gap-2"
+                >
+                  {tokenCopied ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  {tokenCopied ? "Copied!" : "Copy Token"}
+                </Button>
+
+                <div className="bg-card border border-border rounded-xl p-3 w-full">
+                  <p className="text-xs text-muted-foreground text-center">
+                    🇧🇼 BPC Prepaid • Keep this token safe. Enter all 20 digits into your meter.
+                  </p>
+                </div>
+              </div>
+
+              <Button onClick={() => setStep("products")} className="w-full h-12">
+                Continue Shopping
+              </Button>
+            </div>
+          )}
+
+
           {step === "transport-form" && (
             <div className="p-4 space-y-4">
               <div className="space-y-2"><Label>Customer Name</Label><Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" /></div>
