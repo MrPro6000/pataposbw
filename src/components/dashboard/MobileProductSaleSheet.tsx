@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi } from "lucide-react";
+import { useState, useCallback } from "react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -70,7 +70,54 @@ const airtimeProviders = [
   { id: "btc", name: "BTC", color: "bg-blue-700" },
 ];
 
-type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
+// All councils/city councils in Botswana
+const botswanaCouncils = [
+  "Gaborone City Council",
+  "Francistown City Council",
+  "Lobatse Town Council",
+  "Selebi-Phikwe Town Council",
+  "Jwaneng Town Council",
+  "Sowa Town Council",
+  "Orapa Town Council",
+  "Central District Council",
+  "Ghanzi District Council",
+  "Kgalagadi District Council",
+  "Kgatleng District Council",
+  "Kweneng District Council",
+  "North-East District Council",
+  "North-West District Council",
+  "South-East District Council",
+  "Southern District Council",
+  "Chobe District Council",
+  "Maun Administrative Authority",
+  "Kasane Township Authority",
+  "Letlhakane Sub-District Council",
+  "Bobonong Sub-District Council",
+  "Tutume Sub-District Council",
+  "Tonota Sub-District Council",
+  "Serowe Sub-District Council",
+  "Palapye Sub-District Council",
+  "Mochudi Sub-District Council",
+  "Molepolole Sub-District Council",
+  "Kanye Sub-District Council",
+  "Ramotswa Sub-District Council",
+  "Mahalapye Sub-District Council",
+  "Tlokweng Sub-District Council",
+  "Mogoditshane Sub-District Council",
+  "Goodhope Sub-District Council",
+];
+
+/** Generate a 20-digit BPC-style electricity prepaid token */
+const generateElectricityToken = (): string => {
+  let token = "";
+  for (let i = 0; i < 20; i++) {
+    token += Math.floor(Math.random() * 10).toString();
+    if ((i + 1) % 4 === 0 && i < 19) token += " ";
+  }
+  return token;
+};
+
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "council-form" | "electricity-token" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
@@ -98,6 +145,17 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [utilityAmount, setUtilityAmount] = useState("");
   const [utilityRef, setUtilityRef] = useState("");
   const [utilityCustomer, setUtilityCustomer] = useState("");
+
+  // Council payment state
+  const [selectedCouncil, setSelectedCouncil] = useState("");
+  const [councilOther, setCouncilOther] = useState("");
+  const [councilService, setCouncilService] = useState("");
+  const [councilAmount, setCouncilAmount] = useState("");
+  const [councilRef, setCouncilRef] = useState("");
+
+  // Electricity token state
+  const [electricityToken, setElectricityToken] = useState("");
+  const [tokenCopied, setTokenCopied] = useState(false);
 
   // Only show user's own products from DB
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
@@ -202,12 +260,39 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
 
   const handleAddUtility = () => {
     if (!activeUtility || !utilityAmount) return;
+    const isElectricity = activeUtility.id === "electricity";
     const id = `utility-${Date.now()}`;
     const name = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
     addToCart({ id, name, price: parseFloat(utilityAmount), category: "Services" });
-    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    
+    if (isElectricity) {
+      // Generate token and show it
+      const token = generateElectricityToken();
+      setElectricityToken(token);
+      setTokenCopied(false);
+      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+      setStep("electricity-token");
+    } else {
+      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+      setStep("products");
+    }
+  };
+
+  const handleAddCouncilPayment = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    if (!council || !councilService || !councilAmount) return;
+    const id = `council-${Date.now()}`;
+    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
     setStep("products");
   };
+
+  const handleCopyToken = useCallback(() => {
+    navigator.clipboard.writeText(electricityToken.replace(/\s/g, ""));
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
+  }, [electricityToken]);
 
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
@@ -230,6 +315,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setElectricityToken(""); setTokenCopied(false);
     onClose();
   };
 
@@ -244,6 +331,8 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
       case "airtime-form": return "Buy Airtime";
       case "wifi-form": return "WiFi Subscription";
       case "utility-form": return activeUtility?.label ?? "Utility Payment";
+      case "council-form": return "Council Payment";
+      case "electricity-token": return "Electricity Token";
       case "product-form": return "Add Custom Product";
       case "devices-list": return "Pata Devices";
       case "cart": return "Your Cart";
@@ -355,6 +444,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       onClick={() => {
                         if (svc.id === "airtime") { setStep("airtime-form"); }
                         else if (svc.id === "wifi") { setStep("wifi-form"); }
+                        else if (svc.id === "council") { setStep("council-form"); }
                         else { setActiveUtility(svc); setStep("utility-form"); }
                       }}
                       className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
@@ -495,7 +585,115 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
             </div>
           )}
 
-          {/* TRANSPORT FORM */}
+          {/* COUNCIL PAYMENT FORM */}
+          {step === "council-form" && (
+            <div className="p-4 space-y-4 overflow-y-auto">
+              <Button variant="ghost" size="sm" onClick={() => setStep("services-list")} className="mb-1">
+                <ArrowLeft className="w-4 h-4 mr-1" /> Back
+              </Button>
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center">
+                  <FileText className="w-6 h-6 text-emerald-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-foreground">Council Payment</p>
+                  <p className="text-xs text-muted-foreground">Pay rates, levies, licences</p>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label>Select Council *</Label>
+                <Select value={selectedCouncil} onValueChange={setSelectedCouncil}>
+                  <SelectTrigger><SelectValue placeholder="Choose your council" /></SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {botswanaCouncils.map(c => (
+                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    ))}
+                    <SelectItem value="Other">Other (type below)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {selectedCouncil === "Other" && (
+                <div className="space-y-2">
+                  <Label>Council Name *</Label>
+                  <Input value={councilOther} onChange={e => setCouncilOther(e.target.value)} placeholder="Type your council name" />
+                </div>
+              )}
+              <div className="space-y-2">
+                <Label>Service / Payment Type *</Label>
+                <Select value={councilService} onValueChange={setCouncilService}>
+                  <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Rates">Rates</SelectItem>
+                    <SelectItem value="Levy">Levy</SelectItem>
+                    <SelectItem value="Licence Fee">Licence Fee</SelectItem>
+                    <SelectItem value="Trading Licence">Trading Licence</SelectItem>
+                    <SelectItem value="Building Permit">Building Permit</SelectItem>
+                    <SelectItem value="Water Bill">Water Bill</SelectItem>
+                    <SelectItem value="Refuse Collection">Refuse Collection</SelectItem>
+                    <SelectItem value="Plot Rent">Plot Rent</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <Label>Reference Number (optional)</Label>
+                <Input value={councilRef} onChange={e => setCouncilRef(e.target.value)} placeholder="e.g. account or reference number" />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setStep("services-list")} className="flex-1 h-12">Cancel</Button>
+                <Button 
+                  onClick={handleAddCouncilPayment} 
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount} 
+                  className="flex-1 h-12"
+                >
+                  Add to Cart
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* ELECTRICITY TOKEN DISPLAY */}
+          {step === "electricity-token" && (
+            <div className="p-4 space-y-6">
+              <div className="flex flex-col items-center justify-center py-6 space-y-4">
+                <div className="w-20 h-20 bg-yellow-500/20 rounded-full flex items-center justify-center">
+                  <Zap className="w-10 h-10 text-yellow-500" />
+                </div>
+                <p className="text-lg font-bold text-foreground">Electricity Token Generated</p>
+                <p className="text-sm text-muted-foreground text-center">Enter this token into your prepaid meter to load electricity units.</p>
+                
+                <div className="w-full bg-muted border-2 border-yellow-500/30 rounded-2xl p-5 text-center">
+                  <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-semibold">Prepaid Token</p>
+                  <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
+                </div>
+
+                <Button 
+                  variant="outline" 
+                  onClick={handleCopyToken} 
+                  className="w-full h-12 gap-2"
+                >
+                  {tokenCopied ? <CheckCircle className="w-4 h-4 text-emerald-500" /> : <Copy className="w-4 h-4" />}
+                  {tokenCopied ? "Copied!" : "Copy Token"}
+                </Button>
+
+                <div className="bg-card border border-border rounded-xl p-3 w-full">
+                  <p className="text-xs text-muted-foreground text-center">
+                    🇧🇼 BPC Prepaid • Keep this token safe. Enter all 20 digits into your meter.
+                  </p>
+                </div>
+              </div>
+
+              <Button onClick={() => setStep("products")} className="w-full h-12">
+                Continue Shopping
+              </Button>
+            </div>
+          )}
+
+
           {step === "transport-form" && (
             <div className="p-4 space-y-4">
               <div className="space-y-2"><Label>Customer Name</Label><Input value={transportForm.customerName} onChange={e => setTransportForm({ ...transportForm, customerName: e.target.value })} placeholder="e.g. Keabetswe Moeng" /></div>
