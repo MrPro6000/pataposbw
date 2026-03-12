@@ -171,6 +171,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [selectedCouncil, setSelectedCouncil] = useState("");
   const [councilOther, setCouncilOther] = useState("");
   const [councilService, setCouncilService] = useState("");
+  const [councilServiceOther, setCouncilServiceOther] = useState("");
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
 
