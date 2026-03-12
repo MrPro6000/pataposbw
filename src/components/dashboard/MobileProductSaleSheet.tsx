@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi } from "lucide-react";
+import { useState, useCallback } from "react";
+import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
