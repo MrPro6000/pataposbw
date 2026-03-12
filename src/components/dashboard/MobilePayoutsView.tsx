@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { toast } from "sonner";
 import MobileBottomNav from "./MobileBottomNav";
 import { useTransactions } from "@/hooks/useTransactions";
-import { getConnectedAccounts, type ConnectedAccount } from "./MobileWalletSheet";
+import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
 
 type PayoutStatus = "completed" | "processing" | "pending";
 
