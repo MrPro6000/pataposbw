@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 import { useVouchers } from "@/hooks/useVouchers";
-import { getConnectedAccounts, ConnectedAccount } from "./MobileWalletSheet";
+import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
 import { format } from "date-fns";
 
 interface MobileVoucherSheetProps {
