@@ -59,37 +59,48 @@ const PaymentLinkPage = () => {
   useEffect(() => {
     const fetchLink = async () => {
       if (!id) return;
-      const { data, error } = await supabase
-        .from("payment_links")
-        .select("*")
-        .eq("id", id)
-        .single();
 
-      if (error || !data) {
+      // Use edge function for public access (no auth required)
+      const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+      const anonKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+      try {
+        const res = await fetch(
+          `https://${projectId}.supabase.co/functions/v1/get-payment-link`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "apikey": anonKey,
+            },
+            body: JSON.stringify({ payment_link_id: id }),
+          }
+        );
+
+        if (!res.ok) {
+          setView("expired");
+          setLoading(false);
+          return;
+        }
+
+        const { link: data, merchant: profile } = await res.json();
+
+        // Check expiry
+        const isExpired = data.expires_at && new Date(data.expires_at) < new Date();
+
+        setLink(data as PaymentLink);
+
+        if (data.status === "paid" || data.status === "completed") {
+          setView("success");
+        } else if (data.status !== "pending" || isExpired) {
+          setView("expired");
+        }
+
+        if (profile) setMerchant(profile);
+      } catch {
         setView("expired");
-        setLoading(false);
-        return;
       }
 
-      // Check expiry
-      const expiresAt = (data as any).expires_at;
-      const isExpired = expiresAt && new Date(expiresAt) < new Date();
-
-      setLink(data as PaymentLink);
-
-      if (data.status === "paid" || data.status === "completed") {
-        setView("success");
-      } else if (data.status !== "pending" || isExpired) {
-        setView("expired");
-      }
-
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("business_name, full_name")
-        .eq("user_id", data.user_id)
-        .single();
-
-      if (profile) setMerchant(profile);
       setLoading(false);
     };
 
