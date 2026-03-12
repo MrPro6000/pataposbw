@@ -444,6 +444,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                       onClick={() => {
                         if (svc.id === "airtime") { setStep("airtime-form"); }
                         else if (svc.id === "wifi") { setStep("wifi-form"); }
+                        else if (svc.id === "council") { setStep("council-form"); }
                         else { setActiveUtility(svc); setStep("utility-form"); }
                       }}
                       className="p-4 rounded-2xl text-left transition-all active:scale-95 bg-card border border-border"
