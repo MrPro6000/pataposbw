@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Drawer, DrawerClose, DrawerContent, DrawerHeader, DrawerTitle } from "@/components/ui/drawer";
 import { useToast } from "@/hooks/use-toast";
 import { useVouchers } from "@/hooks/useVouchers";
-import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
+import { getConnectedAccounts, ConnectedAccount } from "./MobileWalletSheet";
 import { format } from "date-fns";
 
 interface MobileVoucherSheetProps {
@@ -23,7 +23,7 @@ const MobileVoucherSheet = ({ open, onClose }: MobileVoucherSheetProps) => {
   const [createdVoucher, setCreatedVoucher] = useState<{ code: string; amount: number; recipientPhone: string } | null>(null);
   const [selectedAccount, setSelectedAccount] = useState<ConnectedAccount | null>(null);
 
-  const { accounts } = useConnectedAccounts();
+  const accounts = getConnectedAccounts();
 
   const handleProceedToAccount = () => {
     if (!form.amount) { toast({ title: "Enter an amount", variant: "destructive" }); return; }

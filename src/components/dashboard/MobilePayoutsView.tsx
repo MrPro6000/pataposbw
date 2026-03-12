@@ -8,7 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { toast } from "sonner";
 import MobileBottomNav from "./MobileBottomNav";
 import { useTransactions } from "@/hooks/useTransactions";
-import { useConnectedAccounts, type ConnectedAccount } from "@/hooks/useConnectedAccounts";
+import { getConnectedAccounts, type ConnectedAccount } from "./MobileWalletSheet";
 
 type PayoutStatus = "completed" | "processing" | "pending";
 
@@ -32,7 +32,7 @@ const MobilePayoutsView = () => {
   const [selectedAccount, setSelectedAccount] = useState<ConnectedAccount | null>(null);
   const [payoutAmount, setPayoutAmount] = useState("");
 
-  const { accounts: connectedAccounts } = useConnectedAccounts();
+  const connectedAccounts = getConnectedAccounts();
 
   const payoutsFromDB: Payout[] = transactions.map(tx => ({
     id: tx.id,
