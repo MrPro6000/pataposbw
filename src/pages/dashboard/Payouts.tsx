@@ -35,7 +35,7 @@ const Payouts = () => {
   const [withdrawStep, setWithdrawStep] = useState<"select" | "confirm" | "processing" | "success">("select");
   const [withdrawAccount, setWithdrawAccount] = useState<ConnectedAccount | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
-  const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
+  const { accounts, addAccount: addAccountToDb, removeAccount: removeAccountFromDb, setDefault: setDefaultAccount } = useConnectedAccounts();
   const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   const [loanOpen, setLoanOpen] = useState(false);
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
