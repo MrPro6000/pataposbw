@@ -72,6 +72,9 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     branchCode: "",
     accountHolder: "",
     cardNumber: "",
+    cardExpiry: "",
+    cardCvv: "",
+    cardHolder: "",
     phoneNumber: "",
   });
 
