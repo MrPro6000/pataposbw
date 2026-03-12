@@ -36,7 +36,7 @@ const Payouts = () => {
   const [withdrawAccount, setWithdrawAccount] = useState<ConnectedAccount | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
-  const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", phoneNumber: "" });
+  const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   const [loanOpen, setLoanOpen] = useState(false);
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   
@@ -55,7 +55,7 @@ const Payouts = () => {
   const handleAddBank = () => {
     if (!form.bankName || !form.accountNumber) { toast.error("Fill in bank name and account number"); return; }
     syncAccounts([...accounts, { id: crypto.randomUUID(), type: "bank", name: form.bankName, details: `•••• ${form.accountNumber.slice(-4)}`, bankName: form.bankName, branchCode: form.branchCode, accountHolder: form.accountHolder, isDefault: accounts.length === 0 }]);
-    toast.success("Bank account connected"); setAddAccountType(""); setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", phoneNumber: "" });
+    toast.success("Bank account connected"); setAddAccountType(""); setForm({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   };
 
   const handleAddMobile = () => {
@@ -67,10 +67,24 @@ const Payouts = () => {
     toast.success(`${provider?.name} connected`); setAddAccountType(""); setSelectedProvider(""); setForm({ ...form, phoneNumber: "" });
   };
 
+  const formatCardNumber = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 16);
+    return digits.replace(/(\d{4})(?=\d)/g, "$1 ");
+  };
+  const formatExpiry = (value: string) => {
+    const digits = value.replace(/\D/g, "").slice(0, 4);
+    if (digits.length > 2) return digits.slice(0, 2) + "/" + digits.slice(2);
+    return digits;
+  };
+
   const handleAddCard = () => {
-    if (!form.cardNumber) { toast.error("Enter card number"); return; }
-    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "card", name: "Debit/Credit Card", details: `•••• ${form.cardNumber.slice(-4)}`, isDefault: accounts.length === 0 }]);
-    toast.success("Card connected"); setAddAccountType(""); setForm({ ...form, cardNumber: "" });
+    const digits = form.cardNumber.replace(/\D/g, "");
+    if (digits.length < 13 || digits.length > 16) { toast.error("Card number must be 13-16 digits"); return; }
+    if (!form.cardExpiry || !/^\d{2}\/\d{2}$/.test(form.cardExpiry)) { toast.error("Enter a valid expiry date (MM/YY)"); return; }
+    if (!form.cardCvv || !/^\d{3,4}$/.test(form.cardCvv)) { toast.error("Enter a valid CVV (3 or 4 digits)"); return; }
+    if (!form.cardHolder.trim()) { toast.error("Enter the cardholder name"); return; }
+    syncAccounts([...accounts, { id: crypto.randomUUID(), type: "card", name: form.cardHolder.trim(), details: `•••• ${digits.slice(-4)}`, isDefault: accounts.length === 0 }]);
+    toast.success("Card connected"); setAddAccountType(""); setForm({ ...form, cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "" });
   };
 
   const handleRemoveAccount = (id: string) => {
@@ -275,7 +289,12 @@ const Payouts = () => {
           )}
           {addAccountType === "card" && (
             <div className="space-y-4 py-2">
-              <div className="space-y-2"><Label>Card Number</Label><Input value={form.cardNumber} onChange={e => setForm({ ...form, cardNumber: e.target.value })} placeholder="4242 4242 4242 4242" maxLength={19} /></div>
+              <div className="space-y-2"><Label>Card Number</Label><Input value={form.cardNumber} onChange={e => setForm({ ...form, cardNumber: formatCardNumber(e.target.value) })} placeholder="4242 4242 4242 4242" maxLength={19} inputMode="numeric" /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2"><Label>Expiry Date</Label><Input value={form.cardExpiry} onChange={e => setForm({ ...form, cardExpiry: formatExpiry(e.target.value) })} placeholder="MM/YY" maxLength={5} inputMode="numeric" /></div>
+                <div className="space-y-2"><Label>CVV</Label><Input value={form.cardCvv} onChange={e => setForm({ ...form, cardCvv: e.target.value.replace(/\D/g, "").slice(0, 4) })} placeholder="123" maxLength={4} inputMode="numeric" type="password" /></div>
+              </div>
+              <div className="space-y-2"><Label>Cardholder Name</Label><Input value={form.cardHolder} onChange={e => setForm({ ...form, cardHolder: e.target.value })} placeholder="Name on card" /></div>
               <DialogFooter><Button variant="outline" onClick={() => setAddAccountType("")}>Back</Button><Button onClick={handleAddCard}>Connect</Button></DialogFooter>
             </div>
           )}
