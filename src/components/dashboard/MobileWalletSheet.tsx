@@ -91,7 +91,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     resetForm();
   };
 
-  const handleAddMobile = () => {
+  const handleAddMobile = async () => {
     if (!form.phoneNumber) {
       toast.error("Please enter phone number");
       return;
@@ -102,16 +102,13 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       return;
     }
     const provider = mobileMoneyProviders.find(p => p.id === selectedProvider);
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "mobile_money",
       name: provider?.name || "Mobile Money",
       details: form.phoneNumber,
       provider: selectedProvider,
-      providerImg: provider?.img,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success(`${provider?.name} connected`);
     resetForm();
   };
