@@ -260,12 +260,39 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
 
   const handleAddUtility = () => {
     if (!activeUtility || !utilityAmount) return;
+    const isElectricity = activeUtility.id === "electricity";
     const id = `utility-${Date.now()}`;
     const name = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
     addToCart({ id, name, price: parseFloat(utilityAmount), category: "Services" });
-    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    
+    if (isElectricity) {
+      // Generate token and show it
+      const token = generateElectricityToken();
+      setElectricityToken(token);
+      setTokenCopied(false);
+      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+      setStep("electricity-token");
+    } else {
+      setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+      setStep("products");
+    }
+  };
+
+  const handleAddCouncilPayment = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    if (!council || !councilService || !councilAmount) return;
+    const id = `council-${Date.now()}`;
+    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
     setStep("products");
   };
+
+  const handleCopyToken = useCallback(() => {
+    navigator.clipboard.writeText(electricityToken.replace(/\s/g, ""));
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
+  }, [electricityToken]);
 
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
