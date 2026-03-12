@@ -768,7 +768,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               )}
               <div className="space-y-2">
                 <Label>Service / Payment Type *</Label>
-                <Select value={councilService} onValueChange={setCouncilService}>
+                <Select value={councilService} onValueChange={v => { setCouncilService(v); if (v !== "Other") setCouncilServiceOther(""); }}>
                   <SelectTrigger><SelectValue placeholder="Select service type" /></SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Rates">Rates</SelectItem>
@@ -783,6 +783,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   </SelectContent>
                 </Select>
               </div>
+              {councilService === "Other" && (
+                <div className="space-y-2">
+                  <Label>Service Description *</Label>
+                  <Input value={councilServiceOther} onChange={e => setCouncilServiceOther(e.target.value)} placeholder="Enter payment type" />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Amount (P) *</Label>
                 <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
