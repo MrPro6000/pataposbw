@@ -68,7 +68,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
     onClose();
   };
 
-  const handleAddBank = () => {
+  const handleAddBank = async () => {
     if (!form.bankName) {
       toast.error("Please enter a bank name");
       return;
@@ -78,8 +78,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       toast.error("Account number must be 8-13 digits");
       return;
     }
-    const newAccount: ConnectedAccount = {
-      id: crypto.randomUUID(),
+    await addAccount({
       type: "bank",
       name: form.bankName,
       details: `•••• ${digits.slice(-4)}`,
@@ -87,8 +86,7 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
       branchCode: form.branchCode,
       accountHolder: form.accountHolder,
       isDefault: accounts.length === 0,
-    };
-    syncAccounts([...accounts, newAccount]);
+    });
     toast.success("Bank account connected");
     resetForm();
   };
