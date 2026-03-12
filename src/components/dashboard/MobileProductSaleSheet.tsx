@@ -70,7 +70,54 @@ const airtimeProviders = [
   { id: "btc", name: "BTC", color: "bg-blue-700" },
 ];
 
-type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "product-form" | "devices-list" | "cart" | "payment";
+// All councils/city councils in Botswana
+const botswanaCouncils = [
+  "Gaborone City Council",
+  "Francistown City Council",
+  "Lobatse Town Council",
+  "Selebi-Phikwe Town Council",
+  "Jwaneng Town Council",
+  "Sowa Town Council",
+  "Orapa Town Council",
+  "Central District Council",
+  "Ghanzi District Council",
+  "Kgalagadi District Council",
+  "Kgatleng District Council",
+  "Kweneng District Council",
+  "North-East District Council",
+  "North-West District Council",
+  "South-East District Council",
+  "Southern District Council",
+  "Chobe District Council",
+  "Maun Administrative Authority",
+  "Kasane Township Authority",
+  "Letlhakane Sub-District Council",
+  "Bobonong Sub-District Council",
+  "Tutume Sub-District Council",
+  "Tonota Sub-District Council",
+  "Serowe Sub-District Council",
+  "Palapye Sub-District Council",
+  "Mochudi Sub-District Council",
+  "Molepolole Sub-District Council",
+  "Kanye Sub-District Council",
+  "Ramotswa Sub-District Council",
+  "Mahalapye Sub-District Council",
+  "Tlokweng Sub-District Council",
+  "Mogoditshane Sub-District Council",
+  "Goodhope Sub-District Council",
+];
+
+/** Generate a 20-digit BPC-style electricity prepaid token */
+const generateElectricityToken = (): string => {
+  let token = "";
+  for (let i = 0; i < 20; i++) {
+    token += Math.floor(Math.random() * 10).toString();
+    if ((i + 1) % 4 === 0 && i < 19) token += " ";
+  }
+  return token;
+};
+
+type Step = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "council-form" | "electricity-token" | "product-form" | "devices-list" | "cart" | "payment";
 
 const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) => {
   const [step, setStep] = useState<Step>("products");
