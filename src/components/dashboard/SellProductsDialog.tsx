@@ -336,10 +336,11 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
 
   const handlePayCouncilNow = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    if (!council || !service || !councilAmount) return;
+    const desc = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     processServicePayment(desc, amt, "products");
   };
 
