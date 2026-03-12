@@ -386,6 +386,15 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setSellProductsOpen(true)}
+          >
+            <ShoppingBag className="w-5 h-5" />
+            <span className="text-xs">Sell Products</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
@@ -404,10 +413,10 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => setSellProductsOpen(true)}
+            onClick={() => openPaymentFlow("card")}
           >
-            <ShoppingBag className="w-5 h-5" />
-            <span className="text-xs">Sell Products</span>
+            <CreditCard className="w-5 h-5" />
+            <span className="text-xs">Card Sale</span>
           </Button>
 
           <Button
@@ -417,15 +426,6 @@ const Sales = () => {
           >
             <Smartphone className="w-5 h-5" />
             <span className="text-xs">Mobile Money</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("card")}
-          >
-            <CreditCard className="w-5 h-5" />
-            <span className="text-xs">Card Sale</span>
           </Button>
 
           <Button
