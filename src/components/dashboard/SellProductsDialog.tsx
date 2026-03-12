@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,8 +38,6 @@ interface SellProductsDialogProps {
   onClose: () => void;
 }
 
-// No dummy products — merchants add their own via Products page
-
 const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
   id: d.id,
   name: d.name,
@@ -51,7 +49,93 @@ const allDeviceProducts: Product[] = Object.values(deviceModels).map(d => ({
 const vehicleTypes = ["Combi", "Taxi", "Bus", "Sedan", "SUV", "Van"];
 const baseCategories = ["All", "Transport", "Devices", "Services", "Custom"];
 
-type SubView = "products" | "transport-form" | "service-form" | "product-form" | "devices-list" | "payment";
+const utilityServices = [
+  { id: "airtime", label: "Airtime", icon: Phone, color: "text-green-500", bg: "bg-green-500/10" },
+  { id: "wifi", label: "WiFi", icon: Wifi, color: "text-indigo-500", bg: "bg-indigo-500/10" },
+  { id: "dstv", label: "DSTV", icon: Tv, color: "text-blue-500", bg: "bg-blue-500/10" },
+  { id: "electricity", label: "Electricity", icon: Zap, color: "text-yellow-500", bg: "bg-yellow-500/10" },
+  { id: "water", label: "Water Bill", icon: Droplets, color: "text-cyan-500", bg: "bg-cyan-500/10" },
+  { id: "insurance", label: "Insurance", icon: Shield, color: "text-purple-500", bg: "bg-purple-500/10" },
+  { id: "council", label: "Council Payment", icon: FileText, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+];
+
+const airtimeProviders = [
+  { id: "orange", name: "Orange", color: "bg-orange-500" },
+  { id: "mascom", name: "Mascom", color: "bg-red-600" },
+  { id: "btc", name: "BTC", color: "bg-blue-700" },
+];
+
+const botswanaCouncils = [
+  "Gaborone City Council", "Francistown City Council", "Lobatse Town Council",
+  "Selebi-Phikwe Town Council", "Jwaneng Town Council", "Sowa Town Council",
+  "Orapa Town Council", "Central District Council", "Ghanzi District Council",
+  "Kgalagadi District Council", "Kgatleng District Council", "Kweneng District Council",
+  "North-East District Council", "North-West District Council", "South-East District Council",
+  "Southern District Council", "Chobe District Council", "Maun Administrative Authority",
+  "Kasane Township Authority", "Letlhakane Sub-District Council", "Bobonong Sub-District Council",
+  "Tutume Sub-District Council", "Tonota Sub-District Council", "Serowe Sub-District Council",
+  "Palapye Sub-District Council", "Mochudi Sub-District Council", "Molepolole Sub-District Council",
+  "Kanye Sub-District Council", "Ramotswa Sub-District Council", "Mahalapye Sub-District Council",
+  "Tlokweng Sub-District Council", "Mogoditshane Sub-District Council", "Goodhope Sub-District Council",
+];
+
+const generateElectricityToken = (): string => {
+  let token = "";
+  for (let i = 0; i < 20; i++) {
+    token += Math.floor(Math.random() * 10).toString();
+    if ((i + 1) % 4 === 0 && i < 19) token += " ";
+  }
+  return token;
+};
+
+const paymentSources = [
+  { id: "wallet", label: "Wallet Balance", icon: Wallet, color: "text-primary", bg: "bg-primary/10" },
+  { id: "orange_money", label: "Orange Money", icon: Smartphone, color: "text-orange-500", bg: "bg-orange-500/10" },
+  { id: "myzaka", label: "MyZaka", icon: Smartphone, color: "text-blue-600", bg: "bg-blue-600/10" },
+  { id: "smega", label: "Smega", icon: Smartphone, color: "text-green-600", bg: "bg-green-600/10" },
+];
+
+const PaymentSourceSelector = ({ selected, onSelect }: { selected: string; onSelect: (id: string) => void }) => (
+  <div className="space-y-2">
+    <Label>Pay From *</Label>
+    <div className="grid grid-cols-2 gap-2">
+      {paymentSources.map(src => {
+        const Icon = src.icon;
+        return (
+          <button
+            key={src.id}
+            onClick={() => onSelect(src.id)}
+            className={`flex items-center gap-2 p-3 rounded-xl border-2 transition-all text-left ${
+              selected === src.id ? "border-primary bg-primary/5" : "border-border bg-card"
+            }`}
+          >
+            <div className={`w-8 h-8 ${src.bg} rounded-lg flex items-center justify-center`}>
+              <Icon className={`w-4 h-4 ${src.color}`} />
+            </div>
+            <span className="text-sm font-medium text-foreground">{src.label}</span>
+          </button>
+        );
+      })}
+    </div>
+  </div>
+);
+
+const wifiPackages: Record<string, { name: string; price: number }[]> = {
+  orange: [
+    { name: "Daily 1GB", price: 10 }, { name: "Weekly 5GB", price: 45 },
+    { name: "Monthly 20GB", price: 150 }, { name: "Monthly 50GB", price: 300 },
+  ],
+  mascom: [
+    { name: "Daily 1GB", price: 12 }, { name: "Weekly 5GB", price: 50 },
+    { name: "Monthly 20GB", price: 160 }, { name: "Monthly 50GB", price: 320 },
+  ],
+  btc: [
+    { name: "Daily 1GB", price: 10 }, { name: "Weekly 5GB", price: 40 },
+    { name: "Monthly 20GB", price: 140 }, { name: "Monthly 50GB", price: 280 },
+  ],
+};
+
+type SubView = "products" | "transport-form" | "service-form" | "services-list" | "airtime-form" | "wifi-form" | "utility-form" | "council-form" | "electricity-form" | "electricity-token" | "service-processing" | "product-form" | "devices-list" | "payment";
 
 const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [subView, setSubView] = useState<SubView>("products");
@@ -64,7 +148,46 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
   const [productForm, setProductForm] = useState({ productName: "", price: "", quantity: "1" });
 
-  // Only show user's own products from DB
+  // Payment source for instant service payments
+  const [paymentSource, setPaymentSource] = useState("wallet");
+
+  // Airtime state
+  const [airtimeProvider, setAirtimeProvider] = useState("");
+  const [airtimeAmount, setAirtimeAmount] = useState("");
+  const [airtimePhone, setAirtimePhone] = useState("");
+
+  // WiFi state
+  const [wifiProvider, setWifiProvider] = useState("");
+  const [wifiPackage, setWifiPackage] = useState("");
+  const [wifiPhone, setWifiPhone] = useState("");
+
+  // Utility (DSTV, Water, Insurance) state
+  const [activeUtility, setActiveUtility] = useState<typeof utilityServices[0] | null>(null);
+  const [utilityAmount, setUtilityAmount] = useState("");
+  const [utilityRef, setUtilityRef] = useState("");
+  const [utilityCustomer, setUtilityCustomer] = useState("");
+
+  // Council payment state
+  const [selectedCouncil, setSelectedCouncil] = useState("");
+  const [councilOther, setCouncilOther] = useState("");
+  const [councilService, setCouncilService] = useState("");
+  const [councilAmount, setCouncilAmount] = useState("");
+  const [councilRef, setCouncilRef] = useState("");
+
+  // Electricity form state
+  const [elecAmount, setElecAmount] = useState("");
+  const [elecMeter, setElecMeter] = useState("");
+  const [elecCustomer, setElecCustomer] = useState("");
+
+  // Electricity token state
+  const [electricityToken, setElectricityToken] = useState("");
+  const [tokenCopied, setTokenCopied] = useState(false);
+
+  // Service processing state
+  const [processingLabel, setProcessingLabel] = useState("");
+  const [processingDone, setProcessingDone] = useState(false);
+  const [afterProcessingStep, setAfterProcessingStep] = useState<SubView>("products");
+
   const retailProducts: Product[] = dbProducts.map(p => ({ id: p.id, name: p.name, price: p.price, category: p.category }));
   const categories = [...baseCategories, ...Array.from(new Set(dbProducts.map(p => p.category))).filter(c => !baseCategories.includes(c))];
 
@@ -101,6 +224,25 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     }).filter(item => item.quantity > 0));
   };
 
+  // ── Instant service payment helper ──
+  const processServicePayment = async (description: string, amount: number, nextStep: SubView) => {
+    const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+    setProcessingLabel(description);
+    setProcessingDone(false);
+    setAfterProcessingStep(nextStep);
+    setSubView("service-processing");
+
+    await addTransaction({
+      type: "sale",
+      payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
+      amount,
+      description: `${description} • ${sourceLabel}`,
+      status: "completed",
+    });
+
+    setTimeout(() => setProcessingDone(true), 2000);
+  };
+
   const handleAddTransport = () => {
     if (!transportForm.customerName || !transportForm.to || !transportForm.fare) return;
     const id = `transport-${Date.now()}`;
@@ -117,6 +259,121 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     setServiceForm({ serviceName: "", amount: "", customerName: "" });
     setSubView("products");
   };
+
+  // ── Airtime ──
+  const handleAddAirtime = () => {
+    if (!airtimeProvider || !airtimeAmount) return;
+    const provider = airtimeProviders.find(p => p.id === airtimeProvider);
+    const id = `airtime-${Date.now()}`;
+    const name = `Airtime — ${provider?.name}${airtimePhone ? ` (${airtimePhone})` : ""}`;
+    addToCart({ id, name, price: parseFloat(airtimeAmount), category: "Services" });
+    setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    setSubView("products");
+  };
+
+  const handlePayAirtimeNow = () => {
+    if (!airtimeProvider || !airtimeAmount) return;
+    const provider = airtimeProviders.find(p => p.id === airtimeProvider);
+    const desc = `Airtime — ${provider?.name}${airtimePhone ? ` (${airtimePhone})` : ""}`;
+    const amt = parseFloat(airtimeAmount);
+    setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── WiFi ──
+  const handleAddWifi = () => {
+    if (!wifiProvider || !wifiPackage) return;
+    const provider = airtimeProviders.find(p => p.id === wifiProvider);
+    const pkg = wifiPackages[wifiProvider]?.find(p => p.name === wifiPackage);
+    if (!pkg) return;
+    const id = `wifi-${Date.now()}`;
+    const name = `WiFi — ${provider?.name} ${pkg.name}${wifiPhone ? ` (${wifiPhone})` : ""}`;
+    addToCart({ id, name, price: pkg.price, category: "Services" });
+    setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
+    setSubView("products");
+  };
+
+  const handlePayWifiNow = () => {
+    if (!wifiProvider || !wifiPackage) return;
+    const provider = airtimeProviders.find(p => p.id === wifiProvider);
+    const pkg = wifiPackages[wifiProvider]?.find(p => p.name === wifiPackage);
+    if (!pkg) return;
+    const desc = `WiFi — ${provider?.name} ${pkg.name}${wifiPhone ? ` (${wifiPhone})` : ""}`;
+    setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
+    processServicePayment(desc, pkg.price, "products");
+  };
+
+  // ── Utility (DSTV, Water, Insurance) ──
+  const handleAddUtility = () => {
+    if (!activeUtility || !utilityAmount) return;
+    const id = `utility-${Date.now()}`;
+    const name = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
+    addToCart({ id, name, price: parseFloat(utilityAmount), category: "Services" });
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    setSubView("products");
+  };
+
+  const handlePayUtilityNow = () => {
+    if (!activeUtility || !utilityAmount) return;
+    const desc = `${activeUtility.label}${utilityRef ? ` — Ref: ${utilityRef}` : ""}${utilityCustomer ? ` (${utilityCustomer})` : ""}`;
+    const amt = parseFloat(utilityAmount);
+    setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── Council ──
+  const handleAddCouncilPayment = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    if (!council || !councilService || !councilAmount) return;
+    const id = `council-${Date.now()}`;
+    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSubView("products");
+  };
+
+  const handlePayCouncilNow = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    if (!council || !councilService || !councilAmount) return;
+    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const amt = parseFloat(councilAmount);
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    processServicePayment(desc, amt, "products");
+  };
+
+  // ── Electricity (pay first, then token) ──
+  const handlePayElectricity = async () => {
+    if (!elecAmount || !elecMeter) return;
+    const amt = parseFloat(elecAmount);
+    const desc = `Electricity — Meter: ${elecMeter}${elecCustomer ? ` (${elecCustomer})` : ""}`;
+    const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    setProcessingLabel(desc);
+    setProcessingDone(false);
+    setAfterProcessingStep("electricity-token");
+    setSubView("service-processing");
+
+    await addTransaction({
+      type: "sale",
+      payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
+      amount: amt,
+      description: `${desc} • ${sourceLabel}`,
+      status: "completed",
+    });
+
+    const token = generateElectricityToken();
+    setElectricityToken(token);
+    setTokenCopied(false);
+    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+
+    setTimeout(() => setProcessingDone(true), 2500);
+  };
+
+  const handleCopyToken = useCallback(() => {
+    navigator.clipboard.writeText(electricityToken.replace(/\s/g, ""));
+    setTokenCopied(true);
+    setTimeout(() => setTokenCopied(false), 2000);
+  }, [electricityToken]);
 
   const handleAddProduct = () => {
     if (!productForm.productName || !productForm.price) return;
@@ -185,6 +442,64 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
     );
   }
 
+  // Service processing view
+  if (subView === "service-processing") {
+    return (
+      <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
+        <DialogContent className="max-w-md">
+          <div className="flex flex-col items-center justify-center py-12">
+            {!processingDone ? (
+              <>
+                <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
+                <p className="text-lg font-semibold text-foreground mb-1">Processing Payment</p>
+                <p className="text-sm text-muted-foreground text-center">{processingLabel}</p>
+              </>
+            ) : (
+              <>
+                <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
+                  <CheckCircle className="w-8 h-8 text-green-500" />
+                </div>
+                <p className="text-lg font-semibold text-foreground mb-1">Payment Successful</p>
+                <p className="text-sm text-muted-foreground text-center mb-6">{processingLabel}</p>
+                <Button onClick={() => setSubView(afterProcessingStep)} className="w-full">
+                  {afterProcessingStep === "electricity-token" ? "View Token" : "Done"}
+                </Button>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Electricity token view
+  if (subView === "electricity-token") {
+    return (
+      <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-yellow-500/10 rounded-xl flex items-center justify-center">
+                <Zap className="w-5 h-5 text-yellow-500" />
+              </div>
+              Electricity Token
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <div className="bg-muted rounded-2xl p-6 text-center">
+              <p className="text-sm text-muted-foreground mb-2">Your prepaid token</p>
+              <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
+            </div>
+            <Button onClick={handleCopyToken} variant="outline" className="w-full">
+              {tokenCopied ? <><CheckCircle className="w-4 h-4 mr-2" /> Copied!</> : <><Copy className="w-4 h-4 mr-2" /> Copy Token</>}
+            </Button>
+            <Button onClick={() => setSubView("products")} className="w-full">Done</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && resetAndClose()}>
       <DialogContent className="max-w-5xl max-h-[90vh] flex flex-col">
@@ -223,10 +538,10 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                     </button>
                   )}
                   {showServiceTile && (
-                    <button onClick={() => setSubView("service-form")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                    <button onClick={() => setSubView("services-list")} className="p-3 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
                       <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2"><FileText className="w-5 h-5 text-primary" /></div>
-                      <p className="font-medium text-foreground text-sm">Custom Service</p>
-                      <p className="text-xs text-primary font-semibold mt-1">+ Add</p>
+                      <p className="font-medium text-foreground text-sm">Services</p>
+                      <p className="text-xs text-primary font-semibold mt-1">View All</p>
                     </button>
                   )}
                   {showDevicesTile && (
@@ -249,7 +564,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                       <button key={product.id} onClick={() => addToCart(product)}
                         className={`p-3 rounded-xl text-left transition-all ${qty > 0 ? "bg-primary/10 border-2 border-primary" : "bg-card border border-border"}`}>
                         <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center mb-2">
-                          {product.image ? <img src={product.image} alt="" className="w-6 h-6 object-contain" /> : getCategoryIcon(product.category)}
+                          {getCategoryIcon(product.category)}
                         </div>
                         <p className="font-medium text-foreground text-sm truncate">{product.name}</p>
                         <div className="flex items-center justify-between mt-1">
@@ -260,6 +575,155 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                     );
                   })}
                 </div>
+              </div>
+            )}
+
+            {/* Services List */}
+            {subView === "services-list" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Services</h3>
+                <div className="grid grid-cols-3 gap-3">
+                  {utilityServices.map(svc => {
+                    const Icon = svc.icon;
+                    return (
+                      <button
+                        key={svc.id}
+                        onClick={() => {
+                          if (svc.id === "airtime") setSubView("airtime-form");
+                          else if (svc.id === "wifi") setSubView("wifi-form");
+                          else if (svc.id === "electricity") setSubView("electricity-form");
+                          else if (svc.id === "council") setSubView("council-form");
+                          else { setActiveUtility(svc); setSubView("utility-form"); }
+                        }}
+                        className="p-4 rounded-xl text-left transition-all bg-card border border-border hover:border-primary"
+                      >
+                        <div className={`w-10 h-10 ${svc.bg} rounded-lg flex items-center justify-center mb-2`}>
+                          <Icon className={`w-5 h-5 ${svc.color}`} />
+                        </div>
+                        <p className="font-medium text-foreground text-sm">{svc.label}</p>
+                      </button>
+                    );
+                  })}
+                  {/* Custom Service tile */}
+                  <button onClick={() => setSubView("service-form")} className="p-4 rounded-xl text-left transition-all bg-card border border-border hover:border-primary">
+                    <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center mb-2">
+                      <Plus className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <p className="font-medium text-foreground text-sm">Custom</p>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Airtime Form */}
+            {subView === "airtime-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Buy Airtime</h3>
+                <div className="space-y-2">
+                  <Label>Provider *</Label>
+                  <Select value={airtimeProvider} onValueChange={setAirtimeProvider}>
+                    <SelectTrigger><SelectValue placeholder="Select provider" /></SelectTrigger>
+                    <SelectContent>{airtimeProviders.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2"><Label>Phone Number</Label><Input value={airtimePhone} onChange={e => setAirtimePhone(e.target.value)} placeholder="e.g. 71234567" /></div>
+                <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={airtimeAmount} onChange={e => setAirtimeAmount(e.target.value)} placeholder="0.00" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" onClick={handleAddAirtime} disabled={!airtimeProvider || !airtimeAmount}>Add to Cart</Button>
+                  <Button onClick={handlePayAirtimeNow} disabled={!airtimeProvider || !airtimeAmount}>Pay Now</Button>
+                </div>
+              </div>
+            )}
+
+            {/* WiFi Form */}
+            {subView === "wifi-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Buy WiFi</h3>
+                <div className="space-y-2">
+                  <Label>Provider *</Label>
+                  <Select value={wifiProvider} onValueChange={v => { setWifiProvider(v); setWifiPackage(""); }}>
+                    <SelectTrigger><SelectValue placeholder="Select provider" /></SelectTrigger>
+                    <SelectContent>{airtimeProviders.map(p => <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>)}</SelectContent>
+                  </Select>
+                </div>
+                {wifiProvider && (
+                  <div className="space-y-2">
+                    <Label>Package *</Label>
+                    <Select value={wifiPackage} onValueChange={setWifiPackage}>
+                      <SelectTrigger><SelectValue placeholder="Select package" /></SelectTrigger>
+                      <SelectContent>{wifiPackages[wifiProvider]?.map(p => <SelectItem key={p.name} value={p.name}>{p.name} — P{p.price}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div className="space-y-2"><Label>Phone Number</Label><Input value={wifiPhone} onChange={e => setWifiPhone(e.target.value)} placeholder="e.g. 71234567" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" onClick={handleAddWifi} disabled={!wifiProvider || !wifiPackage}>Add to Cart</Button>
+                  <Button onClick={handlePayWifiNow} disabled={!wifiProvider || !wifiPackage}>Pay Now</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Utility Form (DSTV, Water, Insurance) */}
+            {subView === "utility-form" && activeUtility && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => { setSubView("services-list"); setActiveUtility(null); }}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">{activeUtility.label}</h3>
+                <div className="space-y-2"><Label>Reference / Account Number</Label><Input value={utilityRef} onChange={e => setUtilityRef(e.target.value)} placeholder="e.g. Account number" /></div>
+                <div className="space-y-2"><Label>Customer Name</Label><Input value={utilityCustomer} onChange={e => setUtilityCustomer(e.target.value)} placeholder="e.g. John Doe" /></div>
+                <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={utilityAmount} onChange={e => setUtilityAmount(e.target.value)} placeholder="0.00" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" onClick={handleAddUtility} disabled={!utilityAmount}>Add to Cart</Button>
+                  <Button onClick={handlePayUtilityNow} disabled={!utilityAmount}>Pay Now</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Council Payment Form */}
+            {subView === "council-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Council Payment</h3>
+                <div className="space-y-2">
+                  <Label>Council *</Label>
+                  <Select value={selectedCouncil} onValueChange={v => { setSelectedCouncil(v); if (v !== "Other") setCouncilOther(""); }}>
+                    <SelectTrigger><SelectValue placeholder="Select council" /></SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {botswanaCouncils.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {selectedCouncil === "Other" && (
+                  <div className="space-y-2"><Label>Council Name *</Label><Input value={councilOther} onChange={e => setCouncilOther(e.target.value)} placeholder="Enter council name" /></div>
+                )}
+                <div className="space-y-2"><Label>Service / Purpose *</Label><Input value={councilService} onChange={e => setCouncilService(e.target.value)} placeholder="e.g. Rates, Licence Fee" /></div>
+                <div className="space-y-2"><Label>Reference Number</Label><Input value={councilRef} onChange={e => setCouncilRef(e.target.value)} placeholder="e.g. Account/Ref" /></div>
+                <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" onClick={handleAddCouncilPayment} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}>Add to Cart</Button>
+                  <Button onClick={handlePayCouncilNow} disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}>Pay Now</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Electricity Form */}
+            {subView === "electricity-form" && (
+              <div className="space-y-4">
+                <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Buy Electricity</h3>
+                <div className="space-y-2"><Label>Meter Number *</Label><Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" /></div>
+                <div className="space-y-2"><Label>Customer Name</Label><Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Doe" /></div>
+                <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={elecAmount} onChange={e => setElecAmount(e.target.value)} placeholder="0.00" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full">Pay Now</Button>
+                <p className="text-xs text-muted-foreground text-center">Token will be generated after successful payment</p>
               </div>
             )}
 
@@ -285,11 +749,22 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
 
             {subView === "service-form" && (
               <div className="space-y-4">
-                <Button variant="ghost" size="sm" onClick={() => setSubView("products")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
-                <div className="space-y-2"><Label>Service Name</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee" /></div>
+                <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
+                <h3 className="font-semibold text-foreground">Custom Service</h3>
+                <div className="space-y-2"><Label>Service Name *</Label><Input value={serviceForm.serviceName} onChange={e => setServiceForm({ ...serviceForm, serviceName: e.target.value })} placeholder="e.g. Licence Fee" /></div>
                 <div className="space-y-2"><Label>Customer (optional)</Label><Input value={serviceForm.customerName} onChange={e => setServiceForm({ ...serviceForm, customerName: e.target.value })} placeholder="e.g. Council" /></div>
-                <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
-                <Button onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount} className="w-full">Add to Cart</Button>
+                <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" inputMode="numeric" value={serviceForm.amount} onChange={e => setServiceForm({ ...serviceForm, amount: e.target.value })} placeholder="0.00" /></div>
+                <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
+                <div className="grid grid-cols-2 gap-3">
+                  <Button variant="outline" onClick={handleAddService} disabled={!serviceForm.serviceName || !serviceForm.amount}>Add to Cart</Button>
+                  <Button onClick={() => {
+                    if (!serviceForm.serviceName || !serviceForm.amount) return;
+                    const desc = `${serviceForm.serviceName}${serviceForm.customerName ? ` — ${serviceForm.customerName}` : ""}`;
+                    const amt = parseFloat(serviceForm.amount);
+                    setServiceForm({ serviceName: "", amount: "", customerName: "" });
+                    processServicePayment(desc, amt, "products");
+                  }} disabled={!serviceForm.serviceName || !serviceForm.amount}>Pay Now</Button>
+                </div>
               </div>
             )}
 
