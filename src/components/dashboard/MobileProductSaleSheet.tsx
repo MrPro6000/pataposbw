@@ -390,27 +390,37 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const handlePayElectricity = async () => {
     if (!elecAmount || !elecMeter) return;
     const amt = parseFloat(elecAmount);
-    const desc = `Electricity — Meter: ${elecMeter}${elecCustomer ? ` (${elecCustomer})` : ""}`;
+    const generatedName = generateMeterCustomerName(elecMeter);
+    const desc = `Electricity — Meter: ${elecMeter} (${generatedName})`;
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    if (paymentSource === "wallet") {
+      if (balance < amt) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amt.toFixed(2)}` });
+        return;
+      }
+    }
 
     setProcessingLabel(desc);
     setProcessingDone(false);
     setAfterProcessingStep("electricity-token");
     setStep("service-processing");
 
+    const txAmount = paymentSource === "wallet" ? -amt : amt;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount: amt,
+      amount: txAmount,
       description: `${desc} • ${sourceLabel}`,
       status: "completed",
     });
 
-    // Generate token after payment processes
     const token = generateElectricityToken();
     setElectricityToken(token);
+    setElecGeneratedName(generatedName);
     setTokenCopied(false);
-    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+    setElecAmount(""); setElecMeter("");
 
     setTimeout(() => setProcessingDone(true), 2500);
   };
