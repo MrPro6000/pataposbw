@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
