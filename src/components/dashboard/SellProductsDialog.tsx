@@ -89,6 +89,31 @@ const generateElectricityToken = (): string => {
   return token;
 };
 
+// Botswana surnames for electricity meter name generation
+const botswanaSurnames = [
+  "Moeng", "Kgosidintsi", "Motswagole", "Seretse", "Mogae", "Masire", "Khama",
+  "Tshekedi", "Bathoen", "Letsididi", "Molefe", "Kgathi", "Radipati", "Magang",
+  "Mosweu", "Kepaletswe", "Mothibi", "Otsogile", "Gabathuse", "Letsholo",
+  "Mabua", "Modise", "Mogorosi", "Mokgweetsi", "Sebina", "Tsheko", "Nkwe",
+];
+const botswanaFirstNames = [
+  "Keabetswe", "Tumelo", "Boitumelo", "Kagiso", "Lethabo", "Neo", "Mpho",
+  "Gorata", "Onalenna", "Kago", "Mothusi", "Lesego", "Tebogo", "Goitseone",
+  "Phenyo", "Kealeboga", "Ofentse", "Bame", "Lorato", "Thato",
+];
+
+const generateMeterCustomerName = (meterNumber: string): string => {
+  // Use meter number as seed for consistent name per meter
+  let hash = 0;
+  for (let i = 0; i < meterNumber.length; i++) {
+    hash = ((hash << 5) - hash) + meterNumber.charCodeAt(i);
+    hash |= 0;
+  }
+  const firstIdx = Math.abs(hash) % botswanaFirstNames.length;
+  const lastIdx = Math.abs(hash >> 8) % botswanaSurnames.length;
+  return `${botswanaFirstNames[firstIdx]} ${botswanaSurnames[lastIdx]}`;
+};
+
 const paymentSources = [
   { id: "wallet", label: "Wallet Balance", icon: Wallet, color: "text-primary", bg: "bg-primary/10" },
   { id: "orange_money", label: "Orange Money", icon: Smartphone, color: "text-orange-500", bg: "bg-orange-500/10" },
