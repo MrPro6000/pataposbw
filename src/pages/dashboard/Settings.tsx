@@ -173,6 +173,42 @@ const Settings = () => {
       case "business":
         return (
           <div className="space-y-6">
+            {/* Profile Picture */}
+            <div className="flex items-center gap-5">
+              <div className="relative">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile" className="w-20 h-20 rounded-2xl object-cover" />
+                ) : (
+                  <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center text-2xl font-bold text-primary-foreground">
+                    {userProfile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || "U"}
+                  </div>
+                )}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 bg-foreground rounded-full flex items-center justify-center"
+                >
+                  {uploading ? <Loader2 className="w-3.5 h-3.5 text-background animate-spin" /> : <Camera className="w-3.5 h-3.5 text-background" />}
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">{avatarUrl ? "Profile Photo" : "No photo yet"}</p>
+                <div className="flex gap-2">
+                  <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-sm text-primary font-medium hover:underline">
+                    {avatarUrl ? "Replace" : "Upload"}
+                  </button>
+                  {avatarUrl && (
+                    <>
+                      <span className="text-muted-foreground">·</span>
+                      <button onClick={handleRemoveAvatar} disabled={uploading} className="text-sm text-destructive font-medium hover:underline flex items-center gap-1">
+                        <Trash2 className="w-3 h-3" /> Remove
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="space-y-2"><Label>Business Name</Label><Input value={businessInfo.name} onChange={(e) => setBusinessInfo({ ...businessInfo, name: e.target.value })} /></div>
             <div className="space-y-2"><Label>Registration Number</Label><Input value={businessInfo.registrationNumber} onChange={(e) => setBusinessInfo({ ...businessInfo, registrationNumber: e.target.value })} /></div>
             <div className="grid md:grid-cols-2 gap-4">
