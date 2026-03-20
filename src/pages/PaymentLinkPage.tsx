@@ -443,7 +443,7 @@ const PaymentLinkPage = () => {
 
         {/* SUCCESS RECEIPT */}
         {view === "success" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in-soft">
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle className="w-10 h-10 text-green-500" />
