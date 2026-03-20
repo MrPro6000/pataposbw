@@ -71,8 +71,60 @@ const Settings = () => {
         phone: userProfile.phone || "",
         address: "",
       });
+      setAvatarUrl(userProfile.avatar_url || "");
     }
   }, [userProfile]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const { data: existingFiles } = await supabase.storage.from("avatars").list(user.id);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage.from("avatars").remove(avatarFiles.map(f => `${user.id}/${f.name}`));
+        }
+      }
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/avatar_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+      setAvatarUrl(`${publicUrl}?t=${Date.now()}`);
+      await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", user.id);
+      refreshProfile();
+      toast({ title: "Photo uploaded" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user) return;
+    setUploading(true);
+    try {
+      const { data: existingFiles } = await supabase.storage.from("avatars").list(user.id);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage.from("avatars").remove(avatarFiles.map(f => `${user.id}/${f.name}`));
+        }
+      }
+      await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", user.id);
+      setAvatarUrl("");
+      refreshProfile();
+      toast({ title: "Photo removed" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (isMobile) { return <MobileDashboardHome />; }
 
