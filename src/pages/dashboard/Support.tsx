@@ -107,6 +107,12 @@ const Support = () => {
                 </SelectContent>
               </Select>
             </div>
+            {ticketForm.category === "other" && (
+              <div className="space-y-2">
+                <Label htmlFor="categoryOther">Please specify</Label>
+                <Input id="categoryOther" value={ticketForm.categoryOther || ""} onChange={(e) => setTicketForm({ ...ticketForm, categoryOther: e.target.value })} placeholder="Describe the category" />
+              </div>
+            )}
             <div className="space-y-2"><Label htmlFor="message">Message</Label><Textarea id="message" value={ticketForm.message} onChange={(e) => setTicketForm({ ...ticketForm, message: e.target.value })} placeholder="Describe your issue in detail..." rows={5} /></div>
             <Button onClick={handleSubmitTicket} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"><Send className="w-4 h-4 mr-2" /> Submit Ticket</Button>
           </div>
