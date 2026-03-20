@@ -370,20 +370,22 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // ── Council ──
   const handleAddCouncilPayment = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    if (!council || !service || !councilAmount) return;
     const id = `council-${Date.now()}`;
-    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const name = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
     addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     setStep("products");
   };
 
   const handlePayCouncilNow = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    if (!council || !service || !councilAmount) return;
+    const desc = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     processServicePayment(desc, amt, "products");
   };
 
