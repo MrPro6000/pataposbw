@@ -111,21 +111,22 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   };
 
   // Build quick action rows based on preferences
+  // Order: Mobile Money, Card Sale, Cash
   const row1Actions = [
+    { icon: Smartphone, label: "Mobile Money", show: preferences.show_mobile_money, onClick: () => handleQuickAction('mobile-money') },
     { icon: CreditCard, label: "Card sale", show: true, onClick: () => handleQuickAction('card-sale') },
-    { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
-    { icon: FileText, label: "New invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
+    { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
   ].filter(a => a.show);
 
+  // Order: Payment Link, Voucher, Invoice, Wallet
   const row2Actions = [
-    { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
-    { icon: Smartphone, label: "Mobile Money", show: preferences.show_mobile_money, onClick: () => handleQuickAction('mobile-money') },
+    { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
+    { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
+    { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
     { icon: Wallet, label: "Wallet", show: true, onClick: () => setWalletOpen(true) },
   ].filter(a => a.show);
 
-  const row3Actions = [
-    { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
-  ].filter(a => a.show);
+  const row3Actions: typeof row1Actions = [];
 
   return (
     <div className="min-h-screen bg-muted pb-24">

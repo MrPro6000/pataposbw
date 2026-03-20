@@ -192,18 +192,18 @@ const Payouts = () => {
         )}
       </div>
 
-      <div className="grid md:grid-cols-2 gap-4 mb-6">
-        <button onClick={() => setCapitalOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
-          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center"><Wallet className="w-6 h-6 text-amber-500" /></div><div><p className="font-semibold text-foreground">Pata Capital</p><p className="text-sm text-muted-foreground">Get business funding</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
+      <div className="space-y-4 mb-6">
+        <button onClick={() => setLoanOpen(true)} className="w-full bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center"><Smartphone className="w-6 h-6 text-amber-500" /></div><div><p className="font-semibold text-foreground">Mobile Money Loans</p><p className="text-sm text-muted-foreground">Apply & set your own repayment plan</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
         </button>
-        <button onClick={() => setFeesOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
-          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center"><Percent className="w-6 h-6 text-muted-foreground" /></div><div><p className="font-semibold text-foreground">Fees</p><p className="text-sm text-muted-foreground">All fees related to your business</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
+        <button onClick={() => setCapitalOpen(true)} className="w-full bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center"><Wallet className="w-6 h-6 text-amber-500" /></div><div><p className="font-semibold text-foreground">Pata Capital</p><p className="text-sm text-muted-foreground">Business funding — find out more</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
         </button>
-        <button onClick={() => setLoanOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
-          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center"><Smartphone className="w-6 h-6 text-amber-500" /></div><div><p className="font-semibold text-foreground">Mobile Money Loans</p><p className="text-sm text-muted-foreground">Orange Money, Smega, MyZaka</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
-        </button>
-        <button onClick={() => setMoneyTransferOpen(true)} className="bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+        <button onClick={() => setMoneyTransferOpen(true)} className="w-full bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
           <div className="flex items-center gap-4"><div className="w-12 h-12 bg-orange-500/20 rounded-xl flex items-center justify-center"><Send className="w-6 h-6 text-orange-500" /></div><div><p className="font-semibold text-foreground">Send Money</p><p className="text-sm text-muted-foreground">International transfers via Mukuru</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
+        </button>
+        <button onClick={() => setFeesOpen(true)} className="w-full bg-card border border-border rounded-2xl p-6 text-left hover:bg-muted/50 transition-colors">
+          <div className="flex items-center gap-4"><div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center"><Percent className="w-6 h-6 text-muted-foreground" /></div><div><p className="font-semibold text-foreground">Fees</p><p className="text-sm text-muted-foreground">All fees related to your business</p></div><ChevronRight className="w-5 h-5 text-muted-foreground ml-auto" /></div>
         </button>
       </div>
 
