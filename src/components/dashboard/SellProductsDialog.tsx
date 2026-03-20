@@ -142,7 +142,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { addTransaction } = useTransactions();
+  const { addTransaction, balance } = useTransactions();
   const { products: dbProducts } = useProducts();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
