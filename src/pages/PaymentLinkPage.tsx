@@ -376,7 +376,7 @@ const PaymentLinkPage = () => {
 
         {/* MOBILE MONEY FORM */}
         {view === "mobile_form" && (
-          <div className="space-y-5 animate-fade-in">
+          <div className="space-y-5 animate-fade-in-soft">
             <div className="flex items-center gap-3">
               <button onClick={() => setView("choose")} className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 text-foreground" />
