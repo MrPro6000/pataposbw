@@ -889,6 +889,13 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <p className="text-lg font-bold text-foreground">Electricity Token Generated</p>
                 <p className="text-sm text-muted-foreground text-center">Enter this token into your prepaid meter to load electricity units.</p>
                 
+                {elecGeneratedName && (
+                  <div className="w-full bg-card border border-border rounded-xl p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Customer</p>
+                    <p className="text-sm font-semibold text-foreground">{elecGeneratedName}</p>
+                  </div>
+                )}
+
                 <div className="w-full bg-muted border-2 border-yellow-500/30 rounded-2xl p-5 text-center">
                   <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-semibold">Prepaid Token</p>
                   <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
