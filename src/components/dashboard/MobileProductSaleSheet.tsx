@@ -183,6 +183,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [selectedCouncil, setSelectedCouncil] = useState("");
   const [councilOther, setCouncilOther] = useState("");
   const [councilService, setCouncilService] = useState("");
+  const [councilServiceOther, setCouncilServiceOther] = useState("");
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
 
@@ -369,20 +370,22 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // ── Council ──
   const handleAddCouncilPayment = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    if (!council || !service || !councilAmount) return;
     const id = `council-${Date.now()}`;
-    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const name = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
     addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     setStep("products");
   };
 
   const handlePayCouncilNow = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    if (!council || !service || !councilAmount) return;
+    const desc = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     processServicePayment(desc, amt, "products");
   };
 
@@ -452,7 +455,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     setElecAmount(""); setElecMeter(""); setElecGeneratedName("");
     setElectricityToken(""); setTokenCopied(false);
     setPaymentSource("wallet");
@@ -824,6 +827,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   </SelectContent>
                 </Select>
               </div>
+              {councilService === "Other" && (
+                <div className="space-y-2">
+                  <Label>Specify Service *</Label>
+                  <Input value={councilServiceOther} onChange={e => setCouncilServiceOther(e.target.value)} placeholder="Type the service or payment type" />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Amount (P) *</Label>
                 <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
@@ -835,12 +844,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
                 <Button variant="outline" onClick={handleAddCouncilPayment}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
                   className="flex-1 h-12">
                   <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
                 </Button>
                 <Button onClick={handlePayCouncilNow}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
                   className="flex-1 h-12">
                   Pay Now
                 </Button>

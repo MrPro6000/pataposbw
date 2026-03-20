@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, LayoutGrid } from "lucide-react";
+import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, LayoutGrid, Camera, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -24,6 +24,9 @@ const Settings = () => {
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   const [saving, setSaving] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [businessInfo, setBusinessInfo] = useState({
     name: "",
@@ -68,8 +71,60 @@ const Settings = () => {
         phone: userProfile.phone || "",
         address: "",
       });
+      setAvatarUrl(userProfile.avatar_url || "");
     }
   }, [userProfile]);
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+    setUploading(true);
+    try {
+      const { data: existingFiles } = await supabase.storage.from("avatars").list(user.id);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage.from("avatars").remove(avatarFiles.map(f => `${user.id}/${f.name}`));
+        }
+      }
+      const ext = file.name.split(".").pop();
+      const path = `${user.id}/avatar_${Date.now()}.${ext}`;
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
+      setAvatarUrl(`${publicUrl}?t=${Date.now()}`);
+      await supabase.from("profiles").update({ avatar_url: publicUrl }).eq("user_id", user.id);
+      refreshProfile();
+      toast({ title: "Photo uploaded" });
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    if (!user) return;
+    setUploading(true);
+    try {
+      const { data: existingFiles } = await supabase.storage.from("avatars").list(user.id);
+      if (existingFiles?.length) {
+        const avatarFiles = existingFiles.filter(f => f.name.startsWith("avatar"));
+        if (avatarFiles.length) {
+          await supabase.storage.from("avatars").remove(avatarFiles.map(f => `${user.id}/${f.name}`));
+        }
+      }
+      await supabase.from("profiles").update({ avatar_url: null }).eq("user_id", user.id);
+      setAvatarUrl("");
+      refreshProfile();
+      toast({ title: "Photo removed" });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setUploading(false);
+    }
+  };
 
   if (isMobile) { return <MobileDashboardHome />; }
 
@@ -118,6 +173,42 @@ const Settings = () => {
       case "business":
         return (
           <div className="space-y-6">
+            {/* Profile Picture */}
+            <div className="flex items-center gap-5">
+              <div className="relative">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Profile" className="w-20 h-20 rounded-2xl object-cover" />
+                ) : (
+                  <div className="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center text-2xl font-bold text-primary-foreground">
+                    {userProfile?.full_name?.slice(0, 2).toUpperCase() || user?.email?.slice(0, 2).toUpperCase() || "U"}
+                  </div>
+                )}
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 bg-foreground rounded-full flex items-center justify-center"
+                >
+                  {uploading ? <Loader2 className="w-3.5 h-3.5 text-background animate-spin" /> : <Camera className="w-3.5 h-3.5 text-background" />}
+                </button>
+                <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+              </div>
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">{avatarUrl ? "Profile Photo" : "No photo yet"}</p>
+                <div className="flex gap-2">
+                  <button onClick={() => fileInputRef.current?.click()} disabled={uploading} className="text-sm text-primary font-medium hover:underline">
+                    {avatarUrl ? "Replace" : "Upload"}
+                  </button>
+                  {avatarUrl && (
+                    <>
+                      <span className="text-muted-foreground">·</span>
+                      <button onClick={handleRemoveAvatar} disabled={uploading} className="text-sm text-destructive font-medium hover:underline flex items-center gap-1">
+                        <Trash2 className="w-3 h-3" /> Remove
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
             <div className="space-y-2"><Label>Business Name</Label><Input value={businessInfo.name} onChange={(e) => setBusinessInfo({ ...businessInfo, name: e.target.value })} /></div>
             <div className="space-y-2"><Label>Registration Number</Label><Input value={businessInfo.registrationNumber} onChange={(e) => setBusinessInfo({ ...businessInfo, registrationNumber: e.target.value })} /></div>
             <div className="grid md:grid-cols-2 gap-4">

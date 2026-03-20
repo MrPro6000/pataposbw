@@ -271,7 +271,15 @@ const MobileWalletSheet = ({ open, onClose }: MobileWalletSheetProps) => {
   };
 
   return (
-    <Sheet open={open} onOpenChange={(o) => { if (!o) handleClose(); }}>
+    <Sheet open={open} onOpenChange={(o) => {
+      if (!o) {
+        if (view !== "main") {
+          resetForm();
+        } else {
+          handleClose();
+        }
+      }
+    }}>
       <SheetContent side="bottom" className="rounded-t-2xl max-h-[90vh] overflow-y-auto pb-safe">
         <SheetHeader>
           <SheetTitle>{getTitle()}</SheetTitle>
