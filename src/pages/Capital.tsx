@@ -19,7 +19,7 @@ const Capital = () => {
       <MainNav />
 
       {/* Hero Section */}
-      <section className="px-6 md:px-20 py-12 md:py-20">
+      <section className="px-6 md:px-20 py-12 md:py-20 animate-fade-in-soft">
         <div className="max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div>

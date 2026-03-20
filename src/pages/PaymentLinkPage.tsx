@@ -199,7 +199,7 @@ const PaymentLinkPage = () => {
 
         {/* DETAILS VIEW */}
         {view === "details" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in-soft">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Link2 className="w-8 h-8 text-primary" />
@@ -254,7 +254,7 @@ const PaymentLinkPage = () => {
 
         {/* CHOOSE PAYMENT METHOD */}
         {view === "choose" && (
-          <div className="space-y-5 animate-fade-in">
+          <div className="space-y-5 animate-fade-in-soft">
             <div className="flex items-center gap-3">
               <button onClick={() => setView("details")} className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 text-foreground" />
@@ -290,7 +290,7 @@ const PaymentLinkPage = () => {
 
         {/* CARD FORM */}
         {view === "card_form" && (
-          <div className="space-y-5 animate-fade-in">
+          <div className="space-y-5 animate-fade-in-soft">
             <div className="flex items-center gap-3">
               <button onClick={() => setView("choose")} className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 text-foreground" />
@@ -376,7 +376,7 @@ const PaymentLinkPage = () => {
 
         {/* MOBILE MONEY FORM */}
         {view === "mobile_form" && (
-          <div className="space-y-5 animate-fade-in">
+          <div className="space-y-5 animate-fade-in-soft">
             <div className="flex items-center gap-3">
               <button onClick={() => setView("choose")} className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
                 <ArrowLeft className="w-4 h-4 text-foreground" />
@@ -426,7 +426,7 @@ const PaymentLinkPage = () => {
 
         {/* PROCESSING */}
         {view === "processing" && (
-          <div className="flex flex-col items-center justify-center py-20 space-y-6 animate-fade-in">
+          <div className="flex flex-col items-center justify-center py-20 space-y-6 animate-fade-in-soft">
             <div className="w-24 h-24 relative">
               <div className="absolute inset-0 border-4 border-primary/20 rounded-full" />
               <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -443,7 +443,7 @@ const PaymentLinkPage = () => {
 
         {/* SUCCESS RECEIPT */}
         {view === "success" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in-soft">
             <div className="flex flex-col items-center">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                 <CheckCircle className="w-10 h-10 text-green-500" />
