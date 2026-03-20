@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTheme } from "@/contexts/ThemeContext";
-import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, LayoutGrid } from "lucide-react";
+import { Building2, Store, CreditCard, Receipt, Bell, Percent, ChevronRight, Save, Palette, Sun, Moon, LayoutGrid, Camera, Loader2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
