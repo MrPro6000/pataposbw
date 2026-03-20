@@ -455,7 +455,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setAirtimeProvider(""); setAirtimeAmount(""); setAirtimePhone("");
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
     setElecAmount(""); setElecMeter(""); setElecGeneratedName("");
     setElectricityToken(""); setTokenCopied(false);
     setPaymentSource("wallet");
