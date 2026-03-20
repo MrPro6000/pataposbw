@@ -790,7 +790,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Select Council *</Label>
+                <Label>Council *</Label>
                 <Select value={selectedCouncil} onValueChange={setSelectedCouncil}>
                   <SelectTrigger><SelectValue placeholder="Choose your council" /></SelectTrigger>
                   <SelectContent className="max-h-60">
