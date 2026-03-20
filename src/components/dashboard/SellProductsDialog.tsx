@@ -769,7 +769,12 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                 <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
                 <h3 className="font-semibold text-foreground">Buy Electricity</h3>
                 <div className="space-y-2"><Label>Meter Number *</Label><Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" /></div>
-                <div className="space-y-2"><Label>Customer Name</Label><Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Doe" /></div>
+                {elecMeter.length >= 5 && (
+                  <div className="bg-muted rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Registered to:</p>
+                    <p className="text-sm font-semibold text-foreground">{generateMeterCustomerName(elecMeter)}</p>
+                  </div>
+                )}
                 <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={elecAmount} onChange={e => setElecAmount(e.target.value)} placeholder="0.00" /></div>
                 <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
                 <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full">Pay Now</Button>
