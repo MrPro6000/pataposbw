@@ -536,6 +536,12 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
+            {elecGeneratedName && (
+              <div className="bg-card border border-border rounded-xl p-3 text-center">
+                <p className="text-xs text-muted-foreground">Customer</p>
+                <p className="text-sm font-semibold text-foreground">{elecGeneratedName}</p>
+              </div>
+            )}
             <div className="bg-muted rounded-2xl p-6 text-center">
               <p className="text-sm text-muted-foreground mb-2">Your prepaid token</p>
               <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
