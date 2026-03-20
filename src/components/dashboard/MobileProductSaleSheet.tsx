@@ -755,10 +755,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Meter Number *</Label>
                 <Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" inputMode="numeric" />
               </div>
-              <div className="space-y-2">
-                <Label>Customer Name (optional)</Label>
-                <Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Moeng" />
-              </div>
+              {elecMeter.length >= 5 && (
+                <div className="bg-muted rounded-xl p-3">
+                  <p className="text-xs text-muted-foreground">Registered to:</p>
+                  <p className="text-sm font-semibold text-foreground">{generateMeterCustomerName(elecMeter)}</p>
+                </div>
+              )}
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full h-14 text-lg font-semibold">
                 <Zap className="w-5 h-5 mr-2" />
