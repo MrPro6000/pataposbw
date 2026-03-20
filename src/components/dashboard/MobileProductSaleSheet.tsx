@@ -189,7 +189,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // Electricity form state (separate from utility)
   const [elecAmount, setElecAmount] = useState("");
   const [elecMeter, setElecMeter] = useState("");
-  const [elecCustomer, setElecCustomer] = useState("");
+  const [elecGeneratedName, setElecGeneratedName] = useState("");
 
   // Electricity token state
   const [electricityToken, setElectricityToken] = useState("");
