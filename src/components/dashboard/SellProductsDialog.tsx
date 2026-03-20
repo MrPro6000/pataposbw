@@ -253,15 +253,27 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   // ── Instant service payment helper ──
   const processServicePayment = async (description: string, amount: number, nextStep: SubView) => {
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    // If paying from wallet, check balance
+    if (paymentSource === "wallet") {
+      if (balance < amount) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amount.toFixed(2)}` });
+        return;
+      }
+    }
+
     setProcessingLabel(description);
     setProcessingDone(false);
     setAfterProcessingStep(nextStep);
     setSubView("service-processing");
 
+    // Wallet = deduction (negative), other methods = income (positive)
+    const txAmount = paymentSource === "wallet" ? -amount : amount;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount,
+      amount: txAmount,
       description: `${description} • ${sourceLabel}`,
       status: "completed",
     });
