@@ -23,7 +23,7 @@ const faqs: FAQ[] = [
 const Support = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedFaq, setExpandedFaq] = useState<number | null>(null);
-  const [ticketForm, setTicketForm] = useState({ subject: "", category: "", message: "" });
+  const [ticketForm, setTicketForm] = useState({ subject: "", category: "", message: "", categoryOther: "" });
   const [showLiveChat, setShowLiveChat] = useState(false);
   const isMobile = useIsMobile();
 

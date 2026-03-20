@@ -844,12 +844,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
                 <Button variant="outline" onClick={handleAddCouncilPayment}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
                   className="flex-1 h-12">
                   <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
                 </Button>
                 <Button onClick={handlePayCouncilNow}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !councilService || !councilAmount}
+                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
                   className="flex-1 h-12">
                   Pay Now
                 </Button>
