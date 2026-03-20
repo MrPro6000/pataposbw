@@ -791,7 +791,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </div>
               <div className="space-y-2">
                 <Label>Council *</Label>
-                <Select value={selectedCouncil} onValueChange={setSelectedCouncil}>
+                <Select value={selectedCouncil} onValueChange={v => { setSelectedCouncil(v); if (v !== "Other") setCouncilOther(""); }}>
                   <SelectTrigger><SelectValue placeholder="Choose your council" /></SelectTrigger>
                   <SelectContent className="max-h-60">
                     {botswanaCouncils.map(c => (
