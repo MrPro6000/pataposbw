@@ -24,6 +24,9 @@ const Settings = () => {
   const { toast } = useToast();
   const [activeSection, setActiveSection] = useState<SettingsSection>("business");
   const [saving, setSaving] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [businessInfo, setBusinessInfo] = useState({
     name: "",
