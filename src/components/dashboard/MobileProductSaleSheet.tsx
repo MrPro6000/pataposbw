@@ -827,6 +827,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                   </SelectContent>
                 </Select>
               </div>
+              {councilService === "Other" && (
+                <div className="space-y-2">
+                  <Label>Specify Service *</Label>
+                  <Input value={councilServiceOther} onChange={e => setCouncilServiceOther(e.target.value)} placeholder="Type the service or payment type" />
+                </div>
+              )}
               <div className="space-y-2">
                 <Label>Amount (P) *</Label>
                 <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
