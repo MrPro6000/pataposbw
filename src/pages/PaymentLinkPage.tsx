@@ -199,7 +199,7 @@ const PaymentLinkPage = () => {
 
         {/* DETAILS VIEW */}
         {view === "details" && (
-          <div className="space-y-6 animate-fade-in">
+          <div className="space-y-6 animate-fade-in-soft">
             <div className="text-center">
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <Link2 className="w-8 h-8 text-primary" />
