@@ -34,7 +34,7 @@ const Support = () => {
   const handleSubmitTicket = () => {
     if (!ticketForm.subject || !ticketForm.category || !ticketForm.message) return;
     alert("Support ticket submitted! We'll get back to you within 24 hours.");
-    setTicketForm({ subject: "", category: "", message: "" });
+    setTicketForm({ subject: "", category: "", message: "", categoryOther: "" });
   };
 
   return (
