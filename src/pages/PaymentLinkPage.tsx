@@ -426,7 +426,7 @@ const PaymentLinkPage = () => {
 
         {/* PROCESSING */}
         {view === "processing" && (
-          <div className="flex flex-col items-center justify-center py-20 space-y-6 animate-fade-in">
+          <div className="flex flex-col items-center justify-center py-20 space-y-6 animate-fade-in-soft">
             <div className="w-24 h-24 relative">
               <div className="absolute inset-0 border-4 border-primary/20 rounded-full" />
               <div className="absolute inset-0 border-4 border-primary border-t-transparent rounded-full animate-spin" />
