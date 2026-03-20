@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { toast } from "sonner";
 import { Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,6 +89,31 @@ const generateElectricityToken = (): string => {
   return token;
 };
 
+// Botswana surnames for electricity meter name generation
+const botswanaSurnames = [
+  "Moeng", "Kgosidintsi", "Motswagole", "Seretse", "Mogae", "Masire", "Khama",
+  "Tshekedi", "Bathoen", "Letsididi", "Molefe", "Kgathi", "Radipati", "Magang",
+  "Mosweu", "Kepaletswe", "Mothibi", "Otsogile", "Gabathuse", "Letsholo",
+  "Mabua", "Modise", "Mogorosi", "Mokgweetsi", "Sebina", "Tsheko", "Nkwe",
+];
+const botswanaFirstNames = [
+  "Keabetswe", "Tumelo", "Boitumelo", "Kagiso", "Lethabo", "Neo", "Mpho",
+  "Gorata", "Onalenna", "Kago", "Mothusi", "Lesego", "Tebogo", "Goitseone",
+  "Phenyo", "Kealeboga", "Ofentse", "Bame", "Lorato", "Thato",
+];
+
+const generateMeterCustomerName = (meterNumber: string): string => {
+  // Use meter number as seed for consistent name per meter
+  let hash = 0;
+  for (let i = 0; i < meterNumber.length; i++) {
+    hash = ((hash << 5) - hash) + meterNumber.charCodeAt(i);
+    hash |= 0;
+  }
+  const firstIdx = Math.abs(hash) % botswanaFirstNames.length;
+  const lastIdx = Math.abs(hash >> 8) % botswanaSurnames.length;
+  return `${botswanaFirstNames[firstIdx]} ${botswanaSurnames[lastIdx]}`;
+};
+
 const paymentSources = [
   { id: "wallet", label: "Wallet Balance", icon: Wallet, color: "text-primary", bg: "bg-primary/10" },
   { id: "orange_money", label: "Orange Money", icon: Smartphone, color: "text-orange-500", bg: "bg-orange-500/10" },
@@ -142,7 +168,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const { addTransaction } = useTransactions();
+  const { addTransaction, balance } = useTransactions();
   const { products: dbProducts } = useProducts();
   const [transportForm, setTransportForm] = useState({ customerName: "", from: "", to: "", fare: "", vehicle: "" });
   const [serviceForm, setServiceForm] = useState({ serviceName: "", amount: "", customerName: "" });
@@ -177,7 +203,7 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   // Electricity form state
   const [elecAmount, setElecAmount] = useState("");
   const [elecMeter, setElecMeter] = useState("");
-  const [elecCustomer, setElecCustomer] = useState("");
+  const [elecGeneratedName, setElecGeneratedName] = useState("");
 
   // Electricity token state
   const [electricityToken, setElectricityToken] = useState("");
@@ -227,15 +253,27 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   // ── Instant service payment helper ──
   const processServicePayment = async (description: string, amount: number, nextStep: SubView) => {
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    // If paying from wallet, check balance
+    if (paymentSource === "wallet") {
+      if (balance < amount) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amount.toFixed(2)}` });
+        return;
+      }
+    }
+
     setProcessingLabel(description);
     setProcessingDone(false);
     setAfterProcessingStep(nextStep);
     setSubView("service-processing");
 
+    // Wallet = deduction (negative), other methods = income (positive)
+    const txAmount = paymentSource === "wallet" ? -amount : amount;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount,
+      amount: txAmount,
       description: `${description} • ${sourceLabel}`,
       status: "completed",
     });
@@ -345,26 +383,38 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const handlePayElectricity = async () => {
     if (!elecAmount || !elecMeter) return;
     const amt = parseFloat(elecAmount);
-    const desc = `Electricity — Meter: ${elecMeter}${elecCustomer ? ` (${elecCustomer})` : ""}`;
+    const generatedName = generateMeterCustomerName(elecMeter);
+    const desc = `Electricity — Meter: ${elecMeter} (${generatedName})`;
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    // If paying from wallet, check balance
+    if (paymentSource === "wallet") {
+      if (balance < amt) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amt.toFixed(2)}` });
+        return;
+      }
+    }
 
     setProcessingLabel(desc);
     setProcessingDone(false);
     setAfterProcessingStep("electricity-token");
     setSubView("service-processing");
 
+    const txAmount = paymentSource === "wallet" ? -amt : amt;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount: amt,
+      amount: txAmount,
       description: `${desc} • ${sourceLabel}`,
       status: "completed",
     });
 
     const token = generateElectricityToken();
     setElectricityToken(token);
+    setElecGeneratedName(generatedName);
     setTokenCopied(false);
-    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+    setElecAmount(""); setElecMeter("");
 
     setTimeout(() => setProcessingDone(true), 2500);
   };
@@ -486,6 +536,12 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
+            {elecGeneratedName && (
+              <div className="bg-card border border-border rounded-xl p-3 text-center">
+                <p className="text-xs text-muted-foreground">Customer</p>
+                <p className="text-sm font-semibold text-foreground">{elecGeneratedName}</p>
+              </div>
+            )}
             <div className="bg-muted rounded-2xl p-6 text-center">
               <p className="text-sm text-muted-foreground mb-2">Your prepaid token</p>
               <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
@@ -719,7 +775,12 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
                 <Button variant="ghost" size="sm" onClick={() => setSubView("services-list")}><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button>
                 <h3 className="font-semibold text-foreground">Buy Electricity</h3>
                 <div className="space-y-2"><Label>Meter Number *</Label><Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" /></div>
-                <div className="space-y-2"><Label>Customer Name</Label><Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Doe" /></div>
+                {elecMeter.length >= 5 && (
+                  <div className="bg-muted rounded-xl p-3">
+                    <p className="text-xs text-muted-foreground">Registered to:</p>
+                    <p className="text-sm font-semibold text-foreground">{generateMeterCustomerName(elecMeter)}</p>
+                  </div>
+                )}
                 <div className="space-y-2"><Label>Amount (P) *</Label><Input type="number" value={elecAmount} onChange={e => setElecAmount(e.target.value)} placeholder="0.00" /></div>
                 <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
                 <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full">Pay Now</Button>

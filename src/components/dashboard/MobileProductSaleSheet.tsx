@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
+import { toast } from "sonner";
 import { X, Package, Plus, Minus, ShoppingCart, Search, Bus, Monitor, FileText, ArrowLeft, Zap, Droplets, Tv, Shield, Phone, Wifi, Copy, CheckCircle, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useProducts } from "@/hooks/useProducts";
@@ -89,6 +90,29 @@ const generateElectricityToken = (): string => {
   return token;
 };
 
+const botswanaSurnames = [
+  "Moeng", "Kgosidintsi", "Motswagole", "Seretse", "Mogae", "Masire", "Khama",
+  "Tshekedi", "Bathoen", "Letsididi", "Molefe", "Kgathi", "Radipati", "Magang",
+  "Mosweu", "Kepaletswe", "Mothibi", "Otsogile", "Gabathuse", "Letsholo",
+  "Mabua", "Modise", "Mogorosi", "Mokgweetsi", "Sebina", "Tsheko", "Nkwe",
+];
+const botswanaFirstNames = [
+  "Keabetswe", "Tumelo", "Boitumelo", "Kagiso", "Lethabo", "Neo", "Mpho",
+  "Gorata", "Onalenna", "Kago", "Mothusi", "Lesego", "Tebogo", "Goitseone",
+  "Phenyo", "Kealeboga", "Ofentse", "Bame", "Lorato", "Thato",
+];
+
+const generateMeterCustomerName = (meterNumber: string): string => {
+  let hash = 0;
+  for (let i = 0; i < meterNumber.length; i++) {
+    hash = ((hash << 5) - hash) + meterNumber.charCodeAt(i);
+    hash |= 0;
+  }
+  const firstIdx = Math.abs(hash) % botswanaFirstNames.length;
+  const lastIdx = Math.abs(hash >> 8) % botswanaSurnames.length;
+  return `${botswanaFirstNames[firstIdx]} ${botswanaSurnames[lastIdx]}`;
+};
+
 // Payment sources for instant service checkout
 const paymentSources = [
   { id: "wallet", label: "Wallet Balance", icon: Wallet, color: "text-primary", bg: "bg-primary/10" },
@@ -165,7 +189,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // Electricity form state (separate from utility)
   const [elecAmount, setElecAmount] = useState("");
   const [elecMeter, setElecMeter] = useState("");
-  const [elecCustomer, setElecCustomer] = useState("");
+  const [elecGeneratedName, setElecGeneratedName] = useState("");
 
   // Electricity token state
   const [electricityToken, setElectricityToken] = useState("");
@@ -219,21 +243,29 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // ── Instant service payment helper ──
   const processServicePayment = async (description: string, amount: number, nextStep: Step) => {
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    if (paymentSource === "wallet") {
+      if (balance < amount) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amount.toFixed(2)}` });
+        return;
+      }
+    }
+
     setProcessingLabel(description);
     setProcessingDone(false);
     setAfterProcessingStep(nextStep);
     setStep("service-processing");
 
-    // Record the transaction
+    const txAmount = paymentSource === "wallet" ? -amount : amount;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount,
+      amount: txAmount,
       description: `${description} • ${sourceLabel}`,
       status: "completed",
     });
 
-    // Simulate processing delay
     setTimeout(() => setProcessingDone(true), 2000);
   };
 
@@ -358,27 +390,37 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const handlePayElectricity = async () => {
     if (!elecAmount || !elecMeter) return;
     const amt = parseFloat(elecAmount);
-    const desc = `Electricity — Meter: ${elecMeter}${elecCustomer ? ` (${elecCustomer})` : ""}`;
+    const generatedName = generateMeterCustomerName(elecMeter);
+    const desc = `Electricity — Meter: ${elecMeter} (${generatedName})`;
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    if (paymentSource === "wallet") {
+      if (balance < amt) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amt.toFixed(2)}` });
+        return;
+      }
+    }
 
     setProcessingLabel(desc);
     setProcessingDone(false);
     setAfterProcessingStep("electricity-token");
     setStep("service-processing");
 
+    const txAmount = paymentSource === "wallet" ? -amt : amt;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount: amt,
+      amount: txAmount,
       description: `${desc} • ${sourceLabel}`,
       status: "completed",
     });
 
-    // Generate token after payment processes
     const token = generateElectricityToken();
     setElectricityToken(token);
+    setElecGeneratedName(generatedName);
     setTokenCopied(false);
-    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+    setElecAmount(""); setElecMeter("");
 
     setTimeout(() => setProcessingDone(true), 2500);
   };
@@ -411,7 +453,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
-    setElecAmount(""); setElecMeter(""); setElecCustomer("");
+    setElecAmount(""); setElecMeter(""); setElecGeneratedName("");
     setElectricityToken(""); setTokenCopied(false);
     setPaymentSource("wallet");
     onClose();
@@ -713,10 +755,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <Label>Meter Number *</Label>
                 <Input value={elecMeter} onChange={e => setElecMeter(e.target.value)} placeholder="e.g. 04123456789" inputMode="numeric" />
               </div>
-              <div className="space-y-2">
-                <Label>Customer Name (optional)</Label>
-                <Input value={elecCustomer} onChange={e => setElecCustomer(e.target.value)} placeholder="e.g. John Moeng" />
-              </div>
+              {elecMeter.length >= 5 && (
+                <div className="bg-muted rounded-xl p-3">
+                  <p className="text-xs text-muted-foreground">Registered to:</p>
+                  <p className="text-sm font-semibold text-foreground">{generateMeterCustomerName(elecMeter)}</p>
+                </div>
+              )}
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <Button onClick={handlePayElectricity} disabled={!elecAmount || !elecMeter} className="w-full h-14 text-lg font-semibold">
                 <Zap className="w-5 h-5 mr-2" />
@@ -845,6 +889,13 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 <p className="text-lg font-bold text-foreground">Electricity Token Generated</p>
                 <p className="text-sm text-muted-foreground text-center">Enter this token into your prepaid meter to load electricity units.</p>
                 
+                {elecGeneratedName && (
+                  <div className="w-full bg-card border border-border rounded-xl p-3 text-center">
+                    <p className="text-xs text-muted-foreground">Customer</p>
+                    <p className="text-sm font-semibold text-foreground">{elecGeneratedName}</p>
+                  </div>
+                )}
+
                 <div className="w-full bg-muted border-2 border-yellow-500/30 rounded-2xl p-5 text-center">
                   <p className="text-xs text-muted-foreground mb-2 uppercase tracking-wider font-semibold">Prepaid Token</p>
                   <p className="text-2xl font-mono font-bold text-foreground tracking-widest">{electricityToken}</p>
