@@ -243,21 +243,29 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   // ── Instant service payment helper ──
   const processServicePayment = async (description: string, amount: number, nextStep: Step) => {
     const sourceLabel = paymentSources.find(s => s.id === paymentSource)?.label || paymentSource;
+
+    if (paymentSource === "wallet") {
+      if (balance < amount) {
+        toast.error("Insufficient wallet balance", { description: `Your balance is P${balance.toFixed(2)} but you need P${amount.toFixed(2)}` });
+        return;
+      }
+    }
+
     setProcessingLabel(description);
     setProcessingDone(false);
     setAfterProcessingStep(nextStep);
     setStep("service-processing");
 
-    // Record the transaction
+    const txAmount = paymentSource === "wallet" ? -amount : amount;
+
     await addTransaction({
-      type: "sale",
+      type: paymentSource === "wallet" ? "purchase" : "sale",
       payment_method: paymentSource === "wallet" ? "wallet" : "mobile_money",
-      amount,
+      amount: txAmount,
       description: `${description} • ${sourceLabel}`,
       status: "completed",
     });
 
-    // Simulate processing delay
     setTimeout(() => setProcessingDone(true), 2000);
   };
 
