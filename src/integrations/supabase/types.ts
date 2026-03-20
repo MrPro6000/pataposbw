@@ -85,6 +85,51 @@ export type Database = {
           },
         ]
       }
+      connected_accounts: {
+        Row: {
+          account_holder: string | null
+          bank_name: string | null
+          branch_code: string | null
+          created_at: string
+          details: string
+          id: string
+          is_default: boolean
+          name: string
+          provider: string | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          account_holder?: string | null
+          bank_name?: string | null
+          branch_code?: string | null
+          created_at?: string
+          details: string
+          id?: string
+          is_default?: boolean
+          name: string
+          provider?: string | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          account_holder?: string | null
+          bank_name?: string | null
+          branch_code?: string | null
+          created_at?: string
+          details?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          provider?: string | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       customers: {
         Row: {
           created_at: string
@@ -930,6 +975,16 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      update_own_profile: {
+        Args: {
+          _avatar_url?: string
+          _business_name?: string
+          _email?: string
+          _full_name?: string
+          _phone?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

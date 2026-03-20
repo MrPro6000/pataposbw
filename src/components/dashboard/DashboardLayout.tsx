@@ -222,7 +222,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           <div className="w-10" />
         </header>
 
-        <main className="flex-1 p-6 md:p-8 overflow-auto">
+        <main className="flex-1 p-6 md:p-8 overflow-auto animate-fade-in">
           {children}
         </main>
       </div>

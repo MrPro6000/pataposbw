@@ -395,6 +395,33 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("mobile-money")}
+          >
+            <Smartphone className="w-5 h-5" />
+            <span className="text-xs">Mobile Money</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("card")}
+          >
+            <CreditCard className="w-5 h-5" />
+            <span className="text-xs">Card Sale</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("cash")}
+          >
+            <Banknote className="w-5 h-5" />
+            <span className="text-xs">Cash</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
@@ -413,37 +440,10 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("card")}
-          >
-            <CreditCard className="w-5 h-5" />
-            <span className="text-xs">Card Sale</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("mobile-money")}
-          >
-            <Smartphone className="w-5 h-5" />
-            <span className="text-xs">Mobile Money</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("cash")}
-          >
-            <Banknote className="w-5 h-5" />
-            <span className="text-xs">Cash</span>
-          </Button>
-
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setInvoiceDialogOpen(true)}
           >
             <FileText className="w-5 h-5" />
-            <span className="text-xs">New Invoice</span>
+            <span className="text-xs">Invoice</span>
           </Button>
 
           <Button
