@@ -27,6 +27,7 @@ import MobileProductSaleSheet from "./MobileProductSaleSheet";
 import MobileInvoiceSheet from "./MobileInvoiceSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
 import MobileVoucherSheet from "./MobileVoucherSheet";
+import MobileEWalletSheet from "./MobileEWalletSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvoices } from "@/hooks/useInvoices";
