@@ -36,7 +36,14 @@ const defaultPreferences: DashboardPreferences = {
 
 export const useDashboardPreferences = () => {
   const { user } = useAuth();
-  const [preferences, setPreferences] = useState<DashboardPreferences>(defaultPreferences);
+  // Initialize from localStorage cache to prevent flickering
+  const [preferences, setPreferences] = useState<DashboardPreferences>(() => {
+    try {
+      const cached = localStorage.getItem("pata_dashboard_prefs");
+      if (cached) return JSON.parse(cached) as DashboardPreferences;
+    } catch {}
+    return defaultPreferences;
+  });
   const [loading, setLoading] = useState(true);
 
   const fetchPreferences = useCallback(async () => {
@@ -51,6 +58,8 @@ export const useDashboardPreferences = () => {
       if (data && !error) {
         const { id, user_id, created_at, updated_at, ...prefs } = data;
         setPreferences(prefs as DashboardPreferences);
+        // Cache to localStorage to prevent flicker on next load
+        localStorage.setItem("pata_dashboard_prefs", JSON.stringify(prefs));
       }
     } catch {
       // Use defaults
