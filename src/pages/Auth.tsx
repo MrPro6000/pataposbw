@@ -385,7 +385,7 @@ const Auth = ({ mode }: AuthProps) => {
               </div>
             )}
 
-            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 transition-colors duration-300">
+            <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 transition-colors duration-300">
               
               {step === "credentials" && (
                 <>
