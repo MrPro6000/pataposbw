@@ -334,6 +334,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobileInvoiceSheet open={invoiceSheetOpen} onClose={() => setInvoiceSheetOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
       <MobileVoucherSheet open={voucherOpen} onClose={() => setVoucherOpen(false)} />
+      <MobileEWalletSheet open={eWalletOpen} onClose={() => setEWalletOpen(false)} />
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>
