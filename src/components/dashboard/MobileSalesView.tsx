@@ -48,14 +48,14 @@ const QuickActionButton = ({
 }) => (
   <button 
     onClick={onClick}
-    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl transition-all min-h-[88px] w-full active:scale-95 ${
+    className={`flex flex-col items-center justify-center gap-2 p-3 rounded-2xl transition-all aspect-square w-full active:scale-95 ${
       variant === "dark" 
         ? "bg-foreground text-background active:opacity-80" 
         : "bg-card border border-border text-foreground active:bg-muted"
     }`}
   >
     <Icon className="w-6 h-6" />
-    <span className="text-xs font-medium">{label}</span>
+    <span className="text-xs font-medium text-center leading-tight">{label}</span>
   </button>
 );
 
