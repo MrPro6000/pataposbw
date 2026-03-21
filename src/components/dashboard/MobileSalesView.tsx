@@ -134,7 +134,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Wallet, label: "Wallet", show: true, onClick: () => setWalletOpen(true) },
   ].filter(a => a.show);
 
-  const row3Actions: typeof row1Actions = [];
+  const row4Actions: typeof row1Actions = [];
 
   return (
     <div className="min-h-screen bg-muted pb-24">
