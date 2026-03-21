@@ -683,8 +683,8 @@ const KYC = () => {
         </button>
         <ThemeToggle />
       </header>
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-md bg-card border border-border rounded-2xl p-8 shadow-lg">
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6">
+        <div className="w-full max-w-md bg-card border border-border rounded-2xl p-5 sm:p-8 shadow-lg">
           {(currentStep === "omang" || currentStep === "photos" || currentStep === "selfie") && (
             <>
               {currentStep === "omang" && (
