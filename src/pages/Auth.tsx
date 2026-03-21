@@ -385,10 +385,18 @@ const Auth = ({ mode }: AuthProps) => {
               </div>
             )}
 
-            <div className="bg-card border border-border rounded-2xl p-6 md:p-8 transition-colors duration-300">
+            <div className="bg-card border border-border rounded-2xl p-5 sm:p-6 md:p-8 transition-colors duration-300">
               
               {step === "credentials" && (
                 <>
+                  {mode === "signup" && (
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="flex items-center gap-2 text-sm mb-4 text-muted-foreground hover:text-foreground"
+                    >
+                      ← Back
+                    </button>
+                  )}
                   <h2 className="text-2xl font-semibold text-foreground mb-2">
                     {mode === "login" ? "Welcome back" : "Create your account"}
                   </h2>

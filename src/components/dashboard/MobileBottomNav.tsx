@@ -30,17 +30,17 @@ const MobileBottomNav = () => {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-background border-t border-border md:hidden z-50 safe-area-bottom">
-      <div className="flex items-center justify-around py-2" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
+      <div className="flex items-center justify-around py-2 px-1" style={{ paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
         {navItems.map((item) => (
           <Link
             key={item.label}
             to={item.path}
-            className={`flex flex-col items-center gap-1 px-4 py-2 transition-colors ${
+            className={`flex flex-col items-center gap-1 px-2 sm:px-4 py-2 transition-colors min-w-0 ${
               isActive(item.path) ? "text-primary" : "text-muted-foreground"
             }`}
           >
-            <item.icon className="w-5 h-5" />
-            <span className="text-xs font-medium">{item.label}</span>
+            <item.icon className="w-5 h-5 flex-shrink-0" />
+            <span className="text-[10px] sm:text-xs font-medium truncate">{item.label}</span>
           </Link>
         ))}
       </div>
