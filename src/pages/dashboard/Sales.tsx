@@ -456,6 +456,15 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => { setEWalletDialogOpen(true); setEWalletPhone(""); setEWalletAmount(""); setEWalletRef(""); setEWalletSuccess(false); }}
+          >
+            <Send className="w-5 h-5" />
+            <span className="text-xs">E-Wallet</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => openPaymentFlow("wallet")}
           >
             <Wallet className="w-5 h-5" />
