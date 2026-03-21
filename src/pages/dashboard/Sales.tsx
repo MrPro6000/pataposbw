@@ -1139,6 +1139,69 @@ const Sales = () => {
         </DialogContent>
       </Dialog>
 
+      {/* E-Wallet Dialog */}
+      <Dialog open={eWalletDialogOpen} onOpenChange={setEWalletDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="w-5 h-5" /> Send E-Wallet
+            </DialogTitle>
+          </DialogHeader>
+          {!eWalletSuccess ? (
+            <div className="space-y-4">
+              <div className="bg-primary/10 rounded-xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Wallet Balance</p>
+                <p className="text-2xl font-bold text-foreground">P{balance.toFixed(2)}</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Recipient Phone *</Label>
+                <Input type="tel" inputMode="numeric" placeholder="7XXXXXXX" maxLength={8} value={eWalletPhone} onChange={(e) => setEWalletPhone(e.target.value.replace(/\D/g, ""))} />
+                {eWalletPhone.length > 0 && !/^7\d{7}$/.test(eWalletPhone) && <p className="text-xs text-destructive">Must be 8 digits starting with 7</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input type="text" inputMode="decimal" placeholder="0.00" value={eWalletAmount} onChange={(e) => setEWalletAmount(e.target.value.replace(/[^0-9.]/g, ""))} className="text-xl font-bold text-center" />
+              </div>
+              <div className="space-y-2">
+                <Label>Reference (optional)</Label>
+                <Input placeholder="e.g. Groceries, Rent" value={eWalletRef} onChange={(e) => setEWalletRef(e.target.value)} />
+              </div>
+              <Button
+                className="w-full h-12"
+                disabled={!/^7\d{7}$/.test(eWalletPhone) || !(parseFloat(eWalletAmount) > 0) || eWalletProcessing}
+                onClick={async () => {
+                  const amt = parseFloat(eWalletAmount);
+                  if (amt > balance) {
+                    toast({ title: "Insufficient Balance", description: `Your wallet balance is P${balance.toFixed(2)}`, variant: "destructive" });
+                    return;
+                  }
+                  setEWalletProcessing(true);
+                  await new Promise(r => setTimeout(r, 2000));
+                  const { error } = await addTransaction({
+                    type: "purchase", payment_method: "wallet", amount: -amt,
+                    description: `E-Wallet • Sent to ${eWalletPhone}${eWalletRef ? ` • ${eWalletRef}` : ""}`,
+                    status: "completed",
+                  });
+                  setEWalletProcessing(false);
+                  if (error) { toast({ title: "Failed", description: error, variant: "destructive" }); return; }
+                  setEWalletSuccess(true);
+                  toast({ title: "E-Wallet Sent!", description: `P${amt.toFixed(2)} sent to ${eWalletPhone}` });
+                }}
+              >
+                {eWalletProcessing ? "Sending..." : `Send P${(parseFloat(eWalletAmount) || 0).toFixed(2)}`}
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-6 space-y-3">
+              <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
+              <p className="text-xl font-bold text-foreground">E-Wallet Sent!</p>
+              <p className="text-muted-foreground">P{parseFloat(eWalletAmount).toFixed(2)} sent to {eWalletPhone}</p>
+              <Button className="w-full mt-4" onClick={() => { setEWalletDialogOpen(false); setEWalletSuccess(false); }}>Done</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </DashboardLayout>
   );
 };
