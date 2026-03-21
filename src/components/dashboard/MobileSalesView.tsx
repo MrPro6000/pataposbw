@@ -14,7 +14,8 @@ import {
   Globe,
   Package,
   ShoppingBag,
-  Ticket
+  Ticket,
+  Send
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobilePaymentSheet from "./MobilePaymentSheet";
