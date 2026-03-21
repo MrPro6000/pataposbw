@@ -93,6 +93,9 @@ const Sales = () => {
   const [eWalletRef, setEWalletRef] = useState("");
   const [eWalletProcessing, setEWalletProcessing] = useState(false);
   const [eWalletSuccess, setEWalletSuccess] = useState(false);
+  const [eWalletSendMethod, setEWalletSendMethod] = useState<"direct" | "code">("direct");
+  const [eWalletProvider, setEWalletProvider] = useState("");
+  const [eWalletCode, setEWalletCode] = useState("");
 
   const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
