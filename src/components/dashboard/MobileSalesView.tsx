@@ -127,6 +127,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
     { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
     { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
+    { icon: Send, label: "E-Wallet", show: true, onClick: () => setEWalletOpen(true) },
     { icon: Wallet, label: "Wallet", show: true, onClick: () => setWalletOpen(true) },
   ].filter(a => a.show);
 
