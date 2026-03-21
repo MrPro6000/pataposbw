@@ -389,6 +389,14 @@ const Auth = ({ mode }: AuthProps) => {
               
               {step === "credentials" && (
                 <>
+                  {mode === "signup" && (
+                    <button
+                      onClick={() => navigate("/login")}
+                      className="flex items-center gap-2 text-sm mb-4 text-muted-foreground hover:text-foreground"
+                    >
+                      ← Back
+                    </button>
+                  )}
                   <h2 className="text-2xl font-semibold text-foreground mb-2">
                     {mode === "login" ? "Welcome back" : "Create your account"}
                   </h2>
