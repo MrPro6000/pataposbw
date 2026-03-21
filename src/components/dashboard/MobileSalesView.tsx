@@ -180,21 +180,21 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
         )}
 
         {row1Actions.length > 0 && (
-          <div className={`grid grid-cols-${row1Actions.length} gap-3 mb-3`}>
+          <div className="grid grid-cols-3 gap-3 mb-3">
             {row1Actions.map(a => (
               <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
             ))}
           </div>
         )}
         {row2Actions.length > 0 && (
-          <div className={`grid grid-cols-${row2Actions.length} gap-3 mb-3`}>
+          <div className="grid grid-cols-3 gap-3 mb-3">
             {row2Actions.map(a => (
               <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
             ))}
           </div>
         )}
         {row3Actions.length > 0 && (
-          <div className={`grid grid-cols-${row3Actions.length} gap-3`}>
+          <div className="grid grid-cols-3 gap-3 mb-3">
             {row3Actions.map(a => (
               <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
             ))}
