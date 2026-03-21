@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
 import { 
   CreditCard, 
   Wallet, 
@@ -13,7 +14,8 @@ import {
   Globe,
   Package,
   ShoppingBag,
-  Ticket
+  Ticket,
+  Send
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobilePaymentSheet from "./MobilePaymentSheet";
@@ -25,6 +27,7 @@ import MobileProductSaleSheet from "./MobileProductSaleSheet";
 import MobileInvoiceSheet from "./MobileInvoiceSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
 import MobileVoucherSheet from "./MobileVoucherSheet";
+import MobileEWalletSheet from "./MobileEWalletSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useInvoices } from "@/hooks/useInvoices";
@@ -74,6 +77,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [voucherOpen, setVoucherOpen] = useState(false);
   const [invoiceSheetOpen, setInvoiceSheetOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
+  const [eWalletOpen, setEWalletOpen] = useState(false);
   const { transactions, last7DaysIncome, balance } = useTransactions();
   const { invoices } = useInvoices();
   const { paymentLinks } = usePaymentLinks();
@@ -123,6 +127,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
     { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
     { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
+    { icon: Send, label: "E-Wallet", show: true, onClick: () => setEWalletOpen(true) },
     { icon: Wallet, label: "Wallet", show: true, onClick: () => setWalletOpen(true) },
   ].filter(a => a.show);
 
@@ -329,6 +334,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobileInvoiceSheet open={invoiceSheetOpen} onClose={() => setInvoiceSheetOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
       <MobileVoucherSheet open={voucherOpen} onClose={() => setVoucherOpen(false)} />
+      <MobileEWalletSheet open={eWalletOpen} onClose={() => setEWalletOpen(false)} />
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>
