@@ -111,11 +111,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+    /* Prevent font scaling on landscape rotation */
+    text-size-adjust: 100%;
   }
 
   body {
     @apply bg-background text-foreground;
     padding-top: env(safe-area-inset-top, 0px);
+    /* Smooth scrolling everywhere */
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Ensure all images are responsive */
@@ -124,9 +128,34 @@
     height: auto;
   }
 
-  /* Minimum tap target for inputs/buttons on mobile */
-  input, button, select, textarea, a {
+  /* Minimum tap target for interactive elements on mobile */
+  input, select, textarea {
     min-height: 44px;
+  }
+  
+  button, a {
+    min-height: 44px;
+  }
+
+  /* Fix for small Android phones - prevent text from being too large */
+  @media (max-width: 359px) {
+    html {
+      font-size: 14px;
+    }
+  }
+
+  /* Standard small phones (360-389px) */
+  @media (min-width: 360px) and (max-width: 389px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
+  /* Standard phones (390px+) */
+  @media (min-width: 390px) {
+    html {
+      font-size: 16px;
+    }
   }
 }
 
