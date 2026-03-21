@@ -93,6 +93,9 @@ const Sales = () => {
   const [eWalletRef, setEWalletRef] = useState("");
   const [eWalletProcessing, setEWalletProcessing] = useState(false);
   const [eWalletSuccess, setEWalletSuccess] = useState(false);
+  const [eWalletSendMethod, setEWalletSendMethod] = useState<"direct" | "code">("direct");
+  const [eWalletProvider, setEWalletProvider] = useState("");
+  const [eWalletCode, setEWalletCode] = useState("");
 
   const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
@@ -1140,7 +1143,10 @@ const Sales = () => {
       </Dialog>
 
       {/* E-Wallet Dialog */}
-      <Dialog open={eWalletDialogOpen} onOpenChange={setEWalletDialogOpen}>
+      <Dialog open={eWalletDialogOpen} onOpenChange={(o) => {
+        setEWalletDialogOpen(o);
+        if (!o) { setEWalletSuccess(false); setEWalletPhone(""); setEWalletAmount(""); setEWalletRef(""); setEWalletSendMethod("direct"); setEWalletProvider(""); setEWalletCode(""); }
+      }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -1153,11 +1159,43 @@ const Sales = () => {
                 <p className="text-sm text-muted-foreground">Wallet Balance</p>
                 <p className="text-2xl font-bold text-foreground">P{balance.toFixed(2)}</p>
               </div>
+
+              {/* Send Method Toggle */}
               <div className="space-y-2">
-                <Label>Recipient Phone *</Label>
-                <Input type="tel" inputMode="numeric" placeholder="7XXXXXXX" maxLength={8} value={eWalletPhone} onChange={(e) => setEWalletPhone(e.target.value.replace(/\D/g, ""))} />
-                {eWalletPhone.length > 0 && !/^7\d{7}$/.test(eWalletPhone) && <p className="text-xs text-destructive">Must be 8 digits starting with 7</p>}
+                <Label>Send Method</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button onClick={() => setEWalletSendMethod("direct")}
+                    className={`p-3 rounded-xl border text-center transition-all text-sm font-medium ${eWalletSendMethod === "direct" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
+                    <Send className="w-4 h-4 mx-auto mb-1" /> Send Direct
+                  </button>
+                  <button onClick={() => setEWalletSendMethod("code")}
+                    className={`p-3 rounded-xl border text-center transition-all text-sm font-medium ${eWalletSendMethod === "code" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"}`}>
+                    <Copy className="w-4 h-4 mx-auto mb-1" /> Generate Code
+                  </button>
+                </div>
               </div>
+
+              {eWalletSendMethod === "direct" && (
+                <div className="space-y-2">
+                  <Label>Recipient Phone *</Label>
+                  <Input type="tel" inputMode="numeric" placeholder="7XXXXXXX" maxLength={8} value={eWalletPhone} onChange={(e) => setEWalletPhone(e.target.value.replace(/\D/g, ""))} />
+                  {eWalletPhone.length > 0 && !/^7\d{7}$/.test(eWalletPhone) && <p className="text-xs text-destructive">Must be 8 digits starting with 7</p>}
+                </div>
+              )}
+
+              {/* Provider */}
+              <div className="space-y-2">
+                <Label>Mobile Money Provider (optional)</Label>
+                <Select value={eWalletProvider} onValueChange={setEWalletProvider}>
+                  <SelectTrigger><SelectValue placeholder="Select provider" /></SelectTrigger>
+                  <SelectContent>
+                    {mobileMoneyProviders.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <Label>Amount (P) *</Label>
                 <Input type="text" inputMode="decimal" placeholder="0.00" value={eWalletAmount} onChange={(e) => setEWalletAmount(e.target.value.replace(/[^0-9.]/g, ""))} className="text-xl font-bold text-center" />
@@ -1168,7 +1206,10 @@ const Sales = () => {
               </div>
               <Button
                 className="w-full h-12"
-                disabled={!/^7\d{7}$/.test(eWalletPhone) || !(parseFloat(eWalletAmount) > 0) || eWalletProcessing}
+                disabled={
+                  (eWalletSendMethod === "direct" && !/^7\d{7}$/.test(eWalletPhone)) ||
+                  !(parseFloat(eWalletAmount) > 0) || eWalletProcessing
+                }
                 onClick={async () => {
                   const amt = parseFloat(eWalletAmount);
                   if (amt > balance) {
@@ -1177,26 +1218,56 @@ const Sales = () => {
                   }
                   setEWalletProcessing(true);
                   await new Promise(r => setTimeout(r, 2000));
+                  const code = eWalletSendMethod === "code" ? (() => {
+                    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+                    let c = "";
+                    for (let i = 0; i < 12; i++) { if (i > 0 && i % 4 === 0) c += "-"; c += chars[Math.floor(Math.random() * chars.length)]; }
+                    return c;
+                  })() : "";
+                  const providerName = eWalletProvider ? mobileMoneyProviders.find(p => p.id === eWalletProvider)?.name : "";
+                  const descParts = ["E-Wallet"];
+                  if (eWalletSendMethod === "code") descParts.push(`Code: ${code}`);
+                  else descParts.push(`Sent to ${eWalletPhone}`);
+                  if (providerName) descParts.push(providerName);
+                  if (eWalletRef) descParts.push(eWalletRef);
+
                   const { error } = await addTransaction({
                     type: "purchase", payment_method: "wallet", amount: -amt,
-                    description: `E-Wallet • Sent to ${eWalletPhone}${eWalletRef ? ` • ${eWalletRef}` : ""}`,
+                    description: descParts.join(" • "),
                     status: "completed",
                   });
                   setEWalletProcessing(false);
                   if (error) { toast({ title: "Failed", description: error, variant: "destructive" }); return; }
+                  setEWalletCode(code);
                   setEWalletSuccess(true);
-                  toast({ title: "E-Wallet Sent!", description: `P${amt.toFixed(2)} sent to ${eWalletPhone}` });
+                  toast({ title: eWalletSendMethod === "code" ? "Code Generated!" : "E-Wallet Sent!", description: `P${amt.toFixed(2)} ${eWalletSendMethod === "code" ? "code generated" : `sent to ${eWalletPhone}`}` });
                 }}
               >
-                {eWalletProcessing ? "Sending..." : `Send P${(parseFloat(eWalletAmount) || 0).toFixed(2)}`}
+                {eWalletProcessing ? "Processing..." : eWalletSendMethod === "code" ? `Generate Code — P${(parseFloat(eWalletAmount) || 0).toFixed(2)}` : `Send P${(parseFloat(eWalletAmount) || 0).toFixed(2)}`}
               </Button>
             </div>
           ) : (
             <div className="text-center py-6 space-y-3">
               <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
-              <p className="text-xl font-bold text-foreground">E-Wallet Sent!</p>
-              <p className="text-muted-foreground">P{parseFloat(eWalletAmount).toFixed(2)} sent to {eWalletPhone}</p>
-              <Button className="w-full mt-4" onClick={() => { setEWalletDialogOpen(false); setEWalletSuccess(false); }}>Done</Button>
+              <p className="text-xl font-bold text-foreground">
+                {eWalletSendMethod === "code" ? "E-Wallet Code Generated!" : "E-Wallet Sent!"}
+              </p>
+              <p className="text-muted-foreground">
+                P{parseFloat(eWalletAmount).toFixed(2)} {eWalletSendMethod === "code" ? "code ready" : `sent to ${eWalletPhone}`}
+              </p>
+              {eWalletSendMethod === "code" && eWalletCode && (
+                <div className="space-y-3 mt-2">
+                  <div className="bg-muted rounded-xl p-4 text-center">
+                    <p className="text-xs text-muted-foreground mb-2">Cash-out Code</p>
+                    <p className="text-2xl font-mono font-bold text-foreground tracking-wider">{eWalletCode}</p>
+                  </div>
+                  <Button variant="outline" className="w-full" onClick={() => { navigator.clipboard.writeText(eWalletCode); toast({ title: "Copied!" }); }}>
+                    <Copy className="w-4 h-4 mr-2" /> Copy Code
+                  </Button>
+                  <p className="text-xs text-muted-foreground">Share this code with the recipient to cash out at any agent.</p>
+                </div>
+              )}
+              <Button className="w-full mt-4" onClick={() => { setEWalletDialogOpen(false); setEWalletSuccess(false); setEWalletCode(""); }}>Done</Button>
             </div>
           )}
         </DialogContent>
