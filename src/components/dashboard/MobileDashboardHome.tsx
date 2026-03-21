@@ -70,7 +70,7 @@ const MobileDashboardHome = () => {
   };
 
   return (
-    <div key={pathname} className="animate-fade-in">
+    <div className="animate-fade-in-soft">
       {renderView()}
     </div>
   );

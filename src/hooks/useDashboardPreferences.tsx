@@ -79,6 +79,7 @@ export const useDashboardPreferences = () => {
       .upsert({ user_id: user.id, ...prefs }, { onConflict: "user_id" });
     if (!error) {
       setPreferences(prefs);
+      localStorage.setItem("pata_dashboard_prefs", JSON.stringify(prefs));
     }
     return { error };
   };
