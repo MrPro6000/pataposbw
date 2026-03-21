@@ -87,6 +87,12 @@ const Sales = () => {
   const [voucherForm, setVoucherForm] = useState({ amount: "", recipientName: "", recipientPhone: "" });
   const [voucherCreating, setVoucherCreating] = useState(false);
   const [createdVoucherCode, setCreatedVoucherCode] = useState<string | null>(null);
+  const [eWalletDialogOpen, setEWalletDialogOpen] = useState(false);
+  const [eWalletPhone, setEWalletPhone] = useState("");
+  const [eWalletAmount, setEWalletAmount] = useState("");
+  const [eWalletRef, setEWalletRef] = useState("");
+  const [eWalletProcessing, setEWalletProcessing] = useState(false);
+  const [eWalletSuccess, setEWalletSuccess] = useState(false);
 
   const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
