@@ -178,7 +178,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
   ];
 
   return (
-    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && handleClose()} dismissible={false}>
+    <Drawer open={open} onOpenChange={(isOpen) => !isOpen && handleClose()}>
       <DrawerContent className="bg-background h-[95vh]">
         <DrawerHeader className="border-b border-border pb-4">
           <div className="flex items-center justify-between">
@@ -191,11 +191,9 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                 <p className="text-xs text-muted-foreground">Pata Capital</p>
               </div>
             </div>
-            <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4 text-foreground" />
-              </button>
-            </DrawerClose>
+            <button onClick={handleClose} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4 text-foreground" />
+            </button>
           </div>
         </DrawerHeader>
 
