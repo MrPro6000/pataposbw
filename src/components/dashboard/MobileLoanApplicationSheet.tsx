@@ -241,7 +241,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     className="pl-8 h-14 text-2xl font-bold bg-muted border-0"
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">Min: P1,000 · Max: P500,000</p>
+                <p className="text-xs text-muted-foreground">Min: P1,000 · Max: P100,000</p>
               </div>
 
               {/* Interest summary */}

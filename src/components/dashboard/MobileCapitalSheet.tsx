@@ -61,7 +61,7 @@ const MobileCapitalSheet = ({ open, onClose }: MobileCapitalSheetProps) => {
               <h3 className="font-medium text-foreground mb-2">Your Eligibility</h3>
               <div className="flex items-center justify-between">
                 <p className="text-sm text-muted-foreground">Available amount</p>
-                <p className="font-bold text-foreground">Up to P500,000</p>
+                <p className="font-bold text-foreground">Up to P100,000</p>
               </div>
               <p className="text-xs text-muted-foreground mt-2">Based on your sales history</p>
             </div>
