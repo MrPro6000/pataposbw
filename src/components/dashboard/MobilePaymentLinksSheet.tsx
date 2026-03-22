@@ -121,11 +121,9 @@ const MobilePaymentLinksSheet = ({ open, onClose }: MobilePaymentLinksSheetProps
                 {view === "create" ? "Create Payment Link" : view === "success" ? "Link Created!" : "Payment Links"}
               </DrawerTitle>
             </div>
-            <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4 text-foreground" />
-              </button>
-            </DrawerClose>
+            <button onClick={() => { resetForm(); onClose(); }} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4 text-foreground" />
+            </button>
           </div>
         </DrawerHeader>
 

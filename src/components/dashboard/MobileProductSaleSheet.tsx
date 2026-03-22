@@ -495,11 +495,9 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               </div>
               <DrawerTitle className="text-foreground">{getStepTitle()}</DrawerTitle>
             </div>
-            <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4 text-foreground" />
-              </button>
-            </DrawerClose>
+            <button onClick={resetAndClose} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4 text-foreground" />
+            </button>
           </div>
         </DrawerHeader>
 
