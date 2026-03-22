@@ -123,7 +123,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
     return false;
   };
 
-  const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 500000
+  const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 100000
     && purpose && businessName.trim() && businessType
     && monthlyRevenue && monthlyRevenueNum > 0
     && yearsInBusiness && mobileMoneyProvider
