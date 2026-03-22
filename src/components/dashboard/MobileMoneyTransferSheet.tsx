@@ -168,11 +168,9 @@ const MobileMoneyTransferSheet = ({ open, onClose }: MobileMoneyTransferSheetPro
                 <p className="text-xs text-muted-foreground">Powered by Mukuru</p>
               </div>
             </div>
-            <DrawerClose asChild>
-              <button className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                <X className="w-4 h-4 text-foreground" />
-              </button>
-            </DrawerClose>
+            <button onClick={handleClose} className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+              <X className="w-4 h-4 text-foreground" />
+            </button>
           </div>
         </DrawerHeader>
 
