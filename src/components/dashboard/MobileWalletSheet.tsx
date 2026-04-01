@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
+import posoMoneyImg from "@/assets/mobile-money/poso-money.png";
 import { useTransactions } from "@/hooks/useTransactions";
 
 interface MobileWalletSheetProps {
