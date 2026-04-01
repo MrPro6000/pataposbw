@@ -119,6 +119,7 @@ const paymentSources = [
   { id: "orange_money", label: "Orange Money", icon: Smartphone, color: "text-orange-500", bg: "bg-orange-500/10" },
   { id: "myzaka", label: "MyZaka", icon: Smartphone, color: "text-blue-600", bg: "bg-blue-600/10" },
   { id: "smega", label: "Smega", icon: Smartphone, color: "text-green-600", bg: "bg-green-600/10" },
+  { id: "poso_money", label: "POSO Money", icon: Smartphone, color: "text-teal-600", bg: "bg-teal-600/10" },
 ];
 
 /** Inline payment source selector */

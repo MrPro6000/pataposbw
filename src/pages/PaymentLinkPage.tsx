@@ -411,7 +411,7 @@ const PaymentLinkPage = () => {
                 />
               </div>
               <p className="text-xs text-muted-foreground bg-muted rounded-xl p-3">
-                You will receive a prompt on your {mobileProvider === "myzaka" ? "MyZaka" : mobileProvider.charAt(0).toUpperCase() + mobileProvider.slice(1)} app to confirm payment of P{link.amount.toFixed(2)}.
+                You will receive a prompt on your {mobileProvider === "myzaka" ? "MyZaka" : mobileProvider === "poso" ? "POSO Money" : mobileProvider.charAt(0).toUpperCase() + mobileProvider.slice(1)} app to confirm payment of P{link.amount.toFixed(2)}.
               </p>
               <Button
                 onClick={handleMobileSubmit}

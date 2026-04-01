@@ -38,6 +38,7 @@ const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", img: orangeMoneyImg },
   { id: "smega", name: "Smega", img: smegaImg },
   { id: "myzaka", name: "MyZaka", img: myzakaImg },
+  { id: "poso", name: "POSO Money", img: posoMoneyImg },
 ];
 
 // Shared state for connected accounts (in production this would be in DB)
