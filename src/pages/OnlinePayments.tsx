@@ -23,7 +23,7 @@ const OnlinePayments = () => {
     },
     {
       title: "Mobile Money",
-      description: "Accept payments from Orange Money, Smega, and MyZaka—Botswana's leading mobile money providers.",
+      description: "Accept payments from Orange Money, Smega, MyZaka, and POSO Money—Botswana's leading mobile money providers.",
       icon: Phone,
     },
   ];
