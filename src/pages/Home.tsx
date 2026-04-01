@@ -160,7 +160,7 @@ const Home = () => {
               {
                 title: "Mobile Money",
                 icon: Phone,
-                description: "Accept and process mobile money payments from Orange Money, Smega, and MyZaka. Seamless integration for your business.",
+                description: "Accept and process mobile money payments from Orange Money, Smega, MyZaka, and POSO Money. Seamless integration for your business.",
                 link: "/online-payments",
                 tagline: "Pay with mobile",
               },

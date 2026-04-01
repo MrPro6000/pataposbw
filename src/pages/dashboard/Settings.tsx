@@ -247,7 +247,7 @@ const Settings = () => {
             {[
               { label: "Card Payments", desc: "Accept Visa, Mastercard, Amex", color: "bg-primary/20", iconColor: "text-primary" },
               { label: "Tap to Pay", desc: "NFC contactless payments", color: "bg-purple-500/20", iconColor: "text-purple-500" },
-              { label: "Mobile Money", desc: "Orange Money, Smega, MyZaka", color: "bg-amber-500/20", iconColor: "text-amber-500" },
+              { label: "Mobile Money", desc: "Orange Money, Smega, MyZaka, POSO Money", color: "bg-amber-500/20", iconColor: "text-amber-500" },
               { label: "Online Payments", desc: "Payment links & invoices", color: "bg-green-500/20", iconColor: "text-green-500" },
             ].map(item => (
               <div key={item.label} className="p-4 bg-muted rounded-xl flex items-center justify-between">

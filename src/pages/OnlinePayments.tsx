@@ -23,7 +23,7 @@ const OnlinePayments = () => {
     },
     {
       title: "Mobile Money",
-      description: "Accept payments from Orange Money, Smega, and MyZaka—Botswana's leading mobile money providers.",
+      description: "Accept payments from Orange Money, Smega, MyZaka, and POSO Money—Botswana's leading mobile money providers.",
       icon: Phone,
     },
   ];
@@ -119,7 +119,7 @@ const OnlinePayments = () => {
                 <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl aspect-video p-4 flex flex-col justify-center items-center text-center">
                   <Smartphone className="w-8 h-8 text-white mb-2" />
                   <p className="text-white font-bold text-sm">Mobile Money</p>
-                  <p className="text-white/80 text-xs mt-1">Orange • Smega • MyZaka</p>
+                  <p className="text-white/80 text-xs mt-1">Orange • Smega • MyZaka • POSO</p>
                 </div>
               </div>
             </div>

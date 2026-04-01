@@ -7,6 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
+import posoMoneyImg from "@/assets/mobile-money/poso-money.png";
 import {
   Drawer,
   DrawerClose,
@@ -33,6 +34,7 @@ const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", img: orangeMoneyImg },
   { id: "smega", name: "Smega", img: smegaImg },
   { id: "myzaka", name: "MyZaka", img: myzakaImg },
+  { id: "poso", name: "POSO Money", img: posoMoneyImg },
 ];
 
 const loanPurposes = [

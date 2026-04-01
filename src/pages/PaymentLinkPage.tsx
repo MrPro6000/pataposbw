@@ -390,11 +390,11 @@ const PaymentLinkPage = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Select Provider</Label>
-                <div className="grid grid-cols-3 gap-2">
-                  {["orange", "smega", "myzaka"].map((p) => (
+                <div className="grid grid-cols-2 gap-2">
+                  {["orange", "smega", "myzaka", "poso"].map((p) => (
                     <button key={p} onClick={() => setMobileProvider(p)}
                       className={`py-3 rounded-xl border-2 text-sm font-semibold capitalize transition-all ${mobileProvider === p ? "border-primary bg-primary/5 text-primary" : "border-border bg-card text-foreground"}`}>
-                      {p === "myzaka" ? "MyZaka" : p.charAt(0).toUpperCase() + p.slice(1)}
+                      {p === "myzaka" ? "MyZaka" : p === "poso" ? "POSO Money" : p.charAt(0).toUpperCase() + p.slice(1)}
                     </button>
                   ))}
                 </div>
@@ -411,7 +411,7 @@ const PaymentLinkPage = () => {
                 />
               </div>
               <p className="text-xs text-muted-foreground bg-muted rounded-xl p-3">
-                You will receive a prompt on your {mobileProvider === "myzaka" ? "MyZaka" : mobileProvider.charAt(0).toUpperCase() + mobileProvider.slice(1)} app to confirm payment of P{link.amount.toFixed(2)}.
+                You will receive a prompt on your {mobileProvider === "myzaka" ? "MyZaka" : mobileProvider === "poso" ? "POSO Money" : mobileProvider.charAt(0).toUpperCase() + mobileProvider.slice(1)} app to confirm payment of P{link.amount.toFixed(2)}.
               </p>
               <Button
                 onClick={handleMobileSubmit}

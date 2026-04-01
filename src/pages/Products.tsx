@@ -40,8 +40,8 @@ const Products = () => {
     {
       icon: Wallet,
       title: "Mobile Money",
-      description: "Accept mobile money payments from all major Botswana providers. Orange Money, Smega, and MyZaka integrated seamlessly.",
-      features: ["Orange Money", "Smega", "MyZaka"],
+      description: "Accept mobile money payments from all major Botswana providers. Orange Money, Smega, MyZaka, and POSO Money integrated seamlessly.",
+      features: ["Orange Money", "Smega", "MyZaka", "POSO Money"],
       link: "/online-payments",
       color: "from-orange-500/20 to-orange-500/5"
     },
