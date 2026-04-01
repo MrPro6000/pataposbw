@@ -390,7 +390,7 @@ const PaymentLinkPage = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <Label>Select Provider</Label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {["orange", "smega", "myzaka", "poso"].map((p) => (
                     <button key={p} onClick={() => setMobileProvider(p)}
                       className={`py-3 rounded-xl border-2 text-sm font-semibold capitalize transition-all ${mobileProvider === p ? "border-primary bg-primary/5 text-primary" : "border-border bg-card text-foreground"}`}>
