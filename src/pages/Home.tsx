@@ -50,6 +50,22 @@ const FloatingParticle = ({ delay, size, x, y }: { delay: number; size: number; 
 const Home = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const { user, isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect authenticated users (e.g. after OAuth callback)
+  useEffect(() => {
+    if (loading || !user) return;
+    const redirect = async () => {
+      if (isAdmin) { navigate("/admin"); return; }
+      const { data: kyc } = await getKYCSubmission(user.id);
+      if (!kyc || kyc.status === "pending" || kyc.status === "rejected") { navigate("/kyc"); return; }
+      const { data: profile } = await supabase.from("profiles").select("business_name").eq("user_id", user.id).single();
+      if (!profile?.business_name) { navigate("/business-setup"); return; }
+      navigate("/dashboard");
+    };
+    redirect();
+  }, [user, isAdmin, loading, navigate]);
 
   return (
     <div className="bg-background text-foreground min-h-screen">
