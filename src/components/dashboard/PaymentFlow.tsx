@@ -571,6 +571,18 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
                 <span className="font-mono font-medium text-foreground">{linkPhone}</span>
               </div>
             )}
+            {paymentMethod === "poso-money" && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Provider</span>
+                  <span className="font-medium text-foreground">POSO Money</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Phone</span>
+                  <span className="font-medium text-foreground">{posoPhone}</span>
+                </div>
+              </>
+            )}
             <div className="flex justify-between pt-2 border-t border-border">
               <span className="text-muted-foreground">Items</span>
               <span className="font-medium text-foreground">{itemCount}</span>

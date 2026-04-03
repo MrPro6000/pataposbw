@@ -68,6 +68,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
     "card-sale": "card",
     "cash": "cash",
     "mobile-money": "mobile-money",
+    "poso-money": "poso-money",
   };
 
   return (
