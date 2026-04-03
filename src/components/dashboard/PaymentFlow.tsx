@@ -17,8 +17,8 @@ const mobileMoneyProviders = [
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
 ];
 
-export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link";
-export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "payment-link-form" | "payment-link-sending" | "success";
+export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
+export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "payment-link-form" | "payment-link-sending" | "poso-phone" | "poso-sending" | "success";
 
 interface PaymentFlowProps {
   total: number;
