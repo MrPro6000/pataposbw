@@ -47,6 +47,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
   const [customerPhone, setCustomerPhone] = useState("");
   const [cashTendered, setCashTendered] = useState("");
   const [linkPhone, setLinkPhone] = useState("");
+  const [posoPhone, setPosoPhone] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(initialMethod ?? null);
 
   const cashChange = cashTendered ? parseFloat(cashTendered) - total : 0;
