@@ -275,14 +275,16 @@ const Auth = ({ mode }: AuthProps) => {
   const handleGoogleSignIn = async () => {
     setLoading(true);
     try {
-      const { error } = await lovable.auth.signInWithOAuth("google", {
+      const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.origin,
       });
 
-      if (error) {
+      if (result.redirected) return;
+
+      if (result.error) {
         toast({
           title: "Error",
-          description: error.message || "Failed to sign in with Google",
+          description: result.error.message || "Failed to sign in with Google",
           variant: "destructive",
         });
       }
@@ -290,6 +292,33 @@ const Auth = ({ mode }: AuthProps) => {
       toast({
         title: "Error",
         description: error.message || "Failed to sign in with Google",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAppleSignIn = async () => {
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("apple", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.redirected) return;
+
+      if (result.error) {
+        toast({
+          title: "Error",
+          description: result.error.message || "Failed to sign in with Apple",
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to sign in with Apple",
         variant: "destructive",
       });
     } finally {
