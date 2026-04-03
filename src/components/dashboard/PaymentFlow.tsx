@@ -17,8 +17,8 @@ const mobileMoneyProviders = [
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
 ];
 
-export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link";
-export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "payment-link-form" | "payment-link-sending" | "success";
+export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
+export type PaymentStep = "select" | "card-tap" | "card-processing" | "cash-tendered" | "mobile-provider" | "mobile-sending" | "qr-scan" | "payment-link-form" | "payment-link-sending" | "poso-phone" | "poso-sending" | "success";
 
 interface PaymentFlowProps {
   total: number;
@@ -38,6 +38,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     if (initialMethod === "qr") return "qr-scan";
     if (initialMethod === "payment-link") return "payment-link-form";
     if (initialMethod === "mobile-money") return "mobile-provider";
+    if (initialMethod === "poso-money") return "poso-phone";
     return "select";
   };
 
@@ -46,6 +47,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
   const [customerPhone, setCustomerPhone] = useState("");
   const [cashTendered, setCashTendered] = useState("");
   const [linkPhone, setLinkPhone] = useState("");
+  const [posoPhone, setPosoPhone] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(initialMethod ?? null);
 
   const cashChange = cashTendered ? parseFloat(cashTendered) - total : 0;
@@ -85,6 +87,13 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
       }, 2500);
       return () => clearTimeout(timer);
     }
+    if (step === "poso-sending") {
+      const timer = setTimeout(() => {
+        onPaymentSuccess?.("poso_money", total, `Product Sale • POSO Money`);
+        setStep("success");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
   }, [step, onPaymentSuccess, total, selectedProvider]);
 
   const handleSelectMethod = (method: PaymentMethod) => {
@@ -93,6 +102,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     else if (method === "cash") setStep("cash-tendered");
     else if (method === "qr") setStep("qr-scan");
     else if (method === "payment-link") setStep("payment-link-form");
+    else if (method === "poso-money") setStep("poso-phone");
     else setStep("mobile-provider");
   };
 
@@ -130,6 +140,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
               { method: "card" as PaymentMethod, label: "Card", sub: "Tap, insert or swipe", icon: CreditCard, iconBg: "bg-primary" },
               { method: "cash" as PaymentMethod, label: "Cash", sub: "Record cash payment", icon: Banknote, iconBg: "bg-emerald-500" },
               { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka", icon: Smartphone, iconBg: "bg-orange-500" },
+              { method: "poso-money" as PaymentMethod, label: "POSO Money", sub: "Pay with POSO", icon: Banknote, iconBg: "bg-teal-500" },
               { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
               { method: "payment-link" as PaymentMethod, label: "Payment Link", sub: "Send link to pay", icon: Link2, iconBg: "bg-purple-500" },
             ].map(({ method, label, sub, icon: Icon, iconBg }) => (
@@ -433,6 +444,77 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
         </div>
       )}
 
+      {/* POSO MONEY PHONE */}
+      {step === "poso-phone" && (
+        <div className="space-y-4">
+          <div className="bg-muted rounded-2xl p-4 text-center">
+            <p className="text-sm text-muted-foreground">Amount to Pay</p>
+            <p className="text-3xl font-bold text-foreground">P{total.toFixed(2)}</p>
+          </div>
+
+          <div className="flex items-center gap-3 p-4 bg-teal-500/10 border border-teal-500/30 rounded-2xl">
+            <img src={posoMoneyLogo} alt="POSO Money" className="w-12 h-12 object-contain rounded-lg" />
+            <div>
+              <p className="font-semibold text-foreground">POSO Money</p>
+              <p className="text-xs text-muted-foreground">Direct POSO payment</p>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="font-semibold">Customer Phone Number</Label>
+            <Input
+              type="tel"
+              placeholder="+267 71 234 5678"
+              value={posoPhone}
+              onChange={e => setPosoPhone(e.target.value)}
+              className="h-12 text-lg"
+            />
+          </div>
+
+          <div className="flex gap-3">
+            <Button variant="outline" onClick={() => { setPosoPhone(""); setStep("select"); }} className="flex-1">
+              Cancel
+            </Button>
+            <Button onClick={() => {
+              if (!posoPhone) return;
+              const digits = posoPhone.replace(/\D/g, "").replace(/^267/, "");
+              if (!/^7\d{7}$/.test(digits)) {
+                sonnerToast.error("Botswana mobile number must start with 7 and be 8 digits.");
+                return;
+              }
+              setStep("poso-sending");
+            }}
+              disabled={!posoPhone}
+              className="flex-1 bg-teal-500 hover:bg-teal-600 text-white">
+              Send Request
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* POSO MONEY SENDING */}
+      {step === "poso-sending" && (
+        <div className="flex flex-col items-center justify-center py-12 space-y-6">
+          <div className="w-20 h-20 rounded-full bg-teal-500/10 flex items-center justify-center">
+            <div className="w-10 h-10 border-4 border-teal-500 border-t-transparent rounded-full animate-spin" />
+          </div>
+          <div className="text-center space-y-1">
+            <p className="text-lg font-semibold text-foreground">Sending POSO Money Request</p>
+            <p className="text-sm text-muted-foreground">
+              Waiting for customer to approve on POSO Money...
+            </p>
+          </div>
+          <div className="bg-muted rounded-xl p-3 flex items-center gap-3 w-full max-w-xs">
+            <img src={posoMoneyLogo} alt="POSO" className="w-5 h-5 object-contain rounded" />
+            <div className="flex-1">
+              <p className="text-xs text-muted-foreground">Sent to</p>
+              <p className="text-sm font-mono font-semibold text-foreground">{posoPhone}</p>
+            </div>
+            <div className="w-2 h-2 rounded-full bg-teal-500 animate-pulse" />
+          </div>
+        </div>
+      )}
+
       {/* SUCCESS */}
       {step === "success" && (
         <div className="flex flex-col items-center justify-center py-8 space-y-4">
@@ -488,6 +570,18 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
                 <span className="text-muted-foreground">Sent to</span>
                 <span className="font-mono font-medium text-foreground">{linkPhone}</span>
               </div>
+            )}
+            {paymentMethod === "poso-money" && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Provider</span>
+                  <span className="font-medium text-foreground">POSO Money</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Phone</span>
+                  <span className="font-medium text-foreground">{posoPhone}</span>
+                </div>
+              </>
             )}
             <div className="flex justify-between pt-2 border-t border-border">
               <span className="text-muted-foreground">Items</span>

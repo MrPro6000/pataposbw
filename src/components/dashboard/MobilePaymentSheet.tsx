@@ -12,7 +12,7 @@ import {
 import { useTransactions } from "@/hooks/useTransactions";
 import PaymentFlow from "./PaymentFlow";
 
-type PaymentType = "card-sale" | "cash" | "mobile-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money" | "poso-money";
 
 interface MobilePaymentSheetProps {
   open: boolean;
@@ -24,6 +24,7 @@ const paymentConfig: Record<PaymentType, { title: string; icon: React.ElementTyp
   "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-primary" },
   "cash": { title: "Cash Payment", icon: Banknote, color: "bg-green-500" },
   "mobile-money": { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" },
+  "poso-money": { title: "POSO Money", icon: Banknote, color: "bg-teal-500" },
 };
 
 const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetProps) => {
@@ -67,6 +68,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
     "card-sale": "card",
     "cash": "cash",
     "mobile-money": "mobile-money",
+    "poso-money": "poso-money",
   };
 
   return (
