@@ -1,9 +1,14 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useAuth } from "@/hooks/useAuth";
+import { getKYCSubmission } from "@/integrations/supabase/profile";
+import { supabase } from "@/integrations/supabase/client";
 
 
 // App preview image
@@ -45,6 +50,22 @@ const FloatingParticle = ({ delay, size, x, y }: { delay: number; size: number; 
 const Home = () => {
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  const { user, isAdmin, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect authenticated users (e.g. after OAuth callback)
+  useEffect(() => {
+    if (loading || !user) return;
+    const redirect = async () => {
+      if (isAdmin) { navigate("/admin"); return; }
+      const { data: kyc } = await getKYCSubmission(user.id);
+      if (!kyc || kyc.status === "pending" || kyc.status === "rejected") { navigate("/kyc"); return; }
+      const { data: profile } = await supabase.from("profiles").select("business_name").eq("user_id", user.id).single();
+      if (!profile?.business_name) { navigate("/business-setup"); return; }
+      navigate("/dashboard");
+    };
+    redirect();
+  }, [user, isAdmin, loading, navigate]);
 
   return (
     <div className="bg-background text-foreground min-h-screen">
