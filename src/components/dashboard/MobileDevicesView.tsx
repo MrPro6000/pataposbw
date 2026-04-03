@@ -9,15 +9,17 @@ import {
   MoreVertical,
   QrCode,
   ArrowRight,
-  X
+  ShoppingCart,
+  Check
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
-import { getDeviceImage } from "@/data/devices";
+import { getDeviceImage, deviceModels } from "@/data/devices";
 import PataLogo from "@/components/PataLogo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useToast } from "@/hooks/use-toast";
 
 interface MobileDevicesViewProps {
   profile: { full_name: string | null; business_name: string | null } | null;
@@ -34,18 +36,24 @@ interface Device {
 }
 
 const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
-  const [devices] = useState<Device[]>([
+  const { toast } = useToast();
+  const [devices, setDevices] = useState<Device[]>([
     { id: "DEV001", name: "Counter Terminal", model: "Pata Spaza", status: "online", battery: 85, lastSeen: "Now" },
     { id: "DEV002", name: "Mobile Device", model: "Go Pata", status: "online", battery: 42, lastSeen: "2 min ago" },
     { id: "DEV003", name: "Pro Terminal", model: "Pata Pro", status: "online", battery: 78, lastSeen: "5 min ago" },
-    { id: "DEV004", name: "Silver POS", model: "Patapos Silver", status: "offline", battery: 0, lastSeen: "2 days ago" },
-    { id: "DEV005", name: "Diamond Terminal", model: "Pata Diamond", status: "online", battery: 95, lastSeen: "Now" },
-    { id: "DEV006", name: "Platinum Station", model: "Pata Platinum", status: "offline", battery: 0, lastSeen: "1 week ago" },
   ]);
 
   const [showAddSheet, setShowAddSheet] = useState(false);
   const [pairingStep, setPairingStep] = useState<"name" | "scan">("name");
   const [deviceName, setDeviceName] = useState("");
+  const [activeTab, setActiveTab] = useState<"my-machines" | "shop">("my-machines");
+
+  // Buy flow state
+  const [showBuySheet, setShowBuySheet] = useState(false);
+  const [selectedShopDevice, setSelectedShopDevice] = useState<string | null>(null);
+  const [buyStep, setBuyStep] = useState<"confirm" | "name" | "done">("confirm");
+  const [newDeviceName, setNewDeviceName] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<"wallet" | "account">("wallet");
 
   const getBatteryColor = (level: number) => {
     if (level > 50) return "text-green-600 dark:text-green-400";
@@ -65,6 +73,35 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
     setDeviceName("");
   };
 
+  const shopDevices = Object.values(deviceModels);
+
+  const handleBuyDevice = (modelKey: string) => {
+    setSelectedShopDevice(modelKey);
+    setBuyStep("confirm");
+    setNewDeviceName("");
+    setPaymentMethod("wallet");
+    setShowBuySheet(true);
+  };
+
+  const handleConfirmPurchase = () => {
+    if (!selectedShopDevice) return;
+    const model = deviceModels[selectedShopDevice];
+    if (!model) return;
+
+    const newDevice: Device = {
+      id: `DEV${String(devices.length + 1).padStart(3, "0")}`,
+      name: newDeviceName || model.name,
+      model: model.model,
+      status: "offline",
+      battery: 100,
+      lastSeen: "Just purchased",
+    };
+
+    setDevices(prev => [...prev, newDevice]);
+    setBuyStep("done");
+    toast({ title: "Terminal purchased!", description: `${model.name} added to My Machines.` });
+  };
+
   return (
     <div className="min-h-screen bg-muted pb-24">
       {/* Header */}
@@ -80,74 +117,123 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
         </div>
       </header>
 
-      {/* Device Summary */}
-      <div className="px-5 py-4">
-        <div className="bg-card rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-muted-foreground">Active devices</p>
-              <p className="text-2xl font-bold text-foreground">
-                {devices.filter(d => d.status === "online").length}
-              </p>
-            </div>
-            <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
-              <Wifi className="w-6 h-6 text-green-600 dark:text-green-400" />
-            </div>
-          </div>
+      {/* Tabs */}
+      <div className="px-5 py-3">
+        <div className="flex bg-card rounded-xl p-1 border border-border">
+          <button
+            onClick={() => setActiveTab("my-machines")}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === "my-machines" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            My Machines
+          </button>
+          <button
+            onClick={() => setActiveTab("shop")}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-colors ${activeTab === "shop" ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
+          >
+            Shop Terminals
+          </button>
         </div>
       </div>
 
-      {/* Devices List */}
-      <div className="px-5">
-        <h2 className="text-sm text-muted-foreground mb-3">Your devices</h2>
-        <div className="space-y-3">
-          {devices.map((device) => (
-            <div key={device.id} className="bg-card rounded-2xl p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
-                    <img src={getDeviceImage(device.model)} alt={device.model} className="w-full h-full object-cover" />
+      {activeTab === "my-machines" && (
+        <>
+          {/* Device Summary */}
+          <div className="px-5 py-2">
+            <div className="bg-card rounded-2xl p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-muted-foreground">Active devices</p>
+                  <p className="text-2xl font-bold text-foreground">
+                    {devices.filter(d => d.status === "online").length}
+                  </p>
+                </div>
+                <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center">
+                  <Wifi className="w-6 h-6 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Devices List */}
+          <div className="px-5">
+            <h2 className="text-sm text-muted-foreground mb-3">Your devices</h2>
+            <div className="space-y-3">
+              {devices.map((device) => (
+                <div key={device.id} className="bg-card rounded-2xl p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden bg-muted flex items-center justify-center">
+                        <img src={getDeviceImage(device.model)} alt={device.model} className="w-full h-full object-cover" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-foreground">{device.name}</h3>
+                        <p className="text-sm text-muted-foreground">{device.model}</p>
+                      </div>
+                    </div>
+                    <button className="p-2">
+                      <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                    </button>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">{device.name}</h3>
-                    <p className="text-sm text-muted-foreground">{device.model}</p>
+                  <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-1.5">
+                      {device.status === "online" ? (
+                        <Wifi className="w-4 h-4 text-green-600 dark:text-green-400" />
+                      ) : (
+                        <WifiOff className="w-4 h-4 text-muted-foreground" />
+                      )}
+                      <span className={`text-sm font-medium capitalize ${device.status === "online" ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
+                        {device.status}
+                      </span>
+                    </div>
+                    {device.status === "online" && (
+                      <div className="flex items-center gap-1.5">
+                        <Battery className={`w-4 h-4 ${getBatteryColor(device.battery)}`} />
+                        <span className={`text-sm font-medium ${getBatteryColor(device.battery)}`}>{device.battery}%</span>
+                      </div>
+                    )}
+                    <span className="text-sm text-muted-foreground ml-auto">{device.lastSeen}</span>
                   </div>
                 </div>
-                <button className="p-2">
-                  <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                </button>
+              ))}
+            </div>
+
+            {/* Add Device Card */}
+            <button onClick={openAddSheet} className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors">
+              <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
+                <Plus className="w-6 h-6 text-muted-foreground" />
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1.5">
-                  {device.status === "online" ? (
-                    <Wifi className="w-4 h-4 text-green-600 dark:text-green-400" />
-                  ) : (
-                    <WifiOff className="w-4 h-4 text-muted-foreground" />
-                  )}
-                  <span className={`text-sm font-medium capitalize ${device.status === "online" ? "text-green-600 dark:text-green-400" : "text-muted-foreground"}`}>
-                    {device.status}
-                  </span>
+              <span className="text-muted-foreground font-medium">Connect Existing Device</span>
+            </button>
+          </div>
+        </>
+      )}
+
+      {activeTab === "shop" && (
+        <div className="px-5 space-y-4">
+          {shopDevices.map((device) => (
+            <div key={device.id} className="bg-card rounded-2xl p-4 border border-border">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-muted to-secondary flex items-center justify-center p-2">
+                  <img src={device.image} alt={device.name} className="w-full h-full object-contain" />
                 </div>
-                {device.status === "online" && (
-                  <div className="flex items-center gap-1.5">
-                    <Battery className={`w-4 h-4 ${getBatteryColor(device.battery)}`} />
-                    <span className={`text-sm font-medium ${getBatteryColor(device.battery)}`}>{device.battery}%</span>
-                  </div>
-                )}
-                <span className="text-sm text-muted-foreground ml-auto">{device.lastSeen}</span>
+                <div className="flex-1">
+                  <h3 className="font-bold text-foreground">{device.name}</h3>
+                  <p className="text-xl font-bold text-foreground">{device.price}</p>
+                  <p className="text-xs text-muted-foreground">{device.description}</p>
+                </div>
               </div>
+              <Button
+                onClick={() => handleBuyDevice(device.model)}
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                size="sm"
+              >
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Buy & Add to My Machines
+              </Button>
             </div>
           ))}
         </div>
-
-        {/* Add Device Card */}
-        <button onClick={openAddSheet} className="w-full mt-4 border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center justify-center gap-2 active:border-primary active:bg-primary/5 transition-colors">
-          <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center">
-            <Plus className="w-6 h-6 text-muted-foreground" />
-          </div>
-          <span className="text-muted-foreground font-medium">Add New Device</span>
-        </button>
-      </div>
+      )}
 
       {/* Add Device Sheet */}
       <Sheet open={showAddSheet} onOpenChange={setShowAddSheet}>
@@ -155,18 +241,17 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
           <SheetHeader>
             <SheetTitle>{pairingStep === "name" ? "Name Your Device" : "Link Your Device"}</SheetTitle>
           </SheetHeader>
-
           {pairingStep === "name" ? (
             <div className="py-6">
               <div className="text-center mb-6">
                 <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center mx-auto mb-3">
                   <img src={getDeviceImage("Go Pata")} alt="Device" className="w-12 h-12 object-contain" />
                 </div>
-                <p className="text-muted-foreground text-sm">Give your device a friendly name so you can identify it easily.</p>
+                <p className="text-muted-foreground text-sm">Give your device a friendly name.</p>
               </div>
               <div className="space-y-2 mb-6">
                 <Label htmlFor="mobileDeviceName">Device Name</Label>
-                <Input id="mobileDeviceName" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} placeholder='e.g. "Front Counter" or "Delivery Van"' />
+                <Input id="mobileDeviceName" value={deviceName} onChange={(e) => setDeviceName(e.target.value)} placeholder='e.g. "Front Counter"' />
               </div>
               <Button onClick={() => setPairingStep("scan")} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!deviceName.trim()}>
                 Next <ArrowRight className="w-4 h-4 ml-1" />
@@ -180,25 +265,19 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
                 </div>
                 <h3 className="font-semibold text-foreground mb-2">Scan QR Code</h3>
                 <p className="text-muted-foreground text-sm mb-6">
-                  Find the QR code on the back of your Pata terminal and scan it to link <span className="font-semibold text-foreground">"{deviceName}"</span>.
+                  Find the QR code on the back of your terminal to link <span className="font-semibold text-foreground">"{deviceName}"</span>.
                 </p>
                 <div className="bg-muted rounded-xl p-4 text-left space-y-3 mb-6">
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">1</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-bold text-primary">1</span></div>
                     <p className="text-sm text-foreground">Turn on your Pata terminal</p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">2</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-bold text-primary">2</span></div>
                     <p className="text-sm text-foreground">Find the QR code sticker on the back</p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-xs font-bold text-primary">3</span>
-                    </div>
+                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"><span className="text-xs font-bold text-primary">3</span></div>
                     <p className="text-sm text-foreground">Scan with your phone camera</p>
                   </div>
                 </div>
@@ -212,7 +291,83 @@ const MobileDevicesView = ({ profile, userEmail }: MobileDevicesViewProps) => {
         </SheetContent>
       </Sheet>
 
-      {/* Bottom Navigation */}
+      {/* Buy Device Sheet */}
+      <Sheet open={showBuySheet} onOpenChange={(open) => { setShowBuySheet(open); if (!open) setBuyStep("confirm"); }}>
+        <SheetContent side="bottom" className="rounded-t-3xl px-5 pb-8 max-h-[85vh] overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>
+              {buyStep === "confirm" ? "Purchase Terminal" : buyStep === "name" ? "Name Your Terminal" : "Purchase Complete"}
+            </SheetTitle>
+          </SheetHeader>
+
+          {buyStep === "confirm" && selectedShopDevice && deviceModels[selectedShopDevice] && (
+            <div className="py-4">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-20 h-20 rounded-xl overflow-hidden bg-muted flex items-center justify-center p-2">
+                  <img src={deviceModels[selectedShopDevice].image} alt={deviceModels[selectedShopDevice].name} className="w-full h-full object-contain" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-foreground text-lg">{deviceModels[selectedShopDevice].name}</h3>
+                  <p className="text-2xl font-bold text-primary">{deviceModels[selectedShopDevice].price}</p>
+                </div>
+              </div>
+              <div className="space-y-3 mb-6">
+                <Label>Pay with</Label>
+                <div className="space-y-2">
+                  <button onClick={() => setPaymentMethod("wallet")}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-colors ${paymentMethod === "wallet" ? "border-primary bg-primary/5" : "border-border"}`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "wallet" ? "border-primary" : "border-muted-foreground"}`}>
+                      {paymentMethod === "wallet" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                    </div>
+                    <span className="font-medium text-foreground">Wallet Balance</span>
+                  </button>
+                  <button onClick={() => setPaymentMethod("account")}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl border transition-colors ${paymentMethod === "account" ? "border-primary bg-primary/5" : "border-border"}`}>
+                    <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${paymentMethod === "account" ? "border-primary" : "border-muted-foreground"}`}>
+                      {paymentMethod === "account" && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+                    </div>
+                    <span className="font-medium text-foreground">Connected Account</span>
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setShowBuySheet(false)} className="flex-1">Cancel</Button>
+                <Button onClick={() => setBuyStep("name")} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground">Continue</Button>
+              </div>
+            </div>
+          )}
+
+          {buyStep === "name" && (
+            <div className="py-4">
+              <p className="text-muted-foreground mb-4">Give your new terminal a name.</p>
+              <div className="space-y-2 mb-6">
+                <Label htmlFor="buyDeviceName">Device Name</Label>
+                <Input id="buyDeviceName" value={newDeviceName} onChange={(e) => setNewDeviceName(e.target.value)} placeholder='e.g. "Front Counter"' />
+              </div>
+              <div className="flex gap-3">
+                <Button variant="outline" onClick={() => setBuyStep("confirm")} className="flex-1">Back</Button>
+                <Button onClick={handleConfirmPurchase} className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground" disabled={!newDeviceName.trim()}>
+                  Confirm Purchase
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {buyStep === "done" && (
+            <div className="py-6 text-center">
+              <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="font-bold text-foreground text-lg mb-2">Terminal Added!</h3>
+              <p className="text-muted-foreground mb-6">Your new terminal has been added to My Machines.</p>
+              <Button onClick={() => { setShowBuySheet(false); setActiveTab("my-machines"); }} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+                View My Machines
+              </Button>
+            </div>
+          )}
+        </SheetContent>
+      </Sheet>
+
       <MobileBottomNav />
     </div>
   );
