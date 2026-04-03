@@ -1,9 +1,14 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useAuth } from "@/hooks/useAuth";
+import { getKYCSubmission } from "@/integrations/supabase/profile";
+import { supabase } from "@/integrations/supabase/client";
 
 
 // App preview image
