@@ -120,6 +120,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Smartphone, label: "Mobile Money", show: preferences.show_mobile_money, onClick: () => handleQuickAction('mobile-money') },
     { icon: CreditCard, label: "Card sale", show: true, onClick: () => handleQuickAction('card-sale') },
     { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
+    { icon: Banknote, label: "POSO Money", show: true, onClick: () => handleQuickAction('poso-money') },
   ].filter(a => a.show);
 
   // Order: Payment Link, Voucher, Invoice — then E-Wallet, Wallet
