@@ -87,6 +87,13 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
       }, 2500);
       return () => clearTimeout(timer);
     }
+    if (step === "poso-sending") {
+      const timer = setTimeout(() => {
+        onPaymentSuccess?.("poso_money", total, `Product Sale • POSO Money`);
+        setStep("success");
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
   }, [step, onPaymentSuccess, total, selectedProvider]);
 
   const handleSelectMethod = (method: PaymentMethod) => {
