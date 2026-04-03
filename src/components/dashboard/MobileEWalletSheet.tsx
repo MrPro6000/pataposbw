@@ -25,6 +25,7 @@ const mobileMoneyProviders = [
   { id: "mascom", name: "Mascom MyZaka" },
   { id: "btc", name: "BTC Smega" },
   { id: "poso", name: "POSO Money" },
+  { id: "mani", name: "Mani" },
 ];
 
 const generateEWalletCode = () => {

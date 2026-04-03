@@ -32,6 +32,7 @@ const MobileFeesSheet = ({ open, onClose }: MobileFeesSheetProps) => {
         { name: "MyZaka", rate: "1.5%", description: "Per transaction" },
         { name: "Mascom MyZaka", rate: "1.5%", description: "Per transaction" },
         { name: "POSO Money", rate: "1.5%", description: "Per transaction" },
+        { name: "Mani", rate: "1.5%", description: "Per transaction" },
       ]
     },
     {
