@@ -6,7 +6,7 @@ interface FeesDialogProps { open: boolean; onClose: () => void; }
 const FeesDialog = ({ open, onClose }: FeesDialogProps) => {
   const feeCategories = [
     { title: "Card Payments", icon: CreditCard, iconBg: "bg-primary/10", iconColor: "text-primary", fees: [{ name: "Visa / Mastercard", rate: "2.5% + P1.50" }, { name: "Amex", rate: "3.0% + P1.50" }, { name: "Local cards", rate: "2.0% + P1.00" }] },
-    { title: "Mobile Money", icon: Smartphone, iconBg: "bg-orange-500/20", iconColor: "text-orange-500", fees: [{ name: "Orange Money", rate: "1.5%" }, { name: "Smega", rate: "1.5%" }, { name: "MyZaka", rate: "1.5%" }, { name: "Mascom MyZaka", rate: "1.5%" }, { name: "POSO Money", rate: "1.5%" }, { name: "Mani", rate: "1.5%" }] },
+    { title: "Mobile Money", icon: Smartphone, iconBg: "bg-orange-500/20", iconColor: "text-orange-500", fees: [{ name: "Orange Money", rate: "1.5%" }, { name: "Smega", rate: "1.5%" }, { name: "MyZaka", rate: "1.5%" }, { name: "Mascom MyZaka", rate: "1.5%" }, { name: "POSO Money", rate: "1.5%" }] },
     { title: "Payouts", icon: Zap, iconBg: "bg-purple-500/20", iconColor: "text-purple-500", fees: [{ name: "Standard payout (next day)", rate: "Free" }, { name: "Instant payout", rate: "1.0% (min P5)" }] },
     { title: "Online Payments", icon: Globe, iconBg: "bg-green-500/20", iconColor: "text-green-500", fees: [{ name: "Payment links", rate: "2.5% + P1.50" }, { name: "Invoice payments", rate: "2.5% + P1.50" }, { name: "Website checkout", rate: "2.5% + P1.50" }] },
   ];

@@ -9,14 +9,12 @@ import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
 import smegaLogo from "@/assets/mobile-money/smega.png";
 import myzakaLogo from "@/assets/mobile-money/myzaka.png";
 import posoMoneyLogo from "@/assets/mobile-money/poso-money.png";
-import maniLogo from "@/assets/mobile-money/mani.png";
 
 const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
   { id: "smega", name: "Smega", logo: smegaLogo },
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
-  { id: "mani", name: "Mani", logo: maniLogo },
 ];
 
 export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link";
