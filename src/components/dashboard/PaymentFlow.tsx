@@ -38,6 +38,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     if (initialMethod === "qr") return "qr-scan";
     if (initialMethod === "payment-link") return "payment-link-form";
     if (initialMethod === "mobile-money") return "mobile-provider";
+    if (initialMethod === "poso-money") return "poso-phone";
     return "select";
   };
 
