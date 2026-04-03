@@ -102,6 +102,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     else if (method === "cash") setStep("cash-tendered");
     else if (method === "qr") setStep("qr-scan");
     else if (method === "payment-link") setStep("payment-link-form");
+    else if (method === "poso-money") setStep("poso-phone");
     else setStep("mobile-provider");
   };
 
