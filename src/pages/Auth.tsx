@@ -63,7 +63,13 @@ const Auth = ({ mode }: AuthProps) => {
           return;
         }
 
-        // Check KYC status
+        // For login: go straight to dashboard — user already has an account
+        if (mode === "login") {
+          navigate("/dashboard");
+          return;
+        }
+
+        // For signup: check KYC and business setup
         const { data: kyc } = await getKYCSubmission(user.id);
         
         if (!kyc || kyc.status === "pending" || kyc.status === "rejected") {
@@ -89,7 +95,7 @@ const Auth = ({ mode }: AuthProps) => {
     };
 
     checkAndRedirect();
-  }, [user, isAdmin, navigate]);
+  }, [user, isAdmin, navigate, mode]);
 
   const formatPhoneNumber = (value: string) => {
     const cleaned = value.replace(/[^\d]/g, "");

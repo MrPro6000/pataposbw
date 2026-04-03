@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { getKYCSubmission } from "@/integrations/supabase/profile";
-import { supabase } from "@/integrations/supabase/client";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -32,37 +30,11 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
 
     const runChecks = async () => {
       try {
-        // 1. Check KYC status
-        const { data: kyc } = await getKYCSubmission(user.id);
-
-        if (!kyc) {
-          navigate("/kyc", { replace: true });
-          return;
-        }
-
-        if (kyc.status === "pending" || kyc.status === "rejected") {
-          navigate("/kyc", { replace: true });
-          return;
-        }
-
-        // 2. KYC is approved — check business setup
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("business_name")
-          .eq("user_id", user.id)
-          .single();
-
-        if (!profile?.business_name) {
-          navigate("/business-setup", { replace: true });
-          return;
-        }
-
-        // All checks pass
+        // User is authenticated — allow access to dashboard
+        // KYC and business setup are handled during signup, not on every visit
         setAllowed(true);
       } catch (err) {
         console.error("ProtectedRoute check error:", err);
-        // On error, allow access rather than creating a redirect loop
-        // The user is authenticated — don't send them back to login
         setAllowed(true);
       } finally {
         setChecking(false);
