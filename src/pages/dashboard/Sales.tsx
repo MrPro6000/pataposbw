@@ -63,7 +63,7 @@ const mobileMoneyProviders = [
   { id: "mascom", name: "Mascom MyZaka", color: "bg-yellow-500" },
 ];
 
-type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
+type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet" | "poso-money";
 
 const Sales = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -242,7 +242,7 @@ const Sales = () => {
 
     const paymentMethodMap: Record<string, string> = {
       "card": "card", "payment-link": "payment_link", "invoice": "invoice",
-      "cash": "cash", "mobile-money": "mobile_money", "wallet": "wallet",
+      "cash": "cash", "mobile-money": "mobile_money", "wallet": "wallet", "poso-money": "poso_money",
     };
     const providerLabel = selectedProvider ? mobileMoneyProviders.find(p => p.id === selectedProvider)?.name : undefined;
     const descParts = [paymentType.replace("-", " ")];
@@ -341,6 +341,8 @@ const Sales = () => {
         return { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" };
       case "wallet":
         return { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" };
+      case "poso-money":
+        return { title: "POSO Money", icon: Banknote, color: "bg-teal-500" };
     }
   };
 
@@ -392,7 +394,7 @@ const Sales = () => {
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
 
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -427,6 +429,15 @@ const Sales = () => {
           >
             <Banknote className="w-5 h-5" />
             <span className="text-xs">Cash</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("poso-money")}
+          >
+            <Banknote className="w-5 h-5" />
+            <span className="text-xs">POSO Money</span>
           </Button>
 
           <Button
