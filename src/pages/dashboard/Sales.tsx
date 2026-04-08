@@ -432,7 +432,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("poso-money" as any)}
+            onClick={() => openPaymentFlow("poso-money")}
           >
             <Banknote className="w-5 h-5" />
             <span className="text-xs">POSO Money</span>
