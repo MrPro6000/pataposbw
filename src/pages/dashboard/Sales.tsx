@@ -392,7 +392,7 @@ const Sales = () => {
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
 
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -427,6 +427,15 @@ const Sales = () => {
           >
             <Banknote className="w-5 h-5" />
             <span className="text-xs">Cash</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("poso-money" as any)}
+          >
+            <Banknote className="w-5 h-5" />
+            <span className="text-xs">POSO Money</span>
           </Button>
 
           <Button
