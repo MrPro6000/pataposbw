@@ -242,7 +242,7 @@ const Sales = () => {
 
     const paymentMethodMap: Record<string, string> = {
       "card": "card", "payment-link": "payment_link", "invoice": "invoice",
-      "cash": "cash", "mobile-money": "mobile_money", "wallet": "wallet",
+      "cash": "cash", "mobile-money": "mobile_money", "wallet": "wallet", "poso-money": "poso_money",
     };
     const providerLabel = selectedProvider ? mobileMoneyProviders.find(p => p.id === selectedProvider)?.name : undefined;
     const descParts = [paymentType.replace("-", " ")];
