@@ -63,7 +63,7 @@ const mobileMoneyProviders = [
   { id: "mascom", name: "Mascom MyZaka", color: "bg-yellow-500" },
 ];
 
-type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet";
+type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet" | "poso-money";
 
 const Sales = () => {
   const [searchQuery, setSearchQuery] = useState("");
