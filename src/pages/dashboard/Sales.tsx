@@ -341,6 +341,8 @@ const Sales = () => {
         return { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" };
       case "wallet":
         return { title: "Wallet Payment", icon: Wallet, color: "bg-indigo-500" };
+      case "poso-money":
+        return { title: "POSO Money", icon: Banknote, color: "bg-teal-500" };
     }
   };
 
