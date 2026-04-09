@@ -60,7 +60,7 @@ const mobileMoneyProviders = [
   { id: "orange", name: "Orange Money", color: "bg-orange-500" },
   { id: "smega", name: "Smega", color: "bg-blue-600" },
   { id: "myzaka", name: "MyZaka", color: "bg-green-600" },
-  { id: "mascom", name: "Mascom MyZaka", color: "bg-yellow-500" },
+  { id: "poso", name: "POSO Money", color: "bg-teal-500" },
 ];
 
 type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money" | "wallet" | "poso-money";
