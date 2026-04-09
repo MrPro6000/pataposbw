@@ -96,6 +96,11 @@ const Sales = () => {
   const [eWalletSendMethod, setEWalletSendMethod] = useState<"direct" | "code">("direct");
   const [eWalletProvider, setEWalletProvider] = useState("");
   const [eWalletCode, setEWalletCode] = useState("");
+  const [walletTransferOpen, setWalletTransferOpen] = useState(false);
+  const [walletTransferAmount, setWalletTransferAmount] = useState("");
+  const [walletTransferAccount, setWalletTransferAccount] = useState("");
+  const [walletTransferProcessing, setWalletTransferProcessing] = useState(false);
+  const [walletTransferSuccess, setWalletTransferSuccess] = useState(false);
 
   const { transactions, addTransaction, balance, last7DaysIncome } = useTransactions();
   const { paymentLinks: dbPaymentLinks, createPaymentLink } = usePaymentLinks();
@@ -479,7 +484,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("wallet")}
+            onClick={() => { setWalletTransferOpen(true); setWalletTransferAmount(""); setWalletTransferAccount(""); setWalletTransferSuccess(false); }}
           >
             <Wallet className="w-5 h-5" />
             <span className="text-xs">Wallet</span>
@@ -954,6 +959,7 @@ const Sales = () => {
                 handlePaymentFlowSuccess(method, total, fullDesc);
               }}
               onBack={() => setPaymentFlowStep("amount")}
+              initialMethod={paymentType as any}
             />
           )}
         </DialogContent>
