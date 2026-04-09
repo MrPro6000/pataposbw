@@ -1290,6 +1290,111 @@ const Sales = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Wallet Transfer Dialog */}
+      <Dialog open={walletTransferOpen} onOpenChange={(o) => {
+        setWalletTransferOpen(o);
+        if (!o) { setWalletTransferSuccess(false); setWalletTransferAmount(""); setWalletTransferAccount(""); setWalletTransferProcessing(false); }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="w-5 h-5" /> Transfer from Wallet
+            </DialogTitle>
+          </DialogHeader>
+          {!walletTransferSuccess ? (
+            <div className="space-y-4">
+              <div className="bg-primary/10 rounded-xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Wallet Balance</p>
+                <p className="text-2xl font-bold text-foreground">P{balance.toFixed(2)}</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Transfer To *</Label>
+                <Select value={walletTransferAccount} onValueChange={setWalletTransferAccount}>
+                  <SelectTrigger><SelectValue placeholder="Select account" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fnb">First National Bank •••• 4532</SelectItem>
+                    <SelectItem value="orange">Orange Money</SelectItem>
+                    <SelectItem value="smega">Smega</SelectItem>
+                    <SelectItem value="myzaka">MyZaka</SelectItem>
+                    <SelectItem value="poso">POSO Money</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Amount (P) *</Label>
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  placeholder="0.00"
+                  value={walletTransferAmount}
+                  onChange={(e) => setWalletTransferAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+                  className="text-xl font-bold text-center"
+                />
+              </div>
+
+              {parseFloat(walletTransferAmount) > 0 && (
+                <div className="bg-muted rounded-xl p-3 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Transfer Fee (0.5%)</span>
+                    <span className="font-medium text-foreground">P{(parseFloat(walletTransferAmount) * 0.005).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between mt-1">
+                    <span className="text-muted-foreground">Total Deduction</span>
+                    <span className="font-bold text-foreground">P{(parseFloat(walletTransferAmount) * 1.005).toFixed(2)}</span>
+                  </div>
+                </div>
+              )}
+
+              <Button
+                className="w-full h-12"
+                disabled={
+                  !walletTransferAccount ||
+                  !(parseFloat(walletTransferAmount) > 0) ||
+                  walletTransferProcessing
+                }
+                onClick={async () => {
+                  const amt = parseFloat(walletTransferAmount);
+                  const totalDeduction = amt * 1.005;
+                  if (totalDeduction > balance) {
+                    toast({ title: "Insufficient Balance", description: `Your wallet balance is P${balance.toFixed(2)}`, variant: "destructive" });
+                    return;
+                  }
+                  setWalletTransferProcessing(true);
+                  await new Promise(r => setTimeout(r, 2000));
+                  const accountLabel = walletTransferAccount === "fnb" ? "FNB •••• 4532"
+                    : walletTransferAccount === "orange" ? "Orange Money"
+                    : walletTransferAccount === "smega" ? "Smega"
+                    : walletTransferAccount === "myzaka" ? "MyZaka"
+                    : "POSO Money";
+                  const { error } = await addTransaction({
+                    type: "purchase", payment_method: "wallet", amount: -totalDeduction,
+                    description: `Wallet Transfer • ${accountLabel} • P${amt.toFixed(2)} + P${(amt * 0.005).toFixed(2)} fee`,
+                    status: "completed",
+                  });
+                  setWalletTransferProcessing(false);
+                  if (error) { toast({ title: "Failed", description: error, variant: "destructive" }); return; }
+                  setWalletTransferSuccess(true);
+                  toast({ title: "Transfer Successful", description: `P${amt.toFixed(2)} transferred to ${accountLabel}` });
+                }}
+              >
+                {walletTransferProcessing ? "Processing..." : `Transfer P${(parseFloat(walletTransferAmount) || 0).toFixed(2)}`}
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-6 space-y-3">
+              <CheckCircle className="w-12 h-12 text-green-500 mx-auto" />
+              <p className="text-xl font-bold text-foreground">Transfer Successful!</p>
+              <p className="text-muted-foreground">
+                P{parseFloat(walletTransferAmount).toFixed(2)} has been transferred
+              </p>
+              <Button className="w-full mt-4" onClick={() => { setWalletTransferOpen(false); setWalletTransferSuccess(false); }}>Done</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </DashboardLayout>
   );
 };
