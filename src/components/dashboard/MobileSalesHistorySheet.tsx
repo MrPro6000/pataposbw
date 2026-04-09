@@ -19,11 +19,14 @@ const MobileSalesHistorySheet = ({ open, onClose }: MobileSalesHistorySheetProps
   const [selectedFilter, setSelectedFilter] = useState<string>("all");
   const { transactions, loading } = useTransactions();
 
+  // Only show sold products / income transactions (positive amounts, excluding payouts)
+  const salesOnly = transactions.filter(t => t.amount > 0 && t.type !== "payout" && t.payment_method !== "payout");
+
   const filteredHistory = selectedFilter === "all"
-    ? transactions
+    ? salesOnly
     : selectedFilter === "completed" || selectedFilter === "pending"
-      ? transactions.filter(t => t.status === selectedFilter)
-      : transactions.filter(t => t.payment_method === selectedFilter);
+      ? salesOnly.filter(t => t.status === selectedFilter)
+      : salesOnly.filter(t => t.payment_method === selectedFilter);
 
   const getMethodIcon = (method: string) => {
     switch (method) {

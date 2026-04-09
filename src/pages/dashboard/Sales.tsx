@@ -195,7 +195,10 @@ const Sales = () => {
     }
   };
 
-  const filteredTransactions = transactions.filter((tx) => {
+  // Sales history: only show sold products / income transactions (positive amounts, excluding payouts)
+  const salesTransactions = transactions.filter((tx) => tx.amount > 0 && tx.type !== "payout" && tx.payment_method !== "payout");
+
+  const filteredTransactions = salesTransactions.filter((tx) => {
     const typeLabel = paymentTypeLabels[tx.type]?.toLowerCase() || "";
     const matchesSearch =
       typeLabel.includes(searchQuery.toLowerCase()) ||

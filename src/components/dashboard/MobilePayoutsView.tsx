@@ -34,9 +34,12 @@ const MobilePayoutsView = () => {
 
   const connectedAccounts = getConnectedAccounts();
 
-  const payoutsFromDB: Payout[] = transactions.map(tx => ({
+  // Payouts history: only show withdrawals, cash-ins, and outgoing transfers (negative amounts or payout type)
+  const payoutTransactions = transactions.filter(tx => tx.amount < 0 || tx.payment_method === "payout" || tx.type === "payout" || tx.type === "withdrawal" || tx.type === "cash_in");
+
+  const payoutsFromDB: Payout[] = payoutTransactions.map(tx => ({
     id: tx.id,
-    type: tx.payment_method === "card" ? "Card Sale" : tx.payment_method === "mobile_money" ? "Mobile Money" : tx.payment_method === "cash" ? "Cash" : tx.payment_method === "payout" ? "Withdrawal" : tx.type,
+    type: tx.payment_method === "payout" ? "Withdrawal" : tx.type === "cash_in" ? "Cash In" : tx.payment_method === "wallet" ? "Wallet Transfer" : tx.payment_method === "e_wallet" ? "E-Wallet" : tx.type,
     date: new Date(tx.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }),
     amount: `P${Math.abs(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
     amountNum: tx.amount,
