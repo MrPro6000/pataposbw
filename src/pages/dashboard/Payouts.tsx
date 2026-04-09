@@ -209,17 +209,20 @@ const Payouts = () => {
         </button>
       </div>
 
-      {/* Transaction History */}
+      {/* Payout History - only withdrawals, cash-ins, outgoing transfers */}
+      {(() => {
+        const payoutTxs = transactions.filter(tx => tx.amount < 0 || tx.payment_method === "payout" || tx.type === "payout" || tx.type === "withdrawal" || tx.type === "cash_in");
+        return (
       <div className="bg-card border border-border rounded-2xl overflow-hidden">
-        <div className="p-6 border-b border-border"><h2 className="text-lg font-semibold text-foreground">Transaction History</h2></div>
-        {transactions.length === 0 ? (
-          <div className="p-12 text-center text-muted-foreground"><Wallet className="w-10 h-10 mx-auto mb-3 opacity-50" /><p>No transactions yet</p></div>
+        <div className="p-6 border-b border-border"><h2 className="text-lg font-semibold text-foreground">Payout History</h2></div>
+        {payoutTxs.length === 0 ? (
+          <div className="p-12 text-center text-muted-foreground"><Wallet className="w-10 h-10 mx-auto mb-3 opacity-50" /><p>No payouts yet</p></div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-muted"><tr><th className="text-left p-4 text-sm font-medium text-muted-foreground">Type</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Date</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Amount</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Destination</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Status</th><th className="text-left p-4 text-sm font-medium text-muted-foreground">Actions</th></tr></thead>
               <tbody>
-                {transactions.slice(0, 20).map((tx) => (
+                {payoutTxs.slice(0, 20).map((tx) => (
                   <tr key={tx.id} className="border-t border-border hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedTx(tx)}>
                     <td className="p-4"><span className="font-medium text-foreground capitalize">{tx.payment_method === "payout" ? "Withdrawal" : tx.payment_method.replace("_", " ")}</span></td>
                     <td className="p-4 text-muted-foreground">{new Date(tx.created_at).toLocaleDateString()} {new Date(tx.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</td>
@@ -234,6 +237,8 @@ const Payouts = () => {
           </div>
         )}
       </div>
+        );
+      })()}
 
       {/* Transaction Detail Dialog */}
       <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
