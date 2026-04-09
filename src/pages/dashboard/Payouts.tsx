@@ -237,6 +237,8 @@ const Payouts = () => {
           </div>
         )}
       </div>
+        );
+      })()}
 
       {/* Transaction Detail Dialog */}
       <Dialog open={!!selectedTx} onOpenChange={() => setSelectedTx(null)}>
