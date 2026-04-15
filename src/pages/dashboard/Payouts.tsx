@@ -34,9 +34,10 @@ const Payouts = () => {
   const [addAccountType, setAddAccountType] = useState<"" | "bank" | "mobile" | "card">("");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [withdrawStep, setWithdrawStep] = useState<"select" | "confirm" | "processing" | "success">("select");
+  const [withdrawStep, setWithdrawStep] = useState<"select" | "confirm" | "processing" | "success" | "cardless_confirm" | "cardless_processing" | "cardless_success">("select");
   const [withdrawAccount, setWithdrawAccount] = useState<ConnectedAccount | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [cardlessCode, setCardlessCode] = useState("");
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
   const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   const [loanOpen, setLoanOpen] = useState(false);
