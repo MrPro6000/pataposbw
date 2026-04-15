@@ -158,6 +158,18 @@ const MobilePayoutsView = () => {
     }, 2000);
   };
 
+  const handleCardlessWithdraw = async () => {
+    const amt = parseFloat(payoutAmount);
+    if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
+    if (amt > availableBalance) { toast.error("Insufficient funds."); return; }
+    if (amt < 5) { toast.error("Minimum withdrawal is P5.00."); return; }
+    setInstantPayoutStep("cardless_processing");
+    const code = Math.random().toString(10).slice(2, 8).padStart(6, "0");
+    setCardlessCode(code);
+    await addTransaction({ type: "payout", payment_method: "payout", amount: -(amt - instantFee), description: `Cardless withdrawal (Code: ${code})`, status: "processing" });
+    setTimeout(() => setInstantPayoutStep("cardless_success"), 2000);
+  };
+
   const handleCopyReference = (ref: string) => {
     navigator.clipboard.writeText(ref);
     toast.success("Reference copied");
