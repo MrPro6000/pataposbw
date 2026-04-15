@@ -372,6 +372,17 @@ const MobilePayoutsView = () => {
                   </button>
                 ))
               )}
+              <div className="border-t border-border pt-3">
+                <p className="text-xs text-muted-foreground mb-2">Or withdraw without a card:</p>
+                <button
+                  onClick={() => setInstantPayoutStep("cardless_confirm")}
+                  className="w-full flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/5 active:bg-primary/10 transition-colors text-left"
+                >
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"><Smartphone className="w-5 h-5 text-primary" /></div>
+                  <div className="flex-1"><p className="font-medium text-sm text-foreground">Cardless Withdrawal</p><p className="text-xs text-muted-foreground">Get a code to withdraw at any ATM</p></div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
               <Button variant="outline" onClick={() => setInstantPayoutOpen(false)} className="w-full">Cancel</Button>
             </div>
           )}
