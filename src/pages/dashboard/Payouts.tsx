@@ -7,7 +7,7 @@ import MobileMoneyTransferSheet from "@/components/dashboard/MobileMoneyTransfer
 import MobileLoanApplicationSheet from "@/components/dashboard/MobileLoanApplicationSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
-import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send } from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send, Copy, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -335,6 +335,9 @@ const Payouts = () => {
             {withdrawStep === "confirm" && "Confirm Withdrawal"}
             {withdrawStep === "processing" && "Processing..."}
             {withdrawStep === "success" && "Withdrawal Sent!"}
+            {withdrawStep === "cardless_confirm" && "Cardless Withdrawal"}
+            {withdrawStep === "cardless_processing" && "Processing..."}
+            {withdrawStep === "cardless_success" && "Withdrawal Code Ready!"}
           </DialogTitle></DialogHeader>
           {withdrawStep === "select" && (
             <div className="space-y-4 py-2">
