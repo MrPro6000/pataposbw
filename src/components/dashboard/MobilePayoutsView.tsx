@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, CheckCircle, Clock, Zap, Building2, ChevronRight, Edit, Check, Copy, AlertTriangle, Smartphone, CreditCard, Wallet } from "lucide-react";
+import { ArrowLeft, CheckCircle, Clock, Zap, Building2, ChevronRight, Edit, Check, Copy, AlertTriangle, Smartphone, CreditCard, Wallet, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,9 +28,10 @@ const MobilePayoutsView = () => {
   const { balance, transactions, addTransaction } = useTransactions();
   const [selectedPayout, setSelectedPayout] = useState<Payout | null>(null);
   const [instantPayoutOpen, setInstantPayoutOpen] = useState(false);
-  const [instantPayoutStep, setInstantPayoutStep] = useState<"select_account" | "confirm" | "processing" | "success">("select_account");
+  const [instantPayoutStep, setInstantPayoutStep] = useState<"select_account" | "confirm" | "processing" | "success" | "cardless_confirm" | "cardless_processing" | "cardless_success">("select_account");
   const [selectedAccount, setSelectedAccount] = useState<ConnectedAccount | null>(null);
   const [payoutAmount, setPayoutAmount] = useState("");
+  const [cardlessCode, setCardlessCode] = useState("");
 
   const connectedAccounts = getConnectedAccounts();
 
