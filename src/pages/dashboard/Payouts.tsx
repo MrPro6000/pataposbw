@@ -7,7 +7,7 @@ import MobileMoneyTransferSheet from "@/components/dashboard/MobileMoneyTransfer
 import MobileLoanApplicationSheet from "@/components/dashboard/MobileLoanApplicationSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
-import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send } from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send, Copy, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -34,9 +34,10 @@ const Payouts = () => {
   const [addAccountType, setAddAccountType] = useState<"" | "bank" | "mobile" | "card">("");
   const [selectedProvider, setSelectedProvider] = useState("");
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [withdrawStep, setWithdrawStep] = useState<"select" | "confirm" | "processing" | "success">("select");
+  const [withdrawStep, setWithdrawStep] = useState<"select" | "confirm" | "processing" | "success" | "cardless_confirm" | "cardless_processing" | "cardless_success">("select");
   const [withdrawAccount, setWithdrawAccount] = useState<ConnectedAccount | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [cardlessCode, setCardlessCode] = useState("");
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
   const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   const [loanOpen, setLoanOpen] = useState(false);
@@ -137,6 +138,22 @@ const Payouts = () => {
       : `${withdrawAccount.name} - ${withdrawAccount.details}`;
     await addTransaction({ type: "payout", payment_method: "payout", amount: -(withdrawAmountNum - withdrawFee), description: `Withdrawal to ${destLabel}`, status: "processing" });
     setTimeout(() => setWithdrawStep("success"), 2000);
+  };
+
+  const generateCardlessCode = () => {
+    return Math.random().toString(10).slice(2, 8).padStart(6, "0");
+  };
+
+  const handleCardlessWithdraw = async () => {
+    const amt = parseFloat(withdrawAmount);
+    if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
+    if (amt > balance) { toast.error("Insufficient funds."); return; }
+    if (amt < 5) { toast.error("Minimum withdrawal is P5.00."); return; }
+    setWithdrawStep("cardless_processing");
+    const code = generateCardlessCode();
+    setCardlessCode(code);
+    await addTransaction({ type: "payout", payment_method: "payout", amount: -(amt - withdrawFee), description: `Cardless withdrawal (Code: ${code})`, status: "processing" });
+    setTimeout(() => setWithdrawStep("cardless_success"), 2000);
   };
 
   return (
@@ -318,18 +335,30 @@ const Payouts = () => {
             {withdrawStep === "confirm" && "Confirm Withdrawal"}
             {withdrawStep === "processing" && "Processing..."}
             {withdrawStep === "success" && "Withdrawal Sent!"}
+            {withdrawStep === "cardless_confirm" && "Cardless Withdrawal"}
+            {withdrawStep === "cardless_processing" && "Processing..."}
+            {withdrawStep === "cardless_success" && "Withdrawal Code Ready!"}
           </DialogTitle></DialogHeader>
           {withdrawStep === "select" && (
             <div className="space-y-4 py-2">
               <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} className="text-xl font-bold h-12 text-center" /><p className="text-xs text-muted-foreground text-center">Available: P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p></div>
               <p className="text-sm text-muted-foreground">Select destination:</p>
-              {accounts.length === 0 ? <p className="text-center py-4 text-muted-foreground text-sm">No connected accounts. Add one first.</p> : accounts.map(a => (
+              {accounts.map(a => (
                 <button key={a.id} onClick={() => { setWithdrawAccount(a); setWithdrawStep("confirm"); }} className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-muted/50 text-left">
                   <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">{a.providerImg ? <img src={a.providerImg} alt="" className="w-6 h-6 rounded object-contain" /> : getAccountIcon(a.type)}</div>
                   <div className="flex-1"><p className="font-medium text-foreground">{a.name}</p><p className="text-xs text-muted-foreground">{a.details} {a.branchCode ? `• Branch ${a.branchCode}` : ""}</p></div>
                   {a.isDefault && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Default</span>}
                 </button>
               ))}
+              <div className="border-t border-border pt-3">
+                <p className="text-sm text-muted-foreground mb-2">Or withdraw without a card:</p>
+                <button onClick={() => setWithdrawStep("cardless_confirm")} className="w-full flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-left transition-colors">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"><Smartphone className="w-5 h-5 text-primary" /></div>
+                  <div className="flex-1"><p className="font-medium text-foreground">Cardless Withdrawal</p><p className="text-xs text-muted-foreground">Get a code to withdraw at any ATM using your phone</p></div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              {accounts.length === 0 && <p className="text-center text-muted-foreground text-xs">No connected accounts yet. You can still use cardless withdrawal above.</p>}
             </div>
           )}
           {withdrawStep === "confirm" && withdrawAccount && (
@@ -355,6 +384,45 @@ const Payouts = () => {
               <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto"><CheckCircle className="w-8 h-8 text-green-600" /></div>
               <h3 className="text-lg font-bold">Withdrawal Sent!</h3>
               <p className="text-sm text-muted-foreground">P{(withdrawAmountNum - withdrawFee).toLocaleString(undefined, { minimumFractionDigits: 2 })} is on its way to {withdrawAccount?.name}</p>
+              <Button onClick={() => setWithdrawOpen(false)} className="w-full">Done</Button>
+            </div>
+          )}
+          {withdrawStep === "cardless_confirm" && (
+            <div className="space-y-4 py-2">
+              <div className="bg-muted rounded-xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Withdrawal Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{withdrawAmountNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <div className="bg-muted rounded-xl p-4 space-y-2">
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Amount</span><span className="text-sm font-medium">P{withdrawAmountNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Fee (0.5%)</span><span className="text-sm font-medium text-destructive">-P{withdrawFee.toFixed(2)}</span></div>
+                <div className="flex justify-between border-t border-border pt-2"><span className="text-sm font-semibold">You'll receive</span><span className="text-sm font-bold">P{(withdrawAmountNum - withdrawFee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+              </div>
+              <div className="flex items-start gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3">
+                <Smartphone className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">A 6-digit code will be generated. Use it at any supported ATM to withdraw cash without a card. Code expires in 30 minutes.</p>
+              </div>
+              <DialogFooter><Button variant="outline" onClick={() => setWithdrawStep("select")}>Back</Button><Button onClick={handleCardlessWithdraw}><Hash className="w-4 h-4 mr-2" /> Generate Code</Button></DialogFooter>
+            </div>
+          )}
+          {withdrawStep === "cardless_processing" && (
+            <div className="py-12 text-center space-y-4"><div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto" /><p className="text-muted-foreground">Generating withdrawal code...</p></div>
+          )}
+          {withdrawStep === "cardless_success" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto"><CheckCircle className="w-8 h-8 text-green-600" /></div>
+              <h3 className="text-lg font-bold text-foreground">Your Withdrawal Code</h3>
+              <div className="bg-muted rounded-xl p-6">
+                <p className="text-4xl font-mono font-bold tracking-[0.3em] text-foreground">{cardlessCode}</p>
+              </div>
+              <button onClick={() => { navigator.clipboard.writeText(cardlessCode); toast.success("Code copied"); }} className="inline-flex items-center gap-2 text-sm text-primary hover:underline"><Copy className="w-4 h-4" /> Copy code</button>
+              <div className="bg-muted rounded-xl p-3 space-y-1 text-left">
+                <p className="text-xs text-muted-foreground">• Go to any supported ATM</p>
+                <p className="text-xs text-muted-foreground">• Select "Cardless Withdrawal"</p>
+                <p className="text-xs text-muted-foreground">• Enter the 6-digit code above</p>
+                <p className="text-xs text-muted-foreground">• Collect P{(withdrawAmountNum - withdrawFee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <p className="text-xs text-orange-500 font-medium">⏱ Code expires in 30 minutes</p>
               <Button onClick={() => setWithdrawOpen(false)} className="w-full">Done</Button>
             </div>
           )}
