@@ -140,6 +140,22 @@ const Payouts = () => {
     setTimeout(() => setWithdrawStep("success"), 2000);
   };
 
+  const generateCardlessCode = () => {
+    return Math.random().toString(10).slice(2, 8).padStart(6, "0");
+  };
+
+  const handleCardlessWithdraw = async () => {
+    const amt = parseFloat(withdrawAmount);
+    if (!amt || amt <= 0) { toast.error("Enter a valid amount."); return; }
+    if (amt > balance) { toast.error("Insufficient funds."); return; }
+    if (amt < 5) { toast.error("Minimum withdrawal is P5.00."); return; }
+    setWithdrawStep("cardless_processing");
+    const code = generateCardlessCode();
+    setCardlessCode(code);
+    await addTransaction({ type: "payout", payment_method: "payout", amount: -(amt - withdrawFee), description: `Cardless withdrawal (Code: ${code})`, status: "processing" });
+    setTimeout(() => setWithdrawStep("cardless_success"), 2000);
+  };
+
   return (
     <DashboardLayout>
       <div className="mb-6">
