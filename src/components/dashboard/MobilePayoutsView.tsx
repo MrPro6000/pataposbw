@@ -330,6 +330,9 @@ const MobilePayoutsView = () => {
               {instantPayoutStep === "confirm" && "Confirm Withdrawal"}
               {instantPayoutStep === "processing" && "Processing..."}
               {instantPayoutStep === "success" && "Withdrawal Sent!"}
+              {instantPayoutStep === "cardless_confirm" && "Cardless Withdrawal"}
+              {instantPayoutStep === "cardless_processing" && "Processing..."}
+              {instantPayoutStep === "cardless_success" && "Withdrawal Code Ready!"}
             </SheetTitle>
           </SheetHeader>
 
