@@ -340,13 +340,22 @@ const Payouts = () => {
             <div className="space-y-4 py-2">
               <div className="space-y-2"><Label>Amount (P)</Label><Input type="number" value={withdrawAmount} onChange={e => setWithdrawAmount(e.target.value)} className="text-xl font-bold h-12 text-center" /><p className="text-xs text-muted-foreground text-center">Available: P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p></div>
               <p className="text-sm text-muted-foreground">Select destination:</p>
-              {accounts.length === 0 ? <p className="text-center py-4 text-muted-foreground text-sm">No connected accounts. Add one first.</p> : accounts.map(a => (
+              {accounts.map(a => (
                 <button key={a.id} onClick={() => { setWithdrawAccount(a); setWithdrawStep("confirm"); }} className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-muted/50 text-left">
                   <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">{a.providerImg ? <img src={a.providerImg} alt="" className="w-6 h-6 rounded object-contain" /> : getAccountIcon(a.type)}</div>
                   <div className="flex-1"><p className="font-medium text-foreground">{a.name}</p><p className="text-xs text-muted-foreground">{a.details} {a.branchCode ? `• Branch ${a.branchCode}` : ""}</p></div>
                   {a.isDefault && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Default</span>}
                 </button>
               ))}
+              <div className="border-t border-border pt-3">
+                <p className="text-sm text-muted-foreground mb-2">Or withdraw without a card:</p>
+                <button onClick={() => setWithdrawStep("cardless_confirm")} className="w-full flex items-center gap-3 p-4 rounded-xl border border-primary/30 bg-primary/5 hover:bg-primary/10 text-left transition-colors">
+                  <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center"><Smartphone className="w-5 h-5 text-primary" /></div>
+                  <div className="flex-1"><p className="font-medium text-foreground">Cardless Withdrawal</p><p className="text-xs text-muted-foreground">Get a code to withdraw at any ATM using your phone</p></div>
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </div>
+              {accounts.length === 0 && <p className="text-center text-muted-foreground text-xs">No connected accounts yet. You can still use cardless withdrawal above.</p>}
             </div>
           )}
           {withdrawStep === "confirm" && withdrawAccount && (
