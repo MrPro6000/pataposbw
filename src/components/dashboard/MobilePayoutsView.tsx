@@ -439,6 +439,56 @@ const MobilePayoutsView = () => {
               <Button onClick={() => setInstantPayoutOpen(false)} className="w-full">Done</Button>
             </div>
           )}
+
+          {instantPayoutStep === "cardless_confirm" && (
+            <div className="py-4 space-y-4">
+              <div className="bg-muted rounded-xl p-4 text-center">
+                <p className="text-sm text-muted-foreground">Withdrawal Amount</p>
+                <p className="text-3xl font-bold text-foreground">P{payoutAmountNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <div className="bg-muted rounded-xl p-4 space-y-3">
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Amount</span><span className="text-sm font-medium text-foreground">P{payoutAmountNum.toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Fee (0.5%)</span><span className="text-sm font-medium text-destructive">-P{instantFee.toFixed(2)}</span></div>
+                <div className="flex justify-between border-t border-border pt-2"><span className="text-sm font-semibold text-foreground">You'll receive</span><span className="text-sm font-bold text-foreground">P{(payoutAmountNum - instantFee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+              </div>
+              <div className="flex items-start gap-2 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3">
+                <Smartphone className="w-4 h-4 text-blue-500 mt-0.5 shrink-0" />
+                <p className="text-xs text-muted-foreground">A 6-digit code will be generated. Use it at any supported ATM to withdraw cash without a card. Code expires in 30 minutes.</p>
+              </div>
+              <Button onClick={handleCardlessWithdraw} className="w-full"><Hash className="w-4 h-4 mr-2" /> Generate Code</Button>
+              <Button variant="outline" onClick={() => setInstantPayoutStep("select_account")} className="w-full">Back</Button>
+            </div>
+          )}
+
+          {instantPayoutStep === "cardless_processing" && (
+            <div className="py-12 text-center space-y-4">
+              <div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto" />
+              <p className="text-muted-foreground">Generating withdrawal code...</p>
+            </div>
+          )}
+
+          {instantPayoutStep === "cardless_success" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto">
+                <Check className="w-8 h-8 text-green-600" />
+              </div>
+              <h3 className="text-lg font-bold text-foreground">Your Withdrawal Code</h3>
+              <div className="bg-muted rounded-xl p-6">
+                <p className="text-4xl font-mono font-bold tracking-[0.3em] text-foreground">{cardlessCode}</p>
+              </div>
+              <button onClick={() => { navigator.clipboard.writeText(cardlessCode); toast.success("Code copied"); }} className="inline-flex items-center gap-2 text-sm text-primary">
+                <Copy className="w-4 h-4" /> Copy code
+              </button>
+              <div className="bg-muted rounded-xl p-3 space-y-1 text-left">
+                <p className="text-xs text-muted-foreground">• Go to any supported ATM</p>
+                <p className="text-xs text-muted-foreground">• Select "Cardless Withdrawal"</p>
+                <p className="text-xs text-muted-foreground">• Enter the 6-digit code above</p>
+                <p className="text-xs text-muted-foreground">• Collect P{(payoutAmountNum - instantFee).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <p className="text-xs text-orange-500 font-medium">⏱ Code expires in 30 minutes</p>
+              <Button onClick={() => setInstantPayoutOpen(false)} className="w-full">Done</Button>
+            </div>
+          )}
         </SheetContent>
       </Sheet>
 
