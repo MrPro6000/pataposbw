@@ -12,6 +12,8 @@ import {
   RefreshCw,
   CheckCircle,
   Globe,
+  Globe2,
+  Bitcoin,
   Package,
   ShoppingBag,
   Ticket,
