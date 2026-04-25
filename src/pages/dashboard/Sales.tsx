@@ -83,6 +83,7 @@ const Sales = () => {
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
