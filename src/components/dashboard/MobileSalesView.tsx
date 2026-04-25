@@ -66,7 +66,7 @@ interface MobileSalesViewProps {
   userEmail?: string;
 }
 
-type PaymentType = "card-sale" | "cash" | "mobile-money" | "poso-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money";
 
 const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
