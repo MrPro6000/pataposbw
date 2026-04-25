@@ -445,7 +445,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("mobile-money")}
+            onClick={() => navigate("/dashboard/payouts")}
           >
             <Globe2 className="w-5 h-5" />
             <span className="text-xs">Mukuru</span>
@@ -454,7 +454,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("mobile-money")}
+            onClick={() => toast({ title: "Crypto payments", description: "Coming soon" })}
           >
             <Bitcoin className="w-5 h-5" />
             <span className="text-xs">Crypto</span>
