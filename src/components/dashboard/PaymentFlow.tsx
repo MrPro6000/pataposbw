@@ -17,8 +17,6 @@ const mobileMoneyProviders: ProviderEntry[] = [
   { id: "smega", name: "Smega", logo: smegaLogo },
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
-  { id: "mukuru", name: "Mukuru", icon: Globe2, iconBg: "bg-orange-600" },
-  { id: "crypto", name: "Crypto", icon: Bitcoin, iconBg: "bg-amber-500" },
 ];
 
 export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
@@ -143,7 +141,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             {[
               { method: "card" as PaymentMethod, label: "Card", sub: "Tap, insert or swipe", icon: CreditCard, iconBg: "bg-primary" },
               { method: "cash" as PaymentMethod, label: "Cash", sub: "Record cash payment", icon: Banknote, iconBg: "bg-emerald-500" },
-              { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, MyZaka, POSO, Mukuru, Crypto", icon: Smartphone, iconBg: "bg-orange-500" },
+              { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka, POSO", icon: Smartphone, iconBg: "bg-orange-500" },
               { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
               { method: "payment-link" as PaymentMethod, label: "Payment Link", sub: "Send link to pay", icon: Link2, iconBg: "bg-purple-500" },
             ].map(({ method, label, sub, icon: Icon, iconBg }) => (

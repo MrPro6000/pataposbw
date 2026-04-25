@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
@@ -83,6 +83,7 @@ const Sales = () => {
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
@@ -444,7 +445,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("mobile-money")}
+            onClick={() => navigate("/dashboard/payouts")}
           >
             <Globe2 className="w-5 h-5" />
             <span className="text-xs">Mukuru</span>
@@ -453,7 +454,7 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("mobile-money")}
+            onClick={() => toast({ title: "Crypto payments", description: "Coming soon" })}
           >
             <Bitcoin className="w-5 h-5" />
             <span className="text-xs">Crypto</span>
