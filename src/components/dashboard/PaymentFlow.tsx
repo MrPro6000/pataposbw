@@ -308,7 +308,13 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
                 className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${
                   selectedProvider === p.id ? "border-primary bg-primary/10" : "border-border bg-card"
                 }`}>
-                <img src={p.logo} alt={p.name} className="w-12 h-12 object-contain mb-2 rounded-lg" />
+                {p.logo ? (
+                  <img src={p.logo} alt={p.name} className="w-12 h-12 object-contain mb-2 rounded-lg" />
+                ) : (
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-2 ${p.iconBg ?? "bg-primary"}`}>
+                    {p.icon && <p.icon className="w-6 h-6 text-white" />}
+                  </div>
+                )}
                 <p className="text-xs font-medium text-foreground text-center">{p.name}</p>
               </button>
             ))}
