@@ -17,8 +17,6 @@ const mobileMoneyProviders: ProviderEntry[] = [
   { id: "smega", name: "Smega", logo: smegaLogo },
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
-  { id: "mukuru", name: "Mukuru", icon: Globe2, iconBg: "bg-orange-600" },
-  { id: "crypto", name: "Crypto", icon: Bitcoin, iconBg: "bg-amber-500" },
 ];
 
 export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
