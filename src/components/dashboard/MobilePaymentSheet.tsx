@@ -12,7 +12,7 @@ import {
 import { useTransactions } from "@/hooks/useTransactions";
 import PaymentFlow from "./PaymentFlow";
 
-type PaymentType = "card-sale" | "cash" | "mobile-money" | "poso-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money";
 
 interface MobilePaymentSheetProps {
   open: boolean;
