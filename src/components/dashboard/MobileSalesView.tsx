@@ -116,28 +116,20 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     setPaymentSheetOpen(true);
   };
 
-  // Build quick action rows based on preferences
-  // Order: Mobile Money, Card Sale, Cash
-  const row1Actions = [
+  // Unified quick-action grid (3 columns, no gaps)
+  // Order: Mobile Money, Card sale, Cash, Mukuru, Crypto, Payment Link, Voucher, Invoice, E-Wallet, Wallet
+  const quickActions = [
     { icon: Smartphone, label: "Mobile Money", show: preferences.show_mobile_money, onClick: () => handleQuickAction('mobile-money') },
     { icon: CreditCard, label: "Card sale", show: true, onClick: () => handleQuickAction('card-sale') },
     { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
-    { icon: Banknote, label: "POSO Money", show: true, onClick: () => handleQuickAction('poso-money') },
-  ].filter(a => a.show);
-
-  // Order: Payment Link, Voucher, Invoice — then E-Wallet, Wallet
-  const row2Actions = [
+    { icon: Globe2, label: "Mukuru", show: true, onClick: () => handleQuickAction('mobile-money') },
+    { icon: Bitcoin, label: "Crypto", show: true, onClick: () => handleQuickAction('mobile-money') },
     { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
     { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
     { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
-  ].filter(a => a.show);
-
-  const row3Actions = [
     { icon: Send, label: "E-Wallet", show: true, onClick: () => setEWalletOpen(true) },
     { icon: Wallet, label: "Wallet", show: true, onClick: () => setWalletOpen(true) },
   ].filter(a => a.show);
-
-  const row4Actions: typeof row1Actions = [];
 
   return (
     <div className="min-h-screen bg-muted pb-24">
@@ -182,23 +174,9 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
           </button>
         )}
 
-        {row1Actions.length > 0 && (
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            {row1Actions.map(a => (
-              <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
-            ))}
-          </div>
-        )}
-        {row2Actions.length > 0 && (
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            {row2Actions.map(a => (
-              <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
-            ))}
-          </div>
-        )}
-        {row3Actions.length > 0 && (
-          <div className="grid grid-cols-3 gap-3 mb-3">
-            {row3Actions.map(a => (
+        {quickActions.length > 0 && (
+          <div className="grid grid-cols-3 gap-3">
+            {quickActions.map(a => (
               <QuickActionButton key={a.label} icon={a.icon} label={a.label} variant="light" onClick={a.onClick} />
             ))}
           </div>
