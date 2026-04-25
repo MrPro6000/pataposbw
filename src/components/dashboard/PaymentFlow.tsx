@@ -10,11 +10,15 @@ import smegaLogo from "@/assets/mobile-money/smega.png";
 import myzakaLogo from "@/assets/mobile-money/myzaka.png";
 import posoMoneyLogo from "@/assets/mobile-money/poso-money.png";
 
-const mobileMoneyProviders = [
+type ProviderEntry = { id: string; name: string; logo?: string; icon?: React.ElementType; iconBg?: string };
+
+const mobileMoneyProviders: ProviderEntry[] = [
   { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
   { id: "smega", name: "Smega", logo: smegaLogo },
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
+  { id: "mukuru", name: "Mukuru", icon: Globe2, iconBg: "bg-orange-600" },
+  { id: "crypto", name: "Crypto", icon: Bitcoin, iconBg: "bg-amber-500" },
 ];
 
 export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
