@@ -33,6 +33,8 @@ import {
   Package,
   Ticket,
   Send,
+  Globe2,
+  Bitcoin,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -442,10 +444,19 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
-            onClick={() => openPaymentFlow("poso-money")}
+            onClick={() => openPaymentFlow("mobile-money")}
           >
-            <Banknote className="w-5 h-5" />
-            <span className="text-xs">POSO Money</span>
+            <Globe2 className="w-5 h-5" />
+            <span className="text-xs">Mukuru</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => openPaymentFlow("mobile-money")}
+          >
+            <Bitcoin className="w-5 h-5" />
+            <span className="text-xs">Crypto</span>
           </Button>
 
           <Button

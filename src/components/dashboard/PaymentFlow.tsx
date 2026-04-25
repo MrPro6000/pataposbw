@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode, Link2 } from "lucide-react";
+import { CreditCard, Banknote, Smartphone, CheckCircle, Wifi, ArrowLeft, QrCode, Link2, Bitcoin, Globe2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,11 +10,15 @@ import smegaLogo from "@/assets/mobile-money/smega.png";
 import myzakaLogo from "@/assets/mobile-money/myzaka.png";
 import posoMoneyLogo from "@/assets/mobile-money/poso-money.png";
 
-const mobileMoneyProviders = [
+type ProviderEntry = { id: string; name: string; logo?: string; icon?: React.ElementType; iconBg?: string };
+
+const mobileMoneyProviders: ProviderEntry[] = [
   { id: "orange", name: "Orange Money", logo: orangeMoneyLogo },
   { id: "smega", name: "Smega", logo: smegaLogo },
   { id: "myzaka", name: "MyZaka", logo: myzakaLogo },
   { id: "poso", name: "POSO Money", logo: posoMoneyLogo },
+  { id: "mukuru", name: "Mukuru", icon: Globe2, iconBg: "bg-orange-600" },
+  { id: "crypto", name: "Crypto", icon: Bitcoin, iconBg: "bg-amber-500" },
 ];
 
 export type PaymentMethod = "card" | "cash" | "mobile-money" | "qr" | "payment-link" | "poso-money";
@@ -139,8 +143,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             {[
               { method: "card" as PaymentMethod, label: "Card", sub: "Tap, insert or swipe", icon: CreditCard, iconBg: "bg-primary" },
               { method: "cash" as PaymentMethod, label: "Cash", sub: "Record cash payment", icon: Banknote, iconBg: "bg-emerald-500" },
-              { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka", icon: Smartphone, iconBg: "bg-orange-500" },
-              { method: "poso-money" as PaymentMethod, label: "POSO Money", sub: "Pay with POSO", icon: Banknote, iconBg: "bg-teal-500" },
+              { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, MyZaka, POSO, Mukuru, Crypto", icon: Smartphone, iconBg: "bg-orange-500" },
               { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
               { method: "payment-link" as PaymentMethod, label: "Payment Link", sub: "Send link to pay", icon: Link2, iconBg: "bg-purple-500" },
             ].map(({ method, label, sub, icon: Icon, iconBg }) => (
@@ -305,7 +308,13 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
                 className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center ${
                   selectedProvider === p.id ? "border-primary bg-primary/10" : "border-border bg-card"
                 }`}>
-                <img src={p.logo} alt={p.name} className="w-12 h-12 object-contain mb-2 rounded-lg" />
+                {p.logo ? (
+                  <img src={p.logo} alt={p.name} className="w-12 h-12 object-contain mb-2 rounded-lg" />
+                ) : (
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-2 ${p.iconBg ?? "bg-primary"}`}>
+                    {p.icon && <p.icon className="w-6 h-6 text-white" />}
+                  </div>
+                )}
                 <p className="text-xs font-medium text-foreground text-center">{p.name}</p>
               </button>
             ))}
