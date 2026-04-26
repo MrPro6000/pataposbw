@@ -139,7 +139,9 @@ Respond with JSON only:
       }),
     });
 
-    let decision = { approved: true, reason: "AI verification unavailable — auto-approved for manual review" };
+    // Fail-closed: if AI verification is unavailable or unparseable, leave the
+    // submission pending for manual admin review rather than auto-approving.
+    let decision: { approved: boolean; reason: string } | null = null;
 
     if (aiResponse.ok) {
       const aiResult = await aiResponse.json();
@@ -152,6 +154,22 @@ Respond with JSON only:
       }
     } else {
       console.error("AI gateway error:", aiResponse.status);
+    }
+
+    // If AI was unavailable or response unparseable, keep submission pending.
+    if (!decision) {
+      const { error: pendingErr } = await adminClient
+        .from("kyc_submissions")
+        .update({
+          status: "pending",
+          rejection_reason: "Verification service unavailable — pending manual review",
+        })
+        .eq("id", kycId);
+      if (pendingErr) console.error("Failed to set pending status:", pendingErr);
+      return new Response(
+        JSON.stringify({ approved: false, pending: true, reason: "Verification service unavailable — pending manual review" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
 
     // Update KYC status in DB using service role
