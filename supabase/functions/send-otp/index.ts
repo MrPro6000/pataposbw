@@ -84,14 +84,12 @@ Deno.serve(async (req) => {
     }
 
     // TODO: In production, send OTP via SMS provider (e.g. Twilio, Africa's Talking)
-    // For now, return it in response for testing only
+    // OTP is only logged server-side for development; never returned in the response.
     console.log(`OTP for ${phone_number}: ${otp}`);
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    return new Response(JSON.stringify({
+      success: true,
       message: "OTP sent successfully",
-      // Remove this in production - only for testing
-      debug_otp: otp,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

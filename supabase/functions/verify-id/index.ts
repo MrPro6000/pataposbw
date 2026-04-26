@@ -124,7 +124,8 @@ If confidence is "low" but faces look similar, still mark is_match as true. Only
 
       if (!aiResponse.ok) {
         console.error("AI gateway error:", aiResponse.status);
-        return new Response(JSON.stringify({ is_match: true, confidence: "low", reason: "AI verification unavailable" }), {
+        return new Response(JSON.stringify({ is_match: false, confidence: "low", reason: "Verification service unavailable — please try again later" }), {
+          status: 503,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
@@ -237,7 +238,8 @@ Rules:
 
     if (!aiResponse.ok) {
       console.error("AI gateway error:", aiResponse.status);
-      return new Response(JSON.stringify({ is_valid: true, reason: "AI verification unavailable, manual review required" }), {
+      return new Response(JSON.stringify({ is_valid: false, reason: "Verification service unavailable — please try again later" }), {
+        status: 503,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
