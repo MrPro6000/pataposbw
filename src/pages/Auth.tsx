@@ -113,7 +113,7 @@ const Auth = ({ mode }: AuthProps) => {
 
   const handleSendOTP = async () => {
     const formattedNumber = formatPhoneNumber(phoneNumber);
-    
+
     if (!validateBotswanaNumber(formattedNumber)) {
       toast({
         title: "Invalid phone number",
@@ -125,15 +125,47 @@ const Auth = ({ mode }: AuthProps) => {
 
     setLoading(true);
     try {
-      const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-      setGeneratedOtp(newOtp);
-      
+      // Sign the user up first so they have a session for the OTP edge function.
+      // (send-otp / verify-otp both require an authenticated caller.)
+      if (!user) {
+        const { user: newUser, error } = await authSignUp(email, password);
+        if (error) {
+          if (error.includes("already registered") || error.includes("already been registered")) {
+            toast({
+              title: "Account exists",
+              description: "This email is already registered. Please log in instead.",
+              variant: "destructive",
+            });
+          } else {
+            throw new Error(error);
+          }
+          return;
+        }
+        if (!newUser) {
+          toast({
+            title: "Signup failed",
+            description: "Could not create your account. Please try again.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      const { data, error } = await supabase.functions.invoke("send-otp", {
+        body: { phone_number: formattedNumber },
+      });
+
+      if (error || (data && (data as any).error)) {
+        const msg = (data as any)?.error || error?.message || "Failed to send OTP";
+        toast({ title: "Error", description: msg, variant: "destructive" });
+        return;
+      }
+
+      setPhoneNumber(formattedNumber);
       toast({
         title: "OTP Sent",
-        description: `Your verification code is: ${newOtp}`,
-        duration: Infinity,
+        description: `A 6-digit code has been sent to ${formattedNumber}.`,
       });
-      
       setStep("otp");
     } catch (error: any) {
       toast({
@@ -156,36 +188,23 @@ const Auth = ({ mode }: AuthProps) => {
       return;
     }
 
-    if (otp !== generatedOtp) {
-      toast({
-        title: "Invalid OTP",
-        description: "The code you entered is incorrect",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     try {
-      const { user: newUser, error } = await authSignUp(email, password);
+      const { data, error } = await supabase.functions.invoke("verify-otp", {
+        body: { phone_number: phoneNumber, otp_code: otp },
+      });
 
-      if (error) {
-        if (error.includes("already registered") || error.includes("already been registered")) {
-          toast({
-            title: "Account exists",
-            description: "This email is already registered. Please log in instead.",
-            variant: "destructive",
-          });
-        } else {
-          throw new Error(error);
-        }
-      } else if (newUser) {
-        toast({
-          title: "Account created!",
-          description: "Please check your email to verify your account, then complete KYC verification.",
-        });
-        navigate("/kyc");
+      if (error || !(data as any)?.verified) {
+        const msg = (data as any)?.error || error?.message || "Invalid or expired OTP";
+        toast({ title: "Invalid OTP", description: msg, variant: "destructive" });
+        return;
       }
+
+      toast({
+        title: "Account created!",
+        description: "Phone verified. Please complete KYC verification.",
+      });
+      navigate("/kyc");
     } catch (error: any) {
       toast({
         title: "Error",
