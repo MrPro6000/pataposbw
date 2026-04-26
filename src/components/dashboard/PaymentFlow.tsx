@@ -430,7 +430,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setLinkPhone(""); setStep("select"); }} className="flex-1">Cancel</Button>
+            <Button variant="outline" onClick={() => { setLinkPhone(""); cancelToPrev(); }} className="flex-1">Cancel</Button>
             <Button onClick={() => { if (linkPhone) setStep("payment-link-sending"); }}
               disabled={!linkPhone}
               className="flex-1 bg-purple-500 hover:bg-purple-600 text-white">
