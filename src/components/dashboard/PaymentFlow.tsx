@@ -340,7 +340,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setSelectedProvider(""); setCustomerPhone(""); setStep("select"); }} className="flex-1">
+            <Button variant="outline" onClick={() => { setSelectedProvider(""); setCustomerPhone(""); cancelToPrev(); }} className="flex-1">
               Cancel
             </Button>
             <Button onClick={handleMobileSend}
