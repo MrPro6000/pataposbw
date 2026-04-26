@@ -114,6 +114,16 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     setStep("success");
   };
 
+  // When launched with a specific initialMethod, Cancel should fully close
+  // the flow rather than returning to the generic method picker.
+  const cancelToPrev = () => {
+    if (initialMethod) {
+      onBack();
+    } else {
+      setStep("select");
+    }
+  };
+
   const handleMobileSend = () => {
     if (!selectedProvider || !customerPhone) return;
     const digits = customerPhone.replace(/\D/g, "").replace(/^267/, "");
