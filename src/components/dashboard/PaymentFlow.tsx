@@ -114,6 +114,16 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     setStep("success");
   };
 
+  // When launched with a specific initialMethod, Cancel should fully close
+  // the flow rather than returning to the generic method picker.
+  const cancelToPrev = () => {
+    if (initialMethod) {
+      onBack();
+    } else {
+      setStep("select");
+    }
+  };
+
   const handleMobileSend = () => {
     if (!selectedProvider || !customerPhone) return;
     const digits = customerPhone.replace(/\D/g, "").replace(/^267/, "");
@@ -201,7 +211,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             <p className="text-sm text-muted-foreground">Waiting for card...</p>
           </div>
 
-          <Button variant="outline" onClick={() => setStep("select")} className="w-full">Cancel</Button>
+          <Button variant="outline" onClick={cancelToPrev} className="w-full">Cancel</Button>
         </div>
       )}
 
@@ -281,7 +291,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </Button>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setCashTendered(""); setStep("select"); }} className="flex-1">Cancel</Button>
+            <Button variant="outline" onClick={() => { setCashTendered(""); cancelToPrev(); }} className="flex-1">Cancel</Button>
             <Button onClick={handleCashComplete}
               disabled={!cashTendered || parseFloat(cashTendered) < total}
               className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
@@ -330,7 +340,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setSelectedProvider(""); setCustomerPhone(""); setStep("select"); }} className="flex-1">
+            <Button variant="outline" onClick={() => { setSelectedProvider(""); setCustomerPhone(""); cancelToPrev(); }} className="flex-1">
               Cancel
             </Button>
             <Button onClick={handleMobileSend}
@@ -392,7 +402,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             <p className="text-sm text-muted-foreground">Waiting for scan...</p>
           </div>
 
-          <Button variant="outline" onClick={() => setStep("select")} className="w-full">Cancel</Button>
+          <Button variant="outline" onClick={cancelToPrev} className="w-full">Cancel</Button>
         </div>
       )}
 
@@ -420,7 +430,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setLinkPhone(""); setStep("select"); }} className="flex-1">Cancel</Button>
+            <Button variant="outline" onClick={() => { setLinkPhone(""); cancelToPrev(); }} className="flex-1">Cancel</Button>
             <Button onClick={() => { if (linkPhone) setStep("payment-link-sending"); }}
               disabled={!linkPhone}
               className="flex-1 bg-purple-500 hover:bg-purple-600 text-white">
@@ -479,7 +489,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </div>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setPosoPhone(""); setStep("select"); }} className="flex-1">
+            <Button variant="outline" onClick={() => { setPosoPhone(""); cancelToPrev(); }} className="flex-1">
               Cancel
             </Button>
             <Button onClick={() => {
