@@ -402,7 +402,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             <p className="text-sm text-muted-foreground">Waiting for scan...</p>
           </div>
 
-          <Button variant="outline" onClick={() => setStep("select")} className="w-full">Cancel</Button>
+          <Button variant="outline" onClick={cancelToPrev} className="w-full">Cancel</Button>
         </div>
       )}
 
