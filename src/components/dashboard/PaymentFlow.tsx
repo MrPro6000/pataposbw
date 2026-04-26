@@ -291,7 +291,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
           </Button>
 
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setCashTendered(""); setStep("select"); }} className="flex-1">Cancel</Button>
+            <Button variant="outline" onClick={() => { setCashTendered(""); cancelToPrev(); }} className="flex-1">Cancel</Button>
             <Button onClick={handleCashComplete}
               disabled={!cashTendered || parseFloat(cashTendered) < total}
               className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white">
