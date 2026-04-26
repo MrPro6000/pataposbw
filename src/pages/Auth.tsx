@@ -29,7 +29,7 @@ const Auth = ({ mode }: AuthProps) => {
   const [step, setStep] = useState<AuthStep>("credentials");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [otp, setOtp] = useState("");
-  const [generatedOtp, setGeneratedOtp] = useState<string | null>(null);
+  
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [accountBlocked, setAccountBlocked] = useState<{ status: string; reason: string } | null>(null);
   const navigate = useNavigate();
