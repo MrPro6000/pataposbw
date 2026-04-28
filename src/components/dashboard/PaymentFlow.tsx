@@ -114,14 +114,11 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     setStep("success");
   };
 
-  // When launched with a specific initialMethod, Cancel should fully close
-  // the flow rather than returning to the generic method picker.
+  // Cancel always fully closes the flow. Users that want a different
+  // payment method can re-open and choose again. This avoids landing back
+  // on the generic method picker after cancelling a specific sub-flow.
   const cancelToPrev = () => {
-    if (initialMethod) {
-      onBack();
-    } else {
-      setStep("select");
-    }
+    onBack();
   };
 
   const handleMobileSend = () => {
