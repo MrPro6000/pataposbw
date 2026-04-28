@@ -973,7 +973,10 @@ const Sales = () => {
                   : desc || `${method} sale`;
                 handlePaymentFlowSuccess(method, total, fullDesc);
               }}
-              onBack={() => setPaymentFlowStep("amount")}
+              onBack={() => {
+                setPaymentFlowOpen(false);
+                setPaymentFlowStep("amount");
+              }}
               initialMethod={paymentType as any}
             />
           )}
