@@ -19,6 +19,7 @@ export interface StaffMember {
 
 export const useStaff = () => {
   const { user } = useAuth();
+  const { balance, addTransaction } = useTransactions();
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
 
