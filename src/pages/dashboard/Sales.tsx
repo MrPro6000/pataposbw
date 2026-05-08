@@ -699,7 +699,7 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((tx) => (
+                  {paginatedTransactions.map((tx) => (
                     <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
                         <span className="font-medium text-foreground">{tx.id.slice(0, 8)}</span>
