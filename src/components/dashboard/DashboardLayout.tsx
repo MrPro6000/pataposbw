@@ -142,14 +142,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
         
         {/* Navigation */}
-        <nav className="flex-1 py-4 overflow-y-auto">
+        <nav className="flex-1 py-2 overflow-y-auto min-h-0">
           {navSections.map((section) => (
-            <div key={section.label} className="mb-1">
+            <div key={section.label} className="mb-0.5">
               <button
                 onClick={() => toggleSection(section.label)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-foreground hover:bg-muted transition-colors"
+                className="w-full flex items-center gap-3 px-5 py-2 text-foreground hover:bg-muted transition-colors"
               >
-                <section.icon className="w-5 h-5 text-muted-foreground" />
+                <section.icon className="w-4 h-4 text-muted-foreground" />
                 <span className="flex-1 text-left text-sm font-medium">{section.label}</span>
                 <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${
                   expandedSections.includes(section.label) ? 'rotate-180' : ''
