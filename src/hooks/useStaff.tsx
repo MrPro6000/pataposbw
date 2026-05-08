@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
+import { useTransactions } from "./useTransactions";
 
 export interface StaffMember {
   id: string;
@@ -18,6 +19,7 @@ export interface StaffMember {
 
 export const useStaff = () => {
   const { user } = useAuth();
+  const { balance, addTransaction } = useTransactions();
   const [staff, setStaff] = useState<StaffMember[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -61,6 +63,20 @@ export const useStaff = () => {
 
   const payStaff = async (memberId: string, amount: number) => {
     if (!user) return { error: "Not authenticated" };
+    if (balance < amount) {
+      return { error: `Insufficient wallet balance. You have P${balance.toFixed(2)} but need P${amount.toFixed(2)}.` };
+    }
+    const member = staff.find(s => s.id === memberId);
+    // Deduct from wallet
+    const txRes = await addTransaction({
+      type: "staff_payment",
+      payment_method: "wallet",
+      amount: -Math.abs(amount),
+      description: `Salary • ${member?.name || "Staff"}`,
+      status: "completed",
+    });
+    if (txRes.error) return { error: txRes.error };
+
     const { error } = await supabase.from("staff_payments").insert({
       user_id: user.id, staff_member_id: memberId, amount, payment_method: "wallet",
     });
@@ -74,6 +90,10 @@ export const useStaff = () => {
   const payAllStaff = async () => {
     if (!user) return { error: "Not authenticated" };
     const active = staff.filter(s => s.status === "active");
+    const total = active.reduce((sum, m) => sum + Number(m.salary || 0), 0);
+    if (balance < total) {
+      return { error: `Insufficient wallet balance. You have P${balance.toFixed(2)} but need P${total.toFixed(2)} to pay all staff.` };
+    }
     for (const member of active) {
       await payStaff(member.id, member.salary);
     }
