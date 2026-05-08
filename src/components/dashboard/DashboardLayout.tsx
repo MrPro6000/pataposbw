@@ -111,7 +111,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-muted flex">
+    <div className="h-screen overflow-hidden bg-muted flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
@@ -124,7 +124,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
         w-56 bg-background border-r border-border
-        flex flex-col
+        flex flex-col h-screen md:h-auto md:self-stretch
         transform transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
@@ -142,14 +142,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
         </div>
         
         {/* Navigation */}
-        <nav className="flex-1 py-4 overflow-y-auto">
+        <nav className="flex-1 py-2 overflow-y-auto min-h-0">
           {navSections.map((section) => (
-            <div key={section.label} className="mb-1">
+            <div key={section.label} className="mb-0.5">
               <button
                 onClick={() => toggleSection(section.label)}
-                className="w-full flex items-center gap-3 px-5 py-2.5 text-foreground hover:bg-muted transition-colors"
+                className="w-full flex items-center gap-3 px-5 py-2 text-foreground hover:bg-muted transition-colors"
               >
-                <section.icon className="w-5 h-5 text-muted-foreground" />
+                <section.icon className="w-4 h-4 text-muted-foreground" />
                 <span className="flex-1 text-left text-sm font-medium">{section.label}</span>
                 <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${
                   expandedSections.includes(section.label) ? 'rotate-180' : ''
@@ -163,7 +163,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       key={item.path}
                       to={item.path}
                       onClick={() => setSidebarOpen(false)}
-                      className={`block pl-4 pr-5 py-2 text-sm transition-colors ${
+                      className={`block pl-4 pr-5 py-1.5 text-sm transition-colors ${
                         isActive(item.path) 
                           ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
                           : 'text-muted-foreground hover:text-foreground'
@@ -209,7 +209,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col h-screen min-w-0">
         {/* Mobile header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-background border-b border-border">
           <button 

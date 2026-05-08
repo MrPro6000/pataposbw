@@ -69,6 +69,9 @@ type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money"
 
 const Sales = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [txPage, setTxPage] = useState(1);
+  const [linksPage, setLinksPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -210,6 +213,13 @@ const Sales = () => {
     const matchesType = typeFilter === "all" || tx.type === typeFilter;
     return matchesSearch && matchesType;
   });
+
+  const txTotalPages = Math.max(1, Math.ceil(filteredTransactions.length / PAGE_SIZE));
+  const txPageSafe = Math.min(txPage, txTotalPages);
+  const paginatedTransactions = filteredTransactions.slice((txPageSafe - 1) * PAGE_SIZE, txPageSafe * PAGE_SIZE);
+
+  const linksTotalPages = Math.max(1, Math.ceil((dbPaymentLinks?.length || 0) / PAGE_SIZE));
+  const linksPageSafe = Math.min(linksPage, linksTotalPages);
 
   const openPaymentFlow = (type: PaymentType) => {
     setPaymentType(type);
@@ -689,7 +699,7 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredTransactions.map((tx) => (
+                  {paginatedTransactions.map((tx) => (
                     <tr key={tx.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
                         <span className="font-medium text-foreground">{tx.id.slice(0, 8)}</span>
@@ -729,6 +739,18 @@ const Sales = () => {
                 </tbody>
               </table>
             </div>
+            {filteredTransactions.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Showing {(txPageSafe - 1) * PAGE_SIZE + 1}-{Math.min(txPageSafe * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" disabled={txPageSafe <= 1} onClick={() => setTxPage(p => Math.max(1, p - 1))}>Previous</Button>
+                  <span className="text-sm text-muted-foreground">Page {txPageSafe} of {txTotalPages}</span>
+                  <Button variant="outline" size="sm" disabled={txPageSafe >= txTotalPages} onClick={() => setTxPage(p => Math.min(txTotalPages, p + 1))}>Next</Button>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
@@ -759,7 +781,7 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dbPaymentLinks.map((link) => (
+                  {dbPaymentLinks.slice((linksPageSafe - 1) * PAGE_SIZE, linksPageSafe * PAGE_SIZE).map((link) => (
                     <tr key={link.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
                         <span className="font-medium text-foreground">{link.description || link.customer_name}</span>
@@ -797,6 +819,18 @@ const Sales = () => {
                 </tbody>
               </table>
             </div>
+            {dbPaymentLinks.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Showing {(linksPageSafe - 1) * PAGE_SIZE + 1}-{Math.min(linksPageSafe * PAGE_SIZE, dbPaymentLinks.length)} of {dbPaymentLinks.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" disabled={linksPageSafe <= 1} onClick={() => setLinksPage(p => Math.max(1, p - 1))}>Previous</Button>
+                  <span className="text-sm text-muted-foreground">Page {linksPageSafe} of {linksTotalPages}</span>
+                  <Button variant="outline" size="sm" disabled={linksPageSafe >= linksTotalPages} onClick={() => setLinksPage(p => Math.min(linksTotalPages, p + 1))}>Next</Button>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
