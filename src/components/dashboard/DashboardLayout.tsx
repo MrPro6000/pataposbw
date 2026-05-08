@@ -39,6 +39,7 @@ interface NavSection {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
   const location = useLocation();
   const navigate = useNavigate();
@@ -123,13 +124,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       {/* Sidebar */}
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
-        w-56 bg-background border-r border-border
-        flex flex-col h-screen md:h-auto md:self-stretch
-        transform transition-transform duration-200
+        bg-background border-r border-border
+        flex flex-col h-screen md:self-stretch
+        transform transition-all duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+        ${desktopCollapsed ? 'md:w-0 md:border-r-0 md:overflow-hidden' : 'w-56'}
       `}>
         {/* Logo */}
-        <div className="flex items-center justify-between px-5 py-5 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-5 border-b border-border shrink-0">
           <Link to="/">
             <PataLogo className="h-5" />
           </Link>
@@ -141,7 +143,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           </button>
         </div>
         
-        {/* Navigation */}
+        {/* Navigation — own scroll */}
         <nav className="flex-1 py-2 overflow-y-auto min-h-0">
           {navSections.map((section) => (
             <div key={section.label} className="mb-0.5">
@@ -178,8 +180,8 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           ))}
         </nav>
 
-        {/* Business Switcher & Sign Out */}
-        <div className="border-t border-border p-4">
+        {/* Business Switcher & Sign Out — pinned bottom */}
+        <div className="border-t border-border p-4 shrink-0">
           <div className="flex items-center gap-3 px-2 py-2 mb-2">
             {userProfile?.avatar_url ? (
               <img
@@ -210,15 +212,21 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-screen min-w-0">
-        {/* Mobile header */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-background border-b border-border">
+        {/* Header — hamburger on both mobile & desktop */}
+        <header className="flex items-center justify-between p-4 bg-background border-b border-border shrink-0">
           <button 
-            onClick={() => setSidebarOpen(true)}
-            className="p-2 text-foreground"
+            onClick={() => {
+              if (window.innerWidth < 768) setSidebarOpen(true);
+              else setDesktopCollapsed((v) => !v);
+            }}
+            className="p-2 text-foreground hover:bg-muted rounded-lg transition-colors"
+            aria-label="Toggle sidebar"
           >
-            <Menu className="w-6 h-6" />
+            <Menu className="w-5 h-5" />
           </button>
-          <PataLogo className="h-4" />
+          <div className="md:hidden">
+            <PataLogo className="h-4" />
+          </div>
           <div className="w-10" />
         </header>
 
