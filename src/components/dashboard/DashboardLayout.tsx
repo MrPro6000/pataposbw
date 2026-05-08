@@ -124,7 +124,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       <aside className={`
         fixed md:static inset-y-0 left-0 z-50
         w-56 bg-background border-r border-border
-        flex flex-col
+        flex flex-col h-screen md:h-auto md:self-stretch
         transform transition-transform duration-200
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
       `}>
