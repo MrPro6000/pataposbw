@@ -214,6 +214,13 @@ const Sales = () => {
     return matchesSearch && matchesType;
   });
 
+  const txTotalPages = Math.max(1, Math.ceil(filteredTransactions.length / PAGE_SIZE));
+  const txPageSafe = Math.min(txPage, txTotalPages);
+  const paginatedTransactions = filteredTransactions.slice((txPageSafe - 1) * PAGE_SIZE, txPageSafe * PAGE_SIZE);
+
+  const linksTotalPages = Math.max(1, Math.ceil((dbPaymentLinks?.length || 0) / PAGE_SIZE));
+  const linksPageSafe = Math.min(linksPage, linksTotalPages);
+
   const openPaymentFlow = (type: PaymentType) => {
     setPaymentType(type);
     setPaymentFlowAmount("");
