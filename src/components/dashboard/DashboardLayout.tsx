@@ -209,7 +209,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col h-screen min-w-0">
         {/* Mobile header */}
         <header className="md:hidden flex items-center justify-between p-4 bg-background border-b border-border">
           <button 
