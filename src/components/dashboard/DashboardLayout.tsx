@@ -39,6 +39,7 @@ interface NavSection {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
   const location = useLocation();
   const navigate = useNavigate();
