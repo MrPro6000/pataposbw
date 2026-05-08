@@ -739,6 +739,18 @@ const Sales = () => {
                 </tbody>
               </table>
             </div>
+            {filteredTransactions.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Showing {(txPageSafe - 1) * PAGE_SIZE + 1}-{Math.min(txPageSafe * PAGE_SIZE, filteredTransactions.length)} of {filteredTransactions.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" disabled={txPageSafe <= 1} onClick={() => setTxPage(p => Math.max(1, p - 1))}>Previous</Button>
+                  <span className="text-sm text-muted-foreground">Page {txPageSafe} of {txTotalPages}</span>
+                  <Button variant="outline" size="sm" disabled={txPageSafe >= txTotalPages} onClick={() => setTxPage(p => Math.min(txTotalPages, p + 1))}>Next</Button>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
