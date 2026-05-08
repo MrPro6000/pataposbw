@@ -111,7 +111,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-muted flex">
+    <div className="h-screen overflow-hidden bg-muted flex">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
         <div 
