@@ -69,6 +69,9 @@ type PaymentType = "card" | "payment-link" | "invoice" | "cash" | "mobile-money"
 
 const Sales = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [txPage, setTxPage] = useState(1);
+  const [linksPage, setLinksPage] = useState(1);
+  const PAGE_SIZE = 10;
   const [selectedTransaction, setSelectedTransaction] = useState<any>(null);
   const [dateFilter, setDateFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
