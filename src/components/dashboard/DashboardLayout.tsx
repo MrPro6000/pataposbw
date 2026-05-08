@@ -163,7 +163,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
                       key={item.path}
                       to={item.path}
                       onClick={() => setSidebarOpen(false)}
-                      className={`block pl-4 pr-5 py-2 text-sm transition-colors ${
+                      className={`block pl-4 pr-5 py-1.5 text-sm transition-colors ${
                         isActive(item.path) 
                           ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
                           : 'text-muted-foreground hover:text-foreground'
