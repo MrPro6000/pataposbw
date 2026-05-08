@@ -819,6 +819,18 @@ const Sales = () => {
                 </tbody>
               </table>
             </div>
+            {dbPaymentLinks.length > PAGE_SIZE && (
+              <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+                <p className="text-sm text-muted-foreground">
+                  Showing {(linksPageSafe - 1) * PAGE_SIZE + 1}-{Math.min(linksPageSafe * PAGE_SIZE, dbPaymentLinks.length)} of {dbPaymentLinks.length}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" disabled={linksPageSafe <= 1} onClick={() => setLinksPage(p => Math.max(1, p - 1))}>Previous</Button>
+                  <span className="text-sm text-muted-foreground">Page {linksPageSafe} of {linksTotalPages}</span>
+                  <Button variant="outline" size="sm" disabled={linksPageSafe >= linksTotalPages} onClick={() => setLinksPage(p => Math.min(linksTotalPages, p + 1))}>Next</Button>
+                </div>
+              </div>
+            )}
           </div>
         </TabsContent>
 
