@@ -781,7 +781,7 @@ const Sales = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dbPaymentLinks.map((link) => (
+                  {dbPaymentLinks.slice((linksPageSafe - 1) * PAGE_SIZE, linksPageSafe * PAGE_SIZE).map((link) => (
                     <tr key={link.id} className="border-t border-border hover:bg-muted/50">
                       <td className="p-4">
                         <span className="font-medium text-foreground">{link.description || link.customer_name}</span>
