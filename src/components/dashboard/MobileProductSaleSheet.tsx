@@ -373,26 +373,45 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   };
 
   // ── Council ──
-  const handleAddCouncilPayment = () => {
+  const councilFieldsValid = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
     const service = councilService === "Other" ? councilServiceOther : councilService;
-    if (!council || !service || !councilAmount) return;
+    const contactDigits = councilContact.replace(/\D/g, "").replace(/^267/, "");
+    return !!(
+      council && service && councilAmount &&
+      councilFullName.trim() && councilIdNumber.trim() && councilPlot.trim() &&
+      /^7\d{7}$/.test(contactDigits)
+    );
+  };
+
+  const buildCouncilDesc = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    return `Council Payment — ${council} • ${service} • ${councilFullName} • ID:${councilIdNumber} • Plot:${councilPlot} • Tel:${councilContact}${councilRef ? ` • Ref:${councilRef}` : ""}`;
+  };
+
+  const resetCouncilForm = () => {
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther("");
+    setCouncilAmount(""); setCouncilRef("");
+    setCouncilFullName(""); setCouncilIdNumber(""); setCouncilPlot(""); setCouncilContact("");
+  };
+
+  const handleAddCouncilPayment = () => {
+    if (!councilFieldsValid()) return;
     const id = `council-${Date.now()}`;
-    const name = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
-    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    addToCart({ id, name: buildCouncilDesc(), price: parseFloat(councilAmount), category: "Services" });
+    resetCouncilForm();
     setStep("products");
   };
 
   const handlePayCouncilNow = () => {
-    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    const service = councilService === "Other" ? councilServiceOther : councilService;
-    if (!council || !service || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    if (!councilFieldsValid()) return;
+    const desc = buildCouncilDesc();
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    resetCouncilForm();
     processServicePayment(desc, amt, "products");
   };
+
 
   // ── Electricity (pay first, then token) ──
   const handlePayElectricity = async () => {
