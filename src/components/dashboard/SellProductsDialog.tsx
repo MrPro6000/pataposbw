@@ -200,6 +200,10 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   const [councilService, setCouncilService] = useState("");
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
+  const [councilFullName, setCouncilFullName] = useState("");
+  const [councilIdNumber, setCouncilIdNumber] = useState("");
+  const [councilPlot, setCouncilPlot] = useState("");
+  const [councilContact, setCouncilContact] = useState("");
 
   // Electricity form state
   const [elecAmount, setElecAmount] = useState("");
