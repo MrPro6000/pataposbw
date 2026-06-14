@@ -461,6 +461,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    setCouncilFullName(""); setCouncilIdNumber(""); setCouncilPlot(""); setCouncilContact("");
     setElecAmount(""); setElecMeter(""); setElecGeneratedName("");
     setElectricityToken(""); setTokenCopied(false);
     setPaymentSource("wallet");
