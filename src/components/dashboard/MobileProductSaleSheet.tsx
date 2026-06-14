@@ -187,6 +187,10 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [councilServiceOther, setCouncilServiceOther] = useState("");
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
+  const [councilFullName, setCouncilFullName] = useState("");
+  const [councilIdNumber, setCouncilIdNumber] = useState("");
+  const [councilPlot, setCouncilPlot] = useState("");
+  const [councilContact, setCouncilContact] = useState("");
 
   // Electricity form state (separate from utility)
   const [elecAmount, setElecAmount] = useState("");
