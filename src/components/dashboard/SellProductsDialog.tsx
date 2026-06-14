@@ -365,22 +365,36 @@ const SellProductsDialog = ({ open, onClose }: SellProductsDialogProps) => {
   };
 
   // ── Council ──
-  const handleAddCouncilPayment = () => {
+  const councilFieldsValid = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
-    const id = `council-${Date.now()}`;
-    const name = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
-    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
+    const contactDigits = councilContact.replace(/\D/g, "").replace(/^267/, "");
+    return !!(
+      council && councilService && councilAmount &&
+      councilFullName.trim() && councilIdNumber.trim() && councilPlot.trim() &&
+      /^7\d{7}$/.test(contactDigits)
+    );
+  };
+  const buildCouncilDesc = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    return `Council Payment — ${council} • ${councilService} • ${councilFullName} • ID:${councilIdNumber} • Plot:${councilPlot} • Tel:${councilContact}${councilRef ? ` • Ref:${councilRef}` : ""}`;
+  };
+  const resetCouncilForm = () => {
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    setCouncilFullName(""); setCouncilIdNumber(""); setCouncilPlot(""); setCouncilContact("");
+  };
+  const handleAddCouncilPayment = () => {
+    if (!councilFieldsValid()) return;
+    const id = `council-${Date.now()}`;
+    addToCart({ id, name: buildCouncilDesc(), price: parseFloat(councilAmount), category: "Services" });
+    resetCouncilForm();
     setSubView("products");
   };
 
   const handlePayCouncilNow = () => {
-    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    if (!council || !councilService || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${councilService}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    if (!councilFieldsValid()) return;
+    const desc = buildCouncilDesc();
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilAmount(""); setCouncilRef("");
+    resetCouncilForm();
     processServicePayment(desc, amt, "products");
   };
 
