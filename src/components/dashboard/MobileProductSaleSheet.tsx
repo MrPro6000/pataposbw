@@ -187,6 +187,10 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   const [councilServiceOther, setCouncilServiceOther] = useState("");
   const [councilAmount, setCouncilAmount] = useState("");
   const [councilRef, setCouncilRef] = useState("");
+  const [councilFullName, setCouncilFullName] = useState("");
+  const [councilIdNumber, setCouncilIdNumber] = useState("");
+  const [councilPlot, setCouncilPlot] = useState("");
+  const [councilContact, setCouncilContact] = useState("");
 
   // Electricity form state (separate from utility)
   const [elecAmount, setElecAmount] = useState("");
@@ -369,26 +373,45 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
   };
 
   // ── Council ──
-  const handleAddCouncilPayment = () => {
+  const councilFieldsValid = () => {
     const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
     const service = councilService === "Other" ? councilServiceOther : councilService;
-    if (!council || !service || !councilAmount) return;
+    const contactDigits = councilContact.replace(/\D/g, "").replace(/^267/, "");
+    return !!(
+      council && service && councilAmount &&
+      councilFullName.trim() && councilIdNumber.trim() && councilPlot.trim() &&
+      /^7\d{7}$/.test(contactDigits)
+    );
+  };
+
+  const buildCouncilDesc = () => {
+    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
+    const service = councilService === "Other" ? councilServiceOther : councilService;
+    return `Council Payment — ${council} • ${service} • ${councilFullName} • ID:${councilIdNumber} • Plot:${councilPlot} • Tel:${councilContact}${councilRef ? ` • Ref:${councilRef}` : ""}`;
+  };
+
+  const resetCouncilForm = () => {
+    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther("");
+    setCouncilAmount(""); setCouncilRef("");
+    setCouncilFullName(""); setCouncilIdNumber(""); setCouncilPlot(""); setCouncilContact("");
+  };
+
+  const handleAddCouncilPayment = () => {
+    if (!councilFieldsValid()) return;
     const id = `council-${Date.now()}`;
-    const name = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
-    addToCart({ id, name, price: parseFloat(councilAmount), category: "Services" });
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    addToCart({ id, name: buildCouncilDesc(), price: parseFloat(councilAmount), category: "Services" });
+    resetCouncilForm();
     setStep("products");
   };
 
   const handlePayCouncilNow = () => {
-    const council = selectedCouncil === "Other" ? councilOther : selectedCouncil;
-    const service = councilService === "Other" ? councilServiceOther : councilService;
-    if (!council || !service || !councilAmount) return;
-    const desc = `Council Payment — ${council} • ${service}${councilRef ? ` (Ref: ${councilRef})` : ""}`;
+    if (!councilFieldsValid()) return;
+    const desc = buildCouncilDesc();
     const amt = parseFloat(councilAmount);
-    setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    resetCouncilForm();
     processServicePayment(desc, amt, "products");
   };
+
 
   // ── Electricity (pay first, then token) ──
   const handlePayElectricity = async () => {
@@ -457,6 +480,7 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
     setWifiProvider(""); setWifiPackage(""); setWifiPhone("");
     setActiveUtility(null); setUtilityAmount(""); setUtilityRef(""); setUtilityCustomer("");
     setSelectedCouncil(""); setCouncilOther(""); setCouncilService(""); setCouncilServiceOther(""); setCouncilAmount(""); setCouncilRef("");
+    setCouncilFullName(""); setCouncilIdNumber(""); setCouncilPlot(""); setCouncilContact("");
     setElecAmount(""); setElecMeter(""); setElecGeneratedName("");
     setElectricityToken(""); setTokenCopied(false);
     setPaymentSource("wallet");
@@ -833,7 +857,23 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 </div>
               )}
               <div className="space-y-2">
-                <Label>Amount (P) *</Label>
+                <Label>Full Name / Business Name *</Label>
+                <Input value={councilFullName} onChange={e => setCouncilFullName(e.target.value)} placeholder="e.g. Kabelo Moeng or ABC Trading" />
+              </div>
+              <div className="space-y-2">
+                <Label>ID / Passport Number *</Label>
+                <Input value={councilIdNumber} onChange={e => setCouncilIdNumber(e.target.value)} placeholder="Omang or passport number" />
+              </div>
+              <div className="space-y-2">
+                <Label>Plot Number / Kgotla / Ward *</Label>
+                <Input value={councilPlot} onChange={e => setCouncilPlot(e.target.value)} placeholder="e.g. Plot 1234, Tlokweng Main Kgotla" />
+              </div>
+              <div className="space-y-2">
+                <Label>Contact Number *</Label>
+                <Input type="tel" inputMode="tel" value={councilContact} onChange={e => setCouncilContact(e.target.value)} placeholder="7XXXXXXX" />
+              </div>
+              <div className="space-y-2">
+                <Label>Amount to Pay (P) *</Label>
                 <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
               </div>
               <div className="space-y-2">
@@ -843,12 +883,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
                 <Button variant="outline" onClick={handleAddCouncilPayment}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
+                  disabled={!councilFieldsValid()}
                   className="flex-1 h-12">
                   <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
                 </Button>
                 <Button onClick={handlePayCouncilNow}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
+                  disabled={!councilFieldsValid()}
                   className="flex-1 h-12">
                   Pay Now
                 </Button>
