@@ -857,7 +857,23 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
                 </div>
               )}
               <div className="space-y-2">
-                <Label>Amount (P) *</Label>
+                <Label>Full Name / Business Name *</Label>
+                <Input value={councilFullName} onChange={e => setCouncilFullName(e.target.value)} placeholder="e.g. Kabelo Moeng or ABC Trading" />
+              </div>
+              <div className="space-y-2">
+                <Label>ID / Passport Number *</Label>
+                <Input value={councilIdNumber} onChange={e => setCouncilIdNumber(e.target.value)} placeholder="Omang or passport number" />
+              </div>
+              <div className="space-y-2">
+                <Label>Plot Number / Kgotla / Ward *</Label>
+                <Input value={councilPlot} onChange={e => setCouncilPlot(e.target.value)} placeholder="e.g. Plot 1234, Tlokweng Main Kgotla" />
+              </div>
+              <div className="space-y-2">
+                <Label>Contact Number *</Label>
+                <Input type="tel" inputMode="tel" value={councilContact} onChange={e => setCouncilContact(e.target.value)} placeholder="7XXXXXXX" />
+              </div>
+              <div className="space-y-2">
+                <Label>Amount to Pay (P) *</Label>
                 <Input type="number" inputMode="numeric" value={councilAmount} onChange={e => setCouncilAmount(e.target.value)} placeholder="0.00" />
               </div>
               <div className="space-y-2">
@@ -867,12 +883,12 @@ const MobileProductSaleSheet = ({ open, onClose }: MobileProductSaleSheetProps) 
               <PaymentSourceSelector selected={paymentSource} onSelect={setPaymentSource} />
               <div className="flex gap-3">
                 <Button variant="outline" onClick={handleAddCouncilPayment}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
+                  disabled={!councilFieldsValid()}
                   className="flex-1 h-12">
                   <ShoppingCart className="w-4 h-4 mr-1" /> Add to Cart
                 </Button>
                 <Button onClick={handlePayCouncilNow}
-                  disabled={!(selectedCouncil === "Other" ? councilOther : selectedCouncil) || !(councilService === "Other" ? councilServiceOther : councilService) || !councilAmount}
+                  disabled={!councilFieldsValid()}
                   className="flex-1 h-12">
                   Pay Now
                 </Button>
