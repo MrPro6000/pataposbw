@@ -22,7 +22,7 @@ const team = [
     email: "sales@pata.com",
   },
   {
-    name: "Chief Executive Officer",
+    name: "Shaun Motsumi",
     role: "CEO",
     bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana. Oversees strategy, capital and the company's expansion across the region.",
     email: "info@pata.com",
