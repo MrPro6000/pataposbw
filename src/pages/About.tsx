@@ -12,7 +12,7 @@ const team = [
     image: kirbyAsset.url,
     bio: "Kirby leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana. He keeps the business grounded in what merchants actually need: fast settlement, honest pricing and hardware that works in a spaza shop as well as it does in a restaurant.",
     phone: "+267 73 495 519",
-    email: "info@pata.com",
+    email: "info@pata.co.bw",
   },
   {
     name: "Mildred",
@@ -25,7 +25,7 @@ const team = [
     name: "Shaun Motsumi",
     role: "CEO",
     bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana. Oversees strategy, capital and the company's expansion across the region.",
-    email: "info@pata.com",
+    email: "info@pata.co.bw",
   },
 ];
 
