@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing";
 import Products from "./pages/Products";
 import BusinessType from "./pages/BusinessType";
 import Shop from "./pages/Shop";
+import About from "./pages/About";
 import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
