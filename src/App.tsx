@@ -19,6 +19,7 @@ import Pricing from "./pages/Pricing";
 import Products from "./pages/Products";
 import BusinessType from "./pages/BusinessType";
 import Shop from "./pages/Shop";
+import About from "./pages/About";
 import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
@@ -70,7 +71,9 @@ const AppContent = () => {
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/products" element={<Products />} />
       <Route path="/business-type" element={<BusinessType />} />
+      <Route path="/about" element={<About />} />
       <Route path="/shop" element={<Shop />} />
+
       <Route path="/login" element={<Auth mode="login" />} />
       <Route path="/signup" element={<Auth mode="signup" />} />
       <Route path="/kyc" element={<KYC />} />

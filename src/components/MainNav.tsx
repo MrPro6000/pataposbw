@@ -70,6 +70,10 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
           <Link to="/shop" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Shop
           </Link>
+          <Link to="/about" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
+            About
+          </Link>
+
         </nav>
       </div>
       

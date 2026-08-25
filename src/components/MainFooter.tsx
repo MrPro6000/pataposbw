@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import PataLogo from "./PataLogo";
 import { Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
@@ -82,9 +83,15 @@ const MainFooter = ({ theme: propTheme }: MainFooterProps) => {
               <ul className="space-y-3">
                 {links.map((link) => (
                   <li key={link}>
-                    <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                      {link}
-                    </a>
+                    {link === "About Us" ? (
+                      <Link to="/about" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        {link}
+                      </Link>
+                    ) : (
+                      <a href="#" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                        {link}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>
