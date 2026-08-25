@@ -275,18 +275,18 @@ const Home = () => {
 
       {/* About Us / Leadership Section */}
       <section className="px-5 md:px-20 py-12 md:py-20 bg-background border-t border-border overflow-hidden">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-6xl mx-auto text-center">
           <AnimatedSection>
-            <p className="text-sm font-medium text-primary mb-2">About us</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              The people behind Pata
+            <span className="text-[10px] font-bold tracking-[0.2em] text-primary uppercase mb-3 block">
+              The Leadership
+            </span>
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground mb-6">
+              Executive Team
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-2xl">
-              Botswana-built fintech, led by a team that understands local business from the ground up.
-            </p>
+            <div className="w-12 h-1 bg-primary mx-auto rounded-full" />
           </AnimatedSection>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-16 md:gap-8 mt-16">
             {[
               {
                 name: "Shaun Motsumi",
@@ -299,42 +299,55 @@ const Home = () => {
                 role: "Executive Director",
                 image: kirbyAsset.url,
                 bio: "Leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana.",
+                phone: "+267 73 495 519",
+                email: "info@pata.co.bw",
               },
               {
                 name: "Mildred",
                 role: "Marketing Director",
                 image: mildredAsset.url,
                 bio: "Shapes how Botswana meets Pata. She builds the brand, campaigns, and merchant community around the platform.",
+                email: "sales@pata.com",
               },
             ].map((member, i) => (
               <AnimatedSection key={member.name} delay={0.1 * i}>
-                <article className="rounded-2xl border border-border bg-card overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
-                  {member.image ? (
-                    <img
-                      src={member.image}
-                      alt={`${member.name}, ${member.role} at Pata`}
-                      loading="lazy"
-                      className="w-full h-64 object-cover object-top"
-                    />
-                  ) : (
-                    <div className="w-full h-64 bg-muted flex items-center justify-center">
-                      <User className="w-16 h-16 text-muted-foreground" />
+                <div className="group cursor-default">
+                  <div className="relative flex flex-col items-center transform transition-all duration-500 ease-out group-hover:-translate-y-4">
+                    <div className="relative">
+                      {/* Floating ring decor */}
+                      <div className="absolute -inset-4 rounded-full border border-primary/10 group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute -inset-8 rounded-full border border-primary/5 group-hover:scale-105 transition-transform duration-1000" />
+
+                      {/* Circular image holder */}
+                      <div className="relative w-48 h-48 rounded-full overflow-hidden border-[6px] border-background bg-card shadow-[0_20px_50px_-12px_hsl(var(--primary)/0.3)] group-hover:shadow-[0_40px_80px_-15px_hsl(var(--primary)/0.4)] transition-all duration-500">
+                        {member.image ? (
+                          <img
+                            src={member.image}
+                            alt={`${member.name}, ${member.role} at Pata`}
+                            loading="lazy"
+                            className="w-full h-full object-cover object-top"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted flex items-center justify-center">
+                            <User className="w-16 h-16 text-muted-foreground" />
+                          </div>
+                        )}
+                      </div>
                     </div>
-                  )}
-                  <div className="p-5 flex flex-col gap-2 flex-1">
-                    <div>
-                      <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
-                      <p className="text-sm text-primary font-medium">{member.role}</p>
+
+                    <div className="mt-10 max-w-xs">
+                      <h3 className="text-2xl font-bold text-foreground leading-tight">{member.name}</h3>
+                      <p className="text-xs font-medium tracking-widest uppercase text-primary mt-2">{member.role}</p>
+                      <p className="text-sm text-muted-foreground mt-4 leading-relaxed">{member.bio}</p>
                     </div>
-                    <p className="text-sm text-muted-foreground flex-1">{member.bio}</p>
                   </div>
-                </article>
+                </div>
               </AnimatedSection>
             ))}
           </div>
 
           <AnimatedSection delay={0.3}>
-            <div className="mt-10">
+            <div className="mt-16">
               <Link
                 to="/about"
                 className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center gap-2"
