@@ -293,12 +293,6 @@ const Home = () => {
                 role: "Chief Executive Officer",
                 image: "",
                 bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana and expands access across the region.",
-              },
-              {
-                name: "Kirby",
-                role: "Executive Director",
-                image: kirbyAsset.url,
-                bio: "Leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana.",
                 phone: "+267 73 495 519",
                 email: "info@pata.co.bw",
               },
@@ -307,7 +301,16 @@ const Home = () => {
                 role: "Marketing Director",
                 image: mildredAsset.url,
                 bio: "Shapes how Botswana meets Pata. She builds the brand, campaigns, and merchant community around the platform.",
-                email: "sales@pata.com",
+                phone: "+267 73 495 519",
+                email: "info@pata.co.bw",
+              },
+              {
+                name: "Kirby",
+                role: "Executive Director",
+                image: kirbyAsset.url,
+                bio: "Leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana.",
+                phone: "+267 73 495 519",
+                email: "info@pata.co.bw",
               },
             ].map((member, i) => (
               <AnimatedSection key={member.name} delay={0.1 * i}>

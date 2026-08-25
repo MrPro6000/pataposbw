@@ -7,10 +7,9 @@ import mildredAsset from "@/assets/team/mildred.jpg.asset.json";
 
 const team = [
   {
-    name: "Kirby",
-    role: "Executive Director",
-    image: kirbyAsset.url,
-    bio: "Kirby leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana. He keeps the business grounded in what merchants actually need: fast settlement, honest pricing and hardware that works in a spaza shop as well as it does in a restaurant.",
+    name: "Shaun Motsumi",
+    role: "CEO",
+    bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana. Oversees strategy, capital and the company's expansion across the region.",
     phone: "+267 73 495 519",
     email: "info@pata.co.bw",
   },
@@ -19,12 +18,15 @@ const team = [
     role: "Marketing Director",
     image: mildredAsset.url,
     bio: "Mildred shapes how Botswana meets Pata. She builds the brand, the campaigns and the merchant community around it — translating a payments platform into a story small business owners recognise as their own. Her focus is simple: every trader, from Gaborone to Maun, should know there is a local way to get paid.",
-    email: "sales@pata.com",
+    phone: "+267 73 495 519",
+    email: "info@pata.co.bw",
   },
   {
-    name: "Shaun Motsumi",
-    role: "CEO",
-    bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana. Oversees strategy, capital and the company's expansion across the region.",
+    name: "Kirby",
+    role: "Executive Director",
+    image: kirbyAsset.url,
+    bio: "Kirby leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana. He keeps the business grounded in what merchants actually need: fast settlement, honest pricing and hardware that works in a spaza shop as well as it does in a restaurant.",
+    phone: "+267 73 495 519",
     email: "info@pata.co.bw",
   },
 ];
