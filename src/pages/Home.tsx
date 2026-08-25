@@ -300,7 +300,7 @@ const Home = () => {
                 image: kirbyAsset.url,
                 bio: "Leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana.",
                 phone: "+267 73 495 519",
-                email: "info@pata.com",
+                email: "info@pata.co.bw",
               },
               {
                 name: "Mildred",
