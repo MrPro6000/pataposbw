@@ -132,7 +132,7 @@ const About = () => {
         <section className="px-5 md:px-20 py-16 border-t border-border">
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl">
-            General enquiries: <a className="text-primary" href="mailto:info@pata.com">info@pata.com</a>{" "}
+            General enquiries: <a className="text-primary" href="mailto:info@pata.co.bw">info@pata.co.bw</a>{" "}
             · Sales: <a className="text-primary" href="mailto:sales@pata.com">sales@pata.com</a>
           </p>
           <Link to="/signup" className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center">
