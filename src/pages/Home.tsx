@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
-import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone } from "lucide-react";
+import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -10,9 +10,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { getKYCSubmission } from "@/integrations/supabase/profile";
 import { supabase } from "@/integrations/supabase/client";
 
-
 // App preview image
 import pataAppPreview from "@/assets/pata-app-preview.png";
+import kirbyAsset from "@/assets/team/kirby.jpg.asset.json";
+import mildredAsset from "@/assets/team/mildred.jpg.asset.json";
 
 const AnimatedSection = ({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) => {
   const { ref, isVisible } = useScrollAnimation(0.1);
@@ -269,6 +270,80 @@ const Home = () => {
               </Link>
             </AnimatedSection>
           </div>
+        </div>
+      </section>
+
+      {/* About Us / Leadership Section */}
+      <section className="px-5 md:px-20 py-12 md:py-20 bg-background border-t border-border overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <AnimatedSection>
+            <p className="text-sm font-medium text-primary mb-2">About us</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              The people behind Pata
+            </h2>
+            <p className="text-muted-foreground mb-10 max-w-2xl">
+              Botswana-built fintech, led by a team that understands local business from the ground up.
+            </p>
+          </AnimatedSection>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {[
+              {
+                name: "Shaun Motsumi",
+                role: "Chief Executive Officer",
+                image: "",
+                bio: "Sets Pata's long-term vision — building financial infrastructure that keeps value inside Botswana and expands access across the region.",
+              },
+              {
+                name: "Kirby",
+                role: "Executive Director",
+                image: kirbyAsset.url,
+                bio: "Leads Pata's day-to-day execution — from merchant operations and terminal rollouts to partnerships with banks and mobile money providers across Botswana.",
+              },
+              {
+                name: "Mildred",
+                role: "Marketing Director",
+                image: mildredAsset.url,
+                bio: "Shapes how Botswana meets Pata. She builds the brand, campaigns, and merchant community around the platform.",
+              },
+            ].map((member, i) => (
+              <AnimatedSection key={member.name} delay={0.1 * i}>
+                <article className="rounded-2xl border border-border bg-card overflow-hidden flex flex-col h-full hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                  {member.image ? (
+                    <img
+                      src={member.image}
+                      alt={`${member.name}, ${member.role} at Pata`}
+                      loading="lazy"
+                      className="w-full h-64 object-cover object-top"
+                    />
+                  ) : (
+                    <div className="w-full h-64 bg-muted flex items-center justify-center">
+                      <User className="w-16 h-16 text-muted-foreground" />
+                    </div>
+                  )}
+                  <div className="p-5 flex flex-col gap-2 flex-1">
+                    <div>
+                      <h3 className="text-lg font-semibold text-foreground">{member.name}</h3>
+                      <p className="text-sm text-primary font-medium">{member.role}</p>
+                    </div>
+                    <p className="text-sm text-muted-foreground flex-1">{member.bio}</p>
+                  </div>
+                </article>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection delay={0.3}>
+            <div className="mt-10">
+              <Link
+                to="/about"
+                className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center gap-2"
+              >
+                Learn more about Pata
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
 
