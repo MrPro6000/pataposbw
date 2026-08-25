@@ -325,7 +325,7 @@ const Home = () => {
                             src={member.image}
                             alt={`${member.name}, ${member.role} at Pata`}
                             loading="lazy"
-                            className="w-full h-full object-cover object-top"
+                            className={`w-full h-full object-cover ${member.name === "Kirby" ? "object-center" : "object-top"}`}
                           />
                         ) : (
                           <div className="w-full h-full bg-muted flex items-center justify-center">
