@@ -135,7 +135,7 @@ const About = () => {
           <h2 className="text-2xl font-semibold mb-4">Get in touch</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl">
             General enquiries: <a className="text-primary" href="mailto:info@pata.co.bw">info@pata.co.bw</a>{" "}
-            · Sales: <a className="text-primary" href="mailto:sales@pata.com">sales@pata.com</a>
+            · Sales: <a className="text-primary" href="mailto:info@pata.co.bw">info@pata.co.bw</a>
           </p>
           <Link to="/signup" className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center">
             Get started
