@@ -38,6 +38,10 @@ const Payouts = () => {
   const [withdrawAccount, setWithdrawAccount] = useState<ConnectedAccount | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [cardlessCode, setCardlessCode] = useState("");
+  const [depositOpen, setDepositOpen] = useState(false);
+  const [depositStep, setDepositStep] = useState<"select" | "confirm" | "processing" | "success">("select");
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositAccount, setDepositAccount] = useState<ConnectedAccount | null>(null);
   const [accounts, setAccounts] = useState<ConnectedAccount[]>(getConnectedAccounts());
   const [form, setForm] = useState({ bankName: "", accountNumber: "", branchCode: "", accountHolder: "", cardNumber: "", cardExpiry: "", cardCvv: "", cardHolder: "", phoneNumber: "" });
   const [loanOpen, setLoanOpen] = useState(false);
