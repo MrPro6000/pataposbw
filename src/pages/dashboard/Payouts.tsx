@@ -7,7 +7,7 @@ import MobileMoneyTransferSheet from "@/components/dashboard/MobileMoneyTransfer
 import MobileLoanApplicationSheet from "@/components/dashboard/MobileLoanApplicationSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
-import { Wallet, Building2, ArrowUpRight, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send, Copy, Hash } from "lucide-react";
+import { Wallet, Building2, ArrowUpRight, ArrowDownLeft, Clock, CheckCircle, Edit, ChevronRight, Percent, Zap, Eye, Smartphone, CreditCard, Plus, Trash2, AlertTriangle, Send, Copy, Hash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
