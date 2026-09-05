@@ -160,6 +160,38 @@ const Payouts = () => {
     setTimeout(() => setWithdrawStep("cardless_success"), 2000);
   };
 
+  const handleStartDeposit = () => {
+    setDepositAmount("");
+    setDepositAccount(null);
+    setDepositStep("select");
+    setDepositOpen(true);
+  };
+
+  const handleSelectDepositAccount = (account: ConnectedAccount) => {
+    const amt = parseFloat(depositAmount);
+    if (!amt || amt <= 0) { toast.error("Enter a valid amount first."); return; }
+    setDepositAccount(account);
+    setDepositStep("confirm");
+  };
+
+  const handleConfirmDeposit = async () => {
+    if (!depositAccount) return;
+    const amt = parseFloat(depositAmount);
+    if (!amt || amt <= 0) { toast.error("Invalid amount"); return; }
+    setDepositStep("processing");
+    const sourceLabel = depositAccount.type === "bank"
+      ? `${depositAccount.name} (${depositAccount.details})`
+      : `${depositAccount.name} - ${depositAccount.details}`;
+    await addTransaction({
+      type: "deposit",
+      payment_method: depositAccount.type === "bank" ? "bank_transfer" : depositAccount.type === "mobile_money" ? "mobile_money" : "card",
+      amount: amt,
+      description: `Top up from ${sourceLabel}`,
+      status: "processing",
+    });
+    setTimeout(() => setDepositStep("success"), 2000);
+  };
+
   return (
     <DashboardLayout>
       <div className="mb-6">
