@@ -203,7 +203,10 @@ const Payouts = () => {
         <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 bg-primary rounded-full flex items-center justify-center"><Wallet className="w-5 h-5 text-primary-foreground" /></div><span className="text-muted-foreground">Available Balance</span></div>
           <p className="text-3xl font-bold">P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
-          <Button size="sm" className="mt-3" onClick={() => { setWithdrawAmount(String(balance)); setWithdrawStep("select"); setWithdrawAccount(null); setWithdrawOpen(true); }}><Zap className="w-4 h-4 mr-2" /> Withdraw</Button>
+          <div className="flex flex-wrap gap-2 mt-3">
+            <Button size="sm" onClick={() => { setWithdrawAmount(String(balance)); setWithdrawStep("select"); setWithdrawAccount(null); setWithdrawOpen(true); }}><Zap className="w-4 h-4 mr-2" /> Withdraw</Button>
+            <Button size="sm" variant="outline" onClick={handleStartDeposit}><ArrowDownLeft className="w-4 h-4 mr-2" /> Top Up / Deposit</Button>
+          </div>
         </div>
         <div className="bg-card border border-border rounded-2xl p-6">
           <div className="flex items-center gap-3 mb-4"><div className="w-10 h-10 bg-orange-500/20 rounded-full flex items-center justify-center"><Clock className="w-5 h-5 text-orange-500" /></div><span className="text-muted-foreground">Processing</span></div>
