@@ -468,6 +468,70 @@ const Payouts = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Top Up / Deposit Dialog */}
+      <Dialog open={depositOpen} onOpenChange={(o) => { if (!o) setDepositOpen(false); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader><DialogTitle>
+            {depositStep === "select" && "Top Up Wallet"}
+            {depositStep === "confirm" && "Confirm Deposit"}
+            {depositStep === "processing" && "Processing..."}
+            {depositStep === "success" && "Deposit Sent!"}
+          </DialogTitle></DialogHeader>
+          {depositStep === "select" && (
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label>Amount (P)</Label>
+                <Input type="number" inputMode="decimal" value={depositAmount} onChange={e => setDepositAmount(e.target.value)} placeholder="0.00" className="text-xl font-bold h-12 text-center" autoFocus />
+                <p className="text-xs text-muted-foreground text-center">Current balance: P{balance.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <p className="text-sm text-muted-foreground">Select source account:</p>
+              {accounts.length === 0 ? (
+                <div className="text-center py-6 text-muted-foreground">
+                  <p className="text-sm">No connected accounts.</p>
+                  <p className="text-xs">Add a bank, mobile money, or card account first.</p>
+                </div>
+              ) : accounts.map(a => (
+                <button key={a.id} onClick={() => handleSelectDepositAccount(a)} className="w-full flex items-center gap-3 p-4 rounded-xl border border-border hover:bg-muted/50 text-left transition-colors">
+                  <div className="w-10 h-10 bg-muted rounded-xl flex items-center justify-center">{a.providerImg ? <img src={a.providerImg} alt="" className="w-6 h-6 rounded object-contain" /> : getAccountIcon(a.type)}</div>
+                  <div className="flex-1"><p className="font-medium text-foreground">{a.name}</p><p className="text-xs text-muted-foreground">{a.details} {a.branchCode ? `• Branch ${a.branchCode}` : ""}</p></div>
+                  {a.isDefault && <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">Default</span>}
+                  <ChevronRight className="w-4 h-4 text-muted-foreground" />
+                </button>
+              ))}
+              <DialogFooter><Button variant="outline" onClick={() => setDepositOpen(false)} className="w-full">Cancel</Button></DialogFooter>
+            </div>
+          )}
+          {depositStep === "confirm" && depositAccount && (
+            <div className="space-y-4 py-2">
+              <div className="bg-primary/5 border border-primary/20 rounded-2xl p-5 text-center">
+                <ArrowDownLeft className="w-8 h-8 text-primary mx-auto mb-2" />
+                <p className="text-sm text-muted-foreground mb-1">Depositing</p>
+                <p className="text-3xl font-bold text-foreground">P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
+              </div>
+              <div className="bg-muted rounded-xl p-4 space-y-2">
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">From</span><span className="text-sm font-medium text-foreground">{depositAccount.name}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">Account</span><span className="text-sm font-medium text-foreground">{depositAccount.details}</span></div>
+                <div className="flex justify-between"><span className="text-sm text-muted-foreground">To</span><span className="text-sm font-medium text-foreground">Pata Wallet</span></div>
+                <div className="flex justify-between border-t border-border pt-2"><span className="text-sm font-semibold text-foreground">You'll receive</span><span className="text-sm font-bold text-primary">P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span></div>
+              </div>
+              <DialogFooter><Button variant="outline" onClick={() => setDepositStep("select")}>Back</Button><Button onClick={handleConfirmDeposit}>Confirm Deposit</Button></DialogFooter>
+            </div>
+          )}
+          {depositStep === "processing" && (
+            <div className="py-12 text-center space-y-4"><div className="animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full mx-auto" /><p className="text-muted-foreground">Processing your deposit...</p></div>
+          )}
+          {depositStep === "success" && (
+            <div className="py-8 text-center space-y-4">
+              <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto"><CheckCircle className="w-8 h-8 text-green-600" /></div>
+              <h3 className="text-lg font-bold text-foreground">Deposit Initiated!</h3>
+              <p className="text-sm text-muted-foreground">P{(parseFloat(depositAmount) || 0).toLocaleString(undefined, { minimumFractionDigits: 2 })} from {depositAccount?.name} is being processed.</p>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-orange-100 dark:bg-orange-900/30 rounded-full"><Clock className="w-3.5 h-3.5 text-orange-600 dark:text-orange-400" /><span className="text-xs font-medium text-orange-700 dark:text-orange-400">Processing</span></div>
+              <Button onClick={() => setDepositOpen(false)} className="w-full">Done</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <CapitalDialog open={capitalOpen} onClose={() => setCapitalOpen(false)} />
       <FeesDialog open={feesOpen} onClose={() => setFeesOpen(false)} />
       <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
