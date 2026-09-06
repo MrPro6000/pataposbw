@@ -129,6 +129,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
     { icon: Globe2, label: "Mukuru", show: true, onClick: () => setMukuruOpen(true) },
     { icon: Bitcoin, label: "Crypto", show: true, onClick: () => sonnerToast.info("Crypto payments coming soon") },
+    { icon: Zap, label: "Kazang Services", show: true, onClick: () => setKazangOpen(true) },
     { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
     { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
     { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
