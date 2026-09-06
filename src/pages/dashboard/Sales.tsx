@@ -473,6 +473,15 @@ const Sales = () => {
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setKazangOpen(true)}
+          >
+            <Zap className="w-5 h-5" />
+            <span className="text-xs">Kazang Services</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
             onClick={() => setPaymentLinkDialogOpen(true)}
           >
             <Link2 className="w-5 h-5" />
