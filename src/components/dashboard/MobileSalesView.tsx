@@ -84,6 +84,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [walletOpen, setWalletOpen] = useState(false);
   const [eWalletOpen, setEWalletOpen] = useState(false);
   const [mukuruOpen, setMukuruOpen] = useState(false);
+  const [kazangOpen, setKazangOpen] = useState(false);
   const { transactions, last7DaysIncome, balance } = useTransactions();
   const { invoices } = useInvoices();
   const { paymentLinks } = usePaymentLinks();
