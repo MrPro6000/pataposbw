@@ -1132,6 +1132,7 @@ const Sales = () => {
 
       <SellProductsDialog open={sellProductsOpen} onClose={() => setSellProductsOpen(false)} />
       <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
+      <KazangServicesSheet open={kazangOpen} onClose={() => setKazangOpen(false)} />
 
       {/* Voucher Dialog */}
       <Dialog open={voucherDialogOpen} onOpenChange={setVoucherDialogOpen}>
