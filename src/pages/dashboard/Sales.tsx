@@ -91,6 +91,7 @@ const Sales = () => {
   const navigate = useNavigate();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
+  const [kazangOpen, setKazangOpen] = useState(false);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [voucherForm, setVoucherForm] = useState({ amount: "", recipientName: "", recipientPhone: "" });
   const [voucherCreating, setVoucherCreating] = useState(false);
