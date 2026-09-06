@@ -31,6 +31,7 @@ import MobileWalletSheet from "./MobileWalletSheet";
 import MobileVoucherSheet from "./MobileVoucherSheet";
 import MobileEWalletSheet from "./MobileEWalletSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
+import KazangServicesSheet from "./KazangServicesSheet";
 import { toast as sonnerToast } from "sonner";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
