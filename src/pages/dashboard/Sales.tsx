@@ -5,6 +5,7 @@ import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import PaymentFlow from "@/components/dashboard/PaymentFlow";
 import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
+import KazangServicesSheet from "@/components/dashboard/KazangServicesSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { usePaymentLinks } from "@/hooks/usePaymentLinks";
