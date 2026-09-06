@@ -17,7 +17,8 @@ import {
   Package,
   ShoppingBag,
   Ticket,
-  Send
+  Send,
+  Zap
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobilePaymentSheet from "./MobilePaymentSheet";
@@ -31,6 +32,7 @@ import MobileWalletSheet from "./MobileWalletSheet";
 import MobileVoucherSheet from "./MobileVoucherSheet";
 import MobileEWalletSheet from "./MobileEWalletSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
+import KazangServicesSheet from "./KazangServicesSheet";
 import { toast as sonnerToast } from "sonner";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
@@ -83,6 +85,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [walletOpen, setWalletOpen] = useState(false);
   const [eWalletOpen, setEWalletOpen] = useState(false);
   const [mukuruOpen, setMukuruOpen] = useState(false);
+  const [kazangOpen, setKazangOpen] = useState(false);
   const { transactions, last7DaysIncome, balance } = useTransactions();
   const { invoices } = useInvoices();
   const { paymentLinks } = usePaymentLinks();
@@ -127,6 +130,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
     { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
     { icon: Globe2, label: "Mukuru", show: true, onClick: () => setMukuruOpen(true) },
     { icon: Bitcoin, label: "Crypto", show: true, onClick: () => sonnerToast.info("Crypto payments coming soon") },
+    { icon: Zap, label: "Kazang Services", show: true, onClick: () => setKazangOpen(true) },
     { icon: Link2, label: "Payment Link", show: preferences.show_payment_links, onClick: () => setPaymentLinksOpen(true) },
     { icon: Ticket, label: "Voucher", show: preferences.show_vouchers, onClick: () => setVoucherOpen(true) },
     { icon: FileText, label: "Invoice", show: preferences.show_invoices, onClick: () => setInvoiceSheetOpen(true) },
@@ -323,6 +327,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
       <MobileVoucherSheet open={voucherOpen} onClose={() => setVoucherOpen(false)} />
       <MobileEWalletSheet open={eWalletOpen} onClose={() => setEWalletOpen(false)} />
       <MobileMoneyTransferSheet open={mukuruOpen} onClose={() => setMukuruOpen(false)} />
+      <KazangServicesSheet open={kazangOpen} onClose={() => setKazangOpen(false)} />
       <MobileProfileSheet open={profileOpen} onClose={() => setProfileOpen(false)} profile={profile} userEmail={userEmail} />
       <MobileBottomNav />
     </div>

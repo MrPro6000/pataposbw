@@ -5,6 +5,7 @@ import SellProductsDialog from "@/components/dashboard/SellProductsDialog";
 import MobileDashboardHome from "@/components/dashboard/MobileDashboardHome";
 import PaymentFlow from "@/components/dashboard/PaymentFlow";
 import PaymentGatewayDialog from "@/components/dashboard/PaymentGatewayDialog";
+import KazangServicesSheet from "@/components/dashboard/KazangServicesSheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useTransactions } from "@/hooks/useTransactions";
 import { usePaymentLinks } from "@/hooks/usePaymentLinks";
@@ -35,6 +36,7 @@ import {
   Send,
   Globe2,
   Bitcoin,
+  Zap,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -89,6 +91,7 @@ const Sales = () => {
   const navigate = useNavigate();
   const [sellProductsOpen, setSellProductsOpen] = useState(false);
   const [paymentGatewayOpen, setPaymentGatewayOpen] = useState(false);
+  const [kazangOpen, setKazangOpen] = useState(false);
   const [voucherDialogOpen, setVoucherDialogOpen] = useState(false);
   const [voucherForm, setVoucherForm] = useState({ amount: "", recipientName: "", recipientPhone: "" });
   const [voucherCreating, setVoucherCreating] = useState(false);
@@ -415,7 +418,7 @@ const Sales = () => {
       <div className="bg-card rounded-2xl p-5 mb-6 border border-border">
         <h2 className="text-sm font-medium text-muted-foreground mb-4">Quick Actions</h2>
 
-        <div className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-10 gap-3">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
           <Button
             variant="outline"
             className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
@@ -468,6 +471,15 @@ const Sales = () => {
           >
             <Bitcoin className="w-5 h-5" />
             <span className="text-xs">Crypto</span>
+          </Button>
+
+          <Button
+            variant="outline"
+            className="h-auto py-4 flex flex-col items-center gap-2 hover:bg-muted"
+            onClick={() => setKazangOpen(true)}
+          >
+            <Zap className="w-5 h-5" />
+            <span className="text-xs">Kazang Services</span>
           </Button>
 
           <Button
@@ -1120,6 +1132,7 @@ const Sales = () => {
 
       <SellProductsDialog open={sellProductsOpen} onClose={() => setSellProductsOpen(false)} />
       <PaymentGatewayDialog open={paymentGatewayOpen} onClose={() => setPaymentGatewayOpen(false)} />
+      <KazangServicesSheet open={kazangOpen} onClose={() => setKazangOpen(false)} />
 
       {/* Voucher Dialog */}
       <Dialog open={voucherDialogOpen} onOpenChange={setVoucherDialogOpen}>
