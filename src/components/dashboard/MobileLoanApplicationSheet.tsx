@@ -443,6 +443,14 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     {loanPurposes.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                {purpose === "Other" && (
+                  <Input
+                    placeholder="Please specify your loan purpose"
+                    value={customPurpose}
+                    onChange={(e) => setCustomPurpose(e.target.value)}
+                    className="h-12 bg-muted border-0"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -467,6 +475,14 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     {businessTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                {businessType === "Other" && (
+                  <Input
+                    placeholder="Please specify your business type"
+                    value={customBusinessType}
+                    onChange={(e) => setCustomBusinessType(e.target.value)}
+                    className="h-12 bg-muted border-0"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -516,11 +532,16 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
               </div>
 
               {/* Terms */}
-              <div className="bg-muted rounded-xl p-4">
-                <p className="text-sm text-muted-foreground">
+              <label className="flex items-start gap-3 bg-muted rounded-xl p-4 cursor-pointer">
+                <Checkbox
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm text-muted-foreground">
                   By submitting, you agree to our terms. Your application and repayment plan will be reviewed by our team before any funds are disbursed.
-                </p>
-              </div>
+                </span>
+              </label>
 
               <Button
                 onClick={handleSubmitApplication}
