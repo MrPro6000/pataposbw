@@ -75,6 +75,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
     setProductName("");
     setPrice("");
     setCategory("");
+    setCustomCategory("");
     setStock("");
     setSku("");
     onClose();
@@ -164,7 +165,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
         </div>
 
         <div className="p-4 border-t border-border bg-background">
-          <Button onClick={handleSubmit} disabled={isSubmitting || !productName || !price || !category} className="w-full h-14 font-semibold text-lg">
+          <Button onClick={handleSubmit} disabled={isSubmitting || !productName || !price || !category || (category === "Other" && !customCategory.trim())} className="w-full h-14 font-semibold text-lg">
             {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="animate-spin w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />
