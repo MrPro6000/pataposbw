@@ -115,6 +115,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
 
   const resetForm = () => {
     setLoanAmount(""); setPurpose(""); setBusinessName(""); setBusinessType("");
+    setCustomPurpose(""); setCustomBusinessType(""); setAgreedToTerms(false);
     setMonthlyRevenue(""); setYearsInBusiness(""); setMobileMoneyProvider("");
     setRepaymentType("monthly" as any); setRepaymentFrequency("monthly");
     setRepaymentPercentage(10); setCustomRepaymentAmount(""); setRepaymentDuration("");
@@ -130,11 +131,15 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
     return false;
   };
 
+  const effectivePurpose = purpose === "Other" ? customPurpose.trim() : purpose;
+  const effectiveBusinessType = businessType === "Other" ? customBusinessType.trim() : businessType;
+
   const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 100000
-    && purpose && businessName.trim() && businessType
+    && effectivePurpose && businessName.trim() && effectiveBusinessType
     && monthlyRevenue && monthlyRevenueNum > 0
     && yearsInBusiness && mobileMoneyProvider
-    && isRepaymentValid();
+    && isRepaymentValid()
+    && agreedToTerms;
 
   const handleSubmitApplication = async () => {
     if (!isFormValid) {
@@ -159,9 +164,9 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
       const { error } = await supabase.from("loan_applications").insert({
         user_id: user.id,
         amount: loanAmountNum,
-        purpose: `${purpose} | Repayment plan: ${repaymentPlanNote} | Provider: ${mobileMoneyProvider}`,
+        purpose: `${effectivePurpose} | Repayment plan: ${repaymentPlanNote} | Provider: ${mobileMoneyProvider}`,
         business_name: businessName.trim(),
-        business_type: businessType,
+        business_type: effectiveBusinessType,
         monthly_revenue: monthlyRevenueNum,
         years_in_business: parseInt(yearsInBusiness),
         status: "pending",
