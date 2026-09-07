@@ -44,6 +44,7 @@ const Products = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [editingProductId, setEditingProductId] = useState<string | null>(null);
   const [formData, setFormData] = useState({ name: "", price: "", category: "", stock: "" });
+  const [customCategory, setCustomCategory] = useState("");
   const isMobile = useIsMobile();
   const { toast } = useToast();
 
