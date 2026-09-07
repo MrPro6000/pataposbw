@@ -1,3 +1,4 @@
+import { toast as sonnerToast } from "sonner";
 import { useState } from "react";
 import { X, Wallet, Building2, DollarSign, FileText, CheckCircle, ArrowRight, Smartphone, Calendar, Percent, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -166,6 +167,11 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
 
       setIsSuccess(true);
       toast({ title: "Application Submitted!", description: "Our team will review and contact you within 24 hours." });
+    sonnerToast.success("Loan application received", {
+      description: "Demo: our lending team will review it and contact you within 24 hours.",
+      position: "top-center",
+      duration: 6000,
+    });
     } catch (error) {
       toast({ title: "Error", description: "Failed to submit application. Please try again.", variant: "destructive" });
     } finally {
