@@ -1,3 +1,4 @@
+import { toast as sonnerToast } from "sonner";
 import { useState } from "react";
 import { Wallet, TrendingUp, Clock, CheckCircle, ArrowRight, ChevronLeft } from "lucide-react";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
@@ -51,6 +52,11 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
     toast({ 
       title: "Application Submitted", 
       description: "We'll review your application and contact you within 24 hours" 
+    });
+    sonnerToast.success("Loan application received", {
+      description: "Demo: our lending team will review it and contact you within 24 hours.",
+      position: "top-center",
+      duration: 6000,
     });
     setApplicationForm({ amount: "", purpose: "", monthlyRevenue: "" });
     setMobileMoneyProvider("");

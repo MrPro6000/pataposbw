@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast as sonnerToast } from "sonner";
+import { useTransactions } from "@/hooks/useTransactions";
 
 import orangeMoneyLogo from "@/assets/mobile-money/orange-money.png";
 import smegaLogo from "@/assets/mobile-money/smega.png";
@@ -51,8 +52,9 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
   const [cashTendered, setCashTendered] = useState("");
   const [linkPhone, setLinkPhone] = useState("");
   const [posoPhone, setPosoPhone] = useState("");
-  const [walletPhone, setWalletPhone] = useState("");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(initialMethod ?? null);
+
+  const { balance: walletBalance } = useTransactions();
 
   const cashChange = cashTendered ? parseFloat(cashTendered) - total : 0;
 
@@ -100,7 +102,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     }
     if (step === "wallet-sending") {
       const timer = setTimeout(() => {
-        onPaymentSuccess?.("wallet", total, `Product Sale • Pata Wallet`);
+        onPaymentSuccess?.("wallet", -total, `Paid from Pata Wallet`);
         setStep("success");
       }, 2500);
       return () => clearTimeout(timer);
@@ -161,7 +163,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
               { method: "mobile-money" as PaymentMethod, label: "Mobile Money", sub: "Orange, Smega, MyZaka, POSO", icon: Smartphone, iconBg: "bg-orange-500" },
               { method: "qr" as PaymentMethod, label: "QR Payment", sub: "Scan to pay", icon: QrCode, iconBg: "bg-violet-500" },
               { method: "payment-link" as PaymentMethod, label: "Payment Link", sub: "Send link to pay", icon: Link2, iconBg: "bg-purple-500" },
-              { method: "wallet" as PaymentMethod, label: "Pata Wallet", sub: "Pay from wallet", icon: Wallet, iconBg: "bg-primary" },
+              { method: "wallet" as PaymentMethod, label: "Pata Wallet", sub: "Pay from your wallet", icon: Wallet, iconBg: "bg-primary" },
             ].map(({ method, label, sub, icon: Icon, iconBg }) => (
               <button
                 key={method}
@@ -540,7 +542,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
         </div>
       )}
 
-      {/* PATA WALLET PHONE */}
+      {/* PATA WALLET — PAY FROM YOUR OWN WALLET */}
       {step === "wallet-phone" && (
         <div className="space-y-4">
           <div className="bg-muted rounded-2xl p-4 text-center">
@@ -552,39 +554,47 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center">
               <Wallet className="w-6 h-6 text-primary-foreground" />
             </div>
-            <div>
-              <p className="font-semibold text-foreground">Pata Wallet</p>
-              <p className="text-xs text-muted-foreground">Customer pays from their Pata wallet</p>
+            <div className="flex-1">
+              <p className="font-semibold text-foreground">Your Pata Wallet</p>
+              <p className="text-xs text-muted-foreground">Paying from your own wallet balance</p>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <Label className="font-semibold">Customer Phone Number</Label>
-            <Input
-              type="tel"
-              placeholder="+267 71 234 5678"
-              value={walletPhone}
-              onChange={e => setWalletPhone(e.target.value)}
-              className="h-12 text-lg"
-            />
+          <div className="bg-muted rounded-2xl p-4 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Wallet balance</span>
+              <span className="font-semibold text-foreground">P{walletBalance.toFixed(2)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Balance after payment</span>
+              <span className={`font-semibold ${walletBalance - total < 0 ? "text-destructive" : "text-foreground"}`}>
+                P{(walletBalance - total).toFixed(2)}
+              </span>
+            </div>
           </div>
 
+          {walletBalance < total && (
+            <p className="text-sm text-destructive text-center">
+              Insufficient wallet balance. Top up your wallet to continue.
+            </p>
+          )}
+
           <div className="flex gap-3">
-            <Button variant="outline" onClick={() => { setWalletPhone(""); cancelToPrev(); }} className="flex-1">
+            <Button variant="outline" onClick={cancelToPrev} className="flex-1">
               Cancel
             </Button>
-            <Button onClick={() => {
-              if (!walletPhone) return;
-              const digits = walletPhone.replace(/\D/g, "").replace(/^267/, "");
-              if (!/^7\d{7}$/.test(digits)) {
-                sonnerToast.error("Botswana mobile number must start with 7 and be 8 digits.");
-                return;
-              }
-              setStep("wallet-sending");
-            }}
-              disabled={!walletPhone}
-              className="flex-1">
-              Send Request
+            <Button
+              onClick={() => {
+                if (walletBalance < total) {
+                  sonnerToast.error("Insufficient Pata Wallet balance.");
+                  return;
+                }
+                setStep("wallet-sending");
+              }}
+              disabled={walletBalance < total}
+              className="flex-1"
+            >
+              Pay P{total.toFixed(2)}
             </Button>
           </div>
         </div>
@@ -597,16 +607,16 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
           <div className="text-center space-y-1">
-            <p className="text-lg font-semibold text-foreground">Sending Pata Wallet Request</p>
+            <p className="text-lg font-semibold text-foreground">Paying from Pata Wallet</p>
             <p className="text-sm text-muted-foreground">
-              Waiting for customer to approve in their Pata wallet...
+              Deducting P{total.toFixed(2)} from your wallet balance...
             </p>
           </div>
           <div className="bg-muted rounded-xl p-3 flex items-center gap-3 w-full max-w-xs">
             <Wallet className="w-5 h-5 text-primary" />
             <div className="flex-1">
-              <p className="text-xs text-muted-foreground">Sent to</p>
-              <p className="text-sm font-mono font-semibold text-foreground">{walletPhone}</p>
+              <p className="text-xs text-muted-foreground">Wallet balance</p>
+              <p className="text-sm font-semibold text-foreground">P{walletBalance.toFixed(2)}</p>
             </div>
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
           </div>
@@ -672,12 +682,8 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
             {paymentMethod === "wallet" && (
               <>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Provider</span>
-                  <span className="font-medium text-foreground">Pata Wallet</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Phone</span>
-                  <span className="font-medium text-foreground">{walletPhone}</span>
+                  <span className="text-muted-foreground">Paid from</span>
+                  <span className="font-medium text-foreground">Your Pata Wallet</span>
                 </div>
               </>
             )}
