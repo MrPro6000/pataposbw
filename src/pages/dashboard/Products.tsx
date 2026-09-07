@@ -58,10 +58,11 @@ const Products = () => {
   );
 
   const handleOpenAddModal = () => { setFormData({ name: "", price: "", category: "", stock: "" }); setEditingProductId(null); setIsAddModalOpen(true); };
-  const handleOpenEditModal = (product: typeof products[0]) => { setFormData({ name: product.name, price: product.price.toString(), category: product.category, stock: product.stock.toString() }); setEditingProductId(product.id); setIsAddModalOpen(true); };
+  const handleOpenEditModal = (product: typeof products[0]) => { setFormData({ name: product.name, price: product.price.toString(), category: categories.includes(product.category) ? product.category : "Other", stock: product.stock.toString() }); setEditingProductId(product.id); setIsAddModalOpen(true); };
   
   const handleSaveProduct = async () => {
-    if (!formData.name || !formData.price || !formData.category) return;
+    const effectiveCategory = formData.category === "Other" ? customCategory.trim() : formData.category;
+    if (!formData.name || !formData.price || !effectiveCategory) return;
     if (editingProductId) {
       const { error } = await updateProduct(editingProductId, { name: formData.name, price: parseFloat(formData.price), category: formData.category, stock: parseInt(formData.stock) || 0, stock_status: (parseInt(formData.stock) || 0) === 0 ? "out_of_stock" : "in_stock" });
       if (error) { toast({ title: "Error", description: error, variant: "destructive" }); return; }
