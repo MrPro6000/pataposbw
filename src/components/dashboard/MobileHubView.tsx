@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet, Send, Banknote, CheckCircle, RefreshCw } from "lucide-react";
+import { ChevronRight, Package, Users, CreditCard, Smartphone, Globe, Wallet, Send, Banknote, CheckCircle, RefreshCw, Zap } from "lucide-react";
 import {
   ChartContainer,
 } from "@/components/ui/chart";
@@ -15,6 +15,7 @@ import MobilePOSSheet from "./MobilePOSSheet";
 import MobileMoneyTransferSheet from "./MobileMoneyTransferSheet";
 import MobileLoanApplicationSheet from "./MobileLoanApplicationSheet";
 import MobileWalletSheet from "./MobileWalletSheet";
+import KazangServicesSheet from "./KazangServicesSheet";
 import PataLogo from "@/components/PataLogo";
 import { useTransactions } from "@/hooks/useTransactions";
 import { useDashboardPreferences } from "@/hooks/useDashboardPreferences";
@@ -38,6 +39,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
   const [moneyTransferOpen, setMoneyTransferOpen] = useState(false);
   const [loanApplicationOpen, setLoanApplicationOpen] = useState(false);
   const [walletOpen, setWalletOpen] = useState(false);
+  const [kazangOpen, setKazangOpen] = useState(false);
 
   // Build weekly chart from real transactions
   const now = new Date();
@@ -119,6 +121,15 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
           <Wallet className="w-5 h-5 text-white" />
         </div>
         <div><p className="font-semibold text-foreground text-sm">Wallet</p><p className="text-xs text-muted-foreground">P{balance.toFixed(2)} balance</p></div>
+      </button>
+    )},
+    { key: "kazang", show: true, content: (
+      <button key="kazang" onClick={() => setKazangOpen(true)}
+        className="bg-gradient-to-br from-yellow-50 to-yellow-100/50 dark:from-yellow-900/20 dark:to-yellow-800/10 rounded-2xl p-4 flex items-center gap-3 active:scale-98 transition-transform text-left border border-yellow-200/50 dark:border-yellow-700/30">
+        <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
+          <Zap className="w-5 h-5 text-white" />
+        </div>
+        <div><p className="font-semibold text-foreground text-sm">Kazang Services</p><p className="text-xs text-muted-foreground">Airtime, electricity & more</p></div>
       </button>
     )},
   ].filter(i => i.show);
@@ -263,6 +274,7 @@ const MobileHubView = ({ profile, userEmail }: MobileHubViewProps) => {
       <MobileMoneyTransferSheet open={moneyTransferOpen} onClose={() => setMoneyTransferOpen(false)} />
       <MobileLoanApplicationSheet open={loanApplicationOpen} onClose={() => setLoanApplicationOpen(false)} />
       <MobileWalletSheet open={walletOpen} onClose={() => setWalletOpen(false)} />
+      <KazangServicesSheet open={kazangOpen} onClose={() => setKazangOpen(false)} />
       <MobileBottomNav />
     </div>
   );

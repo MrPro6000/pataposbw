@@ -70,7 +70,7 @@ interface MobileSalesViewProps {
   userEmail?: string;
 }
 
-type PaymentType = "card-sale" | "cash" | "mobile-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money" | "wallet";
 
 const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   const [paymentSheetOpen, setPaymentSheetOpen] = useState(false);
@@ -126,6 +126,7 @@ const MobileSalesView = ({ profile, userEmail }: MobileSalesViewProps) => {
   // Order: Mobile Money, Card sale, Cash, Mukuru, Crypto, Payment Link, Voucher, Invoice, E-Wallet, Wallet
   const quickActions = [
     { icon: Smartphone, label: "Mobile Money", show: preferences.show_mobile_money, onClick: () => handleQuickAction('mobile-money') },
+    { icon: Wallet, label: "Pata Wallet", show: true, onClick: () => handleQuickAction('wallet') },
     { icon: CreditCard, label: "Card sale", show: true, onClick: () => handleQuickAction('card-sale') },
     { icon: Banknote, label: "Cash", show: true, onClick: () => handleQuickAction('cash') },
     { icon: Globe2, label: "Mukuru", show: true, onClick: () => setMukuruOpen(true) },
