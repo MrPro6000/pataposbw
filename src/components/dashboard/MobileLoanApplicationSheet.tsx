@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
@@ -63,6 +64,9 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
   // Business info
   const [loanAmount, setLoanAmount] = useState("");
   const [purpose, setPurpose] = useState("");
+  const [customPurpose, setCustomPurpose] = useState("");
+  const [customBusinessType, setCustomBusinessType] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [monthlyRevenue, setMonthlyRevenue] = useState("");
