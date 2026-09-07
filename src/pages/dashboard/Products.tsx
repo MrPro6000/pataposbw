@@ -57,8 +57,8 @@ const Products = () => {
     p.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleOpenAddModal = () => { setFormData({ name: "", price: "", category: "", stock: "" }); setEditingProductId(null); setIsAddModalOpen(true); };
-  const handleOpenEditModal = (product: typeof products[0]) => { setFormData({ name: product.name, price: product.price.toString(), category: categories.includes(product.category) ? product.category : "Other", stock: product.stock.toString() }); setEditingProductId(product.id); setIsAddModalOpen(true); };
+  const handleOpenAddModal = () => { setFormData({ name: "", price: "", category: "", stock: "" }); setCustomCategory(""); setEditingProductId(null); setIsAddModalOpen(true); };
+  const handleOpenEditModal = (product: typeof products[0]) => { setFormData({ name: product.name, price: product.price.toString(), category: categories.includes(product.category) ? product.category : "Other", stock: product.stock.toString() }); setCustomCategory(categories.includes(product.category) ? "" : product.category); setEditingProductId(product.id); setIsAddModalOpen(true); };
   
   const handleSaveProduct = async () => {
     const effectiveCategory = formData.category === "Other" ? customCategory.trim() : formData.category;
