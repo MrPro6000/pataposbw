@@ -85,6 +85,7 @@ const Sales = () => {
   const [paymentDialogOpen, setPaymentDialogOpen] = useState(false);
   const [paymentType, setPaymentType] = useState<PaymentType>("card");
   const [paymentLinkDialogOpen, setPaymentLinkDialogOpen] = useState(false);
+  const [createdLinkUrl, setCreatedLinkUrl] = useState<string | null>(null);
   const [invoiceDialogOpen, setInvoiceDialogOpen] = useState(false);
   const isMobile = useIsMobile();
   const { toast } = useToast();
@@ -316,8 +317,7 @@ const Sales = () => {
       status: "pending",
     });
     toast({ title: "Payment Link Created", description: "Your payment link has been generated" });
-    setPaymentLinkDialogOpen(false);
-    setLinkTitle(""); setLinkAmount(""); setLinkCustomer("");
+    setCreatedLinkUrl(result.data?.link_url || null);
   };
 
   const handleCreateInvoice = async () => {
@@ -1039,7 +1039,7 @@ const Sales = () => {
       </Dialog>
 
       {/* Create Payment Link Dialog */}
-      <Dialog open={paymentLinkDialogOpen} onOpenChange={setPaymentLinkDialogOpen}>
+      <Dialog open={paymentLinkDialogOpen} onOpenChange={(o) => { setPaymentLinkDialogOpen(o); if (!o) { setCreatedLinkUrl(null); setLinkTitle(""); setLinkAmount(""); setLinkCustomer(""); } }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-3">
@@ -1077,12 +1077,36 @@ const Sales = () => {
                 onChange={(e) => setLinkCustomer(e.target.value)}
               />
             </div>
-            <Button
-              onClick={handleCreatePaymentLink}
-              className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
-            >
-              Create & Copy Link
-            </Button>
+            {createdLinkUrl ? (
+              <div className="space-y-3">
+                <div className="rounded-xl border border-border bg-muted p-3 space-y-1">
+                  <p className="text-xs text-muted-foreground">Payment link sent — copy and share it again anytime</p>
+                  <p className="text-sm font-mono break-all text-foreground">{createdLinkUrl}</p>
+                </div>
+                <div className="flex gap-3">
+                  <Button variant="outline" className="flex-1 h-12" onClick={() => copyLink(createdLinkUrl)}>
+                    <Copy className="w-4 h-4 mr-2" /> Copy Link
+                  </Button>
+                  <Button
+                    className="flex-1 h-12"
+                    onClick={() => {
+                      setCreatedLinkUrl(null);
+                      setPaymentLinkDialogOpen(false);
+                      setLinkTitle(""); setLinkAmount(""); setLinkCustomer("");
+                    }}
+                  >
+                    Done
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <Button
+                onClick={handleCreatePaymentLink}
+                className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              >
+                Create Payment Link
+              </Button>
+            )}
           </div>
         </DialogContent>
       </Dialog>

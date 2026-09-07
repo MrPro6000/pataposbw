@@ -102,7 +102,7 @@ const PaymentFlow = ({ total, itemCount, onComplete, onPaymentSuccess, onBack, c
     }
     if (step === "wallet-sending") {
       const timer = setTimeout(() => {
-        onPaymentSuccess?.("wallet", total, `Product Sale • Pata Wallet`);
+        onPaymentSuccess?.("wallet", -total, `Paid from Pata Wallet`);
         setStep("success");
       }, 2500);
       return () => clearTimeout(timer);

@@ -97,9 +97,9 @@ const KazangServicesSheet = ({ open, onClose }: Props) => {
 
     setProcessing(true);
     const { error } = await addTransaction({
-      type: "sale",
+      type: method === "wallet" ? "payout" : "sale",
       payment_method: method,
-      amount: value,
+      amount: method === "wallet" ? -value : value,
       description: `Kazang • ${service?.label} • ${reference.trim()}`,
       status: "completed",
     });
