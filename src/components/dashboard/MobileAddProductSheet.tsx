@@ -31,6 +31,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
   const [productName, setProductName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("");
+  const [customCategory, setCustomCategory] = useState("");
   const [stock, setStock] = useState("");
   const [sku, setSku] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +39,8 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
   const { addProduct } = useProducts();
 
   const handleSubmit = async () => {
-    if (!productName || !price || !category) {
+    const effectiveCategory = category === "Other" ? customCategory.trim() : category;
+    if (!productName || !price || !effectiveCategory) {
       toast({
         title: "Missing fields",
         description: "Please fill in product name, price, and category",
@@ -51,7 +53,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
     const result = await addProduct({
       name: productName,
       price: parseFloat(price),
-      category,
+      category: effectiveCategory,
       stock: stock ? parseInt(stock) : 0,
     });
     setIsSubmitting(false);
@@ -73,6 +75,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
     setProductName("");
     setPrice("");
     setCategory("");
+    setCustomCategory("");
     setStock("");
     setSku("");
     onClose();
@@ -140,6 +143,14 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
                 ))}
               </SelectContent>
             </Select>
+            {category === "Other" && (
+              <Input
+                placeholder="Type your category"
+                value={customCategory}
+                onChange={(e) => setCustomCategory(e.target.value)}
+                className="h-12 bg-muted border-0 rounded-xl"
+              />
+            )}
           </div>
 
           <div className="space-y-2">
@@ -154,7 +165,7 @@ const MobileAddProductSheet = ({ open, onClose }: MobileAddProductSheetProps) =>
         </div>
 
         <div className="p-4 border-t border-border bg-background">
-          <Button onClick={handleSubmit} disabled={isSubmitting || !productName || !price || !category} className="w-full h-14 font-semibold text-lg">
+          <Button onClick={handleSubmit} disabled={isSubmitting || !productName || !price || !category || (category === "Other" && !customCategory.trim())} className="w-full h-14 font-semibold text-lg">
             {isSubmitting ? (
               <div className="flex items-center gap-2">
                 <div className="animate-spin w-5 h-5 border-2 border-primary-foreground border-t-transparent rounded-full" />

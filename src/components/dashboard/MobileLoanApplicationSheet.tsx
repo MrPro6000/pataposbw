@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
 import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
@@ -63,6 +64,9 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
   // Business info
   const [loanAmount, setLoanAmount] = useState("");
   const [purpose, setPurpose] = useState("");
+  const [customPurpose, setCustomPurpose] = useState("");
+  const [customBusinessType, setCustomBusinessType] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [businessName, setBusinessName] = useState("");
   const [businessType, setBusinessType] = useState("");
   const [monthlyRevenue, setMonthlyRevenue] = useState("");
@@ -111,6 +115,7 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
 
   const resetForm = () => {
     setLoanAmount(""); setPurpose(""); setBusinessName(""); setBusinessType("");
+    setCustomPurpose(""); setCustomBusinessType(""); setAgreedToTerms(false);
     setMonthlyRevenue(""); setYearsInBusiness(""); setMobileMoneyProvider("");
     setRepaymentType("monthly" as any); setRepaymentFrequency("monthly");
     setRepaymentPercentage(10); setCustomRepaymentAmount(""); setRepaymentDuration("");
@@ -126,11 +131,15 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
     return false;
   };
 
+  const effectivePurpose = purpose === "Other" ? customPurpose.trim() : purpose;
+  const effectiveBusinessType = businessType === "Other" ? customBusinessType.trim() : businessType;
+
   const isFormValid = loanAmount && loanAmountNum >= 1000 && loanAmountNum <= 100000
-    && purpose && businessName.trim() && businessType
+    && effectivePurpose && businessName.trim() && effectiveBusinessType
     && monthlyRevenue && monthlyRevenueNum > 0
     && yearsInBusiness && mobileMoneyProvider
-    && isRepaymentValid();
+    && isRepaymentValid()
+    && agreedToTerms;
 
   const handleSubmitApplication = async () => {
     if (!isFormValid) {
@@ -155,9 +164,9 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
       const { error } = await supabase.from("loan_applications").insert({
         user_id: user.id,
         amount: loanAmountNum,
-        purpose: `${purpose} | Repayment plan: ${repaymentPlanNote} | Provider: ${mobileMoneyProvider}`,
+        purpose: `${effectivePurpose} | Repayment plan: ${repaymentPlanNote} | Provider: ${mobileMoneyProvider}`,
         business_name: businessName.trim(),
-        business_type: businessType,
+        business_type: effectiveBusinessType,
         monthly_revenue: monthlyRevenueNum,
         years_in_business: parseInt(yearsInBusiness),
         status: "pending",
@@ -434,6 +443,14 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     {loanPurposes.map((p) => <SelectItem key={p} value={p}>{p}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                {purpose === "Other" && (
+                  <Input
+                    placeholder="Please specify your loan purpose"
+                    value={customPurpose}
+                    onChange={(e) => setCustomPurpose(e.target.value)}
+                    className="h-12 bg-muted border-0"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -458,6 +475,14 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
                     {businessTypes.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
                   </SelectContent>
                 </Select>
+                {businessType === "Other" && (
+                  <Input
+                    placeholder="Please specify your business type"
+                    value={customBusinessType}
+                    onChange={(e) => setCustomBusinessType(e.target.value)}
+                    className="h-12 bg-muted border-0"
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -507,11 +532,16 @@ const MobileLoanApplicationSheet = ({ open, onClose }: MobileLoanApplicationShee
               </div>
 
               {/* Terms */}
-              <div className="bg-muted rounded-xl p-4">
-                <p className="text-sm text-muted-foreground">
+              <label className="flex items-start gap-3 bg-muted rounded-xl p-4 cursor-pointer">
+                <Checkbox
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm text-muted-foreground">
                   By submitting, you agree to our terms. Your application and repayment plan will be reviewed by our team before any funds are disbursed.
-                </p>
-              </div>
+                </span>
+              </label>
 
               <Button
                 onClick={handleSubmitApplication}
