@@ -5,6 +5,7 @@ import orangeMoneyImg from "@/assets/mobile-money/orange-money.png";
 import smegaImg from "@/assets/mobile-money/smega.png";
 import myzakaImg from "@/assets/mobile-money/myzaka.png";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -24,6 +25,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
   const { toast } = useToast();
   const [view, setView] = useState<"info" | "apply">("info");
   const [mobileMoneyProvider, setMobileMoneyProvider] = useState("");
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [applicationForm, setApplicationForm] = useState({
     amount: "",
     purpose: "",
@@ -49,6 +51,10 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
       toast({ title: "Error", description: "Please select a loan amount", variant: "destructive" });
       return;
     }
+    if (!agreedToTerms) {
+      toast({ title: "Terms Required", description: "Please agree to the terms before submitting", variant: "destructive" });
+      return;
+    }
     toast({ 
       title: "Application Submitted", 
       description: "We'll review your application and contact you within 24 hours" 
@@ -60,6 +66,7 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
     });
     setApplicationForm({ amount: "", purpose: "", monthlyRevenue: "" });
     setMobileMoneyProvider("");
+    setAgreedToTerms(false);
     setView("info");
   };
 
@@ -219,14 +226,20 @@ const CapitalDialog = ({ open, onClose }: CapitalDialogProps) => {
                 </div>
               </div>
 
-              <div className="bg-muted rounded-xl p-4">
-                <p className="text-sm text-muted-foreground">
-                  By applying, you agree to our terms and allow us to review your sales history for loan eligibility.
-                </p>
-              </div>
+              <label className="flex items-start gap-3 bg-muted rounded-xl p-4 cursor-pointer">
+                <Checkbox
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  className="mt-0.5"
+                />
+                <span className="text-sm text-muted-foreground">
+                  By submitting, you agree to our terms. Your application and repayment plan will be reviewed by our team before any funds are disbursed.
+                </span>
+              </label>
 
               <Button
                 onClick={handleApply}
+                disabled={!agreedToTerms || !applicationForm.amount}
                 className="w-full h-12 bg-amber-500 hover:bg-amber-600 text-white font-semibold"
               >
                 Submit Application
