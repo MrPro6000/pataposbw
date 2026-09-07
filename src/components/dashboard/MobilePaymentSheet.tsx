@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { X, CreditCard, Banknote, Smartphone, ShoppingCart } from "lucide-react";
+import { X, CreditCard, Banknote, Smartphone, ShoppingCart, Wallet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,7 +12,7 @@ import {
 import { useTransactions } from "@/hooks/useTransactions";
 import PaymentFlow from "./PaymentFlow";
 
-type PaymentType = "card-sale" | "cash" | "mobile-money";
+type PaymentType = "card-sale" | "cash" | "mobile-money" | "wallet";
 
 interface MobilePaymentSheetProps {
   open: boolean;
@@ -24,6 +24,7 @@ const paymentConfig: Record<PaymentType, { title: string; icon: React.ElementTyp
   "card-sale": { title: "Card Sale", icon: CreditCard, color: "bg-primary" },
   "cash": { title: "Cash Payment", icon: Banknote, color: "bg-green-500" },
   "mobile-money": { title: "Mobile Money", icon: Smartphone, color: "bg-orange-500" },
+  "wallet": { title: "Pata Wallet", icon: Wallet, color: "bg-primary" },
 };
 
 const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetProps) => {
@@ -67,6 +68,7 @@ const MobilePaymentSheet = ({ open, onClose, paymentType }: MobilePaymentSheetPr
     "card-sale": "card",
     "cash": "cash",
     "mobile-money": "mobile-money",
+    "wallet": "wallet",
   };
 
   return (
