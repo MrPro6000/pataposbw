@@ -60,7 +60,7 @@ export const softwareServices = [
       "Add team members, give each person a role and permissions, and keep payroll records in the same system as the rest of the business.",
   },
   {
-    icon: AddressBook,
+    icon: Contact,
     name: "Customer Records",
     tagline: "Remember every customer",
     description:
