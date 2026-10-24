@@ -20,6 +20,7 @@ import Products from "./pages/Products";
 import BusinessType from "./pages/BusinessType";
 import Shop from "./pages/Shop";
 import About from "./pages/About";
+import Software from "./pages/Software";
 import Auth from "./pages/Auth";
 import KYC from "./pages/KYC";
 import NotFound from "./pages/NotFound";
@@ -71,6 +72,7 @@ const AppContent = () => {
       <Route path="/capital" element={<Capital />} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/products" element={<Products />} />
+      <Route path="/software" element={<Software />} />
       <Route path="/business-type" element={<BusinessType />} />
       <Route path="/about" element={<About />} />
       <Route path="/shop" element={<Shop />} />
