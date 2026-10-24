@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import { ArrowRight, Star, CreditCard, Smartphone, Globe, Wallet, Phone, User } from "lucide-react";
+import { softwareServices } from "@/data/softwareServices";
 import { Link } from "react-router-dom";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
