@@ -30,6 +30,7 @@ import PaymentLinkPage from "./pages/PaymentLinkPage";
 import DashboardHome from "./pages/dashboard/DashboardHome";
 import Sales from "./pages/dashboard/Sales";
 import DashboardProducts from "./pages/dashboard/Products";
+import DashboardSoftwareProducts from "./pages/dashboard/SoftwareProducts";
 import Customers from "./pages/dashboard/Customers";
 import Payouts from "./pages/dashboard/Payouts";
 import Reports from "./pages/dashboard/Reports";
@@ -85,6 +86,7 @@ const AppContent = () => {
       <Route path="/dashboard/hub" element={<ProtectedRoute><DashboardHome /></ProtectedRoute>} />
       <Route path="/dashboard/sales" element={<ProtectedRoute><Sales /></ProtectedRoute>} />
       <Route path="/dashboard/products" element={<ProtectedRoute><DashboardProducts /></ProtectedRoute>} />
+      <Route path="/dashboard/software-products" element={<ProtectedRoute><DashboardSoftwareProducts /></ProtectedRoute>} />
       <Route path="/dashboard/customers" element={<ProtectedRoute><Customers /></ProtectedRoute>} />
       <Route path="/dashboard/payouts" element={<ProtectedRoute><Payouts /></ProtectedRoute>} />
       <Route path="/dashboard/payout-history" element={<ProtectedRoute><Payouts /></ProtectedRoute>} />

@@ -29,6 +29,7 @@ interface DashboardLayoutProps {
 interface NavItem {
   label: string;
   path: string;
+  children?: NavItem[];
 }
 
 interface NavSection {
@@ -41,6 +42,7 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [desktopCollapsed, setDesktopCollapsed] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["Sales", "Money", "Hub", "Manage"]);
+  const [expandedItems, setExpandedItems] = useState<string[]>([]);
   const location = useLocation();
   const navigate = useNavigate();
   const { userProfile, user } = useAuth();
@@ -53,7 +55,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
       icon: CreditCard,
       items: [
         { label: "Transactions", path: "/dashboard/sales" },
-        ...(preferences.show_sell_products ? [{ label: "Products", path: "/dashboard/products" }] : []),
+        ...(preferences.show_sell_products ? [{
+          label: "Products",
+          path: "/dashboard/products",
+          children: [
+            { label: "Physical Products", path: "/dashboard/products" },
+            { label: "Software Products", path: "/dashboard/software-products" },
+          ],
+        }] : []),
         ...(preferences.show_customers ? [{ label: "Customers", path: "/dashboard/customers" }] : []),
       ]
     },
@@ -111,6 +120,14 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     );
   };
 
+  const toggleItem = (label: string) => {
+    setExpandedItems(prev => 
+      prev.includes(label) 
+        ? prev.filter(i => i !== label)
+        : [...prev, label]
+    );
+  };
+
   return (
     <div className="h-screen overflow-hidden bg-muted flex">
       {/* Mobile sidebar overlay */}
@@ -160,20 +177,56 @@ const DashboardLayout = ({ children }: DashboardLayoutProps) => {
               
               {expandedSections.includes(section.label) && (
                 <div className="ml-8 border-l border-border">
-                  {section.items.map((item) => (
-                    <Link
-                      key={item.path}
-                      to={item.path}
-                      onClick={() => setSidebarOpen(false)}
-                      className={`block pl-4 pr-5 py-1.5 text-sm transition-colors ${
-                        isActive(item.path) 
-                          ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
-                          : 'text-muted-foreground hover:text-foreground'
-                      }`}
-                    >
-                      {item.label}
-                    </Link>
-                  ))}
+                  {section.items.map((item) =>
+                    item.children ? (
+                      <div key={item.label}>
+                        <button
+                          onClick={() => toggleItem(item.label)}
+                          className={`w-full flex items-center justify-between pl-4 pr-5 py-1.5 text-sm transition-colors ${
+                            item.children.some((c) => isActive(c.path))
+                              ? 'text-primary font-medium'
+                              : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                        >
+                          {item.label}
+                          <ChevronDown className={`w-3.5 h-3.5 text-muted-foreground transition-transform ${
+                            expandedItems.includes(item.label) || item.children.some((c) => isActive(c.path)) ? 'rotate-180' : ''
+                          }`} />
+                        </button>
+                        {(expandedItems.includes(item.label) || item.children.some((c) => isActive(c.path))) && (
+                          <div className="ml-6 border-l border-border">
+                            {item.children.map((child) => (
+                              <Link
+                                key={child.path}
+                                to={child.path}
+                                onClick={() => setSidebarOpen(false)}
+                                className={`block pl-4 pr-5 py-1.5 text-sm transition-colors ${
+                                  isActive(child.path)
+                                    ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
+                                    : 'text-muted-foreground hover:text-foreground'
+                                }`}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      <Link
+                        key={item.path}
+                        to={item.path}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`block pl-4 pr-5 py-1.5 text-sm transition-colors ${
+                          isActive(item.path) 
+                            ? 'text-primary font-medium border-l-2 border-primary -ml-[1px]' 
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {item.label}
+                      </Link>
+                    )
+                  )}
                 </div>
               )}
             </div>

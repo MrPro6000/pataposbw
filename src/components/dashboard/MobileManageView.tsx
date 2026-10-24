@@ -11,7 +11,8 @@ import {
   HelpCircle,
   LogOut,
   Users,
-  Smartphone
+  Smartphone,
+  Sparkles
 } from "lucide-react";
 import MobileBottomNav from "./MobileBottomNav";
 import MobileSettingsSheet from "./MobileSettingsSheet";
@@ -149,6 +150,20 @@ const MobileManageView = ({ profile, userEmail, userId, onProfileUpdated }: Mobi
             </div>
           </Link>
         </div>
+
+        {/* Software Products */}
+        <Link to="/dashboard/software-products" className="flex items-center justify-between bg-card border border-border rounded-2xl p-4 active:scale-98 transition-transform mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary/20 rounded-xl flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <p className="font-semibold text-foreground">Software Products</p>
+              <p className="text-xs text-muted-foreground">Payment links, invoices, Kazang services & more</p>
+            </div>
+          </div>
+          <ChevronRight className="w-5 h-5 text-muted-foreground" />
+        </Link>
       </div>
 
       {/* Staff Section */}
