@@ -5,7 +5,7 @@ import {
   Link2,
   Layers,
   Users,
-  AddressBook,
+  Contact,
   BarChart3,
   Receipt,
 } from "lucide-react";
