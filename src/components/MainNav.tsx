@@ -39,6 +39,9 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
           <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
             Products
           </Link>
+          <Link to="/software" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
+            Software
+          </Link>
           <div ref={dropdownRef} className="relative flex items-center h-full">
             <button 
               onClick={() => setPosOpen(!posOpen)}
