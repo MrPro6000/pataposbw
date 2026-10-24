@@ -143,6 +143,55 @@ const Home = () => {
       </section>
 
 
+      {/* Software Services Section */}
+      <section className="px-5 md:px-20 py-12 md:py-20 border-t border-border overflow-hidden">
+        <div className="max-w-7xl mx-auto">
+          <AnimatedSection>
+            <p className="text-primary text-xs font-bold tracking-[0.2em] uppercase mb-3">
+              The software
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Simple software that <span className="pata-hero-gradient">holds it together</span>
+            </h2>
+            <p className="text-muted-foreground mb-12 max-w-2xl">
+              Catalogue, invoices, record keeping, connected accounts, stock, staff and
+              reports — the everyday tools that make the whole app one system.
+            </p>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+            {softwareServices.map((service, i) => (
+              <AnimatedSection key={service.name} delay={0.06 * i}>
+                <div className="group bg-card border border-border rounded-2xl p-6 h-full hover:border-primary/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+                  <div className="w-11 h-11 bg-primary/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
+                    <service.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <p className="text-xs uppercase tracking-wider text-muted-foreground mb-1">
+                    {service.tagline}
+                  </p>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{service.name}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+
+          <AnimatedSection delay={0.3}>
+            <div className="mt-10">
+              <Link
+                to="/software"
+                className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center gap-2"
+              >
+                See all software
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* Features Section */}
       <section className="px-5 md:px-20 py-12 md:py-20 bg-secondary overflow-hidden">
         <div className="max-w-7xl mx-auto">
