@@ -10,6 +10,7 @@ import MobileReportsView from "./MobileReportsView";
 import MobileDevicesView from "./MobileDevicesView";
 import MobileStaffView from "./MobileStaffView";
 import MobileProductsView from "./MobileProductsView";
+import MobileSoftwareProductsView from "./MobileSoftwareProductsView";
 import MobileCustomersView from "./MobileCustomersView";
 import MobileSupportView from "./MobileSupportView";
 import MobileTransportView from "./MobileTransportView";
@@ -62,6 +63,7 @@ const MobileDashboardHome = () => {
     if (pathname === "/dashboard/devices") return <MobileDevicesView {...profileProps} />;
     if (pathname === "/dashboard/staff") return <MobileStaffView {...profileProps} />;
     if (pathname === "/dashboard/products") return <MobileProductsView {...profileProps} />;
+    if (pathname === "/dashboard/software-products") return <MobileSoftwareProductsView />;
     if (pathname === "/dashboard/customers") return <MobileCustomersView {...profileProps} />;
     if (pathname === "/dashboard/support") return <MobileSupportView {...profileProps} />;
     if (pathname === "/dashboard/transport") return <MobileTransportView />;
