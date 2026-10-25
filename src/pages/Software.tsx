@@ -50,7 +50,7 @@ const Software = () => {
         <div className="max-w-7xl mx-auto">
           <AnimatedSection>
             <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-4">
-              Software
+              Software products
             </p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6 max-w-3xl">
               The simple software that
