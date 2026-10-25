@@ -14,19 +14,24 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
   const { theme: contextTheme } = useTheme();
   const isDark = propTheme ? propTheme === "dark" : contextTheme === "dark";
   const [posOpen, setPosOpen] = useState(false);
+  const [productsOpen, setProductsOpen] = useState(false);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const productsRef = React.useRef<HTMLDivElement>(null);
   React.useEffect(() => {
-    if (!posOpen) return;
+    if (!posOpen && !productsOpen) return;
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setPosOpen(false);
       }
+      if (productsRef.current && !productsRef.current.contains(e.target as Node)) {
+        setProductsOpen(false);
+      }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [posOpen]);
+  }, [posOpen, productsOpen]);
   
   return (
     <header className="flex items-center justify-between px-5 md:px-20 h-16 text-foreground safe-area-top">
@@ -36,12 +41,25 @@ const MainNav = ({ theme: propTheme }: MainNavProps) => {
         </Link>
         
         <nav className="hidden lg:flex items-center gap-8 h-10">
-          <Link to="/products" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
-            Products
-          </Link>
-          <Link to="/software" className="text-sm font-medium hover:opacity-80 transition-opacity leading-none flex items-center h-full">
-            Software
-          </Link>
+          <div ref={productsRef} className="relative flex items-center h-full">
+            <button
+              onClick={() => setProductsOpen(!productsOpen)}
+              className="text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-1 leading-none h-full min-h-0"
+            >
+              Products
+              <ChevronDown className={`w-3 h-3 transition-transform duration-150 ${productsOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {productsOpen && (
+              <div className="absolute top-full left-0 mt-1 bg-card border border-border rounded-xl shadow-lg py-2 min-w-[200px] z-50">
+                <Link to="/physical-products" className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors" onClick={() => setProductsOpen(false)}>
+                  Physical Products
+                </Link>
+                <Link to="/software-products" className="block px-4 py-2 text-sm text-foreground hover:bg-muted transition-colors" onClick={() => setProductsOpen(false)}>
+                  Software Products
+                </Link>
+              </div>
+            )}
+          </div>
           <div ref={dropdownRef} className="relative flex items-center h-full">
             <button 
               onClick={() => setPosOpen(!posOpen)}

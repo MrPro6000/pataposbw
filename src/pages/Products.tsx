@@ -55,7 +55,7 @@ const Products = () => {
       <section className="px-6 md:px-20 py-16 md:py-24">
         <div className="max-w-7xl mx-auto">
           <div className="max-w-2xl mb-16">
-            <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-4">Complete payment solutions</p>
+            <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-4">Physical products</p>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight mb-6">
               One platform,<br />
               <span className="pata-hero-gradient">infinite possibilities</span>
