@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { AuthProvider } from "@/hooks/useAuth";
 import { CartProvider } from "@/contexts/CartContext";
@@ -71,8 +71,10 @@ const AppContent = () => {
       <Route path="/online-payments" element={<OnlinePayments />} />
       <Route path="/capital" element={<Capital />} />
       <Route path="/pricing" element={<Pricing />} />
-      <Route path="/products" element={<Products />} />
-      <Route path="/software" element={<Software />} />
+      <Route path="/physical-products" element={<Products />} />
+      <Route path="/software-products" element={<Software />} />
+      <Route path="/products" element={<Navigate to="/physical-products" replace />} />
+      <Route path="/software" element={<Navigate to="/software-products" replace />} />
       <Route path="/business-type" element={<BusinessType />} />
       <Route path="/about" element={<About />} />
       <Route path="/shop" element={<Shop />} />

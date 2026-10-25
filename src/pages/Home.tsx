@@ -117,7 +117,7 @@ const Home = () => {
                     <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-400 to-primary bg-[length:200%_100%] animate-[shimmer_2s_linear_infinite] opacity-0 group-hover/btn:opacity-100 transition-opacity" />
                   </Link>
                   <Link
-                    to="/products"
+                    to="/physical-products"
                     className="pata-btn-outline-dark !py-2 !px-4 !text-[11px] sm:!py-2.5 sm:!px-6 sm:!text-sm group/btn2 relative overflow-hidden active:scale-95 transition-transform flex items-center justify-center gap-1.5 text-center"
                   >
                     Explore products
@@ -181,7 +181,7 @@ const Home = () => {
           <AnimatedSection delay={0.3}>
             <div className="mt-10">
               <Link
-                to="/software"
+                to="/software-products"
                 className="pata-btn-outline-light dark:pata-btn-outline-dark inline-flex items-center gap-2"
               >
                 See all software
@@ -211,7 +211,7 @@ const Home = () => {
                 icon: Smartphone,
                 description: "Transform your smartphone into a complete point of sale. Manage products, track inventory, and accept payments on the go.",
                 extra: "Download the Pata App and turn your smartphone into a business.",
-                link: "/products",
+                link: "/physical-products",
                 tagline: "Your store in your pocket",
                 showDownload: true,
               },
@@ -240,7 +240,7 @@ const Home = () => {
                 title: "Mukuru Transfer",
                 icon: ArrowRight,
                 description: "Send and receive money across borders via Mukuru. Fast, secure international transfers at competitive rates.",
-                link: "/products",
+                link: "/physical-products",
                 tagline: "Connect globally",
               },
             ].map((feature, i) => (
@@ -302,7 +302,7 @@ const Home = () => {
 
             <AnimatedSection delay={0.6}>
               <Link
-                to="/products"
+                to="/physical-products"
                 className="bg-gradient-to-br from-info/10 to-info/5 dark:from-info/20 dark:to-info/10 rounded-2xl p-8 hover:from-info/20 transition-all group border border-info/20 block hover:-translate-y-2 hover:shadow-xl hover:shadow-info/10 duration-300 relative overflow-hidden"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-info/5 rounded-full -translate-y-1/2 translate-x-1/2 group-hover:scale-150 transition-transform duration-700" />
