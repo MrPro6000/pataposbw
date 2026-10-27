@@ -8,6 +8,15 @@ import {
   Contact,
   BarChart3,
   Receipt,
+  MessageSquare,
+  KeyRound,
+  Radio,
+  Ticket,
+  GraduationCap,
+  CalendarCheck,
+  HeartHandshake,
+  Code2,
+  BellRing,
 } from "lucide-react";
 
 /**
@@ -83,3 +92,57 @@ export const softwareServices = [
 ];
 
 export type SoftwareService = (typeof softwareServices)[number];
+
+/**
+ * Services that sit in Pata Mobile — the sister system that handles bulk
+ * digital services. Listed as capabilities only: no packages, no prices.
+ */
+export const pataMobileServices = [
+  {
+    icon: MessageSquare,
+    name: "Bulk SMS",
+    description: "Send one message to a whole customer list at a time.",
+  },
+  {
+    icon: KeyRound,
+    name: "OTP & verification",
+    description: "One-time codes delivered for logins and confirmations.",
+  },
+  {
+    icon: Radio,
+    name: "Airtime & data",
+    description: "Airtime and mobile data loaded through authorised partners.",
+  },
+  {
+    icon: Ticket,
+    name: "Electronic vouchers",
+    description: "Digital vouchers issued and redeemed without paper stock.",
+  },
+  {
+    icon: GraduationCap,
+    name: "School notices",
+    description: "Announcements, reminders and parent communications.",
+  },
+  {
+    icon: CalendarCheck,
+    name: "Booking confirmations",
+    description: "Confirmations, reminders and promotional offers.",
+  },
+  {
+    icon: HeartHandshake,
+    name: "Loyalty messaging",
+    description: "Keep customers coming back with opt-in loyalty messages.",
+  },
+  {
+    icon: Code2,
+    name: "API integration",
+    description: "Larger organisations connect their own systems to messaging.",
+  },
+  {
+    icon: BellRing,
+    name: "Sales notifications",
+    description: "Merchant alerts tied to activity on Patapos.",
+  },
+];
+
+export type PataMobileService = (typeof pataMobileServices)[number];

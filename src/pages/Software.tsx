@@ -167,6 +167,50 @@ const Software = () => {
         </div>
       </section>
 
+      {/* Pata Mobile — sister system */}
+      <section className="px-5 md:px-20 py-12 md:py-20 border-t border-border">
+        <div className="max-w-7xl mx-auto">
+          <AnimatedSection>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+              <div>
+                <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-3">
+                  Another system in the family
+                </p>
+                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Pata Mobile
+                </h2>
+                <p className="text-muted-foreground max-w-2xl">
+                  Alongside Patapos there is Pata Mobile — the system built for bulk digital
+                  services. Where Patapos keeps the business records, Pata Mobile sends things
+                  out at scale: messages, codes, airtime and vouchers to many people at once.
+                  A few of the services it offers:
+                </p>
+              </div>
+              <span className="inline-flex items-center gap-2 self-start md:self-auto rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground shrink-0">
+                <Smartphone className="w-3.5 h-3.5 text-primary" />
+                Separate system, same Pata family
+              </span>
+            </div>
+          </AnimatedSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            {pataMobileServices.map((service, i) => (
+              <AnimatedSection key={service.name} delay={0.06 * i}>
+                <div className="group bg-card border border-border rounded-2xl p-6 h-full hover:border-primary/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
+                  <div className="w-11 h-11 bg-primary/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
+                    <service.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">{service.name}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+              </AnimatedSection>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="px-5 md:px-20 py-16">
         <div className="max-w-7xl mx-auto text-center">
