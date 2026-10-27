@@ -170,7 +170,7 @@ const Software = () => {
       </section>
 
       {/* Pata Mobile — sister system */}
-      <section className="px-5 md:px-20 py-12 md:py-20 border-t border-border">
+      <section id="pata-mobile" className="px-5 md:px-20 py-12 md:py-20 border-t border-border scroll-mt-28">
         <div className="max-w-7xl mx-auto">
           <AnimatedSection>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
