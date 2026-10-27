@@ -1,9 +1,9 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Smartphone } from "lucide-react";
 import MainNav from "@/components/MainNav";
 import MainFooter from "@/components/MainFooter";
 import ContactSalesDialog from "@/components/ContactSalesDialog";
-import { softwareServices } from "@/data/softwareServices";
+import { softwareServices, pataMobileServices } from "@/data/softwareServices";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const AnimatedSection = ({
