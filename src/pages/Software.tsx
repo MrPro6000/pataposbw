@@ -60,7 +60,9 @@ const Software = () => {
             <p className="text-lg text-muted-foreground max-w-2xl">
               Catalogue, invoices, records, connected accounts, stock, staff and reports.
               These are the everyday tools that hold a business together — and they are all
-              part of Pata, working off the same information.
+              part of Pata, working off the same information. Keep scrolling and you'll also
+              meet <a href="#pata-mobile" className="text-primary font-medium hover:underline underline-offset-4">Pata Mobile</a>,
+              the other system in the family, built for sending bulk digital services.
             </p>
           </AnimatedSection>
         </div>
@@ -168,7 +170,7 @@ const Software = () => {
       </section>
 
       {/* Pata Mobile — sister system */}
-      <section className="px-5 md:px-20 py-12 md:py-20 border-t border-border">
+      <section id="pata-mobile" className="px-5 md:px-20 py-12 md:py-20 border-t border-border scroll-mt-28">
         <div className="max-w-7xl mx-auto">
           <AnimatedSection>
             <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
