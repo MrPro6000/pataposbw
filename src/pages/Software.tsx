@@ -60,7 +60,9 @@ const Software = () => {
             <p className="text-lg text-muted-foreground max-w-2xl">
               Catalogue, invoices, records, connected accounts, stock, staff and reports.
               These are the everyday tools that hold a business together — and they are all
-              part of Pata, working off the same information.
+              part of Pata, working off the same information. Keep scrolling and you'll also
+              meet <Link to="/software-products#pata-mobile" className="text-primary font-medium hover:underline underline-offset-4">Pata Mobile</Link>,
+              the other system in the family, built for sending bulk digital services.
             </p>
           </AnimatedSection>
         </div>
