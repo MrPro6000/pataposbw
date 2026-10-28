@@ -111,6 +111,19 @@ const Software = () => {
         </div>
       </section>
 
+      {/* Pata Mobile — sister system */}
+      <PataMobileServices
+        eyebrow="Software products · Pata Mobile"
+        title="What is included"
+        intro={
+          <>
+            Pata Mobile is the system in the Pata family that keeps the everyday software work
+            in one place — invoices, reports and digital receipts — and sends things out at
+            scale: data, airtime and SIM cards to many people at once. Here is what is included.
+          </>
+        }
+      />
+
       {/* Connections */}
       <section className="px-5 md:px-20 py-12 md:py-16 border-t border-border bg-secondary">
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
@@ -140,19 +153,6 @@ const Software = () => {
           </AnimatedSection>
         </div>
       </section>
-
-      {/* Pata Mobile — sister system */}
-      <PataMobileServices
-        eyebrow="Software products · Pata Mobile"
-        title="What is included"
-        intro={
-          <>
-            Pata Mobile is the system in the Pata family that keeps the everyday software work
-            in one place — invoices, reports and digital receipts — and sends things out at
-            scale: data, airtime and SIM cards to many people at once. Here is what is included.
-          </>
-        }
-      />
 
       {/* CTA */}
       <section className="px-5 md:px-20 py-16">
