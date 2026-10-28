@@ -146,7 +146,23 @@ const Home = () => {
       </section>
 
 
-      <PataMobileServices />
+      <PataMobileServices
+        eyebrow="The software"
+        title={
+          <>
+            Simple software that <span className="pata-hero-gradient">holds it together</span>
+          </>
+        }
+        intro={
+          <>
+            Pata Mobile, part of the Pata family, keeps the everyday work in one place —
+            invoices, reports, digital receipts and bulk services. The tools that make the
+            whole app one system.
+          </>
+        }
+        ctaLabel="See all software"
+      />
+
 
       {/* Features Section */}
       <section className="px-5 md:px-20 py-12 md:py-20 bg-secondary overflow-hidden">
