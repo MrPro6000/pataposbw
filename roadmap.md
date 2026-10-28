@@ -1,6 +1,8 @@
 # Roadmap
 
+- [x] Keep homepage tagline/hero, features and leadership intact; restore Software Products hero, 3-step section and CTA — only the listed products changed to the seven Pata Mobile services, with Pata Mobile named on both pages
 - [x] Replace public software promotion with the seven Pata Mobile services on Home and Software Products; keep POS app tools unchanged
+
 
 - [x] Add "Pata Wallet" as a payment method everywhere POSO Money / Mobile Money appears (desktop Sales, PaymentFlow, MobilePaymentSheet, checkout/PaymentLinkPage; SellProductsDialog & MobileProductSaleSheet already had it)
 - [x] Add Kazang Services button to mobile Hub (bottom quick actions) matching Sales quick actions
