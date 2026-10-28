@@ -8,15 +8,9 @@ import {
   Contact,
   BarChart3,
   Receipt,
-  MessageSquare,
-  KeyRound,
   Radio,
-  Ticket,
-  GraduationCap,
-  CalendarCheck,
-  HeartHandshake,
-  Code2,
-  BellRing,
+  Wifi,
+  IdCard,
 } from "lucide-react";
 
 /**
@@ -99,49 +93,24 @@ export type SoftwareService = (typeof softwareServices)[number];
  */
 export const pataMobileServices = [
   {
-    icon: MessageSquare,
-    name: "Bulk SMS",
-    description: "Send one message to a whole customer list at a time.",
+    icon: FileText,
+    name: "Automated invoicing",
+    description: "Invoices generated and sent automatically, with a copy kept of every one.",
   },
   {
-    icon: KeyRound,
-    name: "OTP & verification",
-    description: "One-time codes delivered for logins and confirmations.",
+    icon: Wifi,
+    name: "Bulk data sales",
+    description: "Mobile data bundles supplied in bulk through approved partners.",
   },
   {
     icon: Radio,
-    name: "Airtime & data",
-    description: "Airtime and mobile data loaded through authorised partners.",
+    name: "Bulk airtime sales & distribution",
+    description: "Airtime sold and distributed in bulk to resellers, agents and customers.",
   },
   {
-    icon: Ticket,
-    name: "Electronic vouchers",
-    description: "Digital vouchers issued and redeemed without paper stock.",
-  },
-  {
-    icon: GraduationCap,
-    name: "School notices",
-    description: "Announcements, reminders and parent communications.",
-  },
-  {
-    icon: CalendarCheck,
-    name: "Booking confirmations",
-    description: "Confirmations, reminders and promotional offers.",
-  },
-  {
-    icon: HeartHandshake,
-    name: "Loyalty messaging",
-    description: "Keep customers coming back with opt-in loyalty messages.",
-  },
-  {
-    icon: Code2,
-    name: "API integration",
-    description: "Larger organisations connect their own systems to messaging.",
-  },
-  {
-    icon: BellRing,
-    name: "Sales notifications",
-    description: "Merchant alerts tied to activity on Patapos.",
+    icon: IdCard,
+    name: "SIM card distribution",
+    description: "SIM cards distributed to agents and retail outlets.",
   },
 ];
 

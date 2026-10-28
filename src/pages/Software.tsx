@@ -186,7 +186,7 @@ const Software = () => {
                 <p className="text-muted-foreground max-w-2xl">
                   Alongside Patapos there is Pata Mobile — the system built for bulk digital
                   services. Where Patapos keeps the business records, Pata Mobile sends things
-                  out at scale: messages, codes, airtime and vouchers to many people at once.
+                  out at scale: data, airtime, SIM cards and invoices to many people at once.
                   A few of the services it offers:
                 </p>
               </div>
