@@ -142,7 +142,6 @@ const Software = () => {
       </section>
 
       {/* Pata Mobile — sister system */}
-
       <PataMobileServices
         eyebrow="Software products · Pata Mobile"
         title="What is included"
