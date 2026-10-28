@@ -105,7 +105,7 @@ export const pataMobileServices = [
   {
     icon: Radio,
     name: "Bulk airtime sales & distribution",
-    description: "Airtime sold and distributed in bulk to resellers, agents and customers.",
+    description: "Airtime sold and distributed in bulk to agents and resellers.",
   },
   {
     icon: IdCard,

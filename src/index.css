@@ -374,7 +374,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 2px;
+  height: 3px;
   border-radius: 2px;
   background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--primary) / 0.15));
   transform: scaleX(0);
