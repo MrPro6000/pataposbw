@@ -1,6 +1,6 @@
 # Roadmap
 
-- [x] Keep homepage tagline/hero, features and leadership intact; restore Software Products hero, 3-step section and CTA — only the listed products changed to the seven Pata Mobile services, with Pata Mobile named on both pages
+- [x] Software Products page: "Everything connects to everything else" sits directly under "What is included", above the closing call to action
 - [x] Replace public software promotion with the seven Pata Mobile services on Home and Software Products; keep POS app tools unchanged
 
 
