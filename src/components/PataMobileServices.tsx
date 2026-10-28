@@ -36,7 +36,7 @@ function ServiceCard({ service, index }: { service: (typeof pataMobileServices)[
     <AnimatedSection delay={0.12 * index} className={isOddLast ? "sm:col-span-2" : ""}>
       <div
         className={`group relative h-full overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 ${
-          isOddLast ? "sm:flex sm:items-start sm:gap-8" : ""
+          isOddLast ? "sm:flex sm:flex-col sm:items-center sm:text-center" : ""
         }`}
       >
         <span aria-hidden className="absolute right-5 top-5 text-xs font-semibold tabular-nums text-muted-foreground">
@@ -50,10 +50,11 @@ function ServiceCard({ service, index }: { service: (typeof pataMobileServices)[
             style={{ animationDelay: `${index * 0.5}s` }}
           />
         </div>
-        <div className="relative">
+        <div className={`relative ${isOddLast ? "max-w-2xl" : ""}`}>
           <h3 className="mb-2 text-lg font-semibold text-foreground">{service.name}</h3>
           <p className="text-sm leading-relaxed text-muted-foreground">{service.description}</p>
         </div>
+
         <span aria-hidden className="pata-mobile-rule" />
       </div>
     </AnimatedSection>
