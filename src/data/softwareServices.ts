@@ -95,7 +95,7 @@ export const pataMobileServices = [
   {
     icon: FileText,
     name: "Automated invoicing",
-    description: "Invoices generated and sent automatically, with a copy kept of every one.",
+    description: "Invoices sent automatically, with a copy kept of every one.",
   },
   {
     icon: Wifi,

@@ -203,15 +203,11 @@ const Software = () => {
               {pataMobileServices.map((service, i) => (
                 <AnimatedSection key={service.name} delay={0.12 * i}>
                   <div className="group relative h-full overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
-                    <span className="absolute right-5 top-5 text-xs font-semibold tabular-nums text-muted-foreground/50">
+                    <span className="absolute right-5 top-5 text-xs font-semibold tabular-nums text-muted-foreground">
                       0{i + 1}
                     </span>
                     <div className="relative mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/25">
-                      <span
-                        aria-hidden
-                        className="pata-mobile-ring"
-                        style={{ animationDelay: `${i * 0.7}s` }}
-                      />
+                      <span aria-hidden className="pata-mobile-ring" />
                       <service.icon
                         className="pata-mobile-icon relative w-5 h-5 text-primary"
                         style={{ animationDelay: `${i * 0.5}s` }}
