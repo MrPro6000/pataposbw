@@ -173,44 +173,59 @@ const Software = () => {
 
       {/* Pata Mobile — sister system */}
       <section id="pata-mobile" className="px-5 md:px-20 py-12 md:py-20 border-t border-border scroll-mt-28">
-        <div className="max-w-7xl mx-auto">
-          <AnimatedSection>
-            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
-              <div>
-                <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-3">
-                  Another system in the family
-                </p>
-                <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-                  Pata Mobile
-                </h2>
-                <p className="text-muted-foreground max-w-2xl">
-                  Alongside Patapos there is Pata Mobile — the system built for bulk digital
-                  services. Where Patapos keeps the business records, Pata Mobile sends things
-                  out at scale: data, airtime, SIM cards and invoices to many people at once.
-                  A few of the services it offers:
-                </p>
-              </div>
-              <span className="inline-flex items-center gap-2 self-start md:self-auto rounded-full border border-border bg-card px-4 py-2 text-xs font-medium text-muted-foreground shrink-0">
-                <Smartphone className="w-3.5 h-3.5 text-primary" />
-                Separate system, same Pata family
-              </span>
-            </div>
-          </AnimatedSection>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {pataMobileServices.map((service, i) => (
-              <AnimatedSection key={service.name} delay={0.06 * i}>
-                <div className="group bg-card border border-border rounded-2xl p-6 h-full hover:border-primary/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/5 transition-all duration-300">
-                  <div className="w-11 h-11 bg-primary/20 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/30 transition-colors">
-                    <service.icon className="w-5 h-5 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">{service.name}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {service.description}
+        <div className="max-w-6xl mx-auto">
+          <div className="pata-mobile-panel relative overflow-hidden rounded-3xl border border-border p-6 md:p-10">
+            <span aria-hidden className="pata-mobile-glow" />
+            <AnimatedSection>
+              <div className="relative flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+                <div>
+                  <p className="text-primary text-sm font-semibold uppercase tracking-wide mb-3">
+                    Another system in the family
+                  </p>
+                  <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+                    Pata Mobile
+                  </h2>
+                  <p className="text-muted-foreground max-w-2xl">
+                    Alongside Patapos there is Pata Mobile — the system built for bulk digital
+                    services. Where Patapos keeps the business records, Pata Mobile sends things
+                    out at scale: data, airtime, SIM cards and invoices to many people at once.
+                    A few of the services it offers:
                   </p>
                 </div>
-              </AnimatedSection>
-            ))}
+                <span className="inline-flex items-center gap-2 self-start md:self-auto rounded-full border border-border bg-background px-4 py-2 text-xs font-medium text-muted-foreground shrink-0">
+                  <Smartphone className="w-3.5 h-3.5 text-primary" />
+                  Separate system, same Pata family
+                </span>
+              </div>
+            </AnimatedSection>
+
+            <div className="relative mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+              {pataMobileServices.map((service, i) => (
+                <AnimatedSection key={service.name} delay={0.12 * i}>
+                  <div className="group relative h-full overflow-hidden rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10">
+                    <span className="absolute right-5 top-5 text-xs font-semibold tabular-nums text-muted-foreground/50">
+                      0{i + 1}
+                    </span>
+                    <div className="relative mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 transition-colors duration-300 group-hover:bg-primary/25">
+                      <span
+                        aria-hidden
+                        className="pata-mobile-ring"
+                        style={{ animationDelay: `${i * 0.7}s` }}
+                      />
+                      <service.icon
+                        className="pata-mobile-icon relative w-5 h-5 text-primary"
+                        style={{ animationDelay: `${i * 0.5}s` }}
+                      />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">{service.name}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {service.description}
+                    </p>
+                    <span aria-hidden className="pata-mobile-rule" />
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
           </div>
         </div>
       </section>
