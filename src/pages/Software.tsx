@@ -154,6 +154,36 @@ const Software = () => {
         }
       />
 
+      {/* Connections */}
+      <section className="px-5 md:px-20 py-12 md:py-16 border-t border-border bg-secondary">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 items-start">
+          <AnimatedSection>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+              Everything connects to everything else
+            </h2>
+            <p className="text-muted-foreground">
+              The reason the software holds together is that the accounts do. Link what you
+              already use and the catalogue, records and reports all read from the same place.
+            </p>
+          </AnimatedSection>
+
+          <AnimatedSection delay={0.15}>
+            <div className="bg-card border border-border rounded-2xl p-6">
+              <ul className="grid sm:grid-cols-2 gap-3">
+                {connections.map((item) => (
+                  <li key={item} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 text-primary" />
+                    </span>
+                    <span className="text-sm text-foreground">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="px-5 md:px-20 py-16">
         <div className="max-w-7xl mx-auto text-center">
