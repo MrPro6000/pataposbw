@@ -72,7 +72,7 @@ type Props = {
 export default function PataMobileServices({
   eyebrow = "Software products · Pata Mobile",
   title = "What is included in Pata Mobile",
-  intro = "A separate system in the Pata family for invoices, reports, digital receipts and bulk distribution. Explore its seven services below.",
+  intro = "A separate system in the Pata family for invoices, reports, digital receipts and bulk distribution. Explore its eight services below.",
   ctaLabel,
   ctaTo = "/software-products",
 }: Props) {
